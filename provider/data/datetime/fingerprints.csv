@@ -42218,7 +42218,7 @@ timezone/names/generic/long/v1, zh-Hant, 982B, 891B, 186176284ffcb8da
 timezone/names/generic/long/v1, zh-MO, -> zh-HK
 timezone/names/generic/long/v1, zu, 2302B, 2211B, 20b32e3605a47cae
 timezone/names/generic/short/v1, <lookup>, 765B, 156 identifiers
-timezone/names/generic/short/v1, <total>, 8756B, 2593B, 67 unique payloads
+timezone/names/generic/short/v1, <total>, 8749B, 2586B, 67 unique payloads
 timezone/names/generic/short/v1, ady, 112B, 20B, a777c69d4861ead9
 timezone/names/generic/short/v1, af, 134B, 42B, fb4264208098b0e
 timezone/names/generic/short/v1, ar, 135B, 43B, a84876092bfa6e79
@@ -42233,7 +42233,7 @@ timezone/names/generic/short/v1, bs, 133B, 41B, ea48cae9dec515b6
 timezone/names/generic/short/v1, ca, -> bs
 timezone/names/generic/short/v1, chr, 153B, 61B, e1e027c4f55243d6
 timezone/names/generic/short/v1, cs, 116B, 24B, 1efa6413f76eab74
-timezone/names/generic/short/v1, cv, 344B, 253B, c8e5bfed4ddcd779
+timezone/names/generic/short/v1, cv, 337B, 246B, 2b191e6d67452595
 timezone/names/generic/short/v1, cy, -> bs
 timezone/names/generic/short/v1, da, 127B, 35B, 63fe8bb17c374844
 timezone/names/generic/short/v1, de, 127B, 35B, 41a26c20100aee1c
@@ -42912,7 +42912,7 @@ timezone/names/specific/long/v1, zh-Hant, 3408B, 3295B, deefcd9d24d06eba
 timezone/names/specific/long/v1, zh-MO, -> zh-HK
 timezone/names/specific/long/v1, zu, 4976B, 4863B, b39e7ab03ccece02
 timezone/names/specific/short/v1, <lookup>, 770B, 157 identifiers
-timezone/names/specific/short/v1, <total>, 11934B, 4000B, 69 unique payloads
+timezone/names/specific/short/v1, <total>, 11917B, 3983B, 69 unique payloads
 timezone/names/specific/short/v1, ady, 137B, 22B, efb2a4d20b7fec95
 timezone/names/specific/short/v1, af, 163B, 48B, 4bddd7d677666a3d
 timezone/names/specific/short/v1, ar, 160B, 45B, 215de509c3f261a8
@@ -42927,7 +42927,7 @@ timezone/names/specific/short/v1, bs, 186B, 71B, e70c7eda0e739399
 timezone/names/specific/short/v1, ca, -> bs
 timezone/names/specific/short/v1, chr, 244B, 129B, ce8c5fd41716b2bf
 timezone/names/specific/short/v1, cs, 151B, 36B, b087bd401214e9a5
-timezone/names/specific/short/v1, cv, 536B, 422B, 4876827ba0db9654
+timezone/names/specific/short/v1, cv, 519B, 405B, 3adf4b2a46d761ff
 timezone/names/specific/short/v1, cy, -> bs
 timezone/names/specific/short/v1, da, 179B, 64B, a0bb75cf94beda04
 timezone/names/specific/short/v1, de, 179B, 64B, b45b61546f9baf7f
@@ -43071,7 +43071,7 @@ timezone/names/specific/short/v1, yrl, -> kgp
 timezone/names/specific/short/v1, zh-Hant, -> ast
 timezone/names/specific/short/v1, zh-SG, -> ta-MY
 timezone/names/standard/long/v1, <lookup>, 1102B, 222 identifiers
-timezone/names/standard/long/v1, <total>, 320436B, 301666B, 206 unique payloads
+timezone/names/standard/long/v1, <total>, 320461B, 301691B, 206 unique payloads
 timezone/names/standard/long/v1, ady, 305B, 214B, 70312c630b04f0f4
 timezone/names/standard/long/v1, af, 988B, 897B, 2a21070028019f88
 timezone/names/standard/long/v1, ak, 1553B, 1462B, daa907b951b1609
@@ -43202,7 +43202,7 @@ timezone/names/standard/long/v1, mni, 339B, 248B, a87f90222149de92
 timezone/names/standard/long/v1, mr, 2488B, 2397B, 30336e5a83347e93
 timezone/names/standard/long/v1, ms, 1059B, 968B, 8adbad504b3d14fb
 timezone/names/standard/long/v1, mt, 162B, 70B, 91eda4165ae152cd
-timezone/names/standard/long/v1, my, 2866B, 2775B, e47f7ac4e89462c3
+timezone/names/standard/long/v1, my, 2891B, 2800B, ea1cd2737f71c911
 timezone/names/standard/long/v1, nds, 168B, 76B, b5aa8b06a87d113a
 timezone/names/standard/long/v1, ne, 2750B, 2659B, e0bd839c40484942
 timezone/names/standard/long/v1, nl, 1595B, 1504B, 6924a8e29970e09a
