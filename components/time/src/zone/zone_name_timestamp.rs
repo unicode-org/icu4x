@@ -280,7 +280,7 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let e3 = |_| D::Error::custom("invalid");
 
             let parts = alloc::borrow::Cow::<'de, str>::deserialize(deserializer)?;
-            if parts.len() != 16 && parts.len() != 19 {
+            if !matches!(parts.len(), 16 | 19) {
                 return Err(e0);
             }
             let year = parts[0..4].parse::<i32>().map_err(e1)?;
