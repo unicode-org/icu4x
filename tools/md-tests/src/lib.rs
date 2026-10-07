@@ -25,4 +25,15 @@ mod documents {
     mod markdown_tips_md {}
     #[doc = include_str!("../../../documents/design/data_safety.md")]
     mod data_safety_md {}
+
+    mod contributor_guide {
+        mod avoid {
+            #[doc = include_str!("../../../documents/contributor_guide/avoid/AV001_no_panics_in_library_code.md")]
+            mod av001_md {}
+            #[doc = include_str!("../../../documents/contributor_guide/avoid/AV004_zero_copy_data_structs.md")]
+            mod av004_md {}
+            #[doc = include_str!("../../../documents/contributor_guide/avoid/AV005_stable_serialized_layout.md")]
+            mod av005_md {}
+        }
+    }
 }
