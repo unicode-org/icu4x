@@ -623,13 +623,13 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
     {
         #[derive(serde::Deserialize)]
         struct Raw<'data> {
-            #[cfg_attr(feature = "serde", serde(borrow, rename = "last_primaries"))]
-            concatenated: ZeroVec<'data, u16>,
+            #[cfg_attr(feature = "serde", serde(borrow))]
+            last_primaries: ZeroVec<'data, u16>,
             numeric_primary: u8,
         }
 
         let Raw {
-            concatenated,
+            last_primaries: concatenated,
             numeric_primary,
         } = Raw::deserialize(deserializer)?;
 
