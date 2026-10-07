@@ -33,7 +33,7 @@ Inside the `![...]` is the alt text, and inside the `(...)` is the relative path
 
 Shane likes SVG files because they scale up and down nicely on different screen sizes and resolutions.  However, bitmaps are acceptable, too, depending on how you created the images.
 
-Create the images using your favorite editor.  For the images in [data-pipeline.md](../design/data-pipeline.md), Shane used Lucidchart.  You can also use Inkscape, Gimp, Google Slides, Adobe Illustrator, etc.  If you have a tablet, another good option may be to draw the image on your screen with your stylus into a whiteboard program and export it as an image.
+Create the images using your favorite editor.  For the images in [data_pipeline.md](../design/data_pipeline.md), Shane used Lucidchart.  You can also use Inkscape, Gimp, Google Slides, Adobe Illustrator, etc.  If you have a tablet, another good option may be to draw the image on your screen with your stylus into a whiteboard program and export it as an image.
 
 #### Previewing Images in PRs
 
