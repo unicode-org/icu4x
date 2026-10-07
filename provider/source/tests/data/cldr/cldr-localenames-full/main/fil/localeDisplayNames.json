@@ -57,7 +57,26 @@
         "types": {
           "calendar": {
             "buddhist": "Kalendaryo ng Buddhist",
-            "core": "Minguo",
+            "_core": {
+              "buddhist": "Buddhist",
+              "chinese": "Chinese",
+              "coptic": "Coptic",
+              "dangi": "Dangi",
+              "ethiopic": "Ethiopic",
+              "ethiopic-amete-alem": "Ethiopic Amete Alem",
+              "gregorian": "Gregorian",
+              "hebrew": "Hebrew",
+              "indian": "Indian National",
+              "islamic": "Hijri",
+              "islamic-civil": "Hijri (tabular, civil epoch)",
+              "islamic-rgsa": "Hijri, Saudi Arabia sighting",
+              "islamic-tbla": "Hijri (tabular, astronomical epoch)",
+              "islamic-umalqura": "Hijri (Umm al-Qura)",
+              "iso8601": "Gregorian",
+              "japanese": "Japanese",
+              "persian": "Persian",
+              "roc": "Minguo"
+            },
             "chinese": "Kalendaryong Chinese",
             "coptic": "Kalendaryong Coptic",
             "dangi": "Dangi na Kalendaryo",
@@ -78,7 +97,10 @@
           },
           "cf": {
             "account": "Format ng Pera sa Accounting",
-            "core": "Karaniwan",
+            "_core": {
+              "account": "Accounting",
+              "standard": "Karaniwan"
+            },
             "standard": "Karaniwang Format ng Pera"
           },
           "colAlternate": {
@@ -91,7 +113,11 @@
           },
           "colCaseFirst": {
             "lower": "Lowercase Muna ang Pag-uri-uriin",
-            "core": "Uppercase",
+            "_core": {
+              "lower": "Lowercase",
+              "no": "Lowercase",
+              "upper": "Uppercase"
+            },
             "no": "Pag-uri-uriin ang Ayos ng Normal na Case",
             "upper": "Uppercase Muna ang Pag-uri-uriin"
           },
@@ -101,7 +127,23 @@
           },
           "collation": {
             "compat": "Nakaraang Pagkakasunud-sunod ng Pag-uuri, para sa compatibility",
-            "core": "Zhuyin",
+            "_core": {
+              "compat": "Compatibility",
+              "dictionary": "Dictionary",
+              "ducet": "Default na Unicode",
+              "emoji": "Emoji",
+              "eor": "Mga panuntunan sa Europe",
+              "phonebook": "Phonebook",
+              "phonetic": "Phonetic",
+              "pinyin": "Pinyin",
+              "search": "Maghanap",
+              "searchjl": "Korean initial consonant",
+              "standard": "Karaniwan",
+              "stroke": "Stroke",
+              "traditional": "Traditional",
+              "unihan": "Radical-Stroke",
+              "zhuyin": "Zhuyin"
+            },
             "dictionary": "Pagkakasunud-sunod ng Pag-uuri ng Diksyunaryo",
             "ducet": "Default na Pagkakasunud-sunod ng Ayos ng Unicode",
             "emoji": "Pagkakasunud-sunod ng Pag-uuri ng Emoji",
@@ -126,11 +168,23 @@
             "yes": "Pag-uri-uriin ang Mga Digit nang Numerical"
           },
           "colReorder": {
-            "core": "Simbolo"
+            "_core": {
+              "currency": "Currency",
+              "digit": "Mga Digit",
+              "punct": "Bantas",
+              "space": "Whitespace",
+              "symbol": "Simbolo"
+            }
           },
           "colStrength": {
             "identical": "Pag-uri-uriin Lahat",
-            "core": "Base, Mga Accent, Case, Mga Variant",
+            "_core": {
+              "identical": "Lahat",
+              "primary": "Mga Base na Titik Lang",
+              "quaternary": "Base, Mga Accent, Case, Mga Variant, Kana",
+              "secondary": "Base, Mga Accent",
+              "tertiary": "Base, Mga Accent, Case, Mga Variant"
+            },
             "primary": "Mga Base na Titik Lang ang Pag-uri-uriin",
             "quaternary": "Pag-uri-uriin ang Mga Accent/Case/Lapad/Kana",
             "secondary": "Pag-uri-uriin ang Mga Accent",
@@ -142,11 +196,22 @@
             "npinyin": "Numeric"
           },
           "em": {
-            "core": "Text"
+            "_core": {
+              "default": "Default",
+              "emoji": "Emoji",
+              "text": "Text"
+            }
           },
           "hc": {
             "c12": "12 Oras na Sistema",
-            "core": "24 (1–24)",
+            "_core": {
+              "c12": "12",
+              "c24": "24",
+              "h11": "12 (0–11)",
+              "h12": "12 (1–12)",
+              "h23": "24 (0–23)",
+              "h24": "24 (1–24)"
+            },
             "c24": "24 na Oras na Sistema",
             "h11": "12 Oras na Sistema (0–11)",
             "h12": "12 Oras na Sistema (1–12)",
@@ -154,16 +219,30 @@
             "h24": "24 na Oras na Sistema (1–24)"
           },
           "kv": {
-            "core": "I-shift ang mga Space, bantas, hindi currency na simbolo"
+            "_core": {
+              "currency": "I-shift ang mga Space, bantas, lahat ng simbolo",
+              "punct": "I-shift ang mga space, bantas",
+              "space": "I-shift ang mga Space, bantas",
+              "symbol": "I-shift ang mga Space, bantas, hindi currency na simbolo"
+            }
           },
           "lb": {
             "loose": "Loose na Istilo ng Line Break",
-            "core": "Strict",
+            "_core": {
+              "loose": "Loose",
+              "normal": "Normal",
+              "strict": "Strict"
+            },
             "normal": "Normal na Istilo ng Line Break",
             "strict": "Mahigpit na Istilo ng Line Break"
           },
           "lw": {
-            "core": "Panatilihin sa mga parirala"
+            "_core": {
+              "breakall": "I-break lahat",
+              "keepall": "Panatilihin lahat",
+              "normal": "Normal",
+              "phrase": "Panatilihin sa mga parirala"
+            }
           },
           "m0": {
             "bgn": "US BGN na Transliteration",
@@ -171,7 +250,11 @@
           },
           "ms": {
             "metric": "Metrikong Sistema",
-            "core": "US",
+            "_core": {
+              "metric": "Metric",
+              "uksystem": "UK",
+              "ussystem": "US"
+            },
             "uksystem": "Sistemang Imperial na Pagsukat",
             "ussystem": "Sistema ng Pagsukat sa US"
           },
@@ -179,7 +262,36 @@
             "ahom": "Ahom na mga Digit",
             "arab": "Arabic-Indic na Mga Digit",
             "arabext": "Extendend Arabic-Indic na Mga Digit",
-            "core": "Mga tradisyonal na numeral",
+            "_core": {
+              "arabext": "Extended Arabic-Indic",
+              "armnlow": "Armenian lowercase",
+              "finance": "Financial",
+              "fullwide": "Full-width",
+              "greklow": "Greek lowercase",
+              "hanidays": "Han-character na pagnunumero sa araw ng buwan para sa mga tradisyonal na kalendaryo",
+              "hanidec": "Positional decimal system gamit ang mga Chinese number ideograph bilang mga digit",
+              "hansfin": "Simplified Chinese financial",
+              "hantfin": "Traditional Chinese financial",
+              "jpanfin": "Japanese financial",
+              "jpanyear": "Japanese first-year Gannen na pagnunumero",
+              "lanatham": "Tai Tham Tham (ecclesiastical)",
+              "mathbold": "Mathematical bold",
+              "mathdbl": "Mathematical double-struck",
+              "mathmono": "Mathematical monospace",
+              "mathsanb": "Mathematical sans-serif bold",
+              "mathsans": "Mathematical sans-serif",
+              "mymrepka": "Myanmar Eastern Pwo Karen",
+              "mymrpao": "Myanmar Pao",
+              "mymrshan": "Myanmar Shan",
+              "mymrtlng": "Myanmar Tai Laing",
+              "native": "Mga native digit",
+              "outlined": "Naka-outline",
+              "roman": "Roman uppercase",
+              "romanlow": "Roman lowercase",
+              "segment": "Segmented",
+              "tamldec": "Modern Tamil",
+              "traditional": "Mga tradisyonal na numeral"
+            },
             "armn": "Mga Armenian Numeral",
             "armnlow": "Armenian Lowercase Numerals",
             "bali": "Balinese na Mga Digit",
@@ -245,18 +357,19 @@
             "vaii": "Mga Vai na Digit"
           },
           "ss": {
-            "core": "Naka-on"
+            "_core": {
+              "none": "Naka-off",
+              "standard": "Naka-on"
+            }
           },
           "t0": {
             "und": "Hindi Natukoy na Machine Translation"
           },
           "va": {
-            "core": "Variant ng POSIX"
+            "_core": {
+              "posix": "Variant ng POSIX"
+            }
           }
-        },
-        "typeValues": {
-          "no": "Naka-off",
-          "yes": "Naka-on"
         },
         "codePatterns": {
           "language": "Wika: {0}",
