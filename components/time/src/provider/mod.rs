@@ -518,6 +518,97 @@ pub struct MetazoneInfo {
 }
 
 impl TimezonePeriods<'_> {
+    /// Creates a new [`TimezonePeriods`] from a map of time zones to their periods.
+    ///
+    /// Each time zone's period map must start with [`ZoneNameTimestamp::far_in_past()`].
+    #[cfg(feature = "datagen")]
+    pub fn new(
+        periods: alloc::collections::BTreeMap<
+            TimeZone,
+            alloc::collections::BTreeMap<ZoneNameTimestamp, (VariantOffsets, Option<MetazoneInfo>)>,
+        >,
+    ) -> Option<TimezonePeriods<'static>> {
+        use alloc::collections::{BTreeMap, BTreeSet};
+        use alloc::vec::Vec;
+
+        fn pack_offsets_and_mzmsk(
+            offsets: VariantOffsets,
+            mz: Option<MetazoneInfo>,
+        ) -> VariantOffsetsWithMetazoneMembershipKind {
+            VariantOffsetsWithMetazoneMembershipKind {
+                offsets,
+                mzmsk: mz
+                    .map(|i| i.kind)
+                    .unwrap_or(MetazoneMembershipKind::BehavesLikeGolden),
+            }
+        }
+
+        let mut offsets = BTreeSet::new();
+        for ps in periods.values() {
+            for &(os, mz) in ps.values() {
+                offsets.insert(pack_offsets_and_mzmsk(os, mz));
+            }
+        }
+
+        let offset_index = offsets
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (v, i as u8))
+            .collect::<BTreeMap<_, _>>();
+
+        let offsets = offsets.into_iter().collect::<ZeroVec<_>>();
+
+        let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
+        for (&tz, value) in &periods {
+            deduped.entry(value).or_default().insert(tz);
+        }
+
+        let index = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
+            deduped
+                .values()
+                .enumerate()
+                .flat_map(|(i, vs)| vs.iter().map(move |tz| (tz.as_str(), i))),
+        )
+        .convert_store();
+
+        let list = VarZeroVec::from(
+            &deduped
+                .into_keys()
+                .map(|ps| {
+                    let mut iter = ps.iter().map(|(&t, &(os, mz))| {
+                        (
+                            Timestamp24(t),
+                            offset_index
+                                .get(&pack_offsets_and_mzmsk(os, mz))
+                                .copied()
+                                .unwrap_or_default(),
+                            NichedOption(mz.map(|i| i.id)),
+                        )
+                    });
+
+                    let (_, os, mz) = iter
+                        .next()
+                        .filter(|&(past, _, _)| past.0 == ZoneNameTimestamp::far_in_past())?;
+
+                    let rest = iter.collect::<ZeroVec<_>>();
+
+                    Some(zerovec::ule::encode_varule_to_box(
+                        &zerovec::ule::vartuple::VarTuple {
+                            sized: (os, mz),
+                            variable: rest.as_slice(),
+                        },
+                    ))
+                })
+                .collect::<Option<Vec<_>>>()?,
+        );
+
+        Some(TimezonePeriods {
+            index,
+            list,
+            offsets,
+        })
+    }
+
     /// Gets the information for a time zone at at timestamp
     ///
     /// If the timezone is in a metazone, returns the metazone ID as well as the offsets
