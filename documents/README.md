@@ -13,6 +13,7 @@ User-facing tutorials are listed in [index.md](tutorials/index.md). The followin
 
 Document | Summary
 ---------|---------
+[contributor_guide/README.md](contributor_guide/README.md) | This guide explains the Rust patterns and design rules that ICU4X depends on. They are easy to miss, especially for new contributors: the code shows what ICU4X does, but not why, or which patterns are rules.
 [markdown_tips.md](process/markdown_tips.md) | According to bylaws.md, designs should make their way to GitHub Markdown files somewhat early in the process. However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice. This document contains tips on the workflow.
 [writing_a_new_data_struct.md](process/writing_a_new_data_struct.md) | Tutorial for ICU4X contributors on how to add locale data to the data provider pipeline.
 
