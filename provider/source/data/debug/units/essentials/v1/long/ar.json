@@ -196,24 +196,6 @@
       {
         "Power": {
           "power": "Two",
-          "count": "Zero"
-        }
-      },
-      "{0} مربّع"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Two",
-          "count": "One"
-        }
-      },
-      "{0} مربّع"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Two",
           "count": "Two"
         }
       },
@@ -245,24 +227,6 @@
         }
       },
       "{0} مربّع"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Three",
-          "count": "Zero"
-        }
-      },
-      "{0} مكعّب"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Three",
-          "count": "One"
-        }
-      },
-      "{0} مكعّب"
     ],
     [
       {

@@ -196,28 +196,10 @@
       {
         "Power": {
           "power": "Two",
-          "count": "One"
-        }
-      },
-      "{0}kare"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Two",
           "count": "Other"
         }
       },
       "{0}kare"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Three",
-          "count": "One"
-        }
-      },
-      "{0}küp"
     ],
     [
       {

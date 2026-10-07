@@ -196,28 +196,10 @@
       {
         "Power": {
           "power": "Two",
-          "count": "One"
-        }
-      },
-      "square {0}"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Two",
           "count": "Other"
         }
       },
       "square {0}"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Three",
-          "count": "One"
-        }
-      },
-      "cubic {0}"
     ],
     [
       {

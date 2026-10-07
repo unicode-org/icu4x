@@ -71764,75 +71764,72 @@ units/duration/digital/v1, sr-Latn, -> da
 units/duration/digital/v1, su, -> da
 units/duration/digital/v1, tk, 33B, 9B, 52bd330c6674d78
 units/duration/digital/v1, und, 33B, 9B, 5031d069e9fdd05c
-units/essentials/v1, <lookup>, 2506B, 259 identifiers
-units/essentials/v1, <total>, 115059B, 95676B, 213 unique payloads
-units/essentials/v1, af/long, 495B, 404B, 49fb4f74aab9d305
-units/essentials/v1, ak/long, 458B, 367B, 1a771d40091a5bb1
-units/essentials/v1, am/long, 593B, 502B, f5136bc052c55046
+units/essentials/v1, <lookup>, 2479B, 256 identifiers
+units/essentials/v1, <total>, 112001B, 92709B, 212 unique payloads
+units/essentials/v1, af/long, 465B, 374B, f50bae5829c93d25
+units/essentials/v1, ak/long, 431B, 340B, 9f36a1c2b39aa38a
+units/essentials/v1, am/long, 555B, 464B, 63f741c357f874ec
 units/essentials/v1, am/narrow, 464B, 373B, 2c7be4680fe6b16
 units/essentials/v1, am/short, -> am/narrow
-units/essentials/v1, ar/long, 805B, 714B, 715e0c6736f92d4c
+units/essentials/v1, ar/long, 737B, 646B, 3f17452cea55c2c8
 units/essentials/v1, ar/narrow, 488B, 397B, 8ba7c2cfbf6bd032
 units/essentials/v1, ar/short, 500B, 409B, 5a5495a9ab6d1794
-units/essentials/v1, as/long, 834B, 743B, 7b2077b715a15b5c
+units/essentials/v1, as/long, 802B, 711B, 180b1188147b9df2
 units/essentials/v1, as/narrow, 605B, 514B, 34ceeaff234ecf95
 units/essentials/v1, as/short, 559B, 468B, 1bae4e064c61826b
 units/essentials/v1, ast/long, 366B, 275B, 87c6c716ee19a568
-units/essentials/v1, az/long, 500B, 409B, 3ca7d3a24bbf37be
+units/essentials/v1, az/long, 476B, 385B, a9853eec785d0dc6
 units/essentials/v1, az/narrow, 364B, 273B, 4fa6aa9532f74db4
 units/essentials/v1, az/short, 365B, 274B, 1a46b36b44272345
 units/essentials/v1, ba/long, 626B, 535B, e25bc42efdf52e3
 units/essentials/v1, ba/narrow, 408B, 317B, 8f8fdb5584aa55fe
 units/essentials/v1, ba/short, -> ba/narrow
-units/essentials/v1, be/long, 719B, 628B, 1bdfd6fc4e970eb9
+units/essentials/v1, be/long, 677B, 586B, 4376e27e2d509345
 units/essentials/v1, be/narrow, 405B, 314B, c93a2471ef9b4ebc
 units/essentials/v1, be/short, 408B, 317B, ef8cf49d72d468f2
 units/essentials/v1, bg/long, 677B, 586B, fb1e549aa86374ab
-units/essentials/v1, blo/long, 587B, 496B, d779316fb5e4f21c
+units/essentials/v1, blo/long, 513B, 422B, 84d93cb491132a77
 units/essentials/v1, blo/narrow, 359B, 268B, c36c27b57e02ce70
 units/essentials/v1, blo/short, -> blo/narrow
-units/essentials/v1, bn-IN/long, 794B, 703B, 6f1a83344b43c378
-units/essentials/v1, bn/long, 796B, 705B, e4c2339487cfbe2
+units/essentials/v1, bn-IN/long, 781B, 690B, 2dea67dcfa2af8bc
+units/essentials/v1, bn/long, 783B, 692B, 82e59d04b47ee799
 units/essentials/v1, bn/narrow, 482B, 391B, f89b201432a9e18b
 units/essentials/v1, bn/short, 514B, 423B, 2591ba0537306126
-units/essentials/v1, br/long, 570B, 479B, 2ddb94bb5bc9700a
+units/essentials/v1, br/long, 470B, 379B, d824b847bc0ae462
 units/essentials/v1, bs/long, 490B, 399B, 15de4c37f5bb4feb
 units/essentials/v1, ca/long, 509B, 418B, a2a107ef36d1595a
-units/essentials/v1, ceb/long, 483B, 392B, 44e18797de4d80a4
-units/essentials/v1, chr/long, 561B, 470B, df8f8af4662e3c1f
+units/essentials/v1, ceb/long, 458B, 367B, 13a9ad9a92e82087
+units/essentials/v1, chr/long, 506B, 415B, af4002c2486836b1
 units/essentials/v1, cop/long, 441B, 350B, c0ec277aeaa2d9dc
 units/essentials/v1, cs/long, 597B, 506B, 7e191c04875b507a
-units/essentials/v1, cv/long, 698B, 607B, 916a82c0860960a4
+units/essentials/v1, cv/long, 626B, 535B, ebc382691a9c305
 units/essentials/v1, cv/narrow, -> ba/narrow
 units/essentials/v1, cv/short, -> ba/narrow
-units/essentials/v1, cy/long, 601B, 510B, 2cffed2f79db9bec
-units/essentials/v1, da/long, 498B, 407B, f8a8e4955497301f
-units/essentials/v1, de/long, 498B, 407B, e511a87284dd4b58
+units/essentials/v1, cy/long, 471B, 380B, b3f75d7bdf290ea0
+units/essentials/v1, da/long, 474B, 383B, 4cc20e60f5a8b9b
+units/essentials/v1, de/long, 474B, 383B, be25def87ae5d9c6
 units/essentials/v1, dsb/long, 572B, 481B, f923c6f473a19e39
 units/essentials/v1, el/long, 765B, 674B, 1f36ad39a4c669b3
 units/essentials/v1, el/narrow, 572B, 481B, 197684f32418a84d
 units/essentials/v1, el/short, 532B, 441B, a58460e43de9c1f2
-units/essentials/v1, en-001/long, 498B, 407B, 98be4ac1ff7771d8
+units/essentials/v1, en-001/long, 473B, 382B, b5a31878289ce22b
 units/essentials/v1, en-CA/long, -> en-001/long
-units/essentials/v1, en/long, 498B, 407B, 6508de3d9de23c6d
-units/essentials/v1, en/narrow, 378B, 287B, bb2e29016eaaa66d
-units/essentials/v1, en/short, -> en/narrow
-units/essentials/v1, eo/long, 490B, 399B, d2c7c4d77c95f69c
+units/essentials/v1, en/long, 473B, 382B, 16c8a9cc63b3c430
+units/essentials/v1, eo/long, 468B, 377B, 8ac73cab4dfbf32d
 units/essentials/v1, es-US/long, 511B, 420B, f1ebf6715a1ebf59
 units/essentials/v1, es/long, 507B, 416B, cadecfd7645b846b
-units/essentials/v1, et/long, 491B, 400B, d32e5e2bf9aec43a
-units/essentials/v1, eu/long, 496B, 405B, 262ec8865fcab836
+units/essentials/v1, et/long, 471B, 380B, 110e2b794f88663d
+units/essentials/v1, eu/long, 469B, 378B, 6a648757ef851635
 units/essentials/v1, eu/narrow, 360B, 269B, 58684da48b3f1c0e
 units/essentials/v1, eu/short, -> eu/narrow
-units/essentials/v1, fa/long, 644B, 553B, 911e76161a9d7aa4
-units/essentials/v1, fa/narrow, -> en/narrow
-units/essentials/v1, fa/short, 631B, 540B, ee2f47cad9a1013a
-units/essentials/v1, ff-Adlm/long, 923B, 832B, cfeb6352056d46e3
-units/essentials/v1, ff-Adlm/narrow, 494B, 403B, 7851266a87fd9b13
-units/essentials/v1, ff-Adlm/short, 506B, 415B, 8c7859b73050d639
-units/essentials/v1, fi/long, 500B, 409B, 50707f6bd425e662
-units/essentials/v1, fil/long, 510B, 419B, e01c5119e5fd9665
-units/essentials/v1, fo/long, 488B, 397B, 291eea2ad9f8ec7e
+units/essentials/v1, fa/long, 615B, 524B, 7488897e1c6fb2fe
+units/essentials/v1, fa/short, 603B, 512B, 1676f8f19b37eec6
+units/essentials/v1, ff-Adlm/long, 861B, 770B, b05bd6c1b4483138
+units/essentials/v1, ff-Adlm/narrow, 474B, 383B, 9932a9bcd2fe7322
+units/essentials/v1, ff-Adlm/short, 486B, 395B, 172632751f7c87bb
+units/essentials/v1, fi/long, 476B, 385B, 6bef404f5c566d7f
+units/essentials/v1, fil/long, 494B, 403B, 40fd5dac45009107
+units/essentials/v1, fo/long, 467B, 376B, 253d16ab0dd676db
 units/essentials/v1, fo/narrow, 363B, 272B, 4e34b8876b855334
 units/essentials/v1, fo/short, -> fo/narrow
 units/essentials/v1, fr-CA/long, 509B, 418B, 9664f2f286bcb3a4
@@ -71840,42 +71837,42 @@ units/essentials/v1, fr/long, 507B, 416B, 22cff9572dd9f005
 units/essentials/v1, fr/narrow, -> eu/narrow
 units/essentials/v1, fr/short, -> eu/narrow
 units/essentials/v1, fy/long, -> ast/long
-units/essentials/v1, ga/long, 607B, 516B, e2c6bfdd76c686e3
-units/essentials/v1, gd/long, 614B, 523B, b9d68bd0074ba06e
+units/essentials/v1, ga/long, 592B, 501B, 46e3876daef17faf
+units/essentials/v1, gd/long, 515B, 424B, b5c07920a139a491
 units/essentials/v1, gl/long, 506B, 415B, 3f1abeaf4ec8f92e
-units/essentials/v1, gu/long, 765B, 674B, d60a2a37ddc537d0
+units/essentials/v1, gu/long, 733B, 642B, 68fbb55fbfaf7fa7
 units/essentials/v1, gu/narrow, 647B, 556B, 8426df9ec17de492
 units/essentials/v1, gu/short, 496B, 405B, b828d1609f39a2c7
-units/essentials/v1, ha/long, 458B, 367B, fe67ea0183df809c
-units/essentials/v1, he/long, 698B, 607B, 2979010e6112ebd9
+units/essentials/v1, ha/long, 432B, 341B, d457eae5c6f7cc89
+units/essentials/v1, he/long, 590B, 499B, bd2054cb51407602
 units/essentials/v1, he/narrow, 514B, 423B, dd4a3b38ad6b34b4
 units/essentials/v1, he/short, 498B, 407B, 5b43669a17081d2b
-units/essentials/v1, hi/long, 839B, 748B, cf51fb0c0f34c688
+units/essentials/v1, hi/long, 807B, 716B, 49482c044e1c4c05
 units/essentials/v1, hi/narrow, 556B, 465B, e24da8b44eb5c62b
 units/essentials/v1, hi/short, 430B, 339B, 810f2c9fc2b4f218
 units/essentials/v1, hr/long, 526B, 435B, e6d7c55208330520
 units/essentials/v1, hsb/long, -> dsb/long
-units/essentials/v1, hu/long, 498B, 407B, 591f213fa5bd84c5
-units/essentials/v1, hy/long, 690B, 599B, 45f159b33c59b133
+units/essentials/v1, hu/long, 474B, 383B, ace879486c466dd8
+units/essentials/v1, hy/long, 642B, 551B, 5264dcbbef211abe
 units/essentials/v1, hy/narrow, 404B, 313B, 604b592a507acb7
 units/essentials/v1, hy/short, -> hy/narrow
-units/essentials/v1, ia/long, 443B, 352B, 48599046bf8779fb
+units/essentials/v1, ia/long, 416B, 325B, e2768166e3666b0
 units/essentials/v1, id/long, 477B, 386B, ac3a8a664195c24d
 units/essentials/v1, ig/long, 419B, 328B, d8b3b3ca3fffa144
-units/essentials/v1, is/long, 514B, 423B, 9fe1307e955302df
+units/essentials/v1, is/long, 495B, 404B, 5f1be1a79b8f199c
 units/essentials/v1, is/narrow, 362B, 271B, 74a55112d766ed01
 units/essentials/v1, is/short, 373B, 282B, e4b32ecb28f07c19
 units/essentials/v1, it/long, 499B, 408B, 4a6c94fcaf864b72
 units/essentials/v1, ja/long, 567B, 476B, a98631c755bd2a53
 units/essentials/v1, jv/long, 474B, 383B, b5ffa191b42a708e
-units/essentials/v1, ka/long, 842B, 751B, 9bed5e37aa891d1f
+units/essentials/v1, ka/long, 780B, 689B, 41b3d9559e023341
 units/essentials/v1, ka/narrow, 507B, 416B, c7709bfdeabc4efb
 units/essentials/v1, ka/short, -> ka/narrow
 units/essentials/v1, kea/long, 441B, 350B, b21f75ccc81c4dbd
 units/essentials/v1, kgp/long, 366B, 275B, 43e4c443aee8f952
-units/essentials/v1, kk-Arab/long, 650B, 559B, a9785866a8445ef4
+units/essentials/v1, kk-Arab/long, 616B, 525B, ec0285a926ef866
 units/essentials/v1, kk-Arab/short, 422B, 331B, 23ab45f51e5a6fee
-units/essentials/v1, kk/long, 660B, 569B, 5441f16b1025f66c
+units/essentials/v1, kk/long, 626B, 535B, d1221cf49a6d32af
 units/essentials/v1, kk/narrow, 408B, 317B, 3289b28100e0549d
 units/essentials/v1, kk/short, -> kk/narrow
 units/essentials/v1, km/long, 731B, 640B, 296b56b54e55644c
@@ -71883,46 +71880,46 @@ units/essentials/v1, kn/long, 948B, 857B, 965ef13536e3b436
 units/essentials/v1, kn/narrow, 579B, 488B, 2073512a1079584a
 units/essentials/v1, kn/short, 544B, 453B, 9dc3afb12dc4669a
 units/essentials/v1, ko/long, 535B, 444B, 356560f342826ff8
-units/essentials/v1, kok-Latn/long, 402B, 311B, c926c72196bbee51
-units/essentials/v1, kok/long, 755B, 664B, 17141584fa979d21
+units/essentials/v1, kok-Latn/long, 377B, 286B, c87a58e80487efac
+units/essentials/v1, kok/long, 742B, 651B, a2a68998d82c447f
 units/essentials/v1, kok/narrow, 381B, 290B, 24b266b712981a9b
 units/essentials/v1, kok/short, 380B, 289B, 53ac82e6cda5959
 units/essentials/v1, ksh/long, 366B, 275B, b30224bfa8c61b2b
-units/essentials/v1, ky/long, 570B, 479B, 35c547376e36be5e
+units/essentials/v1, ky/long, 536B, 445B, b3aba6e4b7cd89f4
 units/essentials/v1, ky/narrow, 378B, 287B, ee7dac669c5d6fa2
 units/essentials/v1, ky/short, -> ky/narrow
 units/essentials/v1, lij/long, 380B, 289B, 458b8f5d9e85a163
 units/essentials/v1, lo/long, 744B, 653B, 128ca233b1c18ebb
 units/essentials/v1, lo/narrow, 480B, 389B, a2c753441819532a
 units/essentials/v1, lo/short, -> lo/narrow
-units/essentials/v1, lt/long, 544B, 453B, a2131d5829e6af6a
-units/essentials/v1, lv/long, 518B, 427B, 5a7500b9c65feb9d
+units/essentials/v1, lt/long, 466B, 375B, 732c124ad22b5c5c
+units/essentials/v1, lv/long, 468B, 377B, 984a99da5043d5f8
 units/essentials/v1, lv/narrow, 362B, 271B, 3c33d3c365a1de95
 units/essentials/v1, lv/short, -> lv/narrow
 units/essentials/v1, mk/long, 669B, 578B, 7f875dac6c374c9
-units/essentials/v1, ml/long, 847B, 756B, 8ad838517e044e97
+units/essentials/v1, ml/long, 788B, 697B, 9191da1f8fe63ccc
 units/essentials/v1, ml/narrow, 378B, 287B, 7ddbc06157175a0e
 units/essentials/v1, ml/short, -> ml/narrow
-units/essentials/v1, mn/long, 633B, 542B, fd8bace918122570
+units/essentials/v1, mn/long, 599B, 508B, b2ae218b4cd86be8
 units/essentials/v1, mn/narrow, 398B, 307B, 8da70cbfe502b772
 units/essentials/v1, mn/short, -> mn/narrow
-units/essentials/v1, mr/long, 762B, 671B, 36ee123b060fff3e
+units/essentials/v1, mr/long, 731B, 640B, 7b3c374819b03f0a
 units/essentials/v1, mr/narrow, 475B, 384B, 48c8390f21b81d21
 units/essentials/v1, mr/short, 493B, 402B, b440dca992245da8
 units/essentials/v1, ms/long, 475B, 384B, 66abcaf04830891a
 units/essentials/v1, my/long, 908B, 817B, 431c56a9aaae1190
-units/essentials/v1, ne/long, 844B, 753B, 51422d3169f0c5b0
+units/essentials/v1, ne/long, 812B, 721B, 6468077b365fdffa
 units/essentials/v1, ne/narrow, 714B, 623B, ce6fa6044f6c869e
 units/essentials/v1, ne/short, 504B, 413B, 21376631bf47f91e
-units/essentials/v1, nl/long, 510B, 419B, fd333616c79d2617
-units/essentials/v1, no/long, 500B, 409B, cb10ac02325b900a
+units/essentials/v1, nl/long, 480B, 389B, c4c12df316434cfc
+units/essentials/v1, no/long, 475B, 384B, ac0b57088c9b063e
 units/essentials/v1, or/long, 717B, 626B, f02a907c526cad9f
 units/essentials/v1, or/narrow, 456B, 365B, a217133607e704ef
 units/essentials/v1, or/short, 476B, 385B, c6273427e35acb3e
-units/essentials/v1, pa/long, 800B, 709B, 9f3ac18775d143e9
+units/essentials/v1, pa/long, 773B, 682B, 54a34045cc897352
 units/essentials/v1, pa/narrow, 569B, 478B, e3559ecdc2fc5564
 units/essentials/v1, pa/short, -> pa/narrow
-units/essentials/v1, pcm/long, 561B, 470B, 33387ba4d4cd04eb
+units/essentials/v1, pcm/long, 534B, 443B, 2dde616fd9b80dd5
 units/essentials/v1, pcm/narrow, 405B, 314B, 74281b3eeeb931b6
 units/essentials/v1, pcm/short, 402B, 311B, c840f2a0a9f68809
 units/essentials/v1, pl/long, 598B, 507B, fbc840996d0e4207
@@ -71933,54 +71930,54 @@ units/essentials/v1, pt-PT/long, 529B, 438B, 23540255b1746e5a
 units/essentials/v1, pt/long, 519B, 428B, 19236d059ccf9abb
 units/essentials/v1, qu/long, 464B, 373B, 69fff372a124b5e7
 units/essentials/v1, qu/short, 364B, 273B, 3bf8227f5badc38a
-units/essentials/v1, rm/long, 500B, 409B, a5380a2c6157ce9f
-units/essentials/v1, ro/long, 526B, 435B, 680af886216b72c0
+units/essentials/v1, rm/long, 474B, 383B, 637e61a3711a327a
+units/essentials/v1, ro/long, 498B, 407B, 649c4bbc2ddc0772
 units/essentials/v1, ro/narrow, 360B, 269B, c5a3c75ad8a41468
 units/essentials/v1, ro/short, -> ro/narrow
 units/essentials/v1, ru/long, 812B, 721B, d0fcf292b0be76b2
 units/essentials/v1, ru/narrow, -> ba/narrow
 units/essentials/v1, ru/short, -> ba/narrow
 units/essentials/v1, sc/long, 541B, 450B, e25cf9d6d270dfbc
-units/essentials/v1, sd/long, 574B, 483B, 9ff3a5d19ef39408
+units/essentials/v1, sd/long, 553B, 462B, 5c401f3b1083bbfd
 units/essentials/v1, shn/long, 1175B, 1084B, 6716c202a9c6dcf3
 units/essentials/v1, shn/narrow, 1097B, 1006B, be77e1ba88fb7ab
 units/essentials/v1, shn/short, -> shn/narrow
-units/essentials/v1, si/long, 862B, 771B, 6a132049840a75ac
+units/essentials/v1, si/long, 830B, 739B, 2908664451403465
 units/essentials/v1, si/narrow, 505B, 414B, 2dcf4678abf37f22
 units/essentials/v1, si/short, 556B, 465B, 832f75658b6f4c92
 units/essentials/v1, sk/long, 585B, 494B, 45eb4cedcd2eee3
 units/essentials/v1, sl/long, 568B, 477B, 46987c23447b90cc
-units/essentials/v1, so/long, 528B, 437B, 8407eab61b4dbc46
-units/essentials/v1, sq/long, 492B, 401B, c4f378a808e1c256
+units/essentials/v1, so/long, 490B, 399B, 3bc134a78dfcce3b
+units/essentials/v1, sq/long, 469B, 378B, 5ffbcadacf8b10dc
 units/essentials/v1, sr-BA/long, 681B, 590B, a6375e4268ea0a8
 units/essentials/v1, sr-Latn-BA/long, 514B, 423B, 431e271da26068e7
 units/essentials/v1, sr-Latn/long, 526B, 435B, 146129af2cb1041f
 units/essentials/v1, sr/long, 708B, 617B, 5efcbe74caf23255
-units/essentials/v1, sv/long, 493B, 402B, c25730de778ea9f2
-units/essentials/v1, sw/long, 494B, 403B, 7ff30a080f2e741f
+units/essentials/v1, sv/long, 469B, 378B, 5563536ba50146de
+units/essentials/v1, sw/long, 466B, 375B, ec9c6f3335fb6fcb
 units/essentials/v1, sw/narrow, 445B, 354B, 5c44b7a1a997dad9
 units/essentials/v1, sw/short, 443B, 352B, e9d3792fb0326
-units/essentials/v1, syr/long, 617B, 526B, 5791398bc47eeab2
+units/essentials/v1, syr/long, 583B, 492B, 1fe8196961f0eb71
 units/essentials/v1, syr/narrow, 479B, 388B, a1ff78025cbfbdb2
 units/essentials/v1, syr/short, -> syr/narrow
-units/essentials/v1, ta/long, 806B, 715B, 1e9c78b8c51e0a08
-units/essentials/v1, te/long, 894B, 803B, e31d00ff28de0dd8
+units/essentials/v1, ta/long, 774B, 683B, 263ab94d941bed3e
+units/essentials/v1, te/long, 841B, 750B, feb745f0d177f663
 units/essentials/v1, te/narrow, 395B, 304B, 8af2aafc9d087b34
 units/essentials/v1, te/short, 393B, 302B, c9aebddc716040e1
 units/essentials/v1, tg/long, 373B, 282B, 91dbbbe268305834
 units/essentials/v1, th/long, 810B, 719B, dcde6464b0c3d9dc
 units/essentials/v1, th/narrow, 767B, 676B, 2f5a1785ab433c7
 units/essentials/v1, th/short, -> th/narrow
-units/essentials/v1, ti/long, 607B, 516B, af8ea2d19bf87c40
+units/essentials/v1, ti/long, 575B, 484B, fae3c2f72159f97e
 units/essentials/v1, ti/narrow, 541B, 450B, d45e4cf683f7abb2
 units/essentials/v1, ti/short, -> ti/narrow
-units/essentials/v1, tk/long, 509B, 418B, 3314aa4f65a51244
+units/essentials/v1, tk/long, 481B, 390B, 40b3cf24759de04d
 units/essentials/v1, tk/narrow, 361B, 270B, 9c7f2b4a8a1b1db6
 units/essentials/v1, tk/short, -> tk/narrow
 units/essentials/v1, to/long, 474B, 383B, 9fefb7b08cdb6bdc
 units/essentials/v1, to/narrow, 362B, 271B, cf6585b8f25f8b4
 units/essentials/v1, to/short, -> to/narrow
-units/essentials/v1, tr/long, 485B, 394B, c92c391325a2e417
+units/essentials/v1, tr/long, 465B, 374B, 87708d863031581e
 units/essentials/v1, tt/long, 369B, 278B, 35fc98a74ab455f3
 units/essentials/v1, uk/long, 781B, 690B, 7cb133a7c2e975a6
 units/essentials/v1, uk/narrow, 410B, 319B, 23f986769c3a5c9d
@@ -71988,15 +71985,15 @@ units/essentials/v1, uk/short, -> uk/narrow
 units/essentials/v1, und/long, 362B, 271B, 4e21be5b8d9c2c1e
 units/essentials/v1, und/narrow, -> und/long
 units/essentials/v1, und/short, -> und/long
-units/essentials/v1, ur/long, 638B, 547B, 258265b5796238a3
+units/essentials/v1, ur/long, 606B, 515B, 9e8882d63e413ab0
 units/essentials/v1, ur/narrow, 419B, 328B, db1223a8e51c9fe4
 units/essentials/v1, ur/short, 397B, 306B, dc8216e753efb600
-units/essentials/v1, uz/long, 497B, 406B, 9ed663e66f4cf1af
+units/essentials/v1, uz/long, 473B, 382B, cbaa379fa21f01e8
 units/essentials/v1, uz/narrow, 368B, 277B, 1cab902e6799e59
 units/essentials/v1, uz/short, -> uz/narrow
 units/essentials/v1, vec/long, 458B, 367B, 8f641c8e736c4483
 units/essentials/v1, vi/long, 475B, 384B, b01ced7743a4fc7f
-units/essentials/v1, xh/long, 396B, 305B, 2fa35e84d729cb09
+units/essentials/v1, xh/long, 371B, 280B, c8022fe63fbcd676
 units/essentials/v1, xnr/long, 367B, 276B, acd32526a2e55475
 units/essentials/v1, yo-BJ/long, 505B, 414B, 9910fe592a3f21f0
 units/essentials/v1, yo/long, 510B, 419B, 6731fb124702707d
@@ -72022,7 +72019,7 @@ units/essentials/v1, zh-MO/narrow, -> zh-HK/narrow
 units/essentials/v1, zh-MO/short, -> zh-HK/narrow
 units/essentials/v1, zh-SG/long, -> zh-Hans-HK/long
 units/essentials/v1, zh/long, 419B, 328B, 162bb2ddf0424f5
-units/essentials/v1, zu/long, 459B, 368B, 7be49427b5d78bb8
+units/essentials/v1, zu/long, 434B, 343B, 6681f94647bc1927
 units/essentials/v1, zu/narrow, 368B, 277B, 91d5c729f7a05ce9
 units/essentials/v1, zu/short, 366B, 275B, 1ede7e00e34c0972
 units/id/v1, <lookup>, 1374B, 157 identifiers
