@@ -35,7 +35,7 @@ Please open an issue so we can fix the guide.
 | `orientation.md` *(planned)* | You are new to the repository. |
 | `i18n_basics.md` *(planned)* | Locales, CLDR, or Unicode properties are new to you. |
 | `errors_and_panics.md` *(planned)* | Before your first code PR. |
-| `cow_and_borrowing.md` *(planned)* | Before your first code PR. |
+| [cow_and_borrowing.md](cow_and_borrowing.md) | Before your first code PR. |
 | `zerovec_and_ule.md` *(planned)* | You change a data struct, or use `zerovec`. |
 | `yoke_and_zerofrom.md` *(planned)* | You wonder what `'data`, `Yokeable`, or `DataPayload` are for. |
 | `data_provider.md` *(planned)* | You write a constructor, or load data. |
