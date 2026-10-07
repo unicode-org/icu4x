@@ -57,7 +57,26 @@
         "types": {
           "calendar": {
             "buddhist": "仏暦",
-            "core": "中華民国暦",
+            "_core": {
+              "buddhist": "仏暦",
+              "chinese": "中国暦",
+              "coptic": "コプト暦",
+              "dangi": "ダンギ暦",
+              "ethiopic": "エチオピア暦",
+              "ethiopic-amete-alem": "エチオピア創世紀元暦",
+              "gregorian": "西暦(グレゴリオ暦)",
+              "hebrew": "ユダヤ暦",
+              "indian": "インド国定暦",
+              "islamic": "イスラム暦",
+              "islamic-civil": "イスラム暦(定周期、公民紀元)",
+              "islamic-rgsa": "イスラム歴(サウジアラビア観測)",
+              "islamic-tbla": "イスラム暦(定周期、天文学紀元)",
+              "islamic-umalqura": "イスラム暦(ウンム・アルクラー)",
+              "iso8601": "グレゴリオ暦",
+              "japanese": "和暦",
+              "persian": "ペルシア暦",
+              "roc": "中華民国暦"
+            },
             "chinese": "中国暦",
             "coptic": "コプト暦",
             "dangi": "ダンギ暦",
@@ -76,7 +95,10 @@
           },
           "cf": {
             "account": "会計通貨フォーマット",
-            "core": "標準",
+            "_core": {
+              "account": "会計",
+              "standard": "標準"
+            },
             "standard": "標準通貨フォーマット"
           },
           "colAlternate": {
@@ -89,7 +111,11 @@
           },
           "colCaseFirst": {
             "lower": "小文字優先で並べ替え",
-            "core": "大文字",
+            "_core": {
+              "lower": "小文字",
+              "no": "小文字",
+              "upper": "大文字"
+            },
             "no": "大文字小文字を通常の順序で並べ替え",
             "upper": "大文字優先で並べ替え"
           },
@@ -99,7 +125,23 @@
           },
           "collation": {
             "compat": "以前の順序（互換性）",
-            "core": "注音",
+            "_core": {
+              "compat": "互換性",
+              "dictionary": "辞書",
+              "ducet": "デフォルトUnicode",
+              "emoji": "絵文字",
+              "eor": "欧州並べ替え規則",
+              "phonebook": "電話帳",
+              "phonetic": "読み",
+              "pinyin": "ピンイン",
+              "search": "検索",
+              "searchjl": "ハングル初声",
+              "standard": "標準",
+              "stroke": "画数",
+              "traditional": "伝統的",
+              "unihan": "部首画数",
+              "zhuyin": "注音"
+            },
             "dictionary": "辞書順",
             "ducet": "デフォルトUnicode照合順",
             "eor": "ヨーロッパ言語文字の並べ替え規則",
@@ -123,11 +165,23 @@
             "yes": "数値を数値として並べ替え"
           },
           "colReorder": {
-            "core": "記号"
+            "_core": {
+              "currency": "通貨",
+              "digit": "数字",
+              "punct": "約物",
+              "space": "空白文字",
+              "symbol": "記号"
+            }
           },
           "colStrength": {
             "identical": "すべてを区別して並べ替え",
-            "core": "基底、アクセント、大文字/小文字、異体字",
+            "_core": {
+              "identical": "すべて",
+              "primary": "基底文字のみ",
+              "quaternary": "基底、アクセント、大文字/小文字、異体字、カナ",
+              "secondary": "基底、アクセント",
+              "tertiary": "基底、アクセント、大文字/小文字、異体字"
+            },
             "primary": "基本文字のみで並べ替え",
             "quaternary": "アクセント/大文字小文字/全角半角/仮名で並べ替え",
             "secondary": "アクセントで並べ替え",
@@ -139,11 +193,22 @@
             "npinyin": "数字"
           },
           "em": {
-            "core": "テキスト"
+            "_core": {
+              "default": "デフォルト",
+              "emoji": "絵文字",
+              "text": "テキスト"
+            }
           },
           "hc": {
             "c12": "12時間制",
-            "core": "24時間制(1〜24)",
+            "_core": {
+              "c12": "12時間制",
+              "c24": "24時間制",
+              "h11": "12時間制(0〜11)",
+              "h12": "12時間制(1〜12)",
+              "h23": "24時間制(0〜23)",
+              "h24": "24時間制(1〜24)"
+            },
             "c24": "24時間制",
             "h11": "12時間制(0〜11)",
             "h12": "12時間制(1〜12)",
@@ -151,16 +216,30 @@
             "h24": "24時間制(1〜24)"
           },
           "kv": {
-            "core": "スペース、約物、非通貨記号をシフト"
+            "_core": {
+              "currency": "スペース、約物、全記号をシフト",
+              "punct": "スペース、約物をシフト",
+              "space": "スペース、約物をシフト",
+              "symbol": "スペース、約物、非通貨記号をシフト"
+            }
           },
           "lb": {
             "loose": "禁則処理(弱)",
-            "core": "強",
+            "_core": {
+              "loose": "弱",
+              "normal": "標準",
+              "strict": "強"
+            },
             "normal": "禁則処理(標準)",
             "strict": "禁則処理(強)"
           },
           "lw": {
-            "core": "文節単位"
+            "_core": {
+              "breakall": "強制改行",
+              "keepall": "改行禁止",
+              "normal": "標準",
+              "phrase": "文節単位"
+            }
           },
           "m0": {
             "bgn": "BGN",
@@ -168,14 +247,47 @@
           },
           "ms": {
             "metric": "メートル法",
-            "core": "米国",
+            "_core": {
+              "metric": "メートル",
+              "uksystem": "英国",
+              "ussystem": "米国"
+            },
             "uksystem": "ヤード・ポンド法",
             "ussystem": "米慣習単位"
           },
           "numbers": {
             "arab": "アラビア・インド数字",
             "arabext": "ペルシア数字",
-            "core": "伝統的数字",
+            "_core": {
+              "arabext": "ペルシア",
+              "armnlow": "アルメニア(小文字)",
+              "finance": "大字",
+              "fullwide": "全角",
+              "greklow": "ギリシャ(小文字)",
+              "hanidays": "伝統的な暦で日付に使用される漢字",
+              "hanidec": "漢数字を数字として扱う位取り記数法",
+              "hansfin": "簡体大字",
+              "hantfin": "繁体大字",
+              "jpanfin": "日本式大字",
+              "jpanyear": "初年を元年とする日本式",
+              "lanatham": "タイ・タム文字タム数字(宗教儀式用)",
+              "mathbold": "数学用太字",
+              "mathdbl": "数学用重ね打ち体",
+              "mathmono": "数学用等幅",
+              "mathsanb": "数学用サンセリフ太字",
+              "mathsans": "数学用サンセリフ",
+              "mymrepka": "ミャンマー数字東部ポー・カレン語",
+              "mymrpao": "ミャンマー数字パオ語",
+              "mymrshan": "ミャンマー数字シャン語",
+              "mymrtlng": "ミャンマー数字タイ・ライン語",
+              "native": "ネイティブ数字",
+              "outlined": "アウトライン数字",
+              "roman": "ローマ数字(大文字)",
+              "romanlow": "ローマ数字(小文字)",
+              "segment": "セグメント数字",
+              "tamldec": "現代タミル",
+              "traditional": "伝統的数字"
+            },
             "armn": "アルメニア数字",
             "armnlow": "アルメニア数字(小文字)",
             "bali": "バリ数字",
@@ -237,18 +349,19 @@
             "vaii": "ヴァイ文字の記数法"
           },
           "ss": {
-            "core": "オン"
+            "_core": {
+              "none": "オフ",
+              "standard": "オン"
+            }
           },
           "t0": {
             "und": "未指定の機械翻訳"
           },
           "va": {
-            "core": "POSIXのバリアント"
+            "_core": {
+              "posix": "POSIXのバリアント"
+            }
           }
-        },
-        "typeValues": {
-          "no": "オフ",
-          "yes": "オン"
         },
         "codePatterns": {
           "language": "言語: {0}",

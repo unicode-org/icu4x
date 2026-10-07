@@ -624,26 +624,38 @@ impl<'de> serde::Deserialize<'de> for CollationSpecialPrimaries<'de> {
         #[derive(serde::Deserialize)]
         struct Raw<'data> {
             #[cfg_attr(feature = "serde", serde(borrow))]
-            concatenated: &'data ZeroSlice<u16>,
+            last_primaries: ZeroVec<'data, u16>,
             numeric_primary: u8,
         }
 
         let Raw {
-            concatenated,
+            last_primaries: concatenated,
             numeric_primary,
         } = Raw::deserialize(deserializer)?;
 
-        let Some((l, c)) = concatenated
-            .as_ule_slice()
-            .split_at_checked(MaxVariable::VARIANT_COUNT)
-        else {
-            return Err(serde::de::Error::custom("invalid"));
+        use alloc::borrow::Cow;
+        let (last_primaries, mut compressible_bytes) = match concatenated.into_cow() {
+            Cow::Borrowed(s) => {
+                let Some((l, c)) = s.split_at_checked(MaxVariable::VARIANT_COUNT) else {
+                    return Err(serde::de::Error::custom("invalid"));
+                };
+                (
+                    ZeroSlice::from_ule_slice(l).as_zerovec(),
+                    ZeroSlice::from_ule_slice(c).as_zerovec(),
+                )
+            }
+            Cow::Owned(v) => {
+                let Some((l, c)) = v.split_at_checked(MaxVariable::VARIANT_COUNT) else {
+                    return Err(serde::de::Error::custom("invalid"));
+                };
+                (
+                    ZeroSlice::from_ule_slice(l).as_zerovec().into_owned(),
+                    ZeroSlice::from_ule_slice(c).as_zerovec().into_owned(),
+                )
+            }
         };
 
-        let last_primaries = ZeroSlice::from_ule_slice(l).as_zerovec();
-        let mut compressible_bytes = ZeroSlice::from_ule_slice(c).as_zerovec();
-
-        if c.len() != CollationSpecialPrimaries::COMPRESSIBLE_BYTES_LEN {
+        if compressible_bytes.len() != CollationSpecialPrimaries::COMPRESSIBLE_BYTES_LEN {
             compressible_bytes = zerovec::zerovec!(
                 u16; <u16 as AsULE>::ULE::from_unsigned; [
                 0b0000_0000_0000_0000,
@@ -722,4 +734,15 @@ impl CollationSpecialPrimaries<'_> {
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0
     }
+}
+
+#[cfg(all(test, feature = "datagen", feature = "compiled_data"))]
+#[test]
+fn test_special_primaries_serde_roundtrip() {
+    let payload = DataProvider::<CollationSpecialPrimariesV1>::load(&Baked, Default::default())
+        .unwrap()
+        .payload;
+    let json = serde_json::to_string(payload.get()).unwrap();
+    let deserialized: CollationSpecialPrimaries<'_> = serde_json::from_str(&json).unwrap();
+    assert_eq!(payload.get(), &deserialized);
 }

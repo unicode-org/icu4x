@@ -301,29 +301,14 @@ impl serde::Serialize for VariantOffsets {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            use core::fmt::Write;
-            let mut r = alloc::format!(
-                "{:+02}:{:02}",
-                self.standard.hours_part(),
-                self.standard.minutes_part(),
-            );
-            if self.standard.seconds_part() != 0 {
-                let _infallible = write!(&mut r, ":{:02}", self.standard.seconds_part());
-            }
+            use writeable::Writeable;
             if let Some(dst) = self.daylight {
-                let _infallible = write!(
-                    &mut r,
-                    "/{:+02}:{:02}",
-                    dst.hours_part(),
-                    dst.minutes_part(),
-                );
-
-                if dst.seconds_part() != 0 {
-                    let _infallible = write!(&mut r, ":{:02}", dst.seconds_part());
-                }
+                serializer.serialize_str(
+                    &writeable::concat_writeable!(self.standard, '/', dst).write_to_string(),
+                )
+            } else {
+                serializer.serialize_str(&self.standard.write_to_string())
             }
-
-            serializer.serialize_str(&r)
         } else {
             self.to_unaligned().serialize(serializer)
         }

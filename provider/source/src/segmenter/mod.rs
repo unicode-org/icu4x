@@ -1457,7 +1457,8 @@ impl SourceDataProvider {
                     symbols.remove(symbol);
                     transitions.retain(|&(_, s), _| s != symbol);
                 } else {
-                    log::warn!(
+                    crate::source::source_issue!(
+                        Default::default(),
                         "{symbol}/{non_complex_symbol}: {:?} != {:?}",
                         symbol_transitions
                             .difference(&non_complex_symbol_transitions)

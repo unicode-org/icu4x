@@ -280,7 +280,7 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let e3 = |_| D::Error::custom("invalid");
 
             let parts = alloc::borrow::Cow::<'de, str>::deserialize(deserializer)?;
-            if parts.len() != 16 {
+            if !matches!(parts.len(), 16 | 19) {
                 return Err(e0);
             }
             let year = parts[0..4].parse::<i32>().map_err(e1)?;
@@ -288,9 +288,14 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
+            let second = if parts.len() == 19 {
+                parts[17..19].parse::<u8>().map_err(e1)?
+            } else {
+                0
+            };
             return Ok(Self::from_zoned_date_time(ZonedDateTime {
                 date: icu_calendar::Date::try_new_iso(year, month, day).map_err(e2)?,
-                time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
+                time: Time::try_new(hour, minute, second, 0).map_err(e3)?,
                 zone: UtcOffset::zero(),
             }));
         }
@@ -377,6 +382,20 @@ mod test {
                 actual,
                 "{test_case:?}"
             );
+        }
+    }
+
+    #[cfg(all(feature = "serde", feature = "alloc"))]
+    #[test]
+    fn test_serde_roundtrip() {
+        for znt in [
+            ZoneNameTimestamp::far_in_past(),
+            ZoneNameTimestamp::from_epoch_seconds(1570129200),
+            ZoneNameTimestamp::far_in_future(),
+        ] {
+            let json = serde_json::to_string(&znt).unwrap();
+            let deserialized: ZoneNameTimestamp = serde_json::from_str(&json).unwrap();
+            assert_eq!(znt, deserialized, "{json}");
         }
     }
 }

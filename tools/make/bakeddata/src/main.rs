@@ -96,8 +96,7 @@ fn main() {
             .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
-    )
-    .with_recommended_segmenter_models();
+    );
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
@@ -270,14 +269,16 @@ fn main() {
     }
 
     if components.len() == COMPONENTS.len() {
-        // On full datagen runs (as in CI) validate that `--markers all --locales full` works
+        // On full datagen runs (as in CI) validate that every struct works
         ExportDriver::new(
             [DataLocaleFamily::FULL],
             DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::try_new_unstable(&source).unwrap(),
         )
-        // These are all supported models
-        .with_recommended_segmenter_models()
+        // All segmenter models
+        .with_marker_attributes_filter("segmenter", |_| true)
+        // All collations
+        .with_marker_attributes_filter("collator", |_| true)
         .export(&source, &*zero_copy_check_exporter)
         .unwrap();
     }

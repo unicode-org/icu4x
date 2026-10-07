@@ -62,7 +62,8 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
                 let mirror = ucd_helpers::parse_cp(parts.next().unwrap().trim());
 
                 if bidi_mirroring[&cp] as u32 != mirror {
-                    log::warn!(
+                    crate::source::source_issue!(
+                        Default::default(),
                         "BidiMirroring.txt and BidiBrackets.txt disagree for U+{cp:X}: {:?} vs U+{mirror:X}", 
                         bidi_mirroring[&cp]
                     );

@@ -5,6 +5,7 @@
 use crate::provider::*;
 use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
 use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
 mod dictionary;
@@ -40,14 +41,14 @@ impl<R: RuleBreakType> Iterator for ComplexIterator<'_, '_, R> {
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "lstm", expect(clippy::large_enum_variant))]
 enum ComplexPayload {
-    Dict(DataPayload<UCharDictionaryBreakDataV1>),
+    Dict(DataPayload<ErasedMarker<DictionaryBreakData<'static>>>),
     #[cfg(feature = "lstm")]
-    Lstm(DataPayload<SegmenterLstmAutoV1>),
+    Lstm(DataPayload<ErasedMarker<LstmData<'static>>>),
 }
 
 #[derive(Debug, Clone, Copy)]
 pub enum ComplexPayloadBorrowed<'data> {
-    Dict(&'data UCharDictionaryBreakData<'data>),
+    Dict(&'data DictionaryBreakData<'data>),
     #[cfg(feature = "lstm")]
     Lstm(&'data LstmData<'data>),
 }

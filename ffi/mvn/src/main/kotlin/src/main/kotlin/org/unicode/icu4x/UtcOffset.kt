@@ -15,6 +15,7 @@ internal interface UtcOffsetLib: Library {
     fun icu4x_UtcOffset_hours_part_mv1(handle: Pointer): Int
     fun icu4x_UtcOffset_minutes_part_mv1(handle: Pointer): FFIUint32
     fun icu4x_UtcOffset_seconds_part_mv1(handle: Pointer): FFIUint32
+    fun icu4x_UtcOffset_to_string_mv1(handle: Pointer, write: Pointer): Unit
 }
 /**
  * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html) for more information.
@@ -174,6 +175,19 @@ class UtcOffset internal constructor (
         
         val returnVal = lib.icu4x_UtcOffset_seconds_part_mv1(handle);
         return (returnVal.toUInt())
+    }
+    
+    /**
+     * Formats the [UtcOffset] as a string.
+     *
+     * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
+     */
+    override fun toString(): String {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_UtcOffset_to_string_mv1(handle, write);
+        
+        val returnString = DW.writeToString(write)
+        return returnString
     }
 
 }
