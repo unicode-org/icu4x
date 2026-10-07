@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include <icu4x/DecimalFormatter.hpp>
+#include <icu4x/CompactDecimalFormatter.hpp>
 #include <icu4x/Logger.hpp>
 
 #include <iostream>
@@ -124,5 +125,50 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    // Test Decimal::equals
+    std::unique_ptr<Decimal> dec_a = Decimal::from_double_with_round_trip_precision(123.45).ok().value();
+    std::unique_ptr<Decimal> dec_b = Decimal::from_double_with_round_trip_precision(123.45).ok().value();
+    std::unique_ptr<Decimal> dec_c = Decimal::from_double_with_round_trip_precision(123.46).ok().value();
+    if (!dec_a->equals(*dec_b.get()) || dec_a->equals(*dec_c.get())) {
+        std::cout << "Decimal::equals failed for non-zero comparison" << std::endl;
+        return 1;
+    }
+    std::unique_ptr<Decimal> zero_pos = Decimal::from(0);
+    std::unique_ptr<Decimal> zero_neg = Decimal::from(0);
+    zero_neg->set_sign(DecimalSign::Negative);
+    if (!zero_pos->equals(*zero_neg.get())) {
+        std::cout << "Decimal::equals failed for +0 vs -0 comparison" << std::endl;
+        return 1;
+    }
+
+    // Test CompactDecimalFormatter
+    std::unique_ptr<Locale> locale_sv = Locale::from_string("sv").ok().value();
+    std::unique_ptr<CompactDecimalFormatter> compact_short =
+        CompactDecimalFormatter::create_short(*locale_sv.get(), std::nullopt).ok().value();
+    std::unique_ptr<CompactDecimalFormatter> compact_long =
+        CompactDecimalFormatter::create_long(*locale_sv.get(), std::nullopt).ok().value();
+
+    if (compact_short->compact_exponent_for_magnitude(3) != 3 ||
+        compact_short->compact_exponent_for_magnitude(6) != 6) {
+        std::cout << "compact_exponent_for_magnitude failed" << std::endl;
+        return 1;
+    }
+
+    std::unique_ptr<Decimal> dec_1234 = Decimal::from(1234);
+    std::string short_out = compact_short->format(*dec_1234.get());
+    std::cout << "Compact short 1234 in sv is " << short_out << std::endl;
+    if (short_out != "1,2\u00a0tn") {
+        std::cout << "Compact short output mismatch: " << short_out << std::endl;
+        return 1;
+    }
+
+    std::string long_out = compact_long->format(*dec_1234.get());
+    std::cout << "Compact long 1234 in sv is " << long_out << std::endl;
+    if (long_out != "1,2 tusen") {
+        std::cout << "Compact long output mismatch: " << long_out << std::endl;
+        return 1;
+    }
+
     return 0;
 }
