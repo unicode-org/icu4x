@@ -16,6 +16,7 @@ members = [
     "components/casemap",
     "components/collator",
     "components/collections",
+    "components/collections/codepointtrie_builder",
     "components/datetime",
     "components/decimal",
     "components/experimental",
@@ -136,6 +137,7 @@ include = [
 icu_locale_core = { version = "2.3.0", path = "components/locale_core", default-features = false }
 icu_provider = { version = "2.3.0", path = "provider/core", default-features = false }
 icu_pattern = { version = "0.5.0", path = "components/pattern", default-features = false }
+icu_codepointtrie_builder = { version = "0.6.0", path = "components/collections/codepointtrie_builder", default-features = false } # Current version: 0.6.1
 
 # Components
 icu = { version = "~2.3.0", path = "components/icu", default-features = false }
@@ -318,6 +320,8 @@ syn = "3.0"
 synstructure = "0.14.0"
 ureq = "3.0.0"
 walkdir = "2.3.2"
+wasmi = "1.0.8"
+wat = "1"
 
 # Size optimized builds
 [profile.release-opt-size]

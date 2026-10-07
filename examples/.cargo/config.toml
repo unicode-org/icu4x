@@ -19,6 +19,7 @@ icu_calendar = { path = "../components/calendar" }
 icu_casemap = { path = "../components/casemap" }
 icu_collator = { path = "../components/collator" }
 icu_collections = { path = "../components/collections" }
+icu_codepointtrie_builder = { path = "../components/collections/codepointtrie_builder" }
 icu_datetime = { path = "../components/datetime" }
 icu_decimal = { path = "../components/decimal" }
 icu_experimental = { path = "../components/experimental" }
