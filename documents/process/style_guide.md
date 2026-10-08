@@ -749,7 +749,7 @@ Note that in cases where the Rust compiler can statically determine that a check
 
 ### Where Result is needed, use a specific error type :: required
 
-ICU4X does not have one error type for all crates, such as an `IcuResult<T>`. Each crate defines its own error types for its own failure cases. Examples: `DataError` in `icu_provider`, `ParseError` in `icu_locale_core`, and `DateTimeFormatterLoadError` in `icu_datetime`.
+Each crate defines its own error types for its own failure cases. Examples: `DataError` in `icu_provider`, `ParseError` in `icu_locale_core`, and `DateTimeFormatterLoadError` in `icu_datetime`.
 
 See also [Implement Copy on Error types and log details](#implement-copy-on-error-types-and-log-details--suggested).
 
