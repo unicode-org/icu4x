@@ -63,12 +63,18 @@ impl Difference {
 /// If `dayperiod_names` is provided, it will be used to resolve flexible day periods (`B`).
 /// If it is `None`, flexible day periods will be assumed to be the same, and only
 /// standard AM/PM (`a`) will be compared.
+///
+/// Zone data is only compared if `compare_zone` is set, which callers do when the
+/// formatted field set contains a zone. Inputs that merely carry zone data
+/// (such as a `ZonedDateTime` passed to a zone-less field set) are otherwise
+/// compared on their date and time fields alone.
 pub(crate) fn resolve_difference(
     input1: &DateTimeInputUnchecked,
     input2: &DateTimeInputUnchecked,
     dayperiod_names: Option<&DayPeriodNames<'_>>,
+    compare_zone: bool,
 ) -> Difference {
-    if !input1.has_same_zone(input2) {
+    if compare_zone && !input1.has_same_zone(input2) {
         return Difference::Incomparable;
     }
 
@@ -178,14 +184,20 @@ mod tests {
     fn test_identical() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 10, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::None);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, true),
+            Difference::None
+        );
     }
 
     #[test]
     fn test_year_diff() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2025, 1, 15, 10, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::Year);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, true),
+            Difference::Year
+        );
     }
 
     #[test]
@@ -193,7 +205,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 2, 15, 10, 30, 0);
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, true),
             Difference::Month
         );
     }
@@ -202,14 +214,20 @@ mod tests {
     fn test_day_diff() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 16, 10, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::Day);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, true),
+            Difference::Day
+        );
     }
 
     #[test]
     fn test_hour_diff_same_ampm() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 11, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::Hour);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, true),
+            Difference::Hour
+        );
     }
 
     #[test]
@@ -217,7 +235,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 22, 30, 0); // 10 PM
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, true),
             Difference::DayPeriodA
         );
     }
@@ -227,7 +245,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 10, 31, 0);
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, true),
             Difference::Minute
         );
     }
@@ -237,7 +255,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 10, 30, 1);
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, true),
             Difference::Second
         );
     }
@@ -249,8 +267,20 @@ mod tests {
         input1.zone_offset = Some(icu_time::zone::UtcOffset::zero());
         input2.zone_offset = Some(icu_time::zone::UtcOffset::try_from_seconds(3600).unwrap());
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, true),
             Difference::Incomparable
+        );
+    }
+
+    #[test]
+    fn test_timezone_diff_ignored_without_zone_field() {
+        let mut input1 = create_input(2024, 1, 15, 10, 30, 0);
+        let mut input2 = create_input(2024, 1, 15, 10, 30, 0);
+        input1.zone_offset = Some(icu_time::zone::UtcOffset::zero());
+        input2.zone_offset = Some(icu_time::zone::UtcOffset::try_from_seconds(3600).unwrap());
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, false),
+            Difference::None
         );
     }
 }
