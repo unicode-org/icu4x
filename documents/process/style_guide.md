@@ -803,6 +803,33 @@ This should not include the contract of code in a different Crate. I.e. if a fun
 
 See also: the [Panics](#Panics--required) section of this document.
 
+**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [data_safety.md](../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
+
+**❌ Don't:**
+
+```rust
+let (key, value) = input.split_once('=').unwrap(); // panics if there is no '='
+let first = names[0];                              // panics if `names` is empty
+```
+
+**✅ Do:** If the caller can do something about the problem, return an error:
+
+```rust
+pub fn parse_pair(input: &str) -> Result<(&str, &str), ParseError> {
+    input.split_once('=').ok_or(ParseError::MissingEquals)
+}
+```
+
+If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds find the bug, and release builds continue with the fallback ("garbage in, garbage out"). From `split_normalized` in `components/normalizer/src/lib.rs`:
+
+```rust
+text.split_at_checked(up_to).unwrap_or_else(|| {
+    // Internal bug, not even GIGO, never supposed to happen
+    debug_assert!(false);
+    ("", text)
+})
+```
+
 #### Special Case: `split_at`
 
 The standard library functions such as `slice::split_at` are panicky, but they are not covered by our Clippy lints. Be careful to use `slice::split_at_checked` instead.
