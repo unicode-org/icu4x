@@ -153,7 +153,7 @@ pub enum TrieResult {
 // supplementary code point (0x10000..0x10ffff).
 // @param supplementary 32-bit code point (U+10000..U+10ffff)
 // @return lead surrogate (U+d800..U+dbff) for supplementary
-fn u16_lead(supplementary: i32) -> u16 {
+fn u16_lead(supplementary: u32) -> u16 {
     (((supplementary) >> 10) + 0xd7c0) as u16
 }
 
@@ -161,7 +161,7 @@ fn u16_lead(supplementary: i32) -> u16 {
 // supplementary code point (0x10000..0x10ffff).
 // @param supplementary 32-bit code point (U+10000..U+10ffff)
 // @return trail surrogate (U+dc00..U+dfff) for supplementary
-fn u16_tail(supplementary: i32) -> u16 {
+fn u16_tail(supplementary: u32) -> u16 {
     (((supplementary) & 0x3ff) | 0xdc00) as u16
 }
 
@@ -171,7 +171,7 @@ impl<'a> Char16TrieCursor<'a> {
     pub fn new(trie: &'a ZeroSlice<u16>) -> Self {
         Self {
             trie,
-            pos: (!trie.is_empty()).then_some(0),
+            pos: Some(0),
             remaining_match_length: None,
         }
     }
@@ -229,12 +229,13 @@ impl<'a> Char16TrieCursor<'a> {
     /// ```
     #[inline]
     pub fn step32(&mut self, c: u32) {
-        if c <= 0xffff {
-            self.step16(c as u16);
+        let c = if let Ok(c) = u16::try_from(c) {
+            c
         } else {
-            self.step16(u16_lead(c as i32));
-            self.step16(u16_tail(c as i32));
-        }
+            self.step16(u16_lead(c));
+            u16_tail(c)
+        };
+        self.step16(c);
     }
 
     /// Steps the cursor one 16-bit code unit into the trie.
@@ -260,6 +261,7 @@ impl<'a> Char16TrieCursor<'a> {
     /// assert_eq!(cursor.value(), None);
     /// assert!(cursor.is_empty());
     /// ```
+    #[inline]
     pub fn step16(&mut self, c: u16) {
         let Some(pos) = self.pos else {
             return;
@@ -290,11 +292,11 @@ impl<'a> Char16TrieCursor<'a> {
         } else if lead_unit & VALUE_IS_FINAL != 0 {
             let v = self.read_value(pos + 1, lead_unit & 0x7fff);
             debug_assert!(v.is_some());
-            v
+            Some(v.unwrap_or(0))
         } else {
             let v = self.read_node_value(pos + 1, lead_unit);
             debug_assert!(v.is_some());
-            v
+            Some(v.unwrap_or(0))
         }
     }
 
@@ -489,8 +491,8 @@ impl<'a> Char16TrieIterator<'a> {
         if c <= 0xffff {
             self.next16(c as u16)
         } else {
-            self.0.step16(u16_lead(c as i32));
-            self.next16(u16_tail(c as i32))
+            self.0.step16(u16_lead(c));
+            self.next16(u16_tail(c))
         }
     }
 

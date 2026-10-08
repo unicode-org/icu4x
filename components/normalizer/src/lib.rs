@@ -97,7 +97,6 @@ use crate::provider::NormalizerUts46DataV1;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use icu_collections::char16trie::Char16Trie;
-use icu_collections::char16trie::Char16TrieCursor;
 #[cfg(not(icu4x_unstable_fast_trie_only))]
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(icu4x_unstable_fast_trie_only)]
@@ -328,10 +327,10 @@ fn in_inclusive_range16(u: u16, start: u16, end: u16) -> bool {
 /// characters or returns `None` if these characters don't compose.
 /// Composition exclusions are taken into account.
 #[inline]
-fn compose(cursor: Char16TrieCursor, starter: char, second: char) -> Option<char> {
+fn compose(canonical_compositions: &Char16Trie, starter: char, second: char) -> Option<char> {
     let v = u32::from(second).wrapping_sub(HANGUL_V_BASE);
     if v >= HANGUL_JAMO_LIMIT - HANGUL_V_BASE {
-        return compose_non_hangul(cursor, starter, second);
+        return compose_non_hangul(canonical_compositions, starter, second);
     }
     if v < HANGUL_V_COUNT {
         let l = u32::from(starter).wrapping_sub(HANGUL_L_BASE);
@@ -356,12 +355,20 @@ fn compose(cursor: Char16TrieCursor, starter: char, second: char) -> Option<char
 /// Performs (non-Hangul) canonical composition on a pair of characters
 /// or returns `None` if these characters don't compose. Composition
 /// exclusions are taken into account.
-fn compose_non_hangul(mut cursor: Char16TrieCursor, starter: char, second: char) -> Option<char> {
+fn compose_non_hangul(
+    canonical_compositions: &Char16Trie,
+    starter: char,
+    second: char,
+) -> Option<char> {
     // To make the trie smaller, the pairs are stored second character first.
     // Given how this method is used in ways where it's known that `second`
     // is or isn't a starter. We could potentially split the trie into two
     // tries depending on whether `second` is a starter.
+    let mut cursor = canonical_compositions.cursor();
     cursor.step(second);
+    if cursor.is_empty() {
+        return None;
+    }
     if cursor.value().is_some() {
         // GIGO case
         debug_assert!(false);
@@ -1051,7 +1058,7 @@ where
     /// Composition exclusions are taken into account.
     #[inline(always)]
     pub fn compose(&self, starter: char, second: char) -> Option<char> {
-        compose(self.canonical_compositions.cursor(), starter, second)
+        compose(&self.canonical_compositions, starter, second)
     }
 
     /// Performs (non-Hangul) canonical composition on a pair of characters
@@ -1059,7 +1066,7 @@ where
     /// exclusions are taken into account.
     #[inline(always)]
     fn compose_non_hangul(&self, starter: char, second: char) -> Option<char> {
-        compose_non_hangul(self.canonical_compositions.cursor(), starter, second)
+        compose_non_hangul(&self.canonical_compositions, starter, second)
     }
 }
 
