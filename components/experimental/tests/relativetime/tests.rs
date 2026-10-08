@@ -1161,3 +1161,28 @@ fn test_numbering_system_latn() {
     assert_writeable_eq!(formatter_bn.format(55.into()), "৫৫ দিনের মধ্যে");
     assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
 }
+
+#[test]
+fn test_negative_zero_and_trailing_zeros() {
+    let mut options = RelativeTimeFormatterOptions::default();
+    options.numeric = Numeric::Auto;
+    let formatter_auto =
+        RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
+    let formatter_always = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default(),
+    )
+    .unwrap();
+
+    // +0 with Numeric::Auto uses "today", but -0 falls through to "past" ("0 days ago").
+    let neg_zero: Decimal = "-0".parse().unwrap();
+    assert_writeable_eq!(formatter_auto.format(0.into()), "today");
+    assert_writeable_eq!(formatter_auto.format(neg_zero), "0 days ago");
+    assert_writeable_eq!(formatter_always.format(0.into()), "in 0 days");
+    assert_writeable_eq!(formatter_always.format("-0".parse().unwrap()), "0 days ago");
+
+    // 1.0 with trailing fractional zero does not match integer 1 ("tomorrow").
+    let one_point_zero: Decimal = "1.0".parse().unwrap();
+    assert_writeable_eq!(formatter_auto.format(1.into()), "tomorrow");
+    assert_writeable_eq!(formatter_auto.format(one_point_zero), "in 1.0 days");
+}
