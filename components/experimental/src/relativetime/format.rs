@@ -30,7 +30,7 @@ pub mod parts {
 pub struct FormattedRelativeTime<'a> {
     pub(crate) formatter: &'a RelativeTimeFormatter,
     pub(crate) options: &'a RelativeTimeFormatterOptions,
-    pub(crate) value: Decimal,
+    pub(crate) value: &'a Decimal,
     pub(crate) is_negative: bool,
 }
 
@@ -55,8 +55,11 @@ impl Writeable for FormattedRelativeTime<'_> {
         } else {
             &self.formatter.rt.get().future
         }
-        .get((&self.value).into(), &self.formatter.plural_rules)
-        .interpolate((self.formatter.decimal_formatter.format(&self.value),))
+        .get(self.value.into(), &self.formatter.plural_rules)
+        .interpolate((self
+            .formatter
+            .decimal_formatter
+            .format_unsigned(icu_decimal::Cow::Borrowed(&self.value.absolute)),))
         .write_to_parts(sink)
     }
 }
