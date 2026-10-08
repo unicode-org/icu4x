@@ -953,7 +953,8 @@ where
     let mut i = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
     loop {
         if is_run_end && i + iter.get_current_codepoint().map_or(0, T::char_len) == first_pos {
-            // See the comment in `next`.
+            // The break at the end of the complex run depends on the following
+            // character, so return None and let the rules in `next` decide it.
             iter.result_cache.clear();
             return None;
         }
