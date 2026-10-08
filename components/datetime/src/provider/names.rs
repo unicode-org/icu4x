@@ -449,8 +449,6 @@ size_test!(YearNames, year_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum YearNames<'data> {
@@ -464,6 +462,76 @@ pub enum YearNames<'data> {
     VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] YearNamesMap<'data>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for YearNames<'_> {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        #[derive(databake::Bake)]
+        #[databake(path = icu_datetime::provider::names)]
+        pub enum YearNames<'data> {
+            FixedEras(VarZeroVec<'data, str>),
+            VariableEras(YearNamesMap<'data>),
+            Cyclic(VarZeroVec<'data, str>),
+        }
+
+        match self {
+            // Japanese eras are now generated as `FixedEras`, but we want to keep serializing
+            // them as VariableEras. It's the only calendar with 7 eras.
+            Self::VariableEras(e)
+                if e.a().iter().eq([
+                    PotentialUtf8::from_str("bce"),
+                    PotentialUtf8::from_str("ce"),
+                    PotentialUtf8::from_str("heisei"),
+                    PotentialUtf8::from_str("meiji"),
+                    PotentialUtf8::from_str("reiwa"),
+                    PotentialUtf8::from_str("showa"),
+                    PotentialUtf8::from_str("taisho"),
+                ]) =>
+            {
+                use zerovec::vecs::VarZeroVecOwned;
+
+                YearNames::FixedEras(
+                    // go from alphabetic order to chronological order
+                    VarZeroVecOwned::try_from_elements(&[
+                        e.b().get(0).unwrap(), // bce
+                        e.b().get(1).unwrap(), // ce
+                        e.b().get(3).unwrap(), // meiji
+                        e.b().get(6).unwrap(), // taisho
+                        e.b().get(5).unwrap(), // showa
+                        e.b().get(2).unwrap(), // heisei
+                        e.b().get(4).unwrap(), // reiwa
+                    ])
+                    .unwrap()
+                    .as_varzerovec(),
+                )
+                .bake(ctx)
+            }
+            Self::FixedEras(e) => YearNames::FixedEras(e.clone()).bake(ctx),
+            Self::Cyclic(c) => YearNames::Cyclic(c.clone()).bake(ctx),
+            Self::VariableEras(e) => YearNames::VariableEras(e.clone()).bake(ctx),
+        }
+    }
+}
+
+#[test]
+fn round_trip() {
+    use databake::Bake;
+    use zerovec::vecs::VarZeroVecOwned;
+
+    let eras = VarZeroVecOwned::try_from_elements(&["a", "b", "c", "d", "e", "f", "g"]).unwrap();
+    let year_names = YearNames::FixedEras(eras.as_varzerovec());
+
+    let serde = serde_json::to_string(&year_names).unwrap();
+    let serde_round = serde_json::from_str::<YearNames>(&serde).unwrap();
+
+    // Japanese eras serialize as ::VariableEras
+    assert_ne!(year_names, serde_round);
+
+    // But Japanese ::VariableEras bake again as ::FixedEras
+    let bake = serde_round.bake(&Default::default()).to_string();
+    assert!(bake.contains("FixedEras"), "{bake}");
+    assert!(bake.contains(&eras.as_varzerovec().bake(&Default::default()).to_string()));
 }
 
 #[cfg(feature = "serde")]
