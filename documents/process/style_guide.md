@@ -766,6 +766,36 @@ Keep the following in mind when using exotic types:
 
 If it is not possible to obey these requirements in an exotic type, use a standard type instead, but make sure that it requires minimal parsing and post-processing.
 
+### Keep the serialized layout of stable data structs :: required
+
+Main policy: [data_versioning.md](data_versioning.md)
+
+Data files must stay readable across ICU4X versions: older code reads newer data, and newer code reads data built for any version with the same major version number. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
+
+**❌ Don't:** Remove a field from a released data struct:
+
+```diff
+ pub struct TimeZoneEssentials<'data> {
+     pub offset_separator: Cow<'data, str>,
+     pub offset_pattern: Cow<'data, SinglePlaceholderPattern>,
+-    pub offset_zero: Cow<'data, str>,
+     pub offset_unknown: Cow<'data, str>,
+ }
+```
+
+**✅ Do:** Keep the serialized layout with hand-written serde impls, or add a new marker next to the old one ([Retain Old Keys When Possible](data_versioning.md#ii-retain-old-keys-when-possible)). [#8250](https://github.com/unicode-org/icu4x/pull/8250) removed `offset_zero` from the Rust struct, but the serde impls in `components/datetime/src/provider/time_zones.rs` still read the field and write a placeholder:
+
+```rust
+// Deserialize: read the old field, then drop it.
+let Raw { offset_separator, offset_pattern, offset_unknown, offset_zero: _offset_zero } =
+    Raw::deserialize(deserializer)?;
+
+// Serialize (datagen only): write a placeholder, so old code can read new data.
+offset_zero: Cow::Borrowed(""),
+```
+
+Reviewers see changes to serialized data in the `provider/data/*/fingerprints.csv` diff.
+
 ## Error Handling
 
 See also the [Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html) chapter in the Rust Book.
