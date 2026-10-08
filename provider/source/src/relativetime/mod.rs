@@ -28,10 +28,30 @@ macro_rules! make_data_provider {
                         "Field not found in relative time format data.",
                     ))?;
 
+                    let (zero_index, relatives) = if data.relatives.is_empty() {
+                        (0, zerovec::VarZeroVec::new())
+                    } else {
+                        let min_count = data.relatives.iter().map(|r| r.count).min().unwrap_or(0).min(0);
+                        let max_count = data.relatives.iter().map(|r| r.count).max().unwrap_or(0);
+                        let zero_index = u8::try_from(-i16::from(min_count))
+                            .map_err(|_| DataError::custom("Invalid min_count in relatives"))?;
+                        let relatives_vec: Vec<&str> = (min_count..=max_count)
+                            .map(|c| {
+                                data.relatives
+                                    .iter()
+                                    .find(|r| r.count == c)
+                                    .map(|r| r.pattern.as_str())
+                                    .unwrap_or("")
+                            })
+                            .collect();
+                        (zero_index, zerovec::VarZeroVec::from(&relatives_vec))
+                    };
+
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(RelativeTimePatternData {
-                            relatives: data.relatives.iter().map(|r| (&r.count, r.pattern.as_ref())).collect(),
+                            zero_index,
+                            relatives,
                             past: (&data.past).into(),
                             future: (&data.future).into(),
                         }),
@@ -115,7 +135,7 @@ mod tests {
             .payload;
         let rules =
             PluralRules::try_new_cardinal_unstable(&provider, locale!("en").into()).unwrap();
-        assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
+        assert_eq!(data.get().get_relative(0).unwrap(), "this qtr.");
         assert_writeable_eq!(
             data.get().past.get(1.into(), &rules).interpolate([1]),
             "1 qtr. ago"
@@ -142,7 +162,7 @@ mod tests {
             .payload;
         let rules =
             PluralRules::try_new_cardinal_unstable(&provider, locale!("ar").into()).unwrap();
-        assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
+        assert_eq!(data.get().get_relative(-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.
         assert_writeable_eq!(
