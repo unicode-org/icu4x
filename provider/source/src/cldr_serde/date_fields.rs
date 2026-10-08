@@ -43,8 +43,6 @@ pub(crate) struct Relative {
 
 #[derive(Debug)]
 pub(crate) struct Field {
-    pub(crate) _display_name: String,
-    pub(crate) _relative_period: Option<String>,
     pub(crate) relatives: Vec<Relative>,
     pub(crate) past: PluralRulesPattern,
     pub(crate) future: PluralRulesPattern,
@@ -62,8 +60,6 @@ impl<'de> Visitor<'de> for FieldVisitor {
     where
         A: serde::de::MapAccess<'de>,
     {
-        let mut display_name = String::new();
-        let mut relative_period = None;
         let mut relatives = Vec::new();
         let mut past = None;
         let mut future = None;
@@ -71,12 +67,8 @@ impl<'de> Visitor<'de> for FieldVisitor {
             relatives.reserve(size_hint);
         }
         while let Some(key) = map.next_key::<String>()? {
-            // Keys must be either "displayName",  "relativePeriod", "relativeTime-type-past", "relativeTime-Type-future", "relative-type-{type}"
-            if key == "displayName" {
-                display_name = map.next_value::<String>()?;
-            } else if key == "relativePeriod" {
-                relative_period = Some(map.next_value::<String>()?);
-            } else if key == "relativeTime-type-past" {
+            // Keys must be either "displayName", "relativePeriod", "relativeTime-type-past", "relativeTime-type-future", "relative-type-{type}"
+            if key == "relativeTime-type-past" {
                 if past.is_some() {
                     return Err(A::Error::duplicate_field(
                         r#"encountered duplicate key "relativeTime-type-past""#,
@@ -95,19 +87,17 @@ impl<'de> Visitor<'de> for FieldVisitor {
             } else if let Some(count) = key.strip_prefix("relative-type-") {
                 let count = count
                     .parse::<i8>()
-                    .map_err(|_| A::Error::unknown_field(&key, &["not able to parse as u32"]))?;
+                    .map_err(|_| A::Error::unknown_field(&key, &["not able to parse as i8"]))?;
                 relatives.push(Relative {
                     count,
                     pattern: map.next_value::<String>()?,
                 });
             } else {
-                // Ignore other keys
+                // Ignore other keys ("displayName", "relativePeriod", etc.)
                 let _ = map.next_value::<IgnoredAny>()?;
             }
         }
         Ok(Field {
-            _display_name: display_name,
-            _relative_period: relative_period,
             relatives,
             past: past.unwrap_or_default(),
             future: future.unwrap_or_default(),

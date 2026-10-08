@@ -10,45 +10,10 @@ use icu::plurals::PluralElements;
 use icu::plurals::provider::PluralElementsPackedCow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
-use std::collections::{HashMap, HashSet};
-use std::sync::OnceLock;
+use std::collections::HashSet;
 
-pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>> = OnceLock::new();
-
-fn marker_filters() -> &'static HashMap<DataMarkerInfo, &'static str> {
-    MARKER_FILTERS.get_or_init(|| {
-        [
-            (DatetimeRelativeSecondLongV1::INFO, "second"),
-            (DatetimeRelativeSecondShortV1::INFO, "second-short"),
-            (DatetimeRelativeSecondNarrowV1::INFO, "second-narrow"),
-            (DatetimeRelativeMinuteLongV1::INFO, "minute"),
-            (DatetimeRelativeMinuteShortV1::INFO, "minute-short"),
-            (DatetimeRelativeMinuteNarrowV1::INFO, "minute-narrow"),
-            (DatetimeRelativeHourLongV1::INFO, "hour"),
-            (DatetimeRelativeHourShortV1::INFO, "hour-short"),
-            (DatetimeRelativeHourNarrowV1::INFO, "hour-narrow"),
-            (DatetimeRelativeDayLongV1::INFO, "day"),
-            (DatetimeRelativeDayShortV1::INFO, "day-short"),
-            (DatetimeRelativeDayNarrowV1::INFO, "day-narrow"),
-            (DatetimeRelativeWeekLongV1::INFO, "week"),
-            (DatetimeRelativeWeekShortV1::INFO, "week-short"),
-            (DatetimeRelativeWeekNarrowV1::INFO, "week-narrow"),
-            (DatetimeRelativeMonthLongV1::INFO, "month"),
-            (DatetimeRelativeMonthShortV1::INFO, "month-short"),
-            (DatetimeRelativeMonthNarrowV1::INFO, "month-narrow"),
-            (DatetimeRelativeQuarterLongV1::INFO, "quarter"),
-            (DatetimeRelativeQuarterShortV1::INFO, "quarter-short"),
-            (DatetimeRelativeQuarterNarrowV1::INFO, "quarter-narrow"),
-            (DatetimeRelativeYearLongV1::INFO, "year"),
-            (DatetimeRelativeYearShortV1::INFO, "year-short"),
-            (DatetimeRelativeYearNarrowV1::INFO, "year-narrow"),
-        ]
-        .into_iter()
-        .collect()
-    })
-}
 macro_rules! make_data_provider {
-    ($($marker: ident),+ $(,)?) => {
+    ($(($marker: ident, $field: literal)),+ $(,)?) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
@@ -59,11 +24,7 @@ macro_rules! make_data_provider {
                         .read_and_parse(req.id.locale, "dateFields.json")?;
                     let fields = &resource.main.value.dates.fields;
 
-                    let field = marker_filters()
-                        .get(&$marker::INFO)
-                        .ok_or(DataErrorKind::MarkerNotFound.into_error())?;
-
-                    let data = fields.0.get(*field).ok_or(DataError::custom(
+                    let data = fields.0.get($field).ok_or(DataError::custom(
                         "Field not found in relative time format data.",
                     ))?;
 
@@ -109,30 +70,30 @@ impl From<&cldr_serde::date_fields::PluralRulesPattern>
 }
 
 make_data_provider!(
-    DatetimeRelativeSecondLongV1,
-    DatetimeRelativeSecondShortV1,
-    DatetimeRelativeSecondNarrowV1,
-    DatetimeRelativeMinuteLongV1,
-    DatetimeRelativeMinuteShortV1,
-    DatetimeRelativeMinuteNarrowV1,
-    DatetimeRelativeHourLongV1,
-    DatetimeRelativeHourShortV1,
-    DatetimeRelativeHourNarrowV1,
-    DatetimeRelativeDayLongV1,
-    DatetimeRelativeDayShortV1,
-    DatetimeRelativeDayNarrowV1,
-    DatetimeRelativeWeekLongV1,
-    DatetimeRelativeWeekShortV1,
-    DatetimeRelativeWeekNarrowV1,
-    DatetimeRelativeMonthLongV1,
-    DatetimeRelativeMonthShortV1,
-    DatetimeRelativeMonthNarrowV1,
-    DatetimeRelativeQuarterLongV1,
-    DatetimeRelativeQuarterShortV1,
-    DatetimeRelativeQuarterNarrowV1,
-    DatetimeRelativeYearLongV1,
-    DatetimeRelativeYearShortV1,
-    DatetimeRelativeYearNarrowV1,
+    (DatetimeRelativeSecondLongV1, "second"),
+    (DatetimeRelativeSecondShortV1, "second-short"),
+    (DatetimeRelativeSecondNarrowV1, "second-narrow"),
+    (DatetimeRelativeMinuteLongV1, "minute"),
+    (DatetimeRelativeMinuteShortV1, "minute-short"),
+    (DatetimeRelativeMinuteNarrowV1, "minute-narrow"),
+    (DatetimeRelativeHourLongV1, "hour"),
+    (DatetimeRelativeHourShortV1, "hour-short"),
+    (DatetimeRelativeHourNarrowV1, "hour-narrow"),
+    (DatetimeRelativeDayLongV1, "day"),
+    (DatetimeRelativeDayShortV1, "day-short"),
+    (DatetimeRelativeDayNarrowV1, "day-narrow"),
+    (DatetimeRelativeWeekLongV1, "week"),
+    (DatetimeRelativeWeekShortV1, "week-short"),
+    (DatetimeRelativeWeekNarrowV1, "week-narrow"),
+    (DatetimeRelativeMonthLongV1, "month"),
+    (DatetimeRelativeMonthShortV1, "month-short"),
+    (DatetimeRelativeMonthNarrowV1, "month-narrow"),
+    (DatetimeRelativeQuarterLongV1, "quarter"),
+    (DatetimeRelativeQuarterShortV1, "quarter-short"),
+    (DatetimeRelativeQuarterNarrowV1, "quarter-narrow"),
+    (DatetimeRelativeYearLongV1, "year"),
+    (DatetimeRelativeYearShortV1, "year-short"),
+    (DatetimeRelativeYearNarrowV1, "year-narrow"),
 );
 
 #[cfg(test)]
