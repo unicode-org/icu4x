@@ -18,7 +18,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] Correct repo link, authors, categories, include
   - [ ] Correct docs.rs and cargo-all-features metadata settings
   - [ ] A `rust-version` field with the MSRV of this crate in accordance with the current ICU4X policies on MSRV.
-  - [ ] The crate should have an `std` feature if (and only if) it contains code that depends on `std`, such as file I/O (`core::error::Error` does not need `std`)
+  - [ ] The crate should have an `std` feature if (and only if) it contains code that depends on `std`, such as file I/O
   - [ ] Audit all features so that any `foo/bar` in a feature is `foo?/bar` when `foo` is an optional dep; if you intend to enable `foo`, add two entries
   - [ ] Use `dep:` for enabling dependencies
 - [ ] The crate should be fully documented
