@@ -85,6 +85,8 @@ type Trie<'trie> = FastCodePointTrie<'trie, u32>;
 
 #[cfg(feature = "harfbuzz_traits")]
 mod harfbuzz;
+#[cfg(feature = "latin1")]
+pub mod latin1;
 pub mod properties;
 pub mod provider;
 pub mod uts46;
