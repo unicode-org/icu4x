@@ -6,7 +6,6 @@ use crate::grapheme::*;
 use crate::indices::*;
 use crate::provider::*;
 use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
-use icu_collections::char16trie::TrieResult;
 
 /// Lifetimes:
 /// - `'data` = lifetime of the data
@@ -28,18 +27,47 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut trie_iter = self.trie.0.iter();
+        enum Cursor<'a> {
+            Char16(icu_collections::char16trie::Char16TrieCursor<'a>),
+            Zero {
+                alphabet: &'a zerovec::ZeroSlice<char>,
+                cursor: zerotrie::cursor::ZeroTrieSimpleAsciiCursor<'a>,
+            },
+        }
+
+        let mut trie_iter = match self.trie {
+            DictionaryBreakData::Char16Trie(trie) => Cursor::Char16(trie.cursor()),
+            DictionaryBreakData::ZeroTrie { alphabet, trie } => Cursor::Zero {
+                alphabet,
+                cursor: trie.cursor(),
+            },
+        };
         let mut intermediate_length = 0;
         let mut not_match = false;
         let mut previous_match = None;
         let mut last_grapheme_offset = 0;
 
         while let Some(next) = self.iter.next() {
-            match trie_iter.next32(next.1.into()) {
-                TrieResult::FinalValue(_) => {
+            let step_result = match &mut trie_iter {
+                Cursor::Char16(cursor) => {
+                    cursor.step32(next.1.into());
+                    (cursor.value().is_some(), cursor.is_empty())
+                }
+                Cursor::Zero { alphabet, cursor } => {
+                    cursor.step(
+                        char::from_u32(next.1.into())
+                            .and_then(|c| alphabet.binary_search(&c).ok())
+                            .map(|i| i as u8)
+                            .unwrap_or(0xFF),
+                    );
+                    (cursor.take_value().is_some(), cursor.is_empty())
+                }
+            };
+            match step_result {
+                (true, true) => {
                     return Some(next.0 + Y::char_len(next.1));
                 }
-                TrieResult::Intermediate(_) => {
+                (true, false) => {
                     // Dictionary has to match with grapheme cluster segment.
                     // If not, we ignore it.
                     while last_grapheme_offset < next.0 + Y::char_len(next.1) {
@@ -57,7 +85,7 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     intermediate_length = next.0 + Y::char_len(next.1);
                     previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
                 }
-                TrieResult::NoMatch => {
+                (false, true) => {
                     if intermediate_length > 0 {
                         if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
                             // Rewind previous match point
@@ -69,7 +97,7 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     // Not found
                     return Some(next.0 + Y::char_len(next.1));
                 }
-                TrieResult::NoValue => {
+                (false, false) => {
                     // Prefix string is matched
                     not_match = true;
                 }
@@ -215,7 +243,7 @@ mod tests {
 
     #[test]
     fn test_dictionary_grapheme_rewind() {
-        let response: DataResponse<SegmenterDictionaryAutoV1> = Baked
+        let response: DataResponse<SegmenterDictionaryAutoV2> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("cjdict"),

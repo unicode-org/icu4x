@@ -18,7 +18,6 @@
 //! This module also declares various constants that are also used
 //! by the `comparison` module.
 
-use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
@@ -1581,36 +1580,24 @@ where
                                 {
                                     let (default, mut trie) =
                                         data.get_default_and_trie(ce32.index());
-                                    match trie.next(combining) {
-                                        TrieResult::NoMatch | TrieResult::NoValue => {
-                                            if let Some(ce) = default.to_ce_simple_or_long_primary()
-                                            {
-                                                let ce_for_combining =
-                                                    CollationElement::new_from_secondary(secondary);
-                                                self.pending.push(ce_for_combining);
-                                                self.mark_prefix_unmatchable();
-                                                return ce;
-                                            }
-                                        }
-                                        TrieResult::Intermediate(trie_ce32) => {
-                                            if !ce32.at_least_one_suffix_contains_starter()
-                                                && let Some(ce) =
-                                                    CollationElement32::new(trie_ce32 as u32)
-                                                        .to_ce_simple_or_long_primary()
-                                            {
-                                                self.mark_prefix_unmatchable();
-                                                return ce;
-                                            }
-                                        }
-                                        TrieResult::FinalValue(trie_ce32) => {
-                                            if let Some(ce) =
+                                    trie.step(combining);
+                                    if let Some(trie_ce32) = trie.value() {
+                                        if (trie.is_empty()
+                                            || !ce32.at_least_one_suffix_contains_starter())
+                                            && let Some(ce) =
                                                 CollationElement32::new(trie_ce32 as u32)
                                                     .to_ce_simple_or_long_primary()
-                                            {
-                                                self.mark_prefix_unmatchable();
-                                                return ce;
-                                            }
+                                        {
+                                            self.mark_prefix_unmatchable();
+                                            return ce;
                                         }
+                                    } else if let Some(ce) = default.to_ce_simple_or_long_primary()
+                                    {
+                                        let ce_for_combining =
+                                            CollationElement::new_from_secondary(secondary);
+                                        self.pending.push(ce_for_combining);
+                                        self.mark_prefix_unmatchable();
+                                        return ce;
                                     }
                                 }
                             }
@@ -1857,18 +1844,12 @@ where
                                 let (default, mut trie) = data.get_default_and_trie(ce32.index());
                                 ce32 = default;
                                 for &ch in self.prefix.iter() {
-                                    match trie.next(ch) {
-                                        TrieResult::NoValue => {}
-                                        TrieResult::NoMatch => {
-                                            continue 'ce32loop;
-                                        }
-                                        TrieResult::Intermediate(ce32_i) => {
-                                            ce32 = CollationElement32::new(ce32_i as u32);
-                                        }
-                                        TrieResult::FinalValue(ce32_i) => {
-                                            ce32 = CollationElement32::new(ce32_i as u32);
-                                            continue 'ce32loop;
-                                        }
+                                    trie.step(ch);
+                                    if let Some(ce32_i) = trie.value() {
+                                        ce32 = CollationElement32::new(ce32_i as u32);
+                                    }
+                                    if trie.is_empty() {
+                                        break;
                                     }
                                 }
                                 continue 'ce32loop;
@@ -1900,27 +1881,27 @@ where
                                 while let Some((character, ccc)) =
                                     combining_characters.get(i).map(|c| c.character_and_ccc())
                                 {
-                                    match (most_recent_skipped_ccc < ccc, trie.next(character)) {
-                                        (true, TrieResult::Intermediate(ce32_i)) => {
+                                    trie.step(character);
+                                    match (
+                                        most_recent_skipped_ccc < ccc,
+                                        trie.value(),
+                                        trie.is_empty(),
+                                    ) {
+                                        (true, Some(ce32_i), is_empty) => {
                                             let _ = combining_characters.remove(i);
                                             while let Some(idx) = pending_removals.pop() {
                                                 combining_characters.remove(idx);
                                                 i -= 1; // Adjust for the shortening
                                             }
+                                            ce32 = CollationElement32::new(ce32_i as u32);
+                                            if is_empty {
+                                                continue 'ce32loop;
+                                            }
                                             attempt = 0;
                                             longest_matching_index = i;
                                             longest_matching_state = trie.clone();
-                                            ce32 = CollationElement32::new(ce32_i as u32);
                                         }
-                                        (true, TrieResult::FinalValue(ce32_i)) => {
-                                            let _ = combining_characters.remove(i);
-                                            while let Some(idx) = pending_removals.pop() {
-                                                combining_characters.remove(idx);
-                                            }
-                                            ce32 = CollationElement32::new(ce32_i as u32);
-                                            continue 'ce32loop;
-                                        }
-                                        (_, TrieResult::NoValue) => {
+                                        (_, None, false) => {
                                             pending_removals.push(i);
                                             i += 1;
                                         }
@@ -1949,112 +1930,87 @@ where
                                     let ahead = self.look_ahead(looked_ahead);
                                     looked_ahead += 1;
                                     if let Some(ch) = ahead {
-                                        match trie.next(ch.character()) {
-                                            TrieResult::NoValue => {}
-                                            TrieResult::NoMatch => {
-                                                if !at_least_one_suffix_ends_with_non_starter {
-                                                    continue 'ce32loop;
-                                                }
-                                                if !ch.decomposition_starts_with_non_starter() {
-                                                    continue 'ce32loop;
-                                                }
-                                                // The last-checked character is non-starter
-                                                // and at least one contraction suffix ends
-                                                // with a non-starter. Try a discontiguous
-                                                // match.
-                                                trie = longest_matching_state.clone();
-                                                // For clarity, mint a new set of variables that
-                                                // behave consistently with the
-                                                // `combining_characters` case
-                                                let mut longest_matching_index = 0;
-                                                let mut attempt = 0;
-                                                let mut i = 0;
-                                                most_recent_skipped_ccc = ch.ccc();
-                                                self.ensure_upcoming_normalized();
-                                                loop {
-                                                    let ahead = self.look_ahead(looked_ahead + i);
-                                                    if let Some(ch) = ahead {
-                                                        let ccc = ch.ccc();
-                                                        if ccc
-                                                            == CanonicalCombiningClass::NotReordered
-                                                        {
-                                                            // If we came here, we had an intervening non-matching
-                                                            // non-starter, after which we cannot contract another
-                                                            // starter anymore.
-                                                            continue 'ce32loop;
-                                                        }
-                                                        match (
-                                                            most_recent_skipped_ccc < ccc,
-                                                            trie.next(ch.character()),
-                                                        ) {
-                                                            (
-                                                                true,
-                                                                TrieResult::Intermediate(ce32_i),
-                                                            ) => {
-                                                                let _ = self
-                                                                    .upcoming
-                                                                    .remove(looked_ahead + i);
-                                                                while let Some(idx) =
-                                                                    pending_removals.pop()
-                                                                {
-                                                                    self.upcoming
-                                                                        .remove(looked_ahead + idx);
-                                                                    i -= 1; // Adjust for the shortening
-                                                                }
-                                                                attempt = 0;
-                                                                longest_matching_index = i;
-                                                                longest_matching_state =
-                                                                    trie.clone();
-                                                                ce32 = CollationElement32::new(
-                                                                    ce32_i as u32,
-                                                                );
-                                                            }
-                                                            (
-                                                                true,
-                                                                TrieResult::FinalValue(ce32_i),
-                                                            ) => {
-                                                                let _ = self
-                                                                    .upcoming
-                                                                    .remove(looked_ahead + i);
-                                                                while let Some(idx) =
-                                                                    pending_removals.pop()
-                                                                {
-                                                                    self.upcoming
-                                                                        .remove(looked_ahead + idx);
-                                                                }
-                                                                ce32 = CollationElement32::new(
-                                                                    ce32_i as u32,
-                                                                );
-                                                                continue 'ce32loop;
-                                                            }
-                                                            (_, TrieResult::NoValue) => {
-                                                                pending_removals.push(i);
-                                                                i += 1;
-                                                            }
-                                                            _ => {
-                                                                pending_removals.clear();
-                                                                most_recent_skipped_ccc = ccc;
-                                                                attempt += 1;
-                                                                i = longest_matching_index
-                                                                    + attempt;
-                                                                trie =
-                                                                    longest_matching_state.clone();
-                                                            }
-                                                        }
-                                                    } else {
+                                        trie.step(ch.character());
+                                        if let Some(ce32_i) = trie.value() {
+                                            drain_from_upcoming = looked_ahead;
+                                            ce32 = CollationElement32::new(ce32_i as u32);
+                                            if trie.is_empty() {
+                                                continue 'ce32loop;
+                                            }
+                                            longest_matching_state = trie.clone();
+                                        } else if trie.is_empty() {
+                                            if !at_least_one_suffix_ends_with_non_starter {
+                                                continue 'ce32loop;
+                                            }
+                                            if !ch.decomposition_starts_with_non_starter() {
+                                                continue 'ce32loop;
+                                            }
+                                            // The last-checked character is non-starter
+                                            // and at least one contraction suffix ends
+                                            // with a non-starter. Try a discontiguous
+                                            // match.
+                                            trie = longest_matching_state.clone();
+                                            // For clarity, mint a new set of variables that
+                                            // behave consistently with the
+                                            // `combining_characters` case
+                                            let mut longest_matching_index = 0;
+                                            let mut attempt = 0;
+                                            let mut i = 0;
+                                            most_recent_skipped_ccc = ch.ccc();
+                                            self.ensure_upcoming_normalized();
+                                            loop {
+                                                let ahead = self.look_ahead(looked_ahead + i);
+                                                if let Some(ch) = ahead {
+                                                    let ccc = ch.ccc();
+                                                    if ccc == CanonicalCombiningClass::NotReordered
+                                                    {
+                                                        // If we came here, we had an intervening non-matching
+                                                        // non-starter, after which we cannot contract another
+                                                        // starter anymore.
                                                         continue 'ce32loop;
                                                     }
+                                                    trie.step(ch.character());
+                                                    match (
+                                                        most_recent_skipped_ccc < ccc,
+                                                        trie.value(),
+                                                        trie.is_empty(),
+                                                    ) {
+                                                        (true, Some(ce32_i), is_empty) => {
+                                                            let _ = self
+                                                                .upcoming
+                                                                .remove(looked_ahead + i);
+                                                            while let Some(idx) =
+                                                                pending_removals.pop()
+                                                            {
+                                                                self.upcoming
+                                                                    .remove(looked_ahead + idx);
+                                                                i -= 1; // Adjust for the shortening
+                                                            }
+                                                            ce32 = CollationElement32::new(
+                                                                ce32_i as u32,
+                                                            );
+                                                            if is_empty {
+                                                                continue 'ce32loop;
+                                                            }
+                                                            attempt = 0;
+                                                            longest_matching_index = i;
+                                                            longest_matching_state = trie.clone();
+                                                        }
+                                                        (_, None, false) => {
+                                                            pending_removals.push(i);
+                                                            i += 1;
+                                                        }
+                                                        _ => {
+                                                            pending_removals.clear();
+                                                            most_recent_skipped_ccc = ccc;
+                                                            attempt += 1;
+                                                            i = longest_matching_index + attempt;
+                                                            trie = longest_matching_state.clone();
+                                                        }
+                                                    }
+                                                } else {
+                                                    continue 'ce32loop;
                                                 }
-                                            }
-                                            TrieResult::Intermediate(ce32_i) => {
-                                                longest_matching_state = trie.clone();
-                                                drain_from_upcoming = looked_ahead;
-                                                ce32 = CollationElement32::new(ce32_i as u32);
-                                            }
-                                            TrieResult::FinalValue(ce32_i) => {
-                                                drain_from_upcoming = looked_ahead;
-                                                ce32 = CollationElement32::new(ce32_i as u32);
-                                                continue 'ce32loop;
                                             }
                                         }
                                     } else {

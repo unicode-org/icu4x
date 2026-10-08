@@ -4,39 +4,67 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::collections::char16trie::Char16Trie;
+use alloc::collections::BTreeSet;
 use icu::segmenter::provider::DictionaryBreakData;
-use icu::segmenter::provider::SegmenterDictionaryAutoV1;
-use icu::segmenter::provider::SegmenterDictionaryExtendedV1;
+use icu::segmenter::provider::SegmenterDictionaryAutoV2;
+use icu::segmenter::provider::SegmenterDictionaryExtendedV2;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use std::fmt::Debug;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
-
-#[derive(serde::Deserialize, Debug)]
-struct SegmenterDictionaryData {
-    trie_data: Vec<u16>,
-}
 
 impl SourceDataProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
     ) -> Result<DictionaryBreakData<'static>, DataError> {
-        let filename = format!(
-            "segmenter/dictionary/{}.toml",
+        let dict = &self.icuexport()?.root.read_to_string(&format!(
+            "segmenter/dictionary/{}.txt",
             req.id.marker_attributes as &str
-        );
+        ))?;
+        let dict = dict.strip_prefix('\u{FEFF}').unwrap_or(dict);
 
-        let toml_data = self
-            .icuexport()?
-            .read_and_parse_toml::<SegmenterDictionaryData>(&filename)?;
+        let mut words = BTreeMap::new();
+        let mut alphabet = BTreeSet::new();
 
-        let trie = Char16Trie {
-            data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+        for line in dict.lines() {
+            let line = line.split_once('#').unwrap_or((line, "")).0.trim();
+            if line.is_empty() {
+                continue;
+            }
+            let mut parts = line.split_ascii_whitespace();
+            let word = parts.next().unwrap();
+            let value = parts.next().unwrap_or("0").parse::<i32>().unwrap();
+            words.insert(word, value);
+            alphabet.extend(word.chars());
+        }
+
+        let trie = if alphabet.len() <= 128 {
+            let alphabet: ZeroVec<'static, char> = alphabet.into_iter().collect();
+
+            DictionaryBreakData::ZeroTrie {
+                trie: ZeroTrieSimpleAscii::try_from_btree_map_str(
+                    &words
+                        .into_iter()
+                        .map(|(k, v)| {
+                            (
+                                k.chars()
+                                    .map(|c| alphabet.binary_search(&c).unwrap() as u8 as char)
+                                    .collect::<String>(),
+                                v as u32 as usize,
+                            )
+                        })
+                        .collect(),
+                )
+                .unwrap()
+                .convert_store(),
+                alphabet,
+            }
+        } else {
+            DictionaryBreakData::Char16Trie(words.into_iter().collect())
         };
 
-        Ok(DictionaryBreakData(trie))
+        Ok(trie)
     }
 }
 
@@ -68,8 +96,8 @@ macro_rules! implement {
     };
 }
 
-implement!(SegmenterDictionaryAutoV1, ["cjdict"]);
+implement!(SegmenterDictionaryAutoV2, ["cjdict"]);
 implement!(
-    SegmenterDictionaryExtendedV1,
+    SegmenterDictionaryExtendedV2,
     ["khmerdict", "laodict", "burmesedict", "thaidict"]
 );
