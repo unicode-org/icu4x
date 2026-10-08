@@ -1160,12 +1160,11 @@ mod tests {
     include!("../tests/helpers.rs.raw");
 
     // The test data files contain the output of the neo implementation.
-    fn run_test(file: &'static str, v1_17: [LineSegmenterBorrowed; 2], neo: LineSegmenterBorrowed) {
+    fn run_test(file: &'static str, segmenters: [LineSegmenterBorrowed; 3]) {
         for expected in parse_test_file(file) {
             let expected = expected.iter().map(String::as_str).collect::<Vec<_>>();
             let s = expected.concat();
-            check_line(&s, &expected, neo);
-            for segmenter in v1_17 {
+            for segmenter in segmenters {
                 check_line(&s, &expected, segmenter);
             }
         }
@@ -1179,8 +1178,7 @@ mod tests {
         neo.load_lstm();
         run_test(
             include_str!("../tests/testdata/LineBreakLstm.txt"),
-            [LineSegmenter::new_auto(Default::default()), s17],
-            neo,
+            [LineSegmenter::new_auto(Default::default()), s17, neo],
         );
     }
 
@@ -1192,8 +1190,7 @@ mod tests {
         neo.load_dictionary();
         run_test(
             include_str!("../tests/testdata/LineBreakDictionary.txt"),
-            [LineSegmenter::new_dictionary(Default::default()), s17],
-            neo,
+            [LineSegmenter::new_dictionary(Default::default()), s17, neo],
         );
     }
 
