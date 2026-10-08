@@ -39,14 +39,14 @@ impl Writeable for FormattedRelativeTime<'_> {
             let relatives = &self.formatter.rt.get().relatives;
             if self.value.absolute.magnitude_range() == (0..=0) {
                 // Can be cast without overflow as it is a single digit.
-                let i8_value = if self.is_negative {
-                    -(self.value.absolute.digit_at(0) as i8)
-                } else {
-                    self.value.absolute.digit_at(0) as i8
-                };
-                if let Some(v) = relatives.get(&i8_value) {
-                    sink.with_part(parts::LITERAL, |s| s.write_str(v))?;
-                    return Ok(());
+                let digit = self.value.absolute.digit_at(0) as i8;
+                // -0 is not handled by special relatives strings
+                if !(self.is_negative && digit == 0) {
+                    let i8_value = if self.is_negative { -digit } else { digit };
+                    if let Some(v) = relatives.get(&i8_value) {
+                        sink.with_part(parts::LITERAL, |s| s.write_str(v))?;
+                        return Ok(());
+                    }
                 }
             }
         }
