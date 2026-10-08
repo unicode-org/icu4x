@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "овог минута"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "овог минута"
+  ],
   "past": {
     "other": [
       0,

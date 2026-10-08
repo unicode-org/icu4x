@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "сейчас"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "сейчас"
+  ],
   "past": {
     "one": [
       0,

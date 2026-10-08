@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "geçen hafta",
-    "0": "bu hafta",
-    "1": "gelecek hafta"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "geçen hafta",
+    "bu hafta",
+    "gelecek hafta"
+  ],
   "past": {
     "other": [
       0,

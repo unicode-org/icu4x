@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "geçen çeyrek",
-    "0": "bu çeyrek",
-    "1": "gelecek çeyrek"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "geçen çeyrek",
+    "bu çeyrek",
+    "gelecek çeyrek"
+  ],
   "past": {
     "other": [
       0,

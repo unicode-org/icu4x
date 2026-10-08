@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "nakaraang buwan",
-    "0": "ngayong buwan",
-    "1": "susunod na buwan"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "nakaraang buwan",
+    "ngayong buwan",
+    "susunod na buwan"
+  ],
   "past": {
     "other": [
       0,

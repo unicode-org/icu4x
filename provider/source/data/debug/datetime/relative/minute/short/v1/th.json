@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "นาทีนี้"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "นาทีนี้"
+  ],
   "past": {
     "other": [
       0,

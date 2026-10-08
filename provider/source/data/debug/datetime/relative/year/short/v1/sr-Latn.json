@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "prošle god.",
-    "0": "ove god.",
-    "1": "sledeće god."
-  },
+  "zero_index": 1,
+  "relatives": [
+    "prošle god.",
+    "ove god.",
+    "sledeće god."
+  ],
   "past": {
     "other": [
       0,
