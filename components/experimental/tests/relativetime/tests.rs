@@ -5,19 +5,20 @@
 use fixed_decimal::Decimal;
 use icu_experimental::relativetime::{
     RelativeTimeFormatter, RelativeTimeFormatterOptions, RelativeTimeFormatterPreferences,
-    options::Numeric,
+    options::{Numeric, Width},
 };
 use icu_locale_core::{extensions::unicode::value, locale};
 use writeable::assert_writeable_eq;
 
 macro_rules! generate_test {
-    ($test_name: ident, $constructor: ident, $options: expr,
+    ($test_name: ident, $constructor: ident, $width: expr, $numeric: expr,
      [$(($en_time: literal, $en_expected: literal)),+ $(,)?],
      [$(($ar_time: literal, $ar_expected: literal)),+ $(,)?]) => {
         #[test]
         fn $test_name(){
-            let mut options = RelativeTimeFormatterOptions::default();
-            options.numeric = $options;
+            let options = RelativeTimeFormatterOptions::default()
+                .with_width($width)
+                .with_numeric($numeric);
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
                 locale!("en").into(),
                 options
@@ -48,7 +49,8 @@ macro_rules! generate_test {
 }
 generate_test!(
     test_long_second_always,
-    try_new_long_second,
+    try_new_second,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 seconds ago"),
@@ -71,7 +73,8 @@ generate_test!(
 );
 generate_test!(
     test_long_second_auto,
-    try_new_long_second,
+    try_new_second,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 seconds ago"),
@@ -94,7 +97,8 @@ generate_test!(
 );
 generate_test!(
     test_long_minute_always,
-    try_new_long_minute,
+    try_new_minute,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 minutes ago"),
@@ -117,7 +121,8 @@ generate_test!(
 );
 generate_test!(
     test_long_minute_auto,
-    try_new_long_minute,
+    try_new_minute,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 minutes ago"),
@@ -140,7 +145,8 @@ generate_test!(
 );
 generate_test!(
     test_long_hour_always,
-    try_new_long_hour,
+    try_new_hour,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 hours ago"),
@@ -163,7 +169,8 @@ generate_test!(
 );
 generate_test!(
     test_long_hour_auto,
-    try_new_long_hour,
+    try_new_hour,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 hours ago"),
@@ -186,7 +193,8 @@ generate_test!(
 );
 generate_test!(
     test_long_day_always,
-    try_new_long_day,
+    try_new_day,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 days ago"),
@@ -209,7 +217,8 @@ generate_test!(
 );
 generate_test!(
     test_long_day_auto,
-    try_new_long_day,
+    try_new_day,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 days ago"),
@@ -232,7 +241,8 @@ generate_test!(
 );
 generate_test!(
     test_long_week_always,
-    try_new_long_week,
+    try_new_week,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 weeks ago"),
@@ -255,7 +265,8 @@ generate_test!(
 );
 generate_test!(
     test_long_week_auto,
-    try_new_long_week,
+    try_new_week,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 weeks ago"),
@@ -278,7 +289,8 @@ generate_test!(
 );
 generate_test!(
     test_long_month_always,
-    try_new_long_month,
+    try_new_month,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 months ago"),
@@ -301,7 +313,8 @@ generate_test!(
 );
 generate_test!(
     test_long_month_auto,
-    try_new_long_month,
+    try_new_month,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 months ago"),
@@ -324,7 +337,8 @@ generate_test!(
 );
 generate_test!(
     test_long_quarter_always,
-    try_new_long_quarter,
+    try_new_quarter,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 quarters ago"),
@@ -347,7 +361,8 @@ generate_test!(
 );
 generate_test!(
     test_long_quarter_auto,
-    try_new_long_quarter,
+    try_new_quarter,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 quarters ago"),
@@ -370,7 +385,8 @@ generate_test!(
 );
 generate_test!(
     test_long_year_always,
-    try_new_long_year,
+    try_new_year,
+    Width::Long,
     Numeric::Always,
     [
         (-10, "10 years ago"),
@@ -393,7 +409,8 @@ generate_test!(
 );
 generate_test!(
     test_long_year_auto,
-    try_new_long_year,
+    try_new_year,
+    Width::Long,
     Numeric::Auto,
     [
         (-10, "10 years ago"),
@@ -416,7 +433,8 @@ generate_test!(
 );
 generate_test!(
     test_short_second_always,
-    try_new_short_second,
+    try_new_second,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 sec. ago"),
@@ -439,7 +457,8 @@ generate_test!(
 );
 generate_test!(
     test_short_second_auto,
-    try_new_short_second,
+    try_new_second,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 sec. ago"),
@@ -462,7 +481,8 @@ generate_test!(
 );
 generate_test!(
     test_short_minute_always,
-    try_new_short_minute,
+    try_new_minute,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 min. ago"),
@@ -485,7 +505,8 @@ generate_test!(
 );
 generate_test!(
     test_short_minute_auto,
-    try_new_short_minute,
+    try_new_minute,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 min. ago"),
@@ -508,7 +529,8 @@ generate_test!(
 );
 generate_test!(
     test_short_hour_always,
-    try_new_short_hour,
+    try_new_hour,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 hr. ago"),
@@ -531,7 +553,8 @@ generate_test!(
 );
 generate_test!(
     test_short_hour_auto,
-    try_new_short_hour,
+    try_new_hour,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 hr. ago"),
@@ -554,7 +577,8 @@ generate_test!(
 );
 generate_test!(
     test_short_day_always,
-    try_new_short_day,
+    try_new_day,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 days ago"),
@@ -577,7 +601,8 @@ generate_test!(
 );
 generate_test!(
     test_short_day_auto,
-    try_new_short_day,
+    try_new_day,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 days ago"),
@@ -600,7 +625,8 @@ generate_test!(
 );
 generate_test!(
     test_short_week_always,
-    try_new_short_week,
+    try_new_week,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 wk. ago"),
@@ -623,7 +649,8 @@ generate_test!(
 );
 generate_test!(
     test_short_week_auto,
-    try_new_short_week,
+    try_new_week,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 wk. ago"),
@@ -646,7 +673,8 @@ generate_test!(
 );
 generate_test!(
     test_short_month_always,
-    try_new_short_month,
+    try_new_month,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 mo. ago"),
@@ -669,7 +697,8 @@ generate_test!(
 );
 generate_test!(
     test_short_month_auto,
-    try_new_short_month,
+    try_new_month,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 mo. ago"),
@@ -692,7 +721,8 @@ generate_test!(
 );
 generate_test!(
     test_short_quarter_always,
-    try_new_short_quarter,
+    try_new_quarter,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 qtrs. ago"),
@@ -715,7 +745,8 @@ generate_test!(
 );
 generate_test!(
     test_short_quarter_auto,
-    try_new_short_quarter,
+    try_new_quarter,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 qtrs. ago"),
@@ -738,7 +769,8 @@ generate_test!(
 );
 generate_test!(
     test_short_year_always,
-    try_new_short_year,
+    try_new_year,
+    Width::Short,
     Numeric::Always,
     [
         (-10, "10 yr. ago"),
@@ -761,7 +793,8 @@ generate_test!(
 );
 generate_test!(
     test_short_year_auto,
-    try_new_short_year,
+    try_new_year,
+    Width::Short,
     Numeric::Auto,
     [
         (-10, "10 yr. ago"),
@@ -784,7 +817,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_second_always,
-    try_new_narrow_second,
+    try_new_second,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10s ago"),
@@ -807,7 +841,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_second_auto,
-    try_new_narrow_second,
+    try_new_second,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10s ago"),
@@ -830,7 +865,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_minute_always,
-    try_new_narrow_minute,
+    try_new_minute,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10m ago"),
@@ -853,7 +889,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_minute_auto,
-    try_new_narrow_minute,
+    try_new_minute,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10m ago"),
@@ -876,7 +913,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_hour_always,
-    try_new_narrow_hour,
+    try_new_hour,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10h ago"),
@@ -899,7 +937,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_hour_auto,
-    try_new_narrow_hour,
+    try_new_hour,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10h ago"),
@@ -922,7 +961,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_day_always,
-    try_new_narrow_day,
+    try_new_day,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10d ago"),
@@ -945,7 +985,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_day_auto,
-    try_new_narrow_day,
+    try_new_day,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10d ago"),
@@ -968,7 +1009,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_week_always,
-    try_new_narrow_week,
+    try_new_week,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10w ago"),
@@ -991,7 +1033,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_week_auto,
-    try_new_narrow_week,
+    try_new_week,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10w ago"),
@@ -1014,7 +1057,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_month_always,
-    try_new_narrow_month,
+    try_new_month,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10mo ago"),
@@ -1037,7 +1081,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_month_auto,
-    try_new_narrow_month,
+    try_new_month,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10mo ago"),
@@ -1060,7 +1105,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_quarter_always,
-    try_new_narrow_quarter,
+    try_new_quarter,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10q ago"),
@@ -1083,7 +1129,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_quarter_auto,
-    try_new_narrow_quarter,
+    try_new_quarter,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10q ago"),
@@ -1106,7 +1153,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_year_always,
-    try_new_narrow_year,
+    try_new_year,
+    Width::Narrow,
     Numeric::Always,
     [
         (-10, "10y ago"),
@@ -1129,7 +1177,8 @@ generate_test!(
 );
 generate_test!(
     test_narrow_year_auto,
-    try_new_narrow_year,
+    try_new_year,
+    Width::Narrow,
     Numeric::Auto,
     [
         (-10, "10y ago"),
@@ -1155,9 +1204,9 @@ generate_test!(
 fn test_numbering_system_latn() {
     let mut prefs = RelativeTimeFormatterPreferences::from(locale!("bn"));
     let options = RelativeTimeFormatterOptions::default();
-    let formatter_bn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
+    let formatter_bn = RelativeTimeFormatter::try_new_day(prefs, options).unwrap();
     prefs.numbering_system = Some(value!("latn").try_into().unwrap());
-    let formatter_bn_latn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
+    let formatter_bn_latn = RelativeTimeFormatter::try_new_day(prefs, options).unwrap();
     assert_writeable_eq!(formatter_bn.format(55.into()), "৫৫ দিনের মধ্যে");
     assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
 }
@@ -1167,8 +1216,8 @@ fn test_negative_zero_and_trailing_zeros() {
     let mut options = RelativeTimeFormatterOptions::default();
     options.numeric = Numeric::Auto;
     let formatter_auto =
-        RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
-    let formatter_always = RelativeTimeFormatter::try_new_long_day(
+        RelativeTimeFormatter::try_new_day(locale!("en").into(), options).unwrap();
+    let formatter_always = RelativeTimeFormatter::try_new_day(
         locale!("en").into(),
         RelativeTimeFormatterOptions::default(),
     )

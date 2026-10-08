@@ -89,30 +89,14 @@ pub mod provider {
         impl_locale_names_variant_v0!(Baked);
         impl_decimal_percent_v1!(Baked);
         impl_person_names_format_v1!(Baked);
-        impl_datetime_relative_day_long_v1!(Baked);
-        impl_datetime_relative_day_narrow_v1!(Baked);
-        impl_datetime_relative_day_short_v1!(Baked);
-        impl_datetime_relative_hour_long_v1!(Baked);
-        impl_datetime_relative_hour_narrow_v1!(Baked);
-        impl_datetime_relative_hour_short_v1!(Baked);
-        impl_datetime_relative_minute_long_v1!(Baked);
-        impl_datetime_relative_minute_narrow_v1!(Baked);
-        impl_datetime_relative_minute_short_v1!(Baked);
-        impl_datetime_relative_month_long_v1!(Baked);
-        impl_datetime_relative_month_narrow_v1!(Baked);
-        impl_datetime_relative_month_short_v1!(Baked);
-        impl_datetime_relative_quarter_long_v1!(Baked);
-        impl_datetime_relative_quarter_narrow_v1!(Baked);
-        impl_datetime_relative_quarter_short_v1!(Baked);
-        impl_datetime_relative_second_long_v1!(Baked);
-        impl_datetime_relative_second_narrow_v1!(Baked);
-        impl_datetime_relative_second_short_v1!(Baked);
-        impl_datetime_relative_week_long_v1!(Baked);
-        impl_datetime_relative_week_narrow_v1!(Baked);
-        impl_datetime_relative_week_short_v1!(Baked);
-        impl_datetime_relative_year_long_v1!(Baked);
-        impl_datetime_relative_year_narrow_v1!(Baked);
-        impl_datetime_relative_year_short_v1!(Baked);
+        impl_datetime_relative_day_v1!(Baked);
+        impl_datetime_relative_hour_v1!(Baked);
+        impl_datetime_relative_minute_v1!(Baked);
+        impl_datetime_relative_month_v1!(Baked);
+        impl_datetime_relative_quarter_v1!(Baked);
+        impl_datetime_relative_second_v1!(Baked);
+        impl_datetime_relative_week_v1!(Baked);
+        impl_datetime_relative_year_v1!(Baked);
         impl_transliterator_rules_v1!(Baked);
         impl_units_info_v1!(Baked);
         impl_units_id_v1!(Baked);
@@ -157,30 +141,14 @@ pub mod provider {
         super::displaynames::provider::LocaleNamesVariantV0::INFO,
         super::measure::provider::UnitsIdV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
-        super::relativetime::provider::DatetimeRelativeDayLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeHourLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeMinuteLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeMonthLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeQuarterLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeSecondLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeWeekLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeYearLongV1::INFO,
-        super::relativetime::provider::DatetimeRelativeDayNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeHourNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeMinuteNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeMonthNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeQuarterNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeSecondNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeWeekNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeYearNarrowV1::INFO,
-        super::relativetime::provider::DatetimeRelativeDayShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeHourShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeMinuteShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeMonthShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeQuarterShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeSecondShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeWeekShortV1::INFO,
-        super::relativetime::provider::DatetimeRelativeYearShortV1::INFO,
+        super::relativetime::provider::DatetimeRelativeDayV1::INFO,
+        super::relativetime::provider::DatetimeRelativeHourV1::INFO,
+        super::relativetime::provider::DatetimeRelativeMinuteV1::INFO,
+        super::relativetime::provider::DatetimeRelativeMonthV1::INFO,
+        super::relativetime::provider::DatetimeRelativeQuarterV1::INFO,
+        super::relativetime::provider::DatetimeRelativeSecondV1::INFO,
+        super::relativetime::provider::DatetimeRelativeWeekV1::INFO,
+        super::relativetime::provider::DatetimeRelativeYearV1::INFO,
         super::transliterate::provider::TransliteratorRulesV1::INFO,
         super::units::provider::UnitsInfoV1::INFO,
     ];

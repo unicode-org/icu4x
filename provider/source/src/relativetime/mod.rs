@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 macro_rules! make_data_provider {
-    ($(($marker: ident, $field: literal)),+ $(,)?) => {
+    ($(($marker: ident, $unit: literal)),+ $(,)?) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
@@ -24,7 +24,14 @@ macro_rules! make_data_provider {
                         .read_and_parse(req.id.locale, "dateFields.json")?;
                     let fields = &resource.main.value.dates.fields;
 
-                    let data = fields.0.get($field).ok_or(DataError::custom(
+                    let field = match req.id.marker_attributes.as_str() {
+                        RelativeTimePatternData::LONG_STR => $unit,
+                        RelativeTimePatternData::SHORT_STR => concat!($unit, "-short"),
+                        RelativeTimePatternData::NARROW_STR => concat!($unit, "-narrow"),
+                        _ => return Err(DataErrorKind::IdentifierNotFound.with_req($marker::INFO, req)),
+                    };
+
+                    let data = fields.0.get(field).ok_or(DataError::custom(
                         "Field not found in relative time format data.",
                     ))?;
 
@@ -45,7 +52,15 @@ macro_rules! make_data_provider {
                         .cldr()?
                         .dates(None)
                         .list_locales()?
-                        .map(DataIdentifierCow::from_locale)
+                        .flat_map(|l| {
+                            [
+                                RelativeTimePatternData::LONG,
+                                RelativeTimePatternData::SHORT,
+                                RelativeTimePatternData::NARROW,
+                            ]
+                            .into_iter()
+                            .map(move |a| DataIdentifierCow::from_borrowed_and_owned(a, l.clone()))
+                        })
                         .collect())
                 }
             }
@@ -70,30 +85,14 @@ impl From<&cldr_serde::date_fields::PluralRulesPattern>
 }
 
 make_data_provider!(
-    (DatetimeRelativeSecondLongV1, "second"),
-    (DatetimeRelativeSecondShortV1, "second-short"),
-    (DatetimeRelativeSecondNarrowV1, "second-narrow"),
-    (DatetimeRelativeMinuteLongV1, "minute"),
-    (DatetimeRelativeMinuteShortV1, "minute-short"),
-    (DatetimeRelativeMinuteNarrowV1, "minute-narrow"),
-    (DatetimeRelativeHourLongV1, "hour"),
-    (DatetimeRelativeHourShortV1, "hour-short"),
-    (DatetimeRelativeHourNarrowV1, "hour-narrow"),
-    (DatetimeRelativeDayLongV1, "day"),
-    (DatetimeRelativeDayShortV1, "day-short"),
-    (DatetimeRelativeDayNarrowV1, "day-narrow"),
-    (DatetimeRelativeWeekLongV1, "week"),
-    (DatetimeRelativeWeekShortV1, "week-short"),
-    (DatetimeRelativeWeekNarrowV1, "week-narrow"),
-    (DatetimeRelativeMonthLongV1, "month"),
-    (DatetimeRelativeMonthShortV1, "month-short"),
-    (DatetimeRelativeMonthNarrowV1, "month-narrow"),
-    (DatetimeRelativeQuarterLongV1, "quarter"),
-    (DatetimeRelativeQuarterShortV1, "quarter-short"),
-    (DatetimeRelativeQuarterNarrowV1, "quarter-narrow"),
-    (DatetimeRelativeYearLongV1, "year"),
-    (DatetimeRelativeYearShortV1, "year-short"),
-    (DatetimeRelativeYearNarrowV1, "year-narrow"),
+    (DatetimeRelativeSecondV1, "second"),
+    (DatetimeRelativeMinuteV1, "minute"),
+    (DatetimeRelativeHourV1, "hour"),
+    (DatetimeRelativeDayV1, "day"),
+    (DatetimeRelativeWeekV1, "week"),
+    (DatetimeRelativeMonthV1, "month"),
+    (DatetimeRelativeQuarterV1, "quarter"),
+    (DatetimeRelativeYearV1, "year"),
 );
 
 #[cfg(test)]
@@ -106,9 +105,12 @@ mod tests {
     #[test]
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<DatetimeRelativeQuarterShortV1> = provider
+        let data: DataPayload<DatetimeRelativeQuarterV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    RelativeTimePatternData::SHORT,
+                    &data_locale!("en"),
+                ),
                 ..Default::default()
             })
             .unwrap()
@@ -133,9 +135,12 @@ mod tests {
     #[test]
     fn test_singular_sub_pattern() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<DatetimeRelativeYearLongV1> = provider
+        let data: DataPayload<DatetimeRelativeYearV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&data_locale!("ar")),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    RelativeTimePatternData::LONG,
+                    &data_locale!("ar"),
+                ),
                 ..Default::default()
             })
             .unwrap()
