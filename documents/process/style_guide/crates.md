@@ -9,9 +9,31 @@ This page is part of the [ICU4X Style Guide](README.md). Rules are **required** 
 
 Main issues: [#77](https://github.com/unicode-org/icu4x/issues/77), [#151](https://github.com/unicode-org/icu4x/issues/151)
 
-Most ICU4X code will not work in [no_std](https://rust-embedded.github.io/book/intro/no-std.html), since memory allocation is very often required to handle edge cases.  Even our most fundamental type, Locale, requires memory allocation.
+Library crates are `no_std`: they use `core` and `alloc` instead of `std`. Allocating is fine. [principles.md](../../design/principles.md#no-standard-library-dependencies-in-the-core-library) says that the `icu` crate and all of its dependencies "should be `#[no_std]`, but may use the `alloc` crate".
 
-However, when designing traits and interfaces, we should make them `no_std`-friendly, such that we can more easily expand in this direction more easily in the future.
+**Why:** ICU4X runs in resource-constrained environments that don't have a standard library.
+
+**❌ Don't:**
+
+```rust
+use std::collections::BTreeMap;
+use std::string::String;
+```
+
+**✅ Do:** Start `lib.rs` with the [library annotations](../boilerplate.md#library-annotations), and import from `alloc`:
+
+```rust
+#![cfg_attr(not(any(test, doc)), no_std)]
+
+extern crate alloc;
+
+use alloc::collections::BTreeMap;
+use alloc::string::String;
+```
+
+Add an `std` feature only for code that needs `std`, such as file I/O.
+
+**Enforcement:** `cargo make ci-job-nostd` builds `icu_capi`, which depends on all components, for a target without `std` (`thumbv7m-none-eabi`).
 
 ### When to add crate [features][features] :: suggested
 
