@@ -17,123 +17,83 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 icu_provider::data_marker!(
-    /// `DatetimeRelativeSecondLongV1`
-    DatetimeRelativeSecondLongV1,
+    /// Relative time formatting data for seconds.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeSecondV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeSecondShortV1`
-    DatetimeRelativeSecondShortV1,
+    /// Relative time formatting data for minutes.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeMinuteV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeSecondNarrowV1`
-    DatetimeRelativeSecondNarrowV1,
+    /// Relative time formatting data for hours.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeHourV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeMinuteLongV1`
-    DatetimeRelativeMinuteLongV1,
+    /// Relative time formatting data for days.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeDayV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeMinuteShortV1`
-    DatetimeRelativeMinuteShortV1,
+    /// Relative time formatting data for weeks.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeWeekV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeMinuteNarrowV1`
-    DatetimeRelativeMinuteNarrowV1,
+    /// Relative time formatting data for months.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeMonthV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeHourLongV1`
-    DatetimeRelativeHourLongV1,
+    /// Relative time formatting data for quarters.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeQuarterV1,
     RelativeTimePatternData<'static>,
 );
 icu_provider::data_marker!(
-    /// `DatetimeRelativeHourShortV1`
-    DatetimeRelativeHourShortV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeHourNarrowV1`
-    DatetimeRelativeHourNarrowV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeDayLongV1`
-    DatetimeRelativeDayLongV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeDayShortV1`
-    DatetimeRelativeDayShortV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeDayNarrowV1`
-    DatetimeRelativeDayNarrowV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeWeekLongV1`
-    DatetimeRelativeWeekLongV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeWeekShortV1`
-    DatetimeRelativeWeekShortV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeWeekNarrowV1`
-    DatetimeRelativeWeekNarrowV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeMonthLongV1`
-    DatetimeRelativeMonthLongV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeMonthShortV1`
-    DatetimeRelativeMonthShortV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeMonthNarrowV1`
-    DatetimeRelativeMonthNarrowV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeQuarterLongV1`
-    DatetimeRelativeQuarterLongV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeQuarterShortV1`
-    DatetimeRelativeQuarterShortV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeQuarterNarrowV1`
-    DatetimeRelativeQuarterNarrowV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeYearLongV1`
-    DatetimeRelativeYearLongV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeYearShortV1`
-    DatetimeRelativeYearShortV1,
-    RelativeTimePatternData<'static>,
-);
-icu_provider::data_marker!(
-    /// `DatetimeRelativeYearNarrowV1`
-    DatetimeRelativeYearNarrowV1,
+    /// Relative time formatting data for years.
+    ///
+    /// Uses [`DataMarkerAttributes`] to distinguish width:
+    /// - [`RelativeTimePatternData::LONG`] (`"L"`)
+    /// - [`RelativeTimePatternData::SHORT`] (`"S"`)
+    /// - [`RelativeTimePatternData::NARROW`] (`"N"`)
+    DatetimeRelativeYearV1,
     RelativeTimePatternData<'static>,
 );
 
@@ -155,6 +115,21 @@ pub struct RelativeTimePatternData<'data> {
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
+}
+
+impl RelativeTimePatternData<'_> {
+    /// The marker attributes for long (wide) relative time formatting.
+    pub const LONG: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("L");
+    #[doc(hidden)]
+    pub const LONG_STR: &'static str = Self::LONG.as_str();
+    /// The marker attributes for short relative time formatting.
+    pub const SHORT: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("S");
+    #[doc(hidden)]
+    pub const SHORT_STR: &'static str = Self::SHORT.as_str();
+    /// The marker attributes for narrow relative time formatting.
+    pub const NARROW: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("N");
+    #[doc(hidden)]
+    pub const NARROW_STR: &'static str = Self::NARROW.as_str();
 }
 
 icu_provider::data_struct!(RelativeTimePatternData<'_>, #[cfg(feature = "datagen")]);
