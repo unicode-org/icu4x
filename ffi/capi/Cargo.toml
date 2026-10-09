@@ -87,7 +87,7 @@ experimental = ["dep:icu_experimental"]
 list = ["dep:icu_list", "dep:potential_utf"]
 locale = ["dep:icu_locale", "locale_fallback"]
 locale_fallback = ["dep:icu_locale_fallback"]
-normalizer = ["dep:icu_normalizer", "icu_normalizer?/utf8_iter", "icu_normalizer?/utf16_iter"]
+normalizer = ["dep:icu_normalizer", "icu_normalizer?/utf8_iter", "icu_normalizer?/utf16_iter", "dep:write16"]
 plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
 properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
 segmenter = ["dep:icu_segmenter"]
@@ -154,6 +154,7 @@ icu_provider_blob = { workspace = true, features = ["alloc"], optional = true }
 potential_utf = { workspace = true, features = ["writeable"], optional = true }
 tinystr = { workspace = true, optional = true }
 unicode-bidi = { workspace = true, optional = true }
+write16 = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
