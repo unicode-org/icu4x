@@ -30,12 +30,12 @@ With a mental model of the lifecycle of data in ICU4X, we can discuss where to f
 The data struct definitions should live in the crate that uses them. By convention, the top-level module `provider` should contain the struct definitions. For example:
 
 - `icu::decimal::provider::DecimalSymbolsV1`
-- `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-- `icu::uniset::provider::PropertyCodePointSetV1`
+- `icu::locale::provider::LocaleLikelySubtagsScriptRegionV1`
+- `icu::properties::provider::PropertyBinaryAlphabeticV1`
 
-In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
+In general, data structs derive `Debug`, `PartialEq`, `Clone`, `yoke::Yokeable`, and `zerofrom::ZeroFrom`, plus Serde `Deserialize` (with the `serde` feature) and Serde `Serialize` and `databake::Bake` (with the `datagen` feature). Pass the type to `icu_provider::data_struct!`, which implements traits that the data provider needs, such as `MaybeEncodeAsVarULE`.
 
-As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
+As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. `cargo make bakeddata` checks this for every marker. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
 Additionally, data structs should keep internal invariants to a minimum. For more information, see [data_safety.md](../design/data_safety.md).
 
@@ -45,7 +45,7 @@ The first step to introduce data into the ICU4X pipeline is to download it from 
 
 When clients use ICU4X, this is generally an automatic step. For the purpose of ICU4X test data, the tool `download-repo-sources` should automatically download data from the external source and save it in the ICU4X tree. `download-repo-sources` should not do anything other than downloading the raw source data.
 
-To add new files to the repo, edit `tools/testdata-scripts/globs.rs.data`, and run 
+To add new files to the repo, edit `provider/source/tests/globs.rs.data`, and run 
 
 ```console
 $ cargo make download-repo-sources
@@ -69,7 +69,7 @@ As the last step, add the marker to the [registry](https://unicode-org.github.io
 
 You can now run `cargo make testdata` to test your implementation on our testing locales. This will generate JSON data in `provider/source/data/debug`, which you can use for debugging.
 
-After you are done, add your data marker to the component's `provider::KEYS` list, and run `cargo make bakeddata` to generate compiled data for inclusion in the crate.
+After you are done, add your data marker to the component's `provider::MARKERS` list, and run `cargo make bakeddata` to generate compiled data for inclusion in the crate.
 
 ### Data export and runtime data providers
 
@@ -116,14 +116,15 @@ pub struct DecimalSymbols<'data> {
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizes,
-
-    /// Digit characters for the current numbering system. In most systems, these digits are
-    /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
-    pub digits: [char; 10],
 }
+
+icu_provider::data_struct!(
+    DecimalSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
 ```
 
-The above example is an abridged definition for `DecimalSymbolsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
+The above example is a simplified version of `DecimalSymbolsV1`: the real struct keeps its strings in one `VarZeroCow<'data, DecimalSymbolsStrs>`, and the digits are in a separate marker, `DecimalDigitsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
 
 ### CLDR JSON Deserialize
 
@@ -165,7 +166,7 @@ The above example is an abridged definition of the Serde structure corresponding
 
 ### Transformer
 
-[*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
+[*provider/source/src/decimal/symbols.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/source/src/decimal/symbols.rs)
 
 ```rust,compile_fail
 impl DataProvider<FooV1> for SourceDataProvider {
@@ -176,25 +177,31 @@ impl DataProvider<FooV1> for SourceDataProvider {
         // Use the data inside self and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
-        // This method will be called once per option returned by iter_locales.
+        // This method will be called once per identifier returned by iter_ids_cached.
     }
 }
 
 impl IterableDataProviderCached<FooV1> for SourceDataProvider {
-    fn iter_locales_cached(
+    fn iter_ids_cached(
         &self,
-    ) -> Result<HashSet<DataLocale>, DataError> {
-        // This should list all supported locales.
+    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        // This should list all supported locales and marker attributes.
     }
 }
 ```
 
 ### Registry
 
+[*provider/registry/src/lib.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/registry/src/lib.rs)
+
+Markers behind an `unstable` feature, and markers of experimental components, go after `#[unstable]`.
+
 ```rust,compile_fail
-registry!(
+cb!(
     // ...
-    icu::foo::provider::FooV1 = "foo/bar@1",
+    icu::foo::provider::FooV1: FooV1,
     // ...
-)
+    #[unstable]
+    // ...
+);
 ```
