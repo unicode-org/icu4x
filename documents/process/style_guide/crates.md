@@ -46,6 +46,23 @@ the end user to control the code size of their compilation as follows:
    example if it is mainly used for debugging diagnostics or development, then
    it should be behind a feature.
 
+**❌ Don't:** Make a dependency that only some users need a required one:
+
+```toml
+[dependencies]
+serde = { workspace = true }
+```
+
+**✅ Do:** Make it optional, and turn it on from a feature with `dep:`. From `components/plurals/Cargo.toml`:
+
+```toml
+[dependencies]
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+
+[features]
+serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde", "dep:displaydoc"]
+```
+
 [features]: https://doc.rust-lang.org/cargo/reference/features.html
 
 ## Crate Dependencies
@@ -55,6 +72,8 @@ the end user to control the code size of their compilation as follows:
 Code size is an important factor for portability.  One of the easiest ways to accidentally bloat your code size is to pull in a heavy dependency.
 
 When possible, write your code in such a way as to reduce dependencies, especially dependencies on heavier libraries.  If you need to add a dependency, consider putting it behind a feature flag.
+
+**Enforcement:** Every dependency must be on one of the allowlists in `tools/make/depcheck/src/allowlist.rs`. There are separate lists for runtime dependencies, build dependencies, and opt-in features such as `serde`. ICU4X components and utils can be added there; for other crates, get approval from the ICU4X owners (`@unicode-org/icu4x-owners`) first, as the file says. `cargo make depcheck`, part of `ci-job-tidy`, checks the lists and also fails on unused dependencies.
 
 ### Avoid `std::collections::HashMap` :: suggested
 
@@ -72,3 +91,7 @@ fn insert_sorted<A>(vec: &mut Vec<A>, item: A) {
   }
 }
 ```
+
+**Why:** Besides code size, `std::collections::HashMap` isn't available in `no_std` crates (see [Use no_std](#use-no_std--suggested)). In data structs, use `ZeroMap` (see [Zero-copy in DataProvider structs](data_types.md#zero-copy-in-dataprovider-structs--required)).
+
+**Enforcement:** Review only. Clippy doesn't check this.
