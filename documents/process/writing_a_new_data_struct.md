@@ -30,12 +30,12 @@ With a mental model of the lifecycle of data in ICU4X, we can discuss where to f
 The data struct definitions should live in the crate that uses them. By convention, the top-level module `provider` should contain the struct definitions. For example:
 
 - `icu::decimal::provider::DecimalSymbolsV1`
-- `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-- `icu::uniset::provider::PropertyCodePointSetV1`
+- `icu::locale::provider::LocaleLikelySubtagsScriptRegionV1`
+- `icu::properties::provider::PropertyBinaryAlphabeticV1`
 
-In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
+In general, data structs derive `Debug`, `PartialEq`, `Clone`, `yoke::Yokeable`, and `zerofrom::ZeroFrom`, plus Serde `Deserialize` (with the `serde` feature) and Serde `Serialize` and `databake::Bake` (with the `datagen` feature). Pass the type to `icu_provider::data_struct!`, which implements traits that the data provider needs, such as `MaybeEncodeAsVarULE`.
 
-As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
+As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. `cargo make bakeddata` checks this for every marker. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
 Additionally, data structs should keep internal invariants to a minimum. For more information, see [data_safety.md](../design/data_safety.md).
 
@@ -69,7 +69,7 @@ As the last step, add the marker to the [registry](https://unicode-org.github.io
 
 You can now run `cargo make testdata` to test your implementation on our testing locales. This will generate JSON data in `provider/source/data/debug`, which you can use for debugging.
 
-After you are done, add your data marker to the component's `provider::KEYS` list, and run `cargo make bakeddata` to generate compiled data for inclusion in the crate.
+After you are done, add your data marker to the component's `provider::MARKERS` list, and run `cargo make bakeddata` to generate compiled data for inclusion in the crate.
 
 ### Data export and runtime data providers
 
