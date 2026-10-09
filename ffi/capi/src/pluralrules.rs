@@ -270,5 +270,26 @@ pub mod ffi {
         ) -> PluralCategory {
             self.0.category_for_range(start.0, end.0).into()
         }
+
+        /// Get the category for a given number represented as operands
+        #[diplomat::rust_link(icu::plurals::PluralRules::category_for, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::rules, FnInStruct, hidden)]
+        pub fn category_for(&self, op: &PluralOperands) -> PluralCategory {
+            self.0.rules().category_for(op.0).into()
+        }
+
+        /// Get all of the categories needed in the current locale
+        #[diplomat::rust_link(icu::plurals::PluralRules::categories, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::rules, FnInStruct, hidden)]
+        #[diplomat::attr(auto, getter)]
+        pub fn categories(&self) -> PluralCategories {
+            PluralCategories::from_iter(self.0.rules().categories())
+        }
+
+        /// Resolves the plural category for a given range of categories.
+        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::resolve_range, FnInStruct)]
+        pub fn resolve_range(&self, start: PluralCategory, end: PluralCategory) -> PluralCategory {
+            self.0.resolve_range(start.into(), end.into()).into()
+        }
     }
 }

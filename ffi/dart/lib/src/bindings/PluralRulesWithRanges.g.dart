@@ -94,6 +94,33 @@ final class PluralRulesWithRanges implements ffi.Finalizable {
     return PluralCategory.values[result];
   }
 
+  /// Get the category for a given number represented as operands
+  ///
+  /// See the [Rust documentation for `category_for`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
+  @meta.experimental
+  PluralCategory categoryFor(PluralOperands op) {
+    final result = _icu4x_PluralRulesWithRanges_category_for_mv1(_ffi, op._ffi);
+    return PluralCategory.values[result];
+  }
+
+  /// Get all of the categories needed in the current locale
+  ///
+  /// See the [Rust documentation for `categories`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+  @meta.experimental
+  PluralCategories get categories {
+    final result = _icu4x_PluralRulesWithRanges_categories_mv1(_ffi);
+    return PluralCategories._fromFfi(result);
+  }
+
+  /// Resolves the plural category for a given range of categories.
+  ///
+  /// See the [Rust documentation for `resolve_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
+  @meta.experimental
+  PluralCategory resolveRange(PluralCategory start, PluralCategory end) {
+    final result = _icu4x_PluralRulesWithRanges_resolve_range_mv1(_ffi, start.index, end.index);
+    return PluralCategory.values[result];
+  }
+
 }
 
 // ignore: experimental_member_use
@@ -131,5 +158,23 @@ external _ResultOpaqueInt32 _icu4x_PluralRulesWithRanges_create_ordinal_with_pro
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRulesWithRanges_category_for_range_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_PluralRulesWithRanges_category_for_range_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> start, ffi.Pointer<ffi.Opaque> end);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRulesWithRanges_category_for_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_PluralRulesWithRanges_category_for_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> op);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRulesWithRanges_categories_mv1')
+// ignore: non_constant_identifier_names
+external _PluralCategoriesFfi _icu4x_PluralRulesWithRanges_categories_mv1(ffi.Pointer<ffi.Opaque> self);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_PluralRulesWithRanges_resolve_range_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_PluralRulesWithRanges_resolve_range_mv1(ffi.Pointer<ffi.Opaque> self, int start, int end);
 
 // dart format on
