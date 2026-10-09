@@ -45,7 +45,7 @@ The first step to introduce data into the ICU4X pipeline is to download it from 
 
 When clients use ICU4X, this is generally an automatic step. For the purpose of ICU4X test data, the tool `download-repo-sources` should automatically download data from the external source and save it in the ICU4X tree. `download-repo-sources` should not do anything other than downloading the raw source data.
 
-To add new files to the repo, edit `tools/testdata-scripts/globs.rs.data`, and run 
+To add new files to the repo, edit `provider/source/tests/globs.rs.data`, and run 
 
 ```console
 $ cargo make download-repo-sources
