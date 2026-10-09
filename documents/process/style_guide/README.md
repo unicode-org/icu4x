@@ -528,7 +528,7 @@ It's probably worth noting here that the [Result](https://doc.rust-lang.org/std/
 
 ### Don't use enums to represent unbounded sets :: suggested
 
-If a set of entities is unbounded or grows over time, use an identifier instead of an enum. For more details, see [enums_or_ids.md](../design/enums_or_ids.md).
+If a set of entities is unbounded or grows over time, use an identifier instead of an enum. For more details, see [enums_or_ids.md](../../design/enums_or_ids.md).
 
 ### Don't use explicit usize values :: suggested
 
@@ -759,7 +759,7 @@ Data in memory should be fully parsed and ready to use. For example, if a data s
 
 Keep the following in mind when using exotic types:
 
-1. **Stability:** Since exotic types become part of the serialization format of the data struct, their serialized form must remain stable, according to the data struct versioning requirements discussed in [data_pipeline.md](../design/data_pipeline.md).
+1. **Stability:** Since exotic types become part of the serialization format of the data struct, their serialized form must remain stable, according to the data struct versioning requirements discussed in [data_pipeline.md](../../design/data_pipeline.md).
 2. **Zero-Copy:** If the exotic type involves variable-length data (like a string or a vector), it must also support zero-copy deserialization, as described above. This means that such an exotic type must have a lifetime parameter and internal `Cow`s or `ZeroVec`s for data storage.
 3. **Patching:** The exotic type should support an owned (`'static`) mode to allow users to patch their own data into a data struct, as explained above.
 4. **Data Integrity:** In most cases, it is insufficient to auto-derive `serde::Deserialize` on an exotic type. Deserialization must perform data validation in order to retain internal invariants of the exotic type.
@@ -768,7 +768,7 @@ If it is not possible to obey these requirements in an exotic type, use a standa
 
 ### Keep the serialized layout of stable data structs :: required
 
-Main policy: [data_versioning.md](data_versioning.md)
+Main policy: [data_versioning.md](../data_versioning.md)
 
 Data files must stay readable across ICU4X versions: older code reads newer data, and newer code reads data built for any version with the same major version number. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
 
@@ -783,7 +783,7 @@ Data files must stay readable across ICU4X versions: older code reads newer data
  }
 ```
 
-**✅ Do:** Keep the serialized layout with hand-written serde impls, or add a new marker next to the old one ([Retain Old Keys When Possible](data_versioning.md#ii-retain-old-keys-when-possible)). [#8250](https://github.com/unicode-org/icu4x/pull/8250) removed `offset_zero` from the Rust struct, but the serde impls in `components/datetime/src/provider/time_zones.rs` still read the field and write a placeholder:
+**✅ Do:** Keep the serialized layout with hand-written serde impls, or add a new marker next to the old one ([Retain Old Keys When Possible](../data_versioning.md#ii-retain-old-keys-when-possible)). [#8250](https://github.com/unicode-org/icu4x/pull/8250) removed `offset_zero` from the Rust struct, but the serde impls in `components/datetime/src/provider/time_zones.rs` still read the field and write a placeholder:
 
 ```rust
 // Deserialize: read the old field, then drop it.
@@ -862,7 +862,7 @@ This should not include the contract of code in a different Crate. I.e. if a fun
 
 See also: the [Panics](#Panics--required) section of this document.
 
-**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [data_safety.md](../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
+**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [data_safety.md](../../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
 
 **❌ Don't:**
 
