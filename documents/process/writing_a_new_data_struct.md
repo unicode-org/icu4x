@@ -116,14 +116,15 @@ pub struct DecimalSymbols<'data> {
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizes,
-
-    /// Digit characters for the current numbering system. In most systems, these digits are
-    /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
-    pub digits: [char; 10],
 }
+
+icu_provider::data_struct!(
+    DecimalSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
 ```
 
-The above example is an abridged definition for `DecimalSymbolsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
+The above example is a simplified version of `DecimalSymbolsV1`: the real struct keeps its strings in one `VarZeroCow<'data, DecimalSymbolsStrs>`, and the digits are in a separate marker, `DecimalDigitsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
 
 ### CLDR JSON Deserialize
 
@@ -165,7 +166,7 @@ The above example is an abridged definition of the Serde structure corresponding
 
 ### Transformer
 
-[*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
+[*provider/source/src/decimal/symbols.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/source/src/decimal/symbols.rs)
 
 ```rust,compile_fail
 impl DataProvider<FooV1> for SourceDataProvider {
@@ -176,25 +177,31 @@ impl DataProvider<FooV1> for SourceDataProvider {
         // Use the data inside self and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
-        // This method will be called once per option returned by iter_locales.
+        // This method will be called once per identifier returned by iter_ids_cached.
     }
 }
 
 impl IterableDataProviderCached<FooV1> for SourceDataProvider {
-    fn iter_locales_cached(
+    fn iter_ids_cached(
         &self,
-    ) -> Result<HashSet<DataLocale>, DataError> {
-        // This should list all supported locales.
+    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        // This should list all supported locales and marker attributes.
     }
 }
 ```
 
 ### Registry
 
+[*provider/registry/src/lib.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/registry/src/lib.rs)
+
+Markers behind an `unstable` feature, and markers of experimental components, go after `#[unstable]`.
+
 ```rust,compile_fail
-registry!(
+cb!(
     // ...
-    icu::foo::provider::FooV1 = "foo/bar@1",
+    icu::foo::provider::FooV1: FooV1,
     // ...
-)
+    #[unstable]
+    // ...
+);
 ```
