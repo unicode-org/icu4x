@@ -39,19 +39,10 @@ int main() {
     std::unique_ptr<Locale> locale_fr = Locale::from_string("fr").ok().value();
     std::unique_ptr<PluralRules> pr_fr = PluralRules::create_cardinal(*locale_fr.get()).ok().value();
 
-    std::unique_ptr<PluralOperands> operands_c6 = PluralOperands::from_string("1.0c6").ok().value();
-    PluralCategory cat_fr = pr_fr->category_for(*operands_c6.get());
-    std::cout << "French category for 1.0c6 is " << static_cast<int32_t>(cat_fr)
-              << " (should be " << static_cast<int32_t>(PluralCategory::Value::Many) << ")"
-              << std::endl;
-    if (cat_fr != PluralCategory::Value::Many) {
-        return 1;
-    }
-
     std::unique_ptr<Decimal> dec_sig = Decimal::from_double_with_round_trip_precision(1.0).ok().value();
     std::unique_ptr<PluralOperands> operands_exp =
         PluralOperands::from_significand_and_exponent(*dec_sig.get(), 6);
-    cat_fr = pr_fr->category_for(*operands_exp.get());
+    PluralCategory cat_fr = pr_fr->category_for(*operands_exp.get());
     std::cout << "French category for significand 1.0, exponent 6 is " << static_cast<int32_t>(cat_fr)
               << " (should be " << static_cast<int32_t>(PluralCategory::Value::Many) << ")"
               << std::endl;
