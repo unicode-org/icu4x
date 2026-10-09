@@ -8,7 +8,7 @@ Above all, ICU4X must provide modern, standards-compliant APIs that encourage be
 
 ## Code Style
 
-All ICU4X code must conform to the [style guide](../process/style_guide.md), including the following:
+All ICU4X code must conform to the [style guide](../process/style_guide/README.md), including the following:
 
 ### Safety
 
