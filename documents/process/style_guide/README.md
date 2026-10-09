@@ -3,6 +3,32 @@ ICU4X Style Guide
 
 This document outlines the style guide and best practice for code in ICU4X, with a focus on Rust code style.
 
+## Contents
+
+Each area is a section of this page or has its own page. You can link to a page or to a rule on it, for example [Don't Panic](errors_and_panics.md#dont-panic--required).
+
+- [Naming Conventions](#naming-conventions)
+- [Module and Code Layout](#module-and-code-layout)
+- [Code Formatting and Linting](#code-formatting-and-linting)
+- [Private vs Public](#private-vs-public)
+- [Derived Traits](#derived-traits)
+- [Sized Types](#sized-types)
+- [Pass by Reference vs Pass by Value](#pass-by-reference-vs-pass-by-value)
+- [Option](#option)
+- [Iteration](#iteration)
+- [Enums](#enums)
+- [Matching](#matching)
+- [Structs with Private Fields](#structs-with-private-fields)
+- [Options structs With All Public Fields](#options-structs-with-all-public-fields)
+- [Data Types](data_types.md) (own page)
+- [Errors and Panics](errors_and_panics.md) (own page)
+- [Lints](#lints)
+- [Crate Features](#crate-features)
+- [Crate Dependencies](#crate-dependencies)
+- [Operator Overloading](#operator-overloading)
+- [Binding Traits to Inbuilt Types](#binding-traits-to-inbuilt-types)
+- [Appendix](#appendix)
+
 ## Objectives
 
 This style guide is intended to help ICU4X code be readable and maintainable for many years to come, as well as run quickly on devices of all sizes and operating systems with low memory usage and code/data size.
