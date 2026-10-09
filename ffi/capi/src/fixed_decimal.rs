@@ -365,10 +365,10 @@ pub mod ffi {
             let _ = self.0.write_to(to);
         }
 
-        /// Check whether two [`Decimal`] values are structurally equal (including sign and trailing zeros),
-        /// or both represent zero.
+        /// Check whether two [`Decimal`] values are structurally equal (including sign and trailing zeros).
+        #[diplomat::rust_link(fixed_decimal::Decimal::eq, FnInTypedef, hidden)]
         pub fn equals(&self, other: &Decimal) -> bool {
-            self.0 == other.0 || (self.0.absolute.is_zero() && other.0.absolute.is_zero())
+            self.0 == other.0
         }
     }
 }

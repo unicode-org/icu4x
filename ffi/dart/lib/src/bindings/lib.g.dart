@@ -46,7 +46,6 @@ part 'CollatorNumericOrdering.g.dart';
 part 'CollatorOptions.g.dart';
 part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';
-part 'CompactDecimalFormatter.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'DataError.g.dart';
 part 'DataProvider.g.dart';

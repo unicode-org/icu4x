@@ -256,8 +256,7 @@ final class Decimal implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Check whether two [Decimal] values are structurally equal (including sign and trailing zeros),
-  /// or both represent zero.
+  /// Check whether two [Decimal] values are structurally equal (including sign and trailing zeros).
   bool equals(Decimal other) {
     final result = _icu4x_Decimal_equals_mv1(_ffi, other._ffi);
     return result;

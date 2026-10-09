@@ -100,8 +100,6 @@ export { DateTimeRangeFormatter } from "./DateTimeRangeFormatter"
 
 export { DateTimeRangeFormatterGregorian } from "./DateTimeRangeFormatterGregorian"
 
-export { CompactDecimalFormatter } from "./CompactDecimalFormatter"
-
 export { DecimalFormatter } from "./DecimalFormatter"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter"

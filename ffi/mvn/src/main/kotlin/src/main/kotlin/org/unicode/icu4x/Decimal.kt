@@ -505,8 +505,7 @@ class Decimal internal constructor (
     }
     
     /**
-     * Check whether two [Decimal] values are structurally equal (including sign and trailing zeros),
-     * or both represent zero.
+     * Check whether two [Decimal] values are structurally equal (including sign and trailing zeros).
      */
     fun equals(other: Decimal): Boolean {
         

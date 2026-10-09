@@ -260,8 +260,7 @@ public:
   inline void to_string_write(W& writeable_output) const;
 
   /**
-   * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros),
-   * or both represent zero.
+   * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros).
    */
   inline bool equals(const icu4x::Decimal& other) const;
 

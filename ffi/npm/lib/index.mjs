@@ -98,8 +98,6 @@ export { DateTimeRangeFormatter } from "./DateTimeRangeFormatter.mjs"
 
 export { DateTimeRangeFormatterGregorian } from "./DateTimeRangeFormatterGregorian.mjs"
 
-export { CompactDecimalFormatter } from "./CompactDecimalFormatter.mjs"
-
 export { DecimalFormatter } from "./DecimalFormatter.mjs"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter.mjs"

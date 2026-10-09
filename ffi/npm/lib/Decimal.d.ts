@@ -218,8 +218,7 @@ export class Decimal {
     toString(): string;
 
     /**
-     * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros),
-     * or both represent zero.
+     * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros).
      */
     equals(other: Decimal): boolean;
 }
