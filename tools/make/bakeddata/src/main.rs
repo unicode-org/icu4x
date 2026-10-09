@@ -539,7 +539,7 @@ impl ZeroCopyCheckExporter {
                     .iter()
                     .all(|e| Self::EXPECTED_VIOLATIONS.contains(e)),
             "Expected violations list does not match found violations!\n\
-            If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
+            If the new list is smaller, please update EXPECTED_VIOLATIONS in tools/make/bakeddata/src/main.rs\n\
             If it is bigger and that was unexpected, please make sure the marker remains zero-copy, or ask ICU4X team members if it is okay \
             to temporarily allow for this marker to be allowlisted.\n\
             Common cause: did you forget to add `serde(borrow)` to all of the fields in your data struct?\n\

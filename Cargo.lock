@@ -726,10 +726,9 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8b37a6cea72eb6df5143d3e091d4c34cb0cf4046dd1ddcc082988886fe1f809"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0664ec0b6da77707571da646868137606091ee02#0664ec0b6da77707571da646868137606091ee02"
 dependencies = [
- "diplomat_core 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "diplomat_core",
  "proc-macro2",
  "quote",
  "syn 3.0.3",
@@ -739,7 +738,7 @@ dependencies = [
 name = "diplomat-coverage"
 version = "0.0.0"
 dependencies = [
- "diplomat_core 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "diplomat_core",
  "elsa",
  "lazy_static",
  "rustdoc-types",
@@ -767,12 +766,12 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.16.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=edcbab4a09fe579dd5de5b5034053ef5babc38de#edcbab4a09fe579dd5de5b5034053ef5babc38de"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0664ec0b6da77707571da646868137606091ee02#0664ec0b6da77707571da646868137606091ee02"
 dependencies = [
  "askama",
  "clap",
  "colored",
- "diplomat_core 0.16.1 (git+https://github.com/rust-diplomat/diplomat?rev=edcbab4a09fe579dd5de5b5034053ef5babc38de)",
+ "diplomat_core",
  "heck 0.5.0",
  "indenter",
  "itertools 0.14.0",
@@ -786,21 +785,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73b18e806f9ecb92df828d080efe47984ae1193958295d4a84fb8b32c9a1aa1b"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde",
- "smallvec",
- "strck",
- "syn 3.0.3",
-]
-
-[[package]]
-name = "diplomat_core"
-version = "0.16.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=edcbab4a09fe579dd5de5b5034053ef5babc38de#edcbab4a09fe579dd5de5b5034053ef5babc38de"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0664ec0b6da77707571da646868137606091ee02#0664ec0b6da77707571da646868137606091ee02"
 dependencies = [
  "annotate-snippets",
  "either",
@@ -3015,9 +3000,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.43"
+version = "0.23.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0283386ce02abc0151e1761d08802dfe86c173b0b494af5cbc086574e453da06"
+checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
 dependencies = [
  "log",
  "once_cell",

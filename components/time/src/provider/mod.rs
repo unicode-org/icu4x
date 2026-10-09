@@ -444,28 +444,7 @@ impl serde::Serialize for TimezonePeriods<'_> {
                                 let (os, mz_info) = self
                                     .get(TimeZone(Subtag::try_from_str(&tz).unwrap()), t)
                                     .unwrap();
-                                (
-                                    t,
-                                    (
-                                        os,
-                                        mz_info.map(|i| {
-                                            (
-                                                i.id,
-                                                match i.kind {
-                                                    MetazoneMembershipKind::BehavesLikeGolden => {
-                                                        [].as_slice()
-                                                    }
-                                                    MetazoneMembershipKind::CustomVariants => {
-                                                        &["custom variants"]
-                                                    }
-                                                    MetazoneMembershipKind::CustomTransitions => {
-                                                        &["custom transitions"]
-                                                    }
-                                                },
-                                            )
-                                        }),
-                                    ),
-                                )
+                                (t, (os, mz_info))
                             })
                             .collect::<alloc::collections::BTreeMap<_, _>>(),
                     )?;
@@ -489,10 +468,9 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
     where
         D: serde::Deserializer<'de>,
     {
-        use serde::de::Error;
         if deserializer.is_human_readable() {
-            // TODO(#6752): Add human-readable deserialization for this data
-            Err(D::Error::custom("not yet supported; see icu4x#6752"))
+            Self::new(<_>::deserialize(deserializer)?)
+                .ok_or_else(|| serde::de::Error::custom("missing far_in_past entry"))
         } else {
             let TimeZonePeriodsSerde {
                 index,
@@ -517,7 +495,138 @@ pub struct MetazoneInfo {
     pub kind: MetazoneMembershipKind,
 }
 
+#[cfg(feature = "datagen")]
+impl serde::Serialize for MetazoneInfo {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        (
+            self.id,
+            match self.kind {
+                MetazoneMembershipKind::BehavesLikeGolden => [].as_slice(),
+                MetazoneMembershipKind::CustomVariants => &["custom variants"],
+                MetazoneMembershipKind::CustomTransitions => &["custom transitions"],
+            },
+        )
+            .serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for MetazoneInfo {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use alloc::borrow::Cow;
+        use alloc::vec::Vec;
+
+        let (id, kind) = <(MetazoneId, Vec<Cow<'de, str>>)>::deserialize(deserializer)?;
+        Ok(Self {
+            id,
+            kind: match kind.first().map(AsRef::as_ref) {
+                None => MetazoneMembershipKind::BehavesLikeGolden,
+                Some("custom variants") => MetazoneMembershipKind::CustomVariants,
+                Some("custom transitions") => MetazoneMembershipKind::CustomTransitions,
+                Some(_) => return Err(serde::de::Error::custom("invalid metazone kind")),
+            },
+        })
+    }
+}
+
 impl TimezonePeriods<'_> {
+    /// Creates a new [`TimezonePeriods`] from a map of time zones to their periods.
+    ///
+    /// Each time zone's period map must start with [`ZoneNameTimestamp::far_in_past()`].
+    #[cfg(feature = "serde")]
+    pub fn new(
+        periods: alloc::collections::BTreeMap<
+            TimeZone,
+            alloc::collections::BTreeMap<ZoneNameTimestamp, (VariantOffsets, Option<MetazoneInfo>)>,
+        >,
+    ) -> Option<TimezonePeriods<'static>> {
+        use alloc::collections::{BTreeMap, BTreeSet};
+        use alloc::vec::Vec;
+
+        fn pack_offsets_and_mzmsk(
+            offsets: VariantOffsets,
+            mz: Option<MetazoneInfo>,
+        ) -> VariantOffsetsWithMetazoneMembershipKind {
+            VariantOffsetsWithMetazoneMembershipKind {
+                offsets,
+                mzmsk: mz
+                    .map(|i| i.kind)
+                    .unwrap_or(MetazoneMembershipKind::BehavesLikeGolden),
+            }
+        }
+
+        let mut offsets = BTreeSet::new();
+        for ps in periods.values() {
+            for &(os, mz) in ps.values() {
+                offsets.insert(pack_offsets_and_mzmsk(os, mz));
+            }
+        }
+
+        let offset_index = offsets
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (v, i as u8))
+            .collect::<BTreeMap<_, _>>();
+
+        let offsets = offsets.into_iter().collect::<ZeroVec<_>>();
+
+        let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
+        for (&tz, value) in &periods {
+            deduped.entry(value).or_default().insert(tz);
+        }
+
+        let index = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
+            deduped
+                .values()
+                .enumerate()
+                .flat_map(|(i, vs)| vs.iter().map(move |tz| (tz.as_str(), i))),
+        )
+        .convert_store();
+
+        let list = VarZeroVec::from(
+            &deduped
+                .into_keys()
+                .map(|ps| {
+                    let mut iter = ps.iter().map(|(&t, &(os, mz))| {
+                        (
+                            Timestamp24(t),
+                            offset_index
+                                .get(&pack_offsets_and_mzmsk(os, mz))
+                                .copied()
+                                .unwrap_or_default(),
+                            NichedOption(mz.map(|i| i.id)),
+                        )
+                    });
+
+                    let (_, os, mz) = iter
+                        .next()
+                        .filter(|&(past, _, _)| past.0 == ZoneNameTimestamp::far_in_past())?;
+
+                    let rest = iter.collect::<ZeroVec<_>>();
+
+                    Some(zerovec::ule::encode_varule_to_box(
+                        &zerovec::ule::vartuple::VarTuple {
+                            sized: (os, mz),
+                            variable: rest.as_slice(),
+                        },
+                    ))
+                })
+                .collect::<Option<Vec<_>>>()?,
+        );
+
+        Some(TimezonePeriods {
+            index,
+            list,
+            offsets,
+        })
+    }
+
     /// Gets the information for a time zone at at timestamp
     ///
     /// If the timezone is in a metazone, returns the metazone ID as well as the offsets
@@ -649,4 +758,15 @@ pub(crate) mod legacy {
         ZeroMap2d<'static, TimeZone, ZoneNameTimestamp, VariantOffsets>,
         is_singleton = true
     );
+}
+
+#[cfg(all(test, feature = "datagen", feature = "compiled_data"))]
+#[test]
+fn test_timezone_periods_serde_roundtrip() {
+    let payload = DataProvider::<TimezonePeriodsV1>::load(&Baked, Default::default())
+        .unwrap()
+        .payload;
+    let json = serde_json::to_string(payload.get()).unwrap();
+    let deserialized: TimezonePeriods<'_> = serde_json::from_str(&json).unwrap();
+    assert_eq!(payload.get(), &deserialized);
 }

@@ -12,6 +12,7 @@ use crate::relativetime::{
     relativetime::RelativeTimeFormatter,
 };
 
+/// [`Part`](writeable::Part)s used by [`FormattedRelativeTime`].
 pub mod parts {
     use writeable::Part;
 
@@ -43,8 +44,7 @@ impl Writeable for FormattedRelativeTime<'_> {
             if !(self.is_negative && digit == 0) {
                 let i8_value = if self.is_negative { -digit } else { digit };
                 if let Some(v) = self.formatter.rt.get().get_relative(i8_value) {
-                    sink.with_part(parts::LITERAL, |s| s.write_str(v))?;
-                    return Ok(());
+                    return sink.with_part(parts::LITERAL, |s| s.write_str(v));
                 }
             }
         }
@@ -56,7 +56,7 @@ impl Writeable for FormattedRelativeTime<'_> {
         }
         .get((&self.value).into(), &self.formatter.plural_rules)
         .interpolate((self.formatter.decimal_formatter.format(&self.value),))
-        .write_to(sink)
+        .write_to_parts(sink)
     }
 }
 
