@@ -6,7 +6,6 @@ use crate::grapheme::*;
 use crate::indices::*;
 use crate::provider::*;
 use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
-use icu_collections::char16trie::TrieResult;
 
 /// Lifetimes:
 /// - `'data` = lifetime of the data
@@ -28,18 +27,19 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut trie_iter = self.trie.0.iter();
+        let mut cursor = self.trie.0.cursor();
         let mut intermediate_length = 0;
         let mut not_match = false;
         let mut previous_match = None;
         let mut last_grapheme_offset = 0;
 
         while let Some(next) = self.iter.next() {
-            match trie_iter.next32(next.1.into()) {
-                TrieResult::FinalValue(_) => {
+            cursor.step32(next.1.into());
+            match (cursor.value().is_some(), cursor.is_empty()) {
+                (true, true) => {
                     return Some(next.0 + Y::char_len(next.1));
                 }
-                TrieResult::Intermediate(_) => {
+                (true, false) => {
                     // Dictionary has to match with grapheme cluster segment.
                     // If not, we ignore it.
                     while last_grapheme_offset < next.0 + Y::char_len(next.1) {
@@ -57,7 +57,7 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     intermediate_length = next.0 + Y::char_len(next.1);
                     previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
                 }
-                TrieResult::NoMatch => {
+                (false, true) => {
                     if intermediate_length > 0 {
                         if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
                             // Rewind previous match point
@@ -69,7 +69,7 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     // Not found
                     return Some(next.0 + Y::char_len(next.1));
                 }
-                TrieResult::NoValue => {
+                (false, false) => {
                     // Prefix string is matched
                     not_match = true;
                 }

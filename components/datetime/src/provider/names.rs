@@ -449,8 +449,6 @@ size_test!(YearNames, year_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum YearNames<'data> {
@@ -466,7 +464,86 @@ pub enum YearNames<'data> {
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "datagen")]
+const JAPANESE_VARIABLE_ERA_NAMES: [&PotentialUtf8; 7] = [
+    PotentialUtf8::from_str("bce"),
+    PotentialUtf8::from_str("ce"),
+    PotentialUtf8::from_str("meiji"),
+    PotentialUtf8::from_str("taisho"),
+    PotentialUtf8::from_str("showa"),
+    PotentialUtf8::from_str("heisei"),
+    PotentialUtf8::from_str("reiwa"),
+];
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for YearNames<'_> {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        use alloc::vec::Vec;
+        use zerovec::vecs::VarZeroVecOwned;
+
+        #[derive(databake::Bake)]
+        #[databake(path = icu_datetime::provider::names)]
+        pub enum YearNames<'data> {
+            FixedEras(VarZeroVec<'data, str>),
+            VariableEras(YearNamesMap<'data>),
+            Cyclic(VarZeroVec<'data, str>),
+        }
+
+        match self {
+            // Japanese eras are now generated as `FixedEras`, but we keep serializing
+            // them as VariableEras. However, even a deserialized struct should bake to
+            // the FixedEras variant.
+            Self::VariableEras(e) => {
+                if let Ok(fixed) = VarZeroVecOwned::try_from_elements(
+                    &JAPANESE_VARIABLE_ERA_NAMES
+                        .iter()
+                        .flat_map(|s| get_year_name_from_map(e, s))
+                        .collect::<Vec<_>>(),
+                ) && fixed.len() == JAPANESE_VARIABLE_ERA_NAMES.len()
+                {
+                    YearNames::FixedEras(fixed.as_varzerovec()).bake(ctx)
+                } else {
+                    YearNames::VariableEras(e.clone()).bake(ctx)
+                }
+            }
+            Self::FixedEras(e) => YearNames::FixedEras(e.clone()).bake(ctx),
+            Self::Cyclic(c) => YearNames::Cyclic(c.clone()).bake(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for YearNames<'_> {
+    fn borrows_size(&self) -> usize {
+        match self {
+            YearNames::Cyclic(e) => e.borrows_size(),
+            YearNames::FixedEras(f) => f.borrows_size(),
+            YearNames::VariableEras(v) => v.borrows_size(),
+        }
+    }
+}
+
+#[test]
+fn year_names_round_trip() {
+    use databake::Bake;
+    use zerovec::vecs::VarZeroVecOwned;
+
+    let eras = VarZeroVecOwned::try_from_elements(&["a", "b", "c", "d", "e", "f", "g"]).unwrap();
+    let year_names = YearNames::FixedEras(eras.as_varzerovec());
+
+    let serde = serde_json::to_string(&year_names).unwrap();
+    let serde_round = serde_json::from_str::<YearNames>(&serde).unwrap();
+
+    // Japanese eras serialize as ::VariableEras
+    assert_ne!(year_names, serde_round);
+
+    // But Japanese ::VariableEras bake again as ::FixedEras
+    let bake = serde_round.bake(&Default::default()).to_string();
+    assert!(bake.contains("FixedEras"), "{bake}");
+    assert!(bake.contains(&eras.as_varzerovec().bake(&Default::default()).to_string()));
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for YearNames<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -486,21 +563,13 @@ impl serde::Serialize for YearNames<'_> {
         match self {
             // Japanese eras are now generated as `FixedEras`, but we want to keep serializing
             // them as VariableEras. It's the only calendar with 7 eras.
-            Self::FixedEras(e) if e.len() == 7 => {
-                let mut kvs = [
-                    PotentialUtf8::from_str("bce"),
-                    PotentialUtf8::from_str("ce"),
-                    PotentialUtf8::from_str("meiji"),
-                    PotentialUtf8::from_str("taisho"),
-                    PotentialUtf8::from_str("showa"),
-                    PotentialUtf8::from_str("heisei"),
-                    PotentialUtf8::from_str("reiwa"),
-                ]
-                .into_iter()
-                .zip(e.iter())
-                .collect::<Vec<_>>();
+            Self::FixedEras(e) if e.len() == JAPANESE_VARIABLE_ERA_NAMES.len() => {
+                let mut kvs = JAPANESE_VARIABLE_ERA_NAMES
+                    .iter()
+                    .zip(e.iter())
+                    .collect::<Vec<_>>();
                 kvs.sort_unstable();
-                let (ks, vs) = kvs.into_iter().unzip::<_, _, Vec<_>, Vec<_>>();
+                let (ks, vs) = kvs.into_iter().unzip::<_, _, Vec<&PotentialUtf8>, Vec<_>>();
                 x = VarZeroCow::from_encodeable(&(ks, vs));
                 Raw::VariableEras(&x)
             }
