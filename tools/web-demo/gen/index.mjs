@@ -2724,6 +2724,60 @@ let termini = Object.assign({
         ]
     },
 
+    "PluralRulesWithRanges.categoryFor": {
+        func: (selfLocaleName, opXV) => icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryFor(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(opXV))),
+        // For avoiding webpacking minifying issues:
+        funcName: "PluralRulesWithRanges.categoryFor",
+        expr: (selfLocaleName, opXV) => "icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).categoryFor(icu.PluralOperands.fromFixedDecimal(icu.Decimal.fromString(opXV)))".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])opXV([,\) \n])/, '$1' + opXV + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "op_x_v",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "PluralRulesWithRanges.resolveRange": {
+        func: (selfLocaleName, start, end) => icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).resolveRange(start, end),
+        // For avoiding webpacking minifying issues:
+        funcName: "PluralRulesWithRanges.resolveRange",
+        expr: (selfLocaleName, start, end) => "icu.PluralRulesWithRanges.createCardinal(icu.Locale.fromString(selfLocaleName)).resolveRange(start, end)".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])start([,\) \n])/, '$1' + start + '$2').replace(/([\( ])end([,\) \n])/, '$1' + end + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "start",
+                type: "PluralCategory",
+                typeUse: "enumerator",
+                values: ["Zero", "One", "Two", "Few", "Many", "Other"]
+            },
+            
+            {
+                name: "end",
+                type: "PluralCategory",
+                typeUse: "enumerator",
+                values: ["Zero", "One", "Two", "Few", "Many", "Other"]
+            }
+            
+        ]
+    },
+
     "EmojiSetData.containsStr": {
         func: (s) => icu.EmojiSetData.createBasic().containsStr(s),
         // For avoiding webpacking minifying issues:
