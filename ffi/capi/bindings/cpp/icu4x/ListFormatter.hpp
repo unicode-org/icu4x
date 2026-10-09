@@ -15,6 +15,7 @@
 #include "DataProvider.hpp"
 #include "ListLength.hpp"
 #include "Locale.hpp"
+#include "PartsSink.hpp"
 #include "diplomat_runtime.hpp"
 
 
@@ -43,6 +44,10 @@ namespace capi {
     void icu4x_ListFormatter_format_utf8_mv1(const icu4x::capi::ListFormatter* self, icu4x::diplomat::capi::DiplomatStringsView list, icu4x::diplomat::capi::DiplomatWrite* write);
 
     void icu4x_ListFormatter_format_utf16_mv1(const icu4x::capi::ListFormatter* self, icu4x::diplomat::capi::DiplomatStrings16View list, icu4x::diplomat::capi::DiplomatWrite* write);
+
+    void icu4x_ListFormatter_format_utf8_to_parts_mv1(const icu4x::capi::ListFormatter* self, icu4x::diplomat::capi::DiplomatStringsView list, icu4x::capi::PartsSink* parts, icu4x::diplomat::capi::DiplomatWrite* write);
+
+    void icu4x_ListFormatter_format_utf16_to_parts_mv1(const icu4x::capi::ListFormatter* self, icu4x::diplomat::capi::DiplomatStrings16View list, icu4x::capi::PartsSink* parts, icu4x::diplomat::capi::DiplomatWrite* write);
 
     void icu4x_ListFormatter_destroy_mv1(ListFormatter* self);
 
@@ -118,6 +123,42 @@ inline void icu4x::ListFormatter::format16_write(icu4x::diplomat::span<const dip
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
     icu4x::capi::icu4x_ListFormatter_format_utf16_mv1(this->AsFFI(),
         {reinterpret_cast<const icu4x::diplomat::capi::DiplomatString16View*>(list.data()), list.size()},
+        &write);
+}
+
+inline std::string icu4x::ListFormatter::format_to_parts(icu4x::diplomat::span<const diplomat::string_view_for_slice> list, icu4x::PartsSink& parts) const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    icu4x::capi::icu4x_ListFormatter_format_utf8_to_parts_mv1(this->AsFFI(),
+        {reinterpret_cast<const icu4x::diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
+        parts.AsFFI(),
+        &write);
+    return output;
+}
+template<typename W>
+inline void icu4x::ListFormatter::format_to_parts_write(icu4x::diplomat::span<const diplomat::string_view_for_slice> list, icu4x::PartsSink& parts, W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::capi::icu4x_ListFormatter_format_utf8_to_parts_mv1(this->AsFFI(),
+        {reinterpret_cast<const icu4x::diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
+        parts.AsFFI(),
+        &write);
+}
+
+inline std::string icu4x::ListFormatter::format_to_parts16(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list, icu4x::PartsSink& parts) const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    icu4x::capi::icu4x_ListFormatter_format_utf16_to_parts_mv1(this->AsFFI(),
+        {reinterpret_cast<const icu4x::diplomat::capi::DiplomatString16View*>(list.data()), list.size()},
+        parts.AsFFI(),
+        &write);
+    return output;
+}
+template<typename W>
+inline void icu4x::ListFormatter::format_to_parts16_write(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list, icu4x::PartsSink& parts, W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::capi::icu4x_ListFormatter_format_utf16_to_parts_mv1(this->AsFFI(),
+        {reinterpret_cast<const icu4x::diplomat::capi::DiplomatString16View*>(list.data()), list.size()},
+        parts.AsFFI(),
         &write);
 }
 

@@ -3,6 +3,7 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { ListLength } from "./ListLength.mjs"
 import { Locale } from "./Locale.mjs"
+import { PartsSink } from "./PartsSink.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -202,6 +203,31 @@ export class ListFormatter {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
     wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, listSlice.ptr, write.buffer);
+
+        try {
+            return write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            write.free();
+        }
+    }
+
+    /**
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
+     *
+     * @experimental
+     */
+    formatToParts(list, parts) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const listSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.strs(wasm, list, "string16")));
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+    wasm.icu4x_ListFormatter_format_utf16_to_parts_mv1(this.ffiValue, listSlice.ptr, parts instanceof PartsSink ? parts.ffiValue : typeError('parts', 'PartsSink'), write.buffer);
 
         try {
             return write.readString8();
