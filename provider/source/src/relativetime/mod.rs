@@ -28,30 +28,17 @@ macro_rules! make_data_provider {
                         "Field not found in relative time format data.",
                     ))?;
 
-                    let (zero_index, relatives) = if data.relatives.is_empty() {
-                        (0, zerovec::VarZeroVec::new())
-                    } else {
-                        let min_count = data.relatives.iter().map(|r| r.count).min().unwrap_or(0).min(0);
-                        let max_count = data.relatives.iter().map(|r| r.count).max().unwrap_or(0);
-                        let zero_index = u8::try_from(-i16::from(min_count))
-                            .map_err(|_| DataError::custom("Invalid min_count in relatives"))?;
-                        let relatives_vec: Vec<&str> = (min_count..=max_count)
-                            .map(|c| {
-                                data.relatives
-                                    .iter()
-                                    .find(|r| r.count == c)
-                                    .map(|r| r.pattern.as_str())
-                                    .unwrap_or("")
-                            })
-                            .collect();
-                        (zero_index, zerovec::VarZeroVec::from(&relatives_vec))
-                    };
+                    let min_count = data.relatives.keys().next().copied().unwrap_or(0).min(0);
+                    let max_count = data.relatives.keys().next_back().copied().unwrap_or(-1);
+                    let relatives_vec: Vec<&str> = (min_count..=max_count)
+                        .map(|c| data.relatives.get(&c).map(String::as_str).unwrap_or(""))
+                        .collect();
 
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(RelativeTimePatternData {
-                            zero_index,
-                            relatives,
+                            zero_index: min_count.unsigned_abs(),
+                            relatives: zerovec::VarZeroVec::from(&relatives_vec),
                             past: (&data.past).into(),
                             future: (&data.future).into(),
                         }),

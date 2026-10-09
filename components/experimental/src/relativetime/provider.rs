@@ -161,7 +161,7 @@ pub struct RelativeTimePatternData<'data> {
 impl<'data> RelativeTimePatternData<'data> {
     /// Returns the relative time string for `offset` (e.g. `-1` for `"yesterday"`), if present.
     pub fn get_relative(&self, offset: i8) -> Option<&str> {
-        let idx = usize::try_from(i16::from(offset) + i16::from(self.zero_index)).ok()?;
+        let idx = usize::from(self.zero_index).wrapping_add_signed(isize::from(offset));
         self.relatives.as_slice().get(idx).filter(|s| !s.is_empty())
     }
 }
