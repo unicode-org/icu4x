@@ -41,6 +41,7 @@ internal interface DecimalLib: Library {
     fun icu4x_Decimal_round_with_mode_and_increment_mv1(handle: Pointer, position: Short, mode: Int, increment: Int): Unit
     fun icu4x_Decimal_concatenate_end_mv1(handle: Pointer, other: Pointer): ResultUnitUnit
     fun icu4x_Decimal_to_string_mv1(handle: Pointer, write: Pointer): Unit
+    fun icu4x_Decimal_equals_mv1(handle: Pointer, other: Pointer): Byte
 }
 /**
  * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html) for more information.
@@ -501,6 +502,15 @@ class Decimal internal constructor (
         
         val returnString = DW.writeToString(write)
         return returnString
+    }
+    
+    /**
+     * Check whether two [Decimal] values are structurally equal (including sign and trailing zeros).
+     */
+    fun equals(other: Decimal): Boolean {
+        
+        val returnVal = lib.icu4x_Decimal_equals_mv1(handle, other.handle);
+        return (returnVal > 0)
     }
 
 }

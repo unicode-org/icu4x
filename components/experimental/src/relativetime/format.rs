@@ -36,7 +36,8 @@ pub struct FormattedRelativeTime<'a> {
 
 impl Writeable for FormattedRelativeTime<'_> {
     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> core::fmt::Result {
-        if self.options.numeric == Numeric::Auto && self.value.absolute.magnitude_range() == (0..=0)
+        if self.options.numeric.unwrap_or_default() == Numeric::Auto
+            && self.value.absolute.magnitude_range() == (0..=0)
         {
             // Can be cast without overflow as it is a single digit.
             let digit = self.value.absolute.digit_at(0) as i8;

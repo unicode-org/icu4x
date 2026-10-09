@@ -124,5 +124,22 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    // Test Decimal::equals
+    std::unique_ptr<Decimal> dec_a = Decimal::from_double_with_round_trip_precision(123.45).ok().value();
+    std::unique_ptr<Decimal> dec_b = Decimal::from_double_with_round_trip_precision(123.45).ok().value();
+    std::unique_ptr<Decimal> dec_c = Decimal::from_double_with_round_trip_precision(123.46).ok().value();
+    if (!dec_a->equals(*dec_b.get()) || dec_a->equals(*dec_c.get())) {
+        std::cout << "Decimal::equals failed for non-zero comparison" << std::endl;
+        return 1;
+    }
+    std::unique_ptr<Decimal> zero_pos = Decimal::from(0);
+    std::unique_ptr<Decimal> zero_neg = Decimal::from(0);
+    zero_neg->set_sign(DecimalSign::Negative);
+    if (zero_pos->equals(*zero_neg.get())) {
+        std::cout << "Decimal::equals failed for +0 vs -0 comparison" << std::endl;
+        return 1;
+    }
+
     return 0;
 }

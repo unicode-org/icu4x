@@ -5,7 +5,7 @@
 use fixed_decimal::Decimal;
 use icu_experimental::relativetime::{
     RelativeTimeFormatter, RelativeTimeFormatterOptions, RelativeTimeFormatterPreferences,
-    options::Numeric,
+    options::{GroupingStrategy, Numeric},
 };
 use icu_locale_core::{extensions::unicode::value, locale};
 use writeable::assert_writeable_eq;
@@ -16,8 +16,7 @@ macro_rules! generate_test {
      [$(($ar_time: literal, $ar_expected: literal)),+ $(,)?]) => {
         #[test]
         fn $test_name(){
-            let mut options = RelativeTimeFormatterOptions::default();
-            options.numeric = $options;
+            let options = RelativeTimeFormatterOptions::default().with_numeric($options);
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
                 locale!("en").into(),
                 options
@@ -1162,12 +1161,40 @@ fn test_numbering_system_latn() {
     assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
 }
 #[test]
+fn test_options_and_grouping_strategy() {
+    let formatter_default = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default(),
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter_default.format(1500.into()), "in 1,500 days");
+
+    let formatter_min2 = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default().with_grouping_strategy(GroupingStrategy::Min2),
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter_min2.format(1500.into()), "in 1500 days");
+    assert_writeable_eq!(formatter_min2.format(15000.into()), "in 15,000 days");
+
+    let formatter_never = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default()
+            .with_numeric(Numeric::Auto)
+            .with_grouping_strategy(GroupingStrategy::Never),
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter_never.format(1.into()), "tomorrow");
+    assert_writeable_eq!(formatter_never.format(15000.into()), "in 15000 days");
+}
+
+#[test]
 fn test_write_to_parts() {
     use icu_experimental::relativetime::parts;
     use writeable::assert_writeable_parts_eq;
 
     let mut options = RelativeTimeFormatterOptions::default();
-    options.numeric = Numeric::Auto;
+    options.numeric = Some(Numeric::Auto);
 
     let formatter_en =
         RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
@@ -1211,7 +1238,7 @@ fn test_write_to_parts() {
 #[test]
 fn test_negative_zero_and_trailing_zeros() {
     let mut options = RelativeTimeFormatterOptions::default();
-    options.numeric = Numeric::Auto;
+    options.numeric = Some(Numeric::Auto);
     let formatter_auto =
         RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
     let formatter_always = RelativeTimeFormatter::try_new_long_day(

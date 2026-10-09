@@ -56,6 +56,15 @@ final class PluralOperands implements ffi.Finalizable {
     return PluralOperands._fromFfi(result, []);
   }
 
+  /// Construct from a `FixedDecimal` significand and a compact/scientific exponent.
+  ///
+  /// Retains at most 18 digits each from the integer and fraction parts.
+  @meta.experimental
+  factory PluralOperands.fromSignificandAndExponent(Decimal significand, int exponent) {
+    final result = _icu4x_PluralOperands_from_significand_and_exponent_mv1(significand._ffi, exponent);
+    return PluralOperands._fromFfi(result, []);
+  }
+
 }
 
 // ignore: experimental_member_use
@@ -81,5 +90,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_int64_mv1(int i);
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_fixed_decimal_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_fixed_decimal_mv1(ffi.Pointer<ffi.Opaque> x);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_significand_and_exponent_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_significand_and_exponent_mv1(ffi.Pointer<ffi.Opaque> significand, int exponent);
 
 // dart format on
