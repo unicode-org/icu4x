@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "в этот час"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "в этот час"
+  ],
   "past": {
     "one": [
       0,

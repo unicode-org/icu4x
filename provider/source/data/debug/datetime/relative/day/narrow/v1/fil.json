@@ -1,11 +1,12 @@
 {
-  "relatives": {
-    "-2": "Araw bago ang kahapon",
-    "-1": "kahapon",
-    "0": "ngayong araw",
-    "1": "bukas",
-    "2": "Samakalawa"
-  },
+  "zero_index": 2,
+  "relatives": [
+    "Araw bago ang kahapon",
+    "kahapon",
+    "ngayong araw",
+    "bukas",
+    "Samakalawa"
+  ],
   "past": {
     "other": [
       0,

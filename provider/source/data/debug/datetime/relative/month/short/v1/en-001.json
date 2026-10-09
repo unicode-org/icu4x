@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "last mo",
-    "0": "this mo",
-    "1": "next mo"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "last mo",
+    "this mo",
+    "next mo"
+  ],
   "past": {
     "other": [
       0,

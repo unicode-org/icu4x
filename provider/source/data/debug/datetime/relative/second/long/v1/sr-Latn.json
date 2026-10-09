@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "sada"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "sada"
+  ],
   "past": {
     "one": [
       0,

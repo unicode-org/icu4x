@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "prošlog meseca",
-    "0": "ovog meseca",
-    "1": "sledećeg meseca"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "prošlog meseca",
+    "ovog meseca",
+    "sledećeg meseca"
+  ],
   "past": {
     "one": [
       0,

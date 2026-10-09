@@ -1,11 +1,12 @@
 {
-  "relatives": {
-    "-2": "evvelsi gün",
-    "-1": "dün",
-    "0": "bugün",
-    "1": "yarın",
-    "2": "öbür gün"
-  },
+  "zero_index": 2,
+  "relatives": [
+    "evvelsi gün",
+    "dün",
+    "bugün",
+    "yarın",
+    "öbür gün"
+  ],
   "past": {
     "other": [
       0,

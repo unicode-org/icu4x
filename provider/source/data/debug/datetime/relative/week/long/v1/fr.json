@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "la semaine dernière",
-    "0": "cette semaine",
-    "1": "la semaine prochaine"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "la semaine dernière",
+    "cette semaine",
+    "la semaine prochaine"
+  ],
   "past": {
     "one": [
       0,

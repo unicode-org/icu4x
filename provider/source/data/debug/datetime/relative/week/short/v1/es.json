@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "sem. ant.",
-    "0": "esta sem.",
-    "1": "próx. sem."
-  },
+  "zero_index": 1,
+  "relatives": [
+    "sem. ant.",
+    "esta sem.",
+    "próx. sem."
+  ],
   "past": {
     "other": [
       0,
