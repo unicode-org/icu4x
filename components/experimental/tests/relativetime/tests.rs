@@ -1189,6 +1189,53 @@ fn test_options_and_grouping_strategy() {
 }
 
 #[test]
+fn test_write_to_parts() {
+    use icu_experimental::relativetime::parts;
+    use writeable::assert_writeable_parts_eq;
+
+    let mut options = RelativeTimeFormatterOptions::default();
+    options.numeric = Some(Numeric::Auto);
+
+    let formatter_en =
+        RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
+
+    // Non-numeric relative literal ("yesterday")
+    assert_writeable_parts_eq!(
+        formatter_en.format((-1).into()),
+        "yesterday",
+        [(0, 9, parts::LITERAL)]
+    );
+
+    // Numeric interpolated pattern ("in 5 days")
+    assert_writeable_parts_eq!(
+        formatter_en.format(5.into()),
+        "in 5 days",
+        [(3, 4, icu_decimal::parts::INTEGER)]
+    );
+
+    // Numeric interpolated pattern with group and fraction ("1,234.5 days ago")
+    let dec: Decimal = "-1234.5".parse().unwrap();
+    assert_writeable_parts_eq!(
+        formatter_en.format(dec),
+        "1,234.5 days ago",
+        [
+            (0, 5, icu_decimal::parts::INTEGER),
+            (1, 2, icu_decimal::parts::GROUP),
+            (5, 6, icu_decimal::parts::DECIMAL),
+            (6, 7, icu_decimal::parts::FRACTION),
+        ]
+    );
+
+    // Pattern without placeholder (Arabic 1 year ago: "قبل سنة واحدة")
+    let formatter_ar = RelativeTimeFormatter::try_new_long_year(
+        locale!("ar").into(),
+        RelativeTimeFormatterOptions::default(),
+    )
+    .unwrap();
+    assert_writeable_parts_eq!(formatter_ar.format((-1).into()), "قبل سنة واحدة", []);
+}
+
+#[test]
 fn test_negative_zero_and_trailing_zeros() {
     let mut options = RelativeTimeFormatterOptions::default();
     options.numeric = Some(Numeric::Auto);

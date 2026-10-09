@@ -101,7 +101,7 @@ impl CanonicalCompositionBorrowed<'_> {
     #[inline(always)]
     pub fn compose(self, starter: char, second: char) -> Option<char> {
         crate::compose(
-            self.canonical_compositions.canonical_compositions.iter(),
+            &self.canonical_compositions.canonical_compositions,
             starter,
             second,
         )
