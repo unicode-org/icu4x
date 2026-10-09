@@ -1708,6 +1708,29 @@ let termini = Object.assign({
         ]
     },
 
+    "Decimal.equals": {
+        func: (selfV, otherV) => icu.Decimal.fromString(selfV).equals(icu.Decimal.fromString(otherV)),
+        // For avoiding webpacking minifying issues:
+        funcName: "Decimal.equals",
+        expr: (selfV, otherV) => "icu.Decimal.fromString(selfV).equals(icu.Decimal.fromString(otherV))".replace(/([\( ])selfV([,\) \n])/, '$1' + selfV + '$2').replace(/([\( ])otherV([,\) \n])/, '$1' + otherV + '$2'),
+        display: displayBool,
+        parameters: [
+            
+            {
+                name: "self_v",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "other_v",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "ListFormatter.format": {
         func: (selfLocaleName, selfLength, list) => icu.ListFormatter.createAndWithLength(icu.Locale.fromString(selfLocaleName), selfLength).format(list),
         // For avoiding webpacking minifying issues:

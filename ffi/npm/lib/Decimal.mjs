@@ -570,6 +570,22 @@ export class Decimal {
         }
     }
 
+    /**
+     * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros).
+     */
+    equals(other) {
+
+        const result = wasm.icu4x_Decimal_equals_mv1(this.ffiValue, other instanceof Decimal ? other.ffiValue : typeError('other', 'Decimal'));
+
+        try {
+            return result;
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }

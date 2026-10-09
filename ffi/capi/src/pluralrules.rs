@@ -154,6 +154,28 @@ pub mod ffi {
         pub fn from_fixed_decimal(x: &crate::unstable::fixed_decimal::ffi::Decimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
         }
+
+        /// Construct from a `FixedDecimal` significand and a compact/scientific exponent.
+        ///
+        /// Retains at most 18 digits each from the integer and fraction parts.
+        #[cfg(all(feature = "decimal", feature = "unstable"))]
+        #[diplomat::rust_link(
+            icu::plurals::PluralOperands::from_significand_and_exponent,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(auto, named_constructor)]
+        pub fn from_significand_and_exponent(
+            significand: &crate::unstable::fixed_decimal::ffi::Decimal,
+            exponent: u8,
+        ) -> Box<Self> {
+            Box::new(Self(
+                icu_plurals::PluralOperands::from_significand_and_exponent(
+                    &significand.0.absolute,
+                    exponent,
+                ),
+            ))
+        }
     }
 
     #[diplomat::out]
