@@ -52,8 +52,9 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("currency", |attrs| {
+        let attr = attrs.as_str().split('/').next_back().unwrap();
         matches!(
-            attrs.as_str().split('/').next_back().unwrap(),
+            attr.strip_suffix('n').unwrap_or(attr),
             "CAD" | "EGP" | "EUR" | "GBP" | "USD"
         )
     })
