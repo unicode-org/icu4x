@@ -29,6 +29,7 @@ pub(crate) enum Alt {
     Menu,
 }
 
+#[cfg(feature = "unstable")]
 impl Alt {
     /// Returns the string representation of the `Alt` variant, or `None` if `Unknown`.
     pub fn as_str(self) -> Option<&'static str> {
@@ -72,6 +73,7 @@ pub(crate) enum Menu {
     Extension,
 }
 
+#[cfg(feature = "unstable")]
 impl Menu {
     /// Returns the string representation of the `Menu` variant, or `None` if `Unknown`.
     pub fn as_str(self) -> Option<&'static str> {
