@@ -5,12 +5,14 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collections::char16trie::Char16Trie;
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::segmenter::provider::DictionaryBreakData;
-use icu::segmenter::provider::SegmenterDictionaryAutoV1;
-use icu::segmenter::provider::SegmenterDictionaryExtendedV1;
+use icu::segmenter::provider::SegmenterDictionaryAutoV2;
+use icu::segmenter::provider::SegmenterDictionaryExtendedV2;
 use icu_provider::prelude::*;
+use itertools::Itertools;
 use std::collections::HashSet;
-use std::fmt::Debug;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
 #[derive(serde::Deserialize, Debug)]
@@ -23,20 +25,69 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
     ) -> Result<DictionaryBreakData<'static>, DataError> {
-        let filename = format!(
-            "segmenter/dictionary/{}.toml",
-            req.id.marker_attributes as &str
+        // TODO: Read {}.txt instead
+        let dict = Char16Trie::new(
+            ZeroVec::from_slice_or_alloc(
+                &self
+                    .icuexport()?
+                    .read_and_parse_toml::<SegmenterDictionaryData>(&format!(
+                        "segmenter/dictionary/{}.toml",
+                        req.id.marker_attributes as &str
+                    ))?
+                    .trie_data,
+            )
+            .into_owned(),
         );
 
-        let toml_data = self
-            .icuexport()?
-            .read_and_parse_toml::<SegmenterDictionaryData>(&filename)?;
+        let mut alphabet_builder = CodePointInversionListBuilder::new();
 
-        let trie = Char16Trie {
-            data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+        for (word, _) in dict.iter2() {
+            for c in word.chars() {
+                alphabet_builder.add_char(c);
+            }
+        }
+
+        let alphabet = alphabet_builder.clone().build();
+
+        let trie = if alphabet.size() <= 128 {
+            let mut minimal_alphabet = alphabet_builder;
+            let mut size = alphabet.size();
+            for gap in alphabet
+                .iter_ranges_complemented()
+                .sorted_by_key(|r| r.end() - r.start())
+            {
+                size += (gap.end() - gap.start() + 1) as usize;
+                if size > 128 {
+                    break;
+                }
+                minimal_alphabet.add_range32(gap);
+            }
+
+            let alphabet = minimal_alphabet.build();
+
+            DictionaryBreakData::ZeroTrie {
+                trie: ZeroTrieSimpleAscii::try_from_btree_map_str(
+                    &dict
+                        .iter2()
+                        .map(|(k, v)| {
+                            (
+                                k.chars()
+                                    .map(|c| alphabet.position(c).unwrap() as u8 as char)
+                                    .collect::<String>(),
+                                v as u32 as usize,
+                            )
+                        })
+                        .collect(),
+                )
+                .unwrap()
+                .convert_store(),
+                alphabet,
+            }
+        } else {
+            DictionaryBreakData::Char16Trie(dict)
         };
 
-        Ok(DictionaryBreakData(trie))
+        Ok(trie)
     }
 }
 
@@ -68,8 +119,8 @@ macro_rules! implement {
     };
 }
 
-implement!(SegmenterDictionaryAutoV1, ["cjdict"]);
+implement!(SegmenterDictionaryAutoV2, ["cjdict"]);
 implement!(
-    SegmenterDictionaryExtendedV1,
+    SegmenterDictionaryExtendedV2,
     ["khmerdict", "laodict", "burmesedict", "thaidict"]
 );
