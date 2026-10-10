@@ -801,6 +801,7 @@ where
     }
 }
 
+#[allow(deprecated)]
 impl<'a, T> ZeroVec<'a, T>
 where
     T: EqULE,
@@ -823,6 +824,7 @@ where
     ///     assert_eq!(bytes, zerovec.as_bytes());
     /// }
     /// ```
+    #[deprecated(since = "0.11.9", note = "consider ZeroVec::from_aligned_slice; see EqULE")]
     #[inline]
     pub fn try_from_slice(slice: &'a [T]) -> Option<Self> {
         T::slice_to_unaligned(slice).map(|ule_slice| Self::new_borrowed(ule_slice))
@@ -850,10 +852,39 @@ where
     /// // Note: zerovec could be either borrowed or owned.
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
+    #[deprecated(since = "0.11.9", note = "consider ZeroVec::from_aligned_slice; see EqULE")]
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn from_slice_or_alloc(slice: &'a [T]) -> Self {
         Self::try_from_slice(slice).unwrap_or_else(|| Self::alloc_from_slice(slice))
+    }
+}
+
+impl<'a, T> ZeroVec<'a, T>
+where
+    T: AsULE<ULE = T>,
+{
+    /// Creates a `ZeroVec<'a, T>` from a `&'a [T]` when T is its own ULE.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// // The little-endian bytes correspond to the numbers on the following line.
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let nums: &[u16] = &[211, 281, 421, 461];
+    ///
+    /// let zerovec = ZeroVec::from_aligned_slice(nums);
+    ///
+    /// assert_eq!(bytes, zerovec.as_bytes());
+    /// assert!(!zerovec.is_owned());
+    /// ```
+    #[inline]
+    pub fn from_aligned_slice(slice: &'a [T]) -> Self {
+        ZeroVec::new_borrowed(slice)
     }
 }
 
