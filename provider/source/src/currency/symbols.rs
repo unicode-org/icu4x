@@ -22,7 +22,10 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .as_borrowed()
             .get_set_for_value_group(GeneralCategoryGroup::Letter);
 
-        let (length, currency) = req.id.marker_attributes.as_str().split_once('/').unwrap();
+        let (is_narrow, currency) = match req.id.marker_attributes.as_str().strip_suffix('n') {
+            Some(currency) => (true, currency),
+            None => (false, req.id.marker_attributes.as_str()),
+        };
 
         let currency_pattern = self
             .cldr()?
@@ -38,10 +41,15 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .get(currency)
             .unwrap();
 
-        let symbol = match length {
-            s if s == CurrencySymbolsV1::SHORT.as_str() => currency_pattern.short.as_ref(),
-            n if n == CurrencySymbolsV1::NARROW.as_str() => currency_pattern.narrow.as_ref(),
-            _ => unreachable!(),
+        // UTS #35 lateral inheritance: a missing narrow symbol falls back to the
+        // standard symbol. Resolving this here means consumers need a single request.
+        let symbol = if is_narrow {
+            currency_pattern
+                .narrow
+                .as_ref()
+                .or(currency_pattern.short.as_ref())
+        } else {
+            currency_pattern.short.as_ref()
         }
         .unwrap();
 
@@ -83,13 +91,18 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
             {
                 if patterns.short.as_ref().is_some_and(|s| s != currency) {
                     ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("s/{currency}")).unwrap(),
+                        DataMarkerAttributes::try_from_string(currency.clone()).unwrap(),
                         locale,
                     ));
                 }
-                if patterns.narrow.as_ref().is_some_and(|s| s != currency) {
+                if patterns
+                    .narrow
+                    .as_ref()
+                    .or(patterns.short.as_ref())
+                    .is_some_and(|s| s != currency)
+                {
                     ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("n/{currency}")).unwrap(),
+                        DataMarkerAttributes::try_from_string(format!("{currency}n")).unwrap(),
                         locale,
                     ));
                 }
@@ -161,4 +174,18 @@ fn test_symbols() {
         load(AR_EG, USD, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("US$", true, false)
     );
+
+    // `fr` defines a standard symbol for FRF but no narrow symbol: the narrow entry
+    // carries the standard symbol (UTS #35 lateral inheritance, resolved at datagen).
+    const FRF: CurrencyType = currency!("FRF");
+    const FR: DataLocale = data_locale!("fr");
+    assert_eq!(
+        load(FR, FRF, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(FR, FRF, CurrencySymbolsV1::NARROW).unwrap().get(),
+    );
+
+    // No symbol of either width: no narrow entry is synthesized either.
+    const PTE: CurrencyType = currency!("PTE");
+    assert_eq!(load(FR, PTE, CurrencySymbolsV1::SHORT), None);
+    assert_eq!(load(FR, PTE, CurrencySymbolsV1::NARROW), None);
 }
