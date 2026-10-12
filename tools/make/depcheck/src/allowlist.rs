@@ -114,7 +114,7 @@ pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &["icu_experimental_data"];
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_LSTM_DEPS: &[&str] = &[];
 
-/// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
+/// Dependencies allowed when opting in to `fixed_decimal`'s `ryu` backend
 /// This should never change
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.

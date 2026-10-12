@@ -27,7 +27,7 @@ cargo add icu
 
 ### JavaScript Part 1
 
-We recommend using [CodePen](https://codepen.io/pen/?editors=1011) to follow along. To load ICU4X into CodePen, you can use this snippet in the JavaScript editor:
+We recommend using [`CodePen`](https://codepen.io/pen/?editors=1011) to follow along. To load ICU4X into `CodePen`, you can use this snippet in the JavaScript editor:
 
 ```javascript
 import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://unpkg.com/icu@2.0.0";

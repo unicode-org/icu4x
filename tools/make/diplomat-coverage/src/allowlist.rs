@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This file contains the allowlist for the ffi_coverage test
+//! This file contains the allowlist for the `ffi_coverage` test
 //!
-//! Most new entries will go into IGNORED_PATHS
+//! Most new entries will go into [`IGNORED_PATHS`]
 
 use std::collections::{HashMap, HashSet};
 
