@@ -359,11 +359,12 @@ mod tests {
 
         // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
         // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
-        // the decimal separator (e.g. "12,345$67").
+        // the decimal separator (e.g. "12,345$67"). Datagen stores that symbol as the
+        // empty string.
         //
         // Compact currency formatters respect `CurrencyDecimalSymbolsV1`, using '$'
-        // instead of the locale's default DecimalSymbolsV1 (','), and omit the zero-width
-        // space symbol placeholder (CLDR-19771).
+        // instead of the locale's default DecimalSymbolsV1 (','), and use the no-currency
+        // pattern for the empty symbol (CLDR-19771).
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
                 .unwrap();

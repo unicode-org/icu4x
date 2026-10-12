@@ -96,10 +96,17 @@ impl CurrencySymbol<'_> {
         &self.0.variable
     }
 
-    /// Returns true if the symbol is a zero-width space (`\u{200B}`), which CLDR uses
-    /// when the currency separator replaces the currency symbol (CLDR-19771).
-    pub(crate) fn is_zero_width_space(&self) -> bool {
-        self.as_str() == "\u{200B}"
+    /// Returns true if the symbol is empty.
+    ///
+    /// An empty symbol means the locale explicitly has no symbol for this currency, so
+    /// the amount is formatted with the no-currency pattern. For example, in `pt-PT`,
+    /// `PTE` uses the cifrão ('$') as its decimal separator instead of a symbol:
+    /// "12,345$67" (CLDR-19771). CLDR marks this case with U+200B ZERO WIDTH SPACE,
+    /// which datagen stores as the empty string.
+    ///
+    /// This is different from a missing `CurrencySymbolsV1` entry, which falls back to the ISO code.
+    pub(crate) fn is_empty(&self) -> bool {
+        self.as_str().is_empty()
     }
 }
 

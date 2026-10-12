@@ -127,7 +127,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         )
         .allow_identifier_not_found()?
         {
-            Some(res) if res.payload.get().is_zero_width_space() => {
+            Some(res) if res.payload.get().is_empty() => {
+                // Empty symbol: the locale explicitly has no symbol for this currency,
+                // so use the no-currency pattern (see `CurrencySymbol::is_empty`).
                 let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(
                     &crate::provider::Baked,
                     ids,
@@ -191,7 +193,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         )
         .allow_identifier_not_found()?
         {
-            Some(res) if res.payload.get().is_zero_width_space() => {
+            Some(res) if res.payload.get().is_empty() => {
+                // Empty symbol: the locale explicitly has no symbol for this currency,
+                // so use the no-currency pattern (see `CurrencySymbol::is_empty`).
                 let patterns =
                     load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
                 CurrencyFormatterData::NoCurrency { patterns }
