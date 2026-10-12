@@ -10,6 +10,7 @@ pub(crate) mod script;
 pub(crate) mod variant;
 
 use crate::cldr_serde::alt::{Alt, WithAlt};
+use crate::source::source_issue;
 use std::collections::{BTreeMap, HashMap};
 
 pub(crate) struct ExtractedNames<'a, K> {
@@ -70,7 +71,12 @@ where
                         //   perhaps with datagen alt flags.
                         // TODO(#8011): Support standalone display names.
                     } else {
-                        log::warn!("Unhandled alt variant for {}: {:?}", log_context, alt);
+                        source_issue!(
+                            Default::default(),
+                            "Unhandled alt variant for {}: {:?}",
+                            log_context,
+                            alt
+                        );
                     }
                 }
             }

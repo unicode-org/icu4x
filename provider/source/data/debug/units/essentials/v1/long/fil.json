@@ -196,15 +196,6 @@
       {
         "Power": {
           "power": "Two",
-          "count": "One"
-        }
-      },
-      "{0} kuwadrado"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Two",
           "count": "Other"
         }
       },

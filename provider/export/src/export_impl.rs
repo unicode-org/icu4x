@@ -27,10 +27,27 @@ use rayon::prelude::*;
 
 impl ExportDriver {
     pub(crate) fn export_dyn(
-        self,
+        mut self,
         provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
     ) -> Result<ExportMetadata, DataError> {
+        if !self.attributes_filters.contains_key("segmenter") {
+            self = self.with_segmenter_models([
+                "cjdict".into(),
+                "burmesedict".into(),
+                "khmerdict".into(),
+                "laodict".into(),
+                "thaidict".into(),
+                "Burmese_codepoints_exclusive_model4_heavy".into(),
+                "Khmer_codepoints_exclusive_model4_heavy".into(),
+                "Lao_codepoints_exclusive_model4_heavy".into(),
+                "Thai_codepoints_exclusive_model4_heavy".into(),
+            ]);
+        }
+        if !self.attributes_filters.contains_key("collator") {
+            self = self.with_additional_collations([]);
+        }
+
         let Self {
             markers,
             requested_families,

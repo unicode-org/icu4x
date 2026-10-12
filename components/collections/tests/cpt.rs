@@ -4,6 +4,7 @@
 
 #![allow(dead_code)]
 
+use core::fmt::Debug;
 use icu_collections::codepointtrie::planes::get_planes_trie;
 use icu_collections::codepointtrie::*;
 use zerovec::ZeroVec;
@@ -242,7 +243,7 @@ enum ValueWidthEnum {
 /// Test .`get()` on [`CodePointTrie`] by iterating through each range in
 /// `check_ranges` and assert that the associated
 /// value matches the trie value for each code point in the range.
-fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
+fn check_trie<T: TrieValue>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     assert_eq!(
         0,
         check_ranges.len() % 2,
@@ -257,7 +258,7 @@ fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &
         let range_value = range_tuple[1];
         // Check all values in this range, one-by-one
         while i < range_limit {
-            assert_eq!(range_value, trie.get32(i).into(), "trie_get({i})",);
+            assert_eq!(range_value, trie.get32(i).to_u32(), "trie_get({i})",);
             i += 1;
         }
     }
@@ -268,10 +269,7 @@ fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &
 ///
 /// `.iter_ranges()` returns an iterator that produces values
 /// by calls to .`get_range`, and this checks if it matches the values in `check_ranges`.
-fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
-    trie: &CodePointTrie<T>,
-    check_ranges: &[u32],
-) {
+fn test_check_ranges_get_ranges<T: TrieValue>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     assert_eq!(
         0,
         check_ranges.len() % 2,
@@ -301,7 +299,7 @@ fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
         let cpm_range = cpm_range.unwrap();
         let cpmr_start = cpm_range.range.start();
         let cpmr_end = cpm_range.range.end();
-        let cpmr_value: u32 = cpm_range.value.into();
+        let cpmr_value: u32 = cpm_range.value.to_u32();
 
         assert_eq!(range_start, *cpmr_start);
         assert_eq!(range_limit, *cpmr_end + 1);
@@ -317,9 +315,29 @@ fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
 }
 
 /// Run above tests that verify the validity of [`CodePointTrie`] methods
-fn run_trie_tests<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
+fn run_trie_tests<T: TrieValue + Debug>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     check_trie(trie, check_ranges);
+    check_builder(trie);
     test_check_ranges_get_ranges(trie, check_ranges);
+}
+
+fn check_builder<T: TrieValue + Debug>(trie: &CodePointTrie<T>) {
+    let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+        trie.null_value(),
+        trie.error_value(),
+        match trie.as_typed_ref() {
+            Typed::Fast(..) => TrieType::Fast,
+            Typed::Small(..) => TrieType::Small,
+        },
+    );
+
+    for range in trie.iter_ranges() {
+        builder.set_range_value(range.range, range.value);
+    }
+
+    let actual = builder.build();
+
+    assert_eq!(&actual, trie);
 }
 
 // The following structs might be useful later for de-/serialization of the

@@ -13,6 +13,7 @@ keywords = ["macros", "derive", "serialization", "zero-copy"]
 edition = "2021"
 license.workspace = true
 repository.workspace = true
+rust-version = "1.83"
 
 [package.metadata.workspaces]
 independent = true

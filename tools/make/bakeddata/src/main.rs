@@ -96,8 +96,7 @@ fn main() {
             .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
-    )
-    .with_recommended_segmenter_models();
+    );
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
@@ -270,14 +269,16 @@ fn main() {
     }
 
     if components.len() == COMPONENTS.len() {
-        // On full datagen runs (as in CI) validate that `--markers all --locales full` works
+        // On full datagen runs (as in CI) validate that every struct works
         ExportDriver::new(
             [DataLocaleFamily::FULL],
             DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::try_new_unstable(&source).unwrap(),
         )
-        // These are all supported models
-        .with_recommended_segmenter_models()
+        // All segmenter models
+        .with_marker_attributes_filter("segmenter", |_| true)
+        // All collations
+        .with_marker_attributes_filter("collator", |_| true)
         .export(&source, &*zero_copy_check_exporter)
         .unwrap();
     }
@@ -538,7 +539,7 @@ impl ZeroCopyCheckExporter {
                     .iter()
                     .all(|e| Self::EXPECTED_VIOLATIONS.contains(e)),
             "Expected violations list does not match found violations!\n\
-            If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
+            If the new list is smaller, please update EXPECTED_VIOLATIONS in tools/make/bakeddata/src/main.rs\n\
             If it is bigger and that was unexpected, please make sure the marker remains zero-copy, or ask ICU4X team members if it is okay \
             to temporarily allow for this marker to be allowlisted.\n\
             Common cause: did you forget to add `serde(borrow)` to all of the fields in your data struct?\n\

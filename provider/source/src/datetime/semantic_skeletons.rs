@@ -5,6 +5,7 @@
 use super::{DatagenCalendar, PackedPatternItem, select_pattern, transpose_with_fallback};
 use crate::datetime::available_formats::DatetimeAsciiPreference;
 use crate::debug_provider::DebugProvider;
+use crate::source::source_issue;
 use crate::{IterableDataProviderCached, SourceDataProvider, cldr_serde};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
@@ -215,8 +216,9 @@ impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Patt
                 let field = Field::from(req);
                 let attributes = attributes.as_str();
                 let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
-                log::warn!(
-                    "{calendar}/{locale}/{attributes}: conflicting field: {previous_field} <=> {field}"
+                source_issue!(
+                    *locale,
+                    "{calendar}/{attributes}: conflicting field: {previous_field} <=> {field}"
                 )
             });
         });
@@ -439,7 +441,7 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
 
 pub(crate) fn preferred_hour_cycle(
     other: &cldr_serde::ca::Dates,
-    locale: &DataLocale,
+    &locale: &DataLocale,
 ) -> CoarseHourCycle {
     let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
     for s in [
@@ -458,8 +460,9 @@ pub(crate) fn preferred_hour_cycle(
 
         if let Some(preferred_hour_cycle) = preferred_hour_cycle {
             if hour_cycle != preferred_hour_cycle {
-                log::warn!(
-                    "{locale:?} contained a mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})"
+                source_issue!(
+                    locale,
+                    "mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})"
                 );
             }
         } else {

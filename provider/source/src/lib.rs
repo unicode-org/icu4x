@@ -133,10 +133,10 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_CLDR_TAG: &'static str = "49.0.0-ALPHA2";
+    pub const TESTED_CLDR_TAG: &'static str = "49.0.0-BETA3";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2026-08-31/79.x";
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-79.1rc";
 
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -149,7 +149,7 @@ impl SourceDataProvider {
     pub const TESTED_UCD_TAG: &'static str = Self::TESTED_UNICODE_TAG;
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2026c";
+    pub const TESTED_TZDB_TAG: &'static str = "2026e";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///

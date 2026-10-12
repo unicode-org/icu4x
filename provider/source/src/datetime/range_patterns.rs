@@ -4,6 +4,7 @@
 
 use super::semantic_skeletons::{gen_date_components, gen_time_components};
 use super::{DatagenCalendar, PackedPatternItem};
+use crate::source::source_issue;
 use crate::{
     IterableDataProviderCached, SourceDataProvider, cldr_serde, debug_provider::DebugProvider,
 };
@@ -116,9 +117,9 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
                 let previous_field = Field::from(previous_field);
                 let attributes = attributes.as_str();
                 let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
-                log::warn!(
-                    "{calendar}/{locale}/{attributes}: conflicting field in range pattern: {previous_field} <=> {field}",
-                    field = requested_field
+                source_issue!(
+                    *locale,
+                    "{calendar}/{attributes}: conflicting field in range pattern: {previous_field} <=> {requested_field}"
                 );
             }
         }

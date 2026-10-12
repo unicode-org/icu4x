@@ -4,8 +4,8 @@
 
 use fixed_decimal::{Decimal, Sign};
 use icu_decimal::{
-    DecimalFormatter, DecimalFormatterPreferences, options::DecimalFormatterOptions,
-    provider::DecimalDigitsV1, provider::DecimalSymbolsV1,
+    DecimalFormatter, DecimalFormatterPreferences, provider::DecimalDigitsV1,
+    provider::DecimalSymbolsV1,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
@@ -84,12 +84,11 @@ pub mod preferences {
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let mut options = RelativeTimeFormatterOptions::default();
-/// options.numeric = Numeric::Auto;
-///
-/// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_short_day(locale!("es").into(), options)
-///         .expect("locale should be present");
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
+///     locale!("es").into(),
+///     RelativeTimeFormatterOptions::default().with_numeric(Numeric::Auto),
+/// )
+/// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(Decimal::from(0u8)),
@@ -156,10 +155,9 @@ macro_rules! constructor {
         ) -> Result<Self, DataError> {
             let locale = <$marker>::make_locale(prefs.locale_preferences);
             let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
-            // Initialize DecimalFormatter with default options
             let decimal_formatter = DecimalFormatter::try_new(
                 (&prefs).into(),
-                DecimalFormatterOptions::default(),
+                options.into(),
             )?;
             let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
@@ -200,11 +198,10 @@ macro_rules! constructor {
         {
             let locale = <$marker>::make_locale(prefs.locale_preferences);
             let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
-            // Initialize DecimalFormatter with default options
             let decimal_formatter = DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                DecimalFormatterOptions::default(),
+                options.into(),
             )?;
             let rt: DataResponse<$marker> = provider
                 .load(DataRequest {

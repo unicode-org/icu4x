@@ -1,0 +1,22 @@
+# Sentence breaking tests
+#
+# Format: input is the concatenation of the segments, which are separated by '|'.
+# Everything after a '#' and blank lines are ignored.
+# Characters can be escaped as \u{XXXX}.
+
+# https://github.com/unicode-org/icu4x/issues/3885
+. |🤥 # [ATerm] [Sp] [Any]
+. \u{A}|🤥 # [ATerm] [Sp] [ParaSep] [Any]
+." |🤥 # [ATerm] [Close] [Sp] [Any]
+." \u{A}|🤥 # [ATerm] [Close] [Sp] [ParaSep] [Any]
+." |" # [ATerm] [Close] [Sp] [Close]
+." |1 # [ATerm] [Close] [Sp] [Numeric]
+." |A # [ATerm] [Close] [Sp] [Upper]
+." |ぁ # [ATerm] [Close] [Sp] [OLetter]
+! |🤥 # [STerm] [Sp] [Any]
+! \u{A}|🤥 # [STerm] [Sp] [ParaSep] [Any]
+!" \u{A}|🤥 # [STerm] [Close] [Sp] [ParaSep] [Any]
+!" |" # [STerm] [Close] [Sp] [Close]
+!" |1 # [STerm] [Close] [Sp] [Numeric]
+!" |A # [STerm] [Close] [Sp] [Upper]
+!" |ぁ # [STerm] [Close] [Sp] [OLetter]

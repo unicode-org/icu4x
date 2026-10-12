@@ -105,6 +105,15 @@ public:
    */
   inline uint32_t seconds_part() const;
 
+  /**
+   * Formats the {@link UtcOffset} as a string.
+   *
+   * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
+   */
+  inline std::string to_string() const;
+  template<typename W>
+  inline void to_string_write(W& writeable_output) const;
+
     inline const icu4x::capi::UtcOffset* AsFFI() const;
     inline icu4x::capi::UtcOffset* AsFFI();
     inline static const icu4x::UtcOffset* FromFFI(const icu4x::capi::UtcOffset* ptr);

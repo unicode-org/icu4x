@@ -121,6 +121,16 @@ final class UtcOffset implements ffi.Finalizable {
     return result;
   }
 
+  /// Formats the [UtcOffset] as a string.
+  ///
+  /// See the [Rust documentation for `write_to`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
+  @override
+  String toString() {
+    final write = _Write();
+    _icu4x_UtcOffset_to_string_mv1(_ffi, write._ffi);
+    return write.finalize();
+  }
+
 }
 
 // ignore: experimental_member_use
@@ -176,5 +186,11 @@ external int _icu4x_UtcOffset_minutes_part_mv1(ffi.Pointer<ffi.Opaque> self);
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UtcOffset_seconds_part_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_UtcOffset_seconds_part_mv1(ffi.Pointer<ffi.Opaque> self);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UtcOffset_to_string_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_UtcOffset_to_string_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 // dart format on

@@ -117,19 +117,24 @@ impl UtcOffset {
             return Err(InvalidOffsetError);
         };
 
-        let minutes = match code_units {
+        let (minutes, seconds) = match code_units {
             /* ±hh */
-            &[_, _] => Some(0),
+            &[_, _] => (Some(0), Some(0)),
             /* ±hhmm, ±hh:mm */
-            &[_, _, m1, m2] | &[_, _, b':', m1, m2] => try_get_time_component([m1, m2]),
-            _ => None,
+            &[_, _, m1, m2] | &[_, _, b':', m1, m2] => (try_get_time_component([m1, m2]), Some(0)),
+            /* ±hhmmss, ±hh:mm:ss */
+            &[_, _, m1, m2, s1, s2] | &[_, _, b':', m1, m2, b':', s1, s2] => (
+                try_get_time_component([m1, m2]),
+                try_get_time_component([s1, s2]),
+            ),
+            _ => (None, None),
         };
 
-        let Some(minutes @ ..60) = minutes else {
+        let (Some(minutes @ ..60), Some(seconds @ ..60)) = (minutes, seconds) else {
             return Err(InvalidOffsetError);
         };
 
-        Self::try_from_seconds(offset_sign * (hours * 60 + minutes) * 60)
+        Self::try_from_seconds(offset_sign * ((hours * 60 + minutes) * 60 + seconds))
     }
 
     /// Create a [`UtcOffset`] from a seconds input without checking bounds.
@@ -177,6 +182,38 @@ impl FromStr for UtcOffset {
         Self::try_from_str(s)
     }
 }
+
+impl writeable::Writeable for UtcOffset {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        sink.write_char(if self.is_non_negative() { '+' } else { '-' })?;
+        for (i, part) in [
+            self.hours_part().unsigned_abs(),
+            self.minutes_part(),
+            self.seconds_part(),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            if i == 2 && part == 0 {
+                break;
+            }
+            if i != 0 {
+                sink.write_char(':')?;
+            }
+            if part < 10 {
+                sink.write_char('0')?;
+            }
+            part.write_to(sink)?;
+        }
+        Ok(())
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(if self.seconds_part() == 0 { 6 } else { 9 })
+    }
+}
+
+writeable::impl_display_with_writeable!(UtcOffset, #[cfg(feature = "alloc")]);
 
 #[derive(Debug)]
 enum OffsetData {
@@ -439,5 +476,29 @@ pub fn test_legacy_offsets_data() {
                 .compute_offsets_from_time_zone_and_name_timestamp(tz, t),
             "{t:?}",
         );
+    }
+}
+
+#[cfg(all(test, feature = "serde", feature = "alloc"))]
+#[test]
+#[allow(deprecated)]
+fn test_variant_offsets_serde_roundtrip() {
+    for (std_secs, dst_secs, expected_json) in [
+        (5 * 3600, None, "\"+05:00\""),
+        (-30 * 60, None, "\"-00:30\""),
+        (-5 * 3600, Some(-4 * 3600), "\"-05:00/-04:00\""),
+        (-44 * 60 - 30, Some(19 * 60 + 32), "\"-00:44:30/+00:19:32\""),
+    ] {
+        let offsets = VariantOffsets {
+            standard: UtcOffset::try_from_seconds(std_secs).unwrap(),
+            daylight: dst_secs.map(|s| UtcOffset::try_from_seconds(s).unwrap()),
+        };
+        if dst_secs.is_none() {
+            writeable::assert_writeable_eq!(offsets.standard, expected_json.trim_matches('"'));
+        }
+        let json = serde_json::to_string(&offsets).unwrap();
+        assert_eq!(json, expected_json);
+        let deserialized: VariantOffsets = serde_json::from_str(&json).unwrap();
+        assert_eq!(offsets, deserialized);
     }
 }
