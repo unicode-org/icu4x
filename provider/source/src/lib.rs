@@ -778,7 +778,9 @@ impl std::hash::Hasher for DataHasher {
 pub(crate) static WARNING_FILE: OnceLock<Mutex<BufWriter<File>>> = OnceLock::new();
 
 pub fn set_warning_file(file: File) -> Result<(), File> {
-    WARNING_FILE.set(Mutex::new(BufWriter::new(file))).map_err(|mutex_buf_writer| mutex_buf_writer.into_inner().unwrap().into_inner().unwrap())
+    WARNING_FILE
+        .set(Mutex::new(BufWriter::new(file)))
+        .map_err(|mutex_buf_writer| mutex_buf_writer.into_inner().unwrap().into_inner().unwrap())
 }
 
 pub fn flush_warning_file() -> std::io::Result<()> {
