@@ -86,10 +86,10 @@ impl<'a> Parser<'a> {
         }
         match self.peek() {
             None => Ok(None),
-            Some('\\') => self.escape().map(Some),
-            Some('{') => self.placeholder().map(Some),
+            Some('\\') => self.parse_escape().map(Some),
+            Some('{') => self.parse_placeholder().map(Some),
             Some(c @ ('}' | '\0')) => Err(self.unexpected(c)),
-            Some(_) => Ok(Some(self.text())),
+            Some(_) => Ok(Some(self.parse_text())),
         }
     }
 
@@ -108,7 +108,7 @@ impl<'a> Parser<'a> {
     }
 
     // A run of text-char.
-    fn text(&mut self) -> (Event<'a>, Range<usize>) {
+    fn parse_text(&mut self) -> (Event<'a>, Range<usize>) {
         let start = self.pos;
         let rest = self.rest();
         let len = rest.find(['\\', '{', '}', '\0']).unwrap_or(rest.len());
@@ -120,7 +120,7 @@ impl<'a> Parser<'a> {
     }
 
     // escaped-char = backslash ( backslash / "{" / "|" / "}" )
-    fn escape(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
+    fn parse_escape(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
         let start = self.pos;
         self.pos += 1;
         match self.peek() {
@@ -137,7 +137,7 @@ impl<'a> Parser<'a> {
 
     // variable-expression = "{" o variable [s function] *(s attribute) o "}"
     // without function and attributes.
-    fn placeholder(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
+    fn parse_placeholder(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
         let start = self.pos;
         self.pos += 1;
         self.skip_o();
@@ -150,7 +150,7 @@ impl<'a> Parser<'a> {
             Some(c) => return Err(self.unexpected(c)),
             None => return Err(self.eof()),
         }
-        let name = self.name()?;
+        let name = self.parse_name()?;
         let saw_ws = self.skip_o();
         match self.peek() {
             Some('}') => {
@@ -166,7 +166,7 @@ impl<'a> Parser<'a> {
 
     // name = [bidi] name-start *name-char [bidi]
     // The trailing bidi mark is left to the `o` that always follows a name here.
-    fn name(&mut self) -> Result<&'a str, ParseError> {
+    fn parse_name(&mut self) -> Result<&'a str, ParseError> {
         if let Some(c) = self.peek().filter(|&c| is_bidi(c)) {
             self.pos += c.len_utf8();
         }
