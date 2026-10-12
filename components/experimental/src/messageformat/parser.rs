@@ -6,7 +6,7 @@
 
 use core::ops::Range;
 
-/// A part of a message, borrowed from its source.
+/// A part of a message.
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) enum Event<'a> {
     /// Text to output verbatim.
@@ -18,7 +18,7 @@ pub(crate) enum Event<'a> {
 /// An error found while parsing a message.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct ParseError {
-    /// Byte offset of the offending character, or the source length for [`ParseErrorKind::Eof`].
+    /// Byte offset of the offending input, or the source length for [`ParseErrorKind::Eof`].
     pub(crate) offset: usize,
     pub(crate) kind: ParseErrorKind,
 }
@@ -28,6 +28,8 @@ pub(crate) struct ParseError {
 pub(crate) enum ParseErrorKind {
     /// A character that is not allowed at this position.
     UnexpectedChar(char),
+    /// A byte sequence that is not valid UTF-8.
+    InvalidUtf8,
     /// The message ended inside a placeholder or an escape sequence.
     Eof,
     /// Parsing reached syntax outside the supported subset.
@@ -37,59 +39,96 @@ pub(crate) enum ParseErrorKind {
 
 /// Yields the events of a simple message, each with the byte range of the source it came from.
 ///
+/// The source does not need to be validated as UTF-8 beforehand: the parser validates
+/// every byte it reads.
+///
 /// Events are yielded as the message is read, so an error invalidates the whole message,
 /// including events yielded before it. Consumers must iterate to completion to validate
 /// the message. After an error or the last event, `next` returns `None`.
 pub(crate) struct Parser<'a> {
-    source: &'a str,
-    /// Byte offset of the next unread character. Always on a char boundary.
-    pos: usize,
+    source: &'a [u8],
+    /// The unread end of `source`.
+    rest: &'a [u8],
 }
 
 impl<'a> Parser<'a> {
-    pub(crate) fn new(source: &'a str) -> Self {
-        Self { source, pos: 0 }
+    pub(crate) fn new(source: &'a [u8]) -> Self {
+        Self {
+            source,
+            rest: source,
+        }
     }
 
-    fn rest(&self) -> &'a str {
-        self.source.get(self.pos..).unwrap_or_default()
+    /// Byte offset of the next unread byte.
+    fn offset(&self) -> usize {
+        self.source.len() - self.rest.len()
     }
 
-    fn peek(&self) -> Option<char> {
-        self.rest().chars().next()
+    /// Decodes the next character without consuming it.
+    fn peek(&self) -> Result<Option<char>, ParseError> {
+        // A character is at most four bytes, so there is no need to look further.
+        let window = self.rest.get(..4).unwrap_or(self.rest);
+        match window.utf8_chunks().next() {
+            None => Ok(None),
+            Some(chunk) => chunk
+                .valid()
+                .chars()
+                .next()
+                .map(Some)
+                .ok_or_else(|| self.invalid_utf8()),
+        }
+    }
+
+    /// Consumes `len` bytes that the caller has already read, and returns them.
+    fn consume(&mut self, len: usize) -> &'a [u8] {
+        let rest = self.rest;
+        let (consumed, rest) = rest.split_at_checked(len).unwrap_or_else(|| {
+            debug_assert!(false, "consumed {len} bytes with {} left", rest.len());
+            // Consuming everything guarantees that parsing still terminates.
+            (rest, &[])
+        });
+        self.rest = rest;
+        consumed
     }
 
     fn unexpected(&self, c: char) -> ParseError {
         ParseError {
-            offset: self.pos,
+            offset: self.offset(),
             kind: ParseErrorKind::UnexpectedChar(c),
+        }
+    }
+
+    fn invalid_utf8(&self) -> ParseError {
+        ParseError {
+            offset: self.offset(),
+            kind: ParseErrorKind::InvalidUtf8,
         }
     }
 
     fn eof(&self) -> ParseError {
         ParseError {
-            offset: self.pos,
+            offset: self.offset(),
             kind: ParseErrorKind::Eof,
         }
     }
 
     fn unsupported(&self) -> ParseError {
         ParseError {
-            offset: self.pos,
+            offset: self.offset(),
             kind: ParseErrorKind::Unsupported,
         }
     }
 
     fn next_event(&mut self) -> Result<Option<(Event<'a>, Range<usize>)>, ParseError> {
-        if self.pos == 0 {
+        if self.offset() == 0 {
             self.check_simple_start()?;
         }
-        match self.peek() {
+        match self.rest.first() {
             None => Ok(None),
-            Some('\\') => self.parse_escape().map(Some),
-            Some('{') => self.parse_placeholder().map(Some),
-            Some(c @ ('}' | '\0')) => Err(self.unexpected(c)),
-            Some(_) => Ok(Some(self.parse_text())),
+            Some(b'\\') => self.parse_escape().map(Some),
+            Some(b'{') => self.parse_placeholder().map(Some),
+            Some(&b @ (b'}' | b'\0')) => Err(self.unexpected(char::from(b))),
+            Some(_) => self.parse_text().map(Some),
         }
     }
 
@@ -97,52 +136,60 @@ impl<'a> Parser<'a> {
     // simple-start-char excludes `.`, so a first non-whitespace `.` or `{{`
     // can only begin a complex-message.
     fn check_simple_start(&self) -> Result<(), ParseError> {
-        let start = self.source.trim_start_matches(|c| is_ws(c) || is_bidi(c));
-        if start.starts_with('.') || start.starts_with("{{") {
-            return Err(ParseError {
-                offset: self.source.len() - start.len(),
-                kind: ParseErrorKind::Unsupported,
-            });
+        let mut lookahead = Self {
+            source: self.source,
+            rest: self.rest,
+        };
+        lookahead.skip_o()?;
+        if lookahead.rest.starts_with(b".") || lookahead.rest.starts_with(b"{{") {
+            return Err(lookahead.unsupported());
         }
         Ok(())
     }
 
     // A run of text-char.
-    fn parse_text(&mut self) -> (Event<'a>, Range<usize>) {
-        let start = self.pos;
-        let rest = self.rest();
-        let len = rest.find(['\\', '{', '}', '\0']).unwrap_or(rest.len());
-        self.pos += len;
-        (
-            Event::Text(rest.get(..len).unwrap_or_default()),
-            start..self.pos,
-        )
+    fn parse_text(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
+        let start = self.offset();
+        // The bytes that end a run are ASCII, and UTF-8 never uses ASCII bytes inside
+        // a multi-byte character, so the end of the run can be found without decoding.
+        let len = self
+            .rest
+            .iter()
+            .position(|&b| matches!(b, b'\\' | b'{' | b'}' | b'\0'))
+            .unwrap_or(self.rest.len());
+        let text = core::str::from_utf8(self.consume(len)).map_err(|e| ParseError {
+            offset: start + e.valid_up_to(),
+            kind: ParseErrorKind::InvalidUtf8,
+        })?;
+        Ok((Event::Text(text), start..self.offset()))
     }
 
     // escaped-char = backslash ( backslash / "{" / "|" / "}" )
     fn parse_escape(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
-        let start = self.pos;
-        self.pos += 1;
-        match self.peek() {
-            Some('\\' | '{' | '|' | '}') => {
-                // All four escapable characters are one byte long.
-                let text = self.rest().get(..1).unwrap_or_default();
-                self.pos += 1;
-                Ok((Event::Text(text), start..self.pos))
-            }
-            Some(c) => Err(self.unexpected(c)),
-            None => Err(self.eof()),
-        }
+        let start = self.offset();
+        self.consume(1);
+        let text = match self.peek()? {
+            Some('\\') => "\\",
+            Some('{') => "{",
+            Some('|') => "|",
+            Some('}') => "}",
+            Some(c) => return Err(self.unexpected(c)),
+            None => return Err(self.eof()),
+        };
+        self.consume(text.len());
+        Ok((Event::Text(text), start..self.offset()))
     }
 
     // variable-expression = "{" o variable [s function] *(s attribute) o "}"
     // without function and attributes.
     fn parse_placeholder(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
-        let start = self.pos;
-        self.pos += 1;
-        self.skip_o();
-        match self.peek() {
-            Some('$') => self.pos += 1,
+        let start = self.offset();
+        self.consume(1);
+        self.skip_o()?;
+        match self.peek()? {
+            Some('$') => {
+                self.consume(1);
+            }
             // The start of a literal-expression, function-expression or markup.
             Some(c) if matches!(c, '|' | ':' | '#' | '/') || is_name_char(c) => {
                 return Err(self.unsupported());
@@ -151,11 +198,11 @@ impl<'a> Parser<'a> {
             None => return Err(self.eof()),
         }
         let name = self.parse_name()?;
-        let saw_ws = self.skip_o();
-        match self.peek() {
+        let saw_ws = self.skip_o()?;
+        match self.peek()? {
             Some('}') => {
-                self.pos += 1;
-                Ok((Event::Variable(name), start..self.pos))
+                self.consume(1);
+                Ok((Event::Variable(name), start..self.offset()))
             }
             // s = *bidi ws o, so bidi marks alone do not separate a function or attribute.
             Some(':' | '@') if saw_ws => Err(self.unsupported()),
@@ -167,34 +214,42 @@ impl<'a> Parser<'a> {
     // name = [bidi] name-start *name-char [bidi]
     // The trailing bidi mark is left to the `o` that always follows a name here.
     fn parse_name(&mut self) -> Result<&'a str, ParseError> {
-        if let Some(c) = self.peek().filter(|&c| is_bidi(c)) {
-            self.pos += c.len_utf8();
+        if let Some(c) = self.peek()?.filter(|&c| is_bidi(c)) {
+            self.consume(c.len_utf8());
         }
-        let start = self.pos;
-        match self.peek() {
-            Some(c) if is_name_start(c) => self.pos += c.len_utf8(),
+        let start = self.rest;
+        match self.peek()? {
+            Some(c) if is_name_start(c) => {
+                self.consume(c.len_utf8());
+            }
             Some(c) => return Err(self.unexpected(c)),
             None => return Err(self.eof()),
         }
-        while let Some(c) = self.peek().filter(|&c| is_name_char(c)) {
-            self.pos += c.len_utf8();
+        while let Some(c) = self.peek()?.filter(|&c| is_name_char(c)) {
+            self.consume(c.len_utf8());
         }
-        Ok(self.source.get(start..self.pos).unwrap_or_default())
+        let name = start.get(..start.len() - self.rest.len());
+        Ok(name
+            .and_then(|name| core::str::from_utf8(name).ok())
+            .unwrap_or_else(|| {
+                debug_assert!(false, "a name consists of decoded characters");
+                ""
+            }))
     }
 
     // o = *(ws / bidi)
     // Returns whether any ws was skipped.
-    fn skip_o(&mut self) -> bool {
+    fn skip_o(&mut self) -> Result<bool, ParseError> {
         let mut saw_ws = false;
-        while let Some(c) = self.peek() {
+        while let Some(c) = self.peek()? {
             if is_ws(c) {
                 saw_ws = true;
             } else if !is_bidi(c) {
                 break;
             }
-            self.pos += c.len_utf8();
+            self.consume(c.len_utf8());
         }
-        saw_ws
+        Ok(saw_ws)
     }
 }
 
@@ -204,7 +259,7 @@ impl<'a> Iterator for Parser<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         let result = self.next_event().transpose();
         if let Some(Err(_)) = result {
-            self.pos = self.source.len();
+            self.rest = &[];
         }
         result
     }
@@ -262,7 +317,7 @@ mod tests {
     type Events<'a> = Vec<(Event<'a>, Range<usize>)>;
 
     fn parse(source: &str) -> Result<Events<'_>, ParseError> {
-        Parser::new(source).collect()
+        Parser::new(source.as_bytes()).collect()
     }
 
     fn error(offset: usize, kind: ParseErrorKind) -> Result<Events<'static>, ParseError> {
@@ -461,6 +516,31 @@ mod tests {
     }
 
     #[test]
+    fn invalid_utf8() {
+        for (source, offset) in [
+            // Not a UTF-8 byte, in text.
+            (&b"a\xFFb"[..], 1),
+            // A character cut off by the end of the message.
+            (b"ab\xE3\x81", 2),
+            // An overlong encoding of `/`.
+            (b"\xC0\xAF", 0),
+            // An encoded surrogate.
+            (b"\xED\xA0\x80", 0),
+            // In leading whitespace, inside a placeholder, in a name and after a backslash.
+            (b" \xFF", 1),
+            (b"{\xFF$x}", 1),
+            (b"{$x\xFF}", 3),
+            (b"\\\xFF", 1),
+        ] {
+            assert_eq!(
+                Parser::new(source).collect::<Result<Events, _>>(),
+                error(offset, InvalidUtf8),
+                "{source:?}"
+            );
+        }
+    }
+
+    #[test]
     fn unsupported_constructs() {
         for (source, offset) in [
             ("{a}", 1),
@@ -485,7 +565,7 @@ mod tests {
 
     #[test]
     fn error_after_valid_prefix() {
-        let mut parser = Parser::new("Hello {$name} }");
+        let mut parser = Parser::new(b"Hello {$name} }");
         assert_eq!(parser.next(), Some(Ok((Text("Hello "), 0..6))));
         assert_eq!(parser.next(), Some(Ok((Variable("name"), 6..13))));
         assert_eq!(parser.next(), Some(Ok((Text(" "), 13..14))));
@@ -502,7 +582,7 @@ mod tests {
 
     #[test]
     fn none_after_end() {
-        let mut parser = Parser::new("a");
+        let mut parser = Parser::new(b"a");
         assert_eq!(parser.next(), Some(Ok((Text("a"), 0..1))));
         assert_eq!(parser.next(), None);
         assert_eq!(parser.next(), None);
