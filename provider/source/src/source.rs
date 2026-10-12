@@ -706,7 +706,7 @@ macro_rules! source_issue {
         if let Some(mutex) = crate::WARNING_FILE.get() {
             use std::io::Write;
             let mut warning_file = mutex.lock().expect("poison");
-            let message = format!("{locale}: {msg}");
+            let message = format!("{locale}: {msg}\n");
             warning_file.write_all(message.as_bytes()).unwrap();
         }
 

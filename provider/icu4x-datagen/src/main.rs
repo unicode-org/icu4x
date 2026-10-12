@@ -412,7 +412,7 @@ fn main() -> eyre::Result<()> {
 
 fn run(cli: Cli) -> eyre::Result<()> {
     #[cfg(feature = "provider")]
-    if let Some(path) = cli.warning_log {
+    if let Some(ref path) = cli.warning_log {
         let file = File::create(path)?;
         icu_provider_source::set_warning_file(file).unwrap();
     }
@@ -775,6 +775,10 @@ fn run(cli: Cli) -> eyre::Result<()> {
     };
 
     let _metadata = metadata.or_else(missing_data_message)?;
+
+    if cli.warning_log.is_some() {
+        icu_provider_source::flush_warning_file();
+    }
 
     Ok(())
 }

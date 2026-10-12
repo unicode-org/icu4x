@@ -45,7 +45,7 @@ use source::{AbstractFs, RscdCache, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::fs::File;
-use std::io::BufWriter;
+use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::sync::{Arc, Mutex, OnceLock};
 
@@ -779,4 +779,13 @@ pub(crate) static WARNING_FILE: OnceLock<Mutex<BufWriter<File>>> = OnceLock::new
 
 pub fn set_warning_file(file: File) -> Result<(), File> {
     WARNING_FILE.set(Mutex::new(BufWriter::new(file))).map_err(|mutex_buf_writer| mutex_buf_writer.into_inner().unwrap().into_inner().unwrap())
+}
+
+pub fn flush_warning_file() -> std::io::Result<()> {
+    if let Some(mutex) = crate::WARNING_FILE.get() {
+        let mut warning_file = mutex.lock().expect("poison");
+        warning_file.flush()
+    } else {
+        Ok(())
+    }
 }
