@@ -51,6 +51,26 @@ pub fn bake_derive(input: TokenStream) -> TokenStream {
 }
 
 fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
+    // Baked data is generated in one configuration but compiled in another (e.g. data is
+    // generated with `serde` enabled, but the baked data is consumed without it). If a variant
+    // only exists in some configurations, the baked code might refer to a non-existent variant.
+    if let Data::Enum(e) = &input.data {
+        if let Some(attr) = e
+            .variants
+            .iter()
+            .flat_map(|v| &v.attrs)
+            .find(|a| a.path().is_ident("cfg"))
+        {
+            return syn::Error::new_spanned(
+                attr,
+                "deriving Bake is not supported on enums with #[cfg]-gated variants, \
+                as baked data might be compiled in a different configuration. \
+                Implement Bake manually instead.",
+            )
+            .to_compile_error();
+        }
+    }
+
     let mut structure = Structure::new(input);
 
     struct PathAttr(Punctuated<PathSegment, Token![::]>);
@@ -132,4 +152,29 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
         }
     })
+}
+
+#[test]
+fn test_reject_cfg_variants() {
+    let output = bake_derive_impl(&syn::parse_quote! {
+        #[databake(path = test)]
+        enum Foo {
+            A,
+            #[cfg(feature = "serde")]
+            B,
+        }
+    })
+    .to_string();
+    assert!(output.contains("compile_error"), "{output}");
+
+    // Not rejected without cfg
+    let output = bake_derive_impl(&syn::parse_quote! {
+        #[databake(path = test)]
+        enum Foo {
+            A,
+            B,
+        }
+    })
+    .to_string();
+    assert!(!output.contains("compile_error"), "{output}");
 }
