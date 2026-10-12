@@ -810,7 +810,12 @@ fn leap_linear_to_leap_pattern(l: &VarZeroSlice<str>) -> Option<VarZeroVec<'stat
     use icu_pattern::{PatternItemCow, SinglePlaceholderKey};
     use zerovec::vecs::VarZeroVecOwned;
 
-    // Builds a pattern that interpolates to `s` when given `p`.
+    let literal = |s: &str| {
+        SinglePlaceholderPattern::try_from_items(
+            [PatternItemCow::Literal(Cow::Borrowed(s))].into_iter(),
+        )
+        .ok()
+    };
     let uninterpolate = |s: &str, p: &str| {
         let (prefix, suffix) = s.split_once(p)?;
         SinglePlaceholderPattern::try_from_items(
@@ -835,11 +840,10 @@ fn leap_linear_to_leap_pattern(l: &VarZeroSlice<str>) -> Option<VarZeroVec<'stat
             .all(|(i, s)| (i == 4 || i == 5) ^ s.is_empty())
     {
         // The Hebrew leap pattern never has a placeholder (that's how `leap_pattern_to_leap_linear` detects Hebrew)
-        let leap_pattern = SinglePlaceholderPattern::try_from_items(
-            [PatternItemCow::Literal(Cow::Borrowed(l.get(n + 4)?))].into_iter(),
-        )
-        .ok()?;
-        let leap_base_pattern = uninterpolate(l.get(n + 5)?, l.get(5)?)?;
+        let leap_pattern = literal(l.get(n + 4)?)?;
+        // The leap base pattern might or might not contain a placeholder for the base month
+        let leap_base_pattern =
+            uninterpolate(l.get(n + 5)?, l.get(5)?).unwrap_or(literal(l.get(n + 5)?)?);
         (leap_pattern, leap_base_pattern)
     } else if let leap_pattern = uninterpolate(l.get(n)?, l.get(0)?)?
         && l.iter()
@@ -908,6 +912,23 @@ fn month_names_round_trip() {
             "Elul",
             &pattern("Adar I").store,
             &pattern("{0} II").store,
+        ],
+        // Hebrew, leap base without placeholder (like `tr`)
+        [
+            "Tişri",
+            "Heşvan",
+            "Kislev",
+            "Tevet",
+            "Şevat",
+            "Adar",
+            "Nisan",
+            "İyar",
+            "Sivan",
+            "Tamuz",
+            "Av",
+            "Elul",
+            &pattern("Adar Rişon").store,
+            &pattern("Veadar").store,
         ],
     ] {
         let names = VarZeroVecOwned::try_from_elements(&names).unwrap();
