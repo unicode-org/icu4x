@@ -538,9 +538,10 @@ fn year_names_round_trip() {
     assert_ne!(year_names, serde_round);
 
     // But Japanese ::VariableEras bake again as ::FixedEras
-    let bake = serde_round.bake(&Default::default()).to_string();
-    assert!(bake.contains("FixedEras"), "{bake}");
-    assert!(bake.contains(&eras.as_varzerovec().bake(&Default::default()).to_string()));
+    assert_eq!(
+        serde_round.bake(&Default::default()).to_string(),
+        year_names.bake(&Default::default()).to_string(),
+    );
 }
 
 #[cfg(feature = "datagen")]
@@ -611,8 +612,6 @@ size_test!(MonthNames, month_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum MonthNames<'data> {
@@ -669,8 +668,55 @@ pub enum MonthNames<'data> {
     LeapPattern(VarZeroVec<'data, str>),
 }
 
+#[cfg(feature = "datagen")]
+impl databake::Bake for MonthNames<'_> {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        #[derive(databake::Bake)]
+        #[databake(path = icu_datetime::provider::names)]
+        pub enum MonthNames<'data> {
+            Linear(VarZeroVec<'data, str>),
+            LeapLinear(VarZeroVec<'data, str>),
+            LeapNumeric(Cow<'data, SinglePlaceholderPattern>),
+            LeapNumericWithBase(VarZeroVec<'data, VarTupleULE<i8, SinglePlaceholderPattern>>),
+            Numeric,
+            LeapPattern(VarZeroVec<'data, str>),
+        }
+
+        match self {
+            // `LeapPattern` is serialized as `LeapLinear`, but even a deserialized struct
+            // should bake to the `LeapPattern` variant.
+            Self::LeapLinear(l) => match leap_linear_to_leap_pattern(l) {
+                Some(p) => MonthNames::LeapPattern(p).bake(ctx),
+                None => MonthNames::LeapLinear(l.clone()).bake(ctx),
+            },
+            Self::Linear(l) => MonthNames::Linear(l.clone()).bake(ctx),
+            Self::LeapNumeric(p) => MonthNames::LeapNumeric(p.clone()).bake(ctx),
+            Self::LeapNumericWithBase(p) => MonthNames::LeapNumericWithBase(p.clone()).bake(ctx),
+            Self::Numeric => MonthNames::Numeric.bake(ctx),
+            Self::LeapPattern(p) => MonthNames::LeapPattern(p.clone()).bake(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for MonthNames<'_> {
+    fn borrows_size(&self) -> usize {
+        match self {
+            Self::LeapLinear(l) => match leap_linear_to_leap_pattern(l) {
+                Some(p) => p.borrows_size(),
+                None => l.borrows_size(),
+            },
+            Self::Linear(l) => l.borrows_size(),
+            Self::LeapNumeric(p) => p.borrows_size(),
+            Self::LeapNumericWithBase(p) => p.borrows_size(),
+            Self::Numeric => 0,
+            Self::LeapPattern(p) => p.borrows_size(),
+        }
+    }
+}
+
 // Stability, don't want to serialize ::LeapPattern
-#[cfg(feature = "serde")]
+#[cfg(feature = "datagen")]
 impl serde::Serialize for MonthNames<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -694,58 +740,211 @@ impl serde::Serialize for MonthNames<'_> {
             Self::LeapNumeric(l) => Raw::LeapNumeric(l),
             Self::LeapNumericWithBase(l) => Raw::LeapNumericWithBase(l),
             Self::LeapPattern(l) => {
-                use alloc::string::String;
-                use alloc::vec::Vec;
-                use zerovec::vecs::VarZeroVecOwned;
-
-                let leap_pattern = l.get(l.len() - 2).unwrap_or_default();
-                let leap_base_pattern = l.get(l.len() - 1).unwrap_or_default();
-
-                let normal_names = l.iter().take(l.len() - 2);
-
-                let r = if leap_pattern.starts_with('\0') {
-                    // The leap pattern is not actually a pattern (no placeholder) - this means it's Hebrew
-                    normal_names
-                        .map(String::from)
-                        .chain([
-                            String::new(),
-                            String::new(),
-                            String::new(),
-                            String::new(),
-                            SinglePlaceholderPattern::from_ref_store(leap_pattern)
-                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
-                                .interpolate_to_string([l.get(5).unwrap_or_default()]),
-                            SinglePlaceholderPattern::from_ref_store(leap_base_pattern)
-                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
-                                .interpolate_to_string([l.get(5).unwrap_or_default()]),
-                            String::new(),
-                            String::new(),
-                            String::new(),
-                            String::new(),
-                            String::new(),
-                            String::new(),
-                        ])
-                        .collect()
-                } else {
-                    normal_names
-                        .clone()
-                        .map(String::from)
-                        .chain(normal_names.map(|m| {
-                            SinglePlaceholderPattern::from_ref_store(leap_pattern)
-                                .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
-                                .interpolate_to_string([m])
-                        }))
-                        .collect::<Vec<_>>()
-                };
-
-                #[allow(clippy::unwrap_used)] // small enough
-                {
-                    z = VarZeroVecOwned::try_from_elements(&r).unwrap().into();
-                }
+                z = leap_pattern_to_leap_linear(l);
                 Raw::LeapLinear(&z)
             }
         }
         .serialize(serializer)
+    }
+}
+
+/// Converts the `LeapPattern` variant into the less efficient `LeapLinear` variant that
+/// is supported by serde.
+#[cfg(feature = "datagen")]
+fn leap_pattern_to_leap_linear(l: &VarZeroVec<'_, str>) -> VarZeroVec<'static, str> {
+    use alloc::string::String;
+    use alloc::vec::Vec;
+    use zerovec::vecs::VarZeroVecOwned;
+
+    let leap_pattern = l.get(l.len() - 2).unwrap_or_default();
+    let leap_base_pattern = l.get(l.len() - 1).unwrap_or_default();
+
+    let normal_names = l.iter().take(l.len() - 2);
+
+    let r = if leap_pattern.starts_with('\0') {
+        // The leap pattern is not actually a pattern (no placeholder) - this means it's Hebrew
+        normal_names
+            .map(String::from)
+            .chain([
+                String::new(),
+                String::new(),
+                String::new(),
+                String::new(),
+                SinglePlaceholderPattern::from_ref_store(leap_pattern)
+                    .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                    .interpolate_to_string([l.get(5).unwrap_or_default()]),
+                SinglePlaceholderPattern::from_ref_store(leap_base_pattern)
+                    .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                    .interpolate_to_string([l.get(5).unwrap_or_default()]),
+                String::new(),
+                String::new(),
+                String::new(),
+                String::new(),
+                String::new(),
+                String::new(),
+            ])
+            .collect()
+    } else {
+        normal_names
+            .clone()
+            .map(String::from)
+            .chain(normal_names.map(|m| {
+                SinglePlaceholderPattern::from_ref_store(leap_pattern)
+                    .unwrap_or(SinglePlaceholderPattern::PASS_THROUGH)
+                    .interpolate_to_string([m])
+            }))
+            .collect::<Vec<_>>()
+    };
+
+    #[allow(clippy::unwrap_used)] // small enough
+    VarZeroVecOwned::try_from_elements(&r).unwrap().into()
+}
+
+/// Inverts the `LeapPattern` -> `LeapLinear` conversion done by [`leap_pattern_to_leap_linear`].
+///
+/// Returns `None` if the data does not look like it was produced from a `LeapPattern`.
+#[cfg(feature = "datagen")]
+fn leap_linear_to_leap_pattern(l: &VarZeroSlice<str>) -> Option<VarZeroVec<'static, str>> {
+    use alloc::borrow::ToOwned;
+    use alloc::vec::Vec;
+    use icu_pattern::{PatternItemCow, SinglePlaceholderKey};
+    use zerovec::vecs::VarZeroVecOwned;
+
+    let literal = |s: &str| {
+        SinglePlaceholderPattern::try_from_items(
+            [PatternItemCow::Literal(Cow::Borrowed(s))].into_iter(),
+        )
+        .ok()
+    };
+    let uninterpolate = |s: &str, p: &str| {
+        let (prefix, suffix) = s.split_once(p)?;
+        SinglePlaceholderPattern::try_from_items(
+            [
+                PatternItemCow::Literal(Cow::Borrowed(prefix)),
+                PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
+                PatternItemCow::Literal(Cow::Borrowed(suffix)),
+            ]
+            .into_iter(),
+        )
+        .ok()
+    };
+
+    let (n, 0) = (l.len() / 2, l.len() % 2) else {
+        return None;
+    };
+
+    let (leap_pattern, leap_base_pattern) = if n == 12
+        && l.iter()
+            .skip(n)
+            .enumerate()
+            .all(|(i, s)| (i == 4 || i == 5) ^ s.is_empty())
+    {
+        // The Hebrew leap pattern never has a placeholder (that's how `leap_pattern_to_leap_linear` detects Hebrew)
+        let leap_pattern = literal(l.get(n + 4)?)?;
+        // The leap base pattern might or might not contain a placeholder for the base month
+        let leap_base_pattern =
+            uninterpolate(l.get(n + 5)?, l.get(5)?).unwrap_or(literal(l.get(n + 5)?)?);
+        (leap_pattern, leap_base_pattern)
+    } else if let leap_pattern = uninterpolate(l.get(n)?, l.get(0)?)?
+        && l.iter()
+            .take(n)
+            .zip(l.iter().skip(n))
+            .all(|(n, l)| writeable::cmp_str(&leap_pattern.interpolate([n]), l).is_eq())
+    {
+        (
+            leap_pattern,
+            SinglePlaceholderPattern::PASS_THROUGH.to_owned(),
+        )
+    } else {
+        return None;
+    };
+
+    VarZeroVecOwned::try_from_elements(
+        &l.iter()
+            .take(n)
+            .chain([&leap_pattern.store, &leap_base_pattern.store])
+            .collect::<Vec<_>>(),
+    )
+    .ok()
+    .map(Into::into)
+}
+
+#[test]
+fn month_names_round_trip() {
+    use databake::Bake;
+    use zerovec::vecs::VarZeroVecOwned;
+
+    fn pattern(s: &str) -> Box<SinglePlaceholderPattern> {
+        SinglePlaceholderPattern::try_from_str(s, Default::default()).unwrap()
+    }
+
+    for names in [
+        // Chinese
+        [
+            "M1",
+            "M2",
+            "M3",
+            "M4",
+            "M5",
+            "M6",
+            "M7",
+            "M8",
+            "M9",
+            "M10",
+            "M11",
+            "M12",
+            &pattern("{0}bis").store,
+            &pattern("{0}").store,
+        ],
+        // Hebrew
+        [
+            "Tishri",
+            "Heshvan",
+            "Kislev",
+            "Tevet",
+            "Shevat",
+            "Adar",
+            "Nisan",
+            "Iyar",
+            "Sivan",
+            "Tamuz",
+            "Av",
+            "Elul",
+            &pattern("Adar I").store,
+            &pattern("{0} II").store,
+        ],
+        // Hebrew, leap base without placeholder (like `tr`)
+        [
+            "Tişri",
+            "Heşvan",
+            "Kislev",
+            "Tevet",
+            "Şevat",
+            "Adar",
+            "Nisan",
+            "İyar",
+            "Sivan",
+            "Tamuz",
+            "Av",
+            "Elul",
+            &pattern("Adar Rişon").store,
+            &pattern("Veadar").store,
+        ],
+    ] {
+        let names = VarZeroVecOwned::try_from_elements(&names).unwrap();
+        let month_names = MonthNames::LeapPattern(names.as_varzerovec());
+
+        let serde = serde_json::to_string(&month_names).unwrap();
+        let serde_round = serde_json::from_str::<MonthNames>(&serde).unwrap();
+
+        // ::LeapPattern serializes as ::LeapLinear
+        assert_ne!(serde_round, month_names);
+
+        // But ::LeapLinear bakes again as ::LeapPattern
+        assert_eq!(
+            serde_round.bake(&Default::default()).to_string(),
+            month_names.bake(&Default::default()).to_string()
+        );
     }
 }
 

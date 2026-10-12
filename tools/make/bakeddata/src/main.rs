@@ -102,11 +102,7 @@ fn main() {
     options.overwrite = true;
     options.pretty = true;
 
-    let zero_copy_check_exporter = Box::leak(Box::new(ZeroCopyCheckExporter {
-        zero_copy_violations: Default::default(),
-        zero_copy_transient_violations: Default::default(),
-        roundtrip_errors: Default::default(),
-    }));
+    let zero_copy_check_exporter = Box::leak(Box::new(ZeroCopyCheckExporter::default()));
 
     for (component, markers, version) in &components {
         let path = Path::new("provider/data").join(component);
@@ -370,10 +366,12 @@ impl DataExporter for StatisticsExporter {
     }
 }
 
+#[derive(Default)]
 struct ZeroCopyCheckExporter {
     zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
-    roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
+    serde_roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
+    serde_baked_roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
 }
 
 impl DataExporter for &'_ ZeroCopyCheckExporter {
@@ -427,20 +425,32 @@ impl DataExporter for &'_ ZeroCopyCheckExporter {
         icu_provider_registry::registry!(cb);
 
         if payload_before != &payload_after {
-            self.roundtrip_errors
+            let id = id.locale.to_string()
+                + if id.marker_attributes.is_empty() {
+                    ""
+                } else {
+                    "-x"
+                }
+                + id.marker_attributes.as_str();
+
+            // Even if serde doesn't round-trip, baked -> serde -> baked should
+            if payload_before.tokenize(&Default::default()).to_string()
+                != payload_after.tokenize(&Default::default()).to_string()
+            {
+                self.serde_baked_roundtrip_errors
+                    .lock()
+                    .expect("poison")
+                    .entry(marker)
+                    .or_default()
+                    .insert(id.clone());
+            }
+
+            self.serde_roundtrip_errors
                 .lock()
                 .expect("poison")
                 .entry(marker)
                 .or_default()
-                .insert(
-                    id.locale.to_string()
-                        + if id.marker_attributes.is_empty() {
-                            ""
-                        } else {
-                            "-x"
-                        }
-                        + id.marker_attributes.as_str(),
-                );
+                .insert(id);
         }
 
         if deallocated != allocated {
@@ -491,7 +501,7 @@ impl ZeroCopyCheckExporter {
         icu::list::provider::ListUnitV1::INFO,
     ];
 
-    const EXPECTED_ROUNDTRIP_VIOLATIONS: &[DataMarkerInfo] = &[
+    const EXPECTED_SERDE_ROUNDTRIP_VIOLATIONS: &[DataMarkerInfo] = &[
         // These serialize to a different variant for stability
         icu::datetime::provider::names::DatetimeNamesMonthDangiV1::INFO,
         icu::datetime::provider::names::DatetimeNamesMonthHebrewV1::INFO,
@@ -500,8 +510,8 @@ impl ZeroCopyCheckExporter {
     ];
 
     fn check(&self) {
-        let roundtrip_errors = self
-            .roundtrip_errors
+        let serde_roundtrip_errors = self
+            .serde_roundtrip_errors
             .lock()
             .expect("poison")
             .keys()
@@ -509,10 +519,23 @@ impl ZeroCopyCheckExporter {
             .collect::<Vec<_>>();
 
         assert!(
-            roundtrip_errors
+            serde_roundtrip_errors
                 .iter()
-                .all(|e| Self::EXPECTED_ROUNDTRIP_VIOLATIONS.contains(e)),
-            "{roundtrip_errors:?}"
+                .all(|e| Self::EXPECTED_SERDE_ROUNDTRIP_VIOLATIONS.contains(e)),
+            "{serde_roundtrip_errors:?}"
+        );
+
+        let serde_baked_roundtrip_errors = self
+            .serde_baked_roundtrip_errors
+            .lock()
+            .expect("poison")
+            .keys()
+            .copied()
+            .collect::<Vec<_>>();
+
+        assert!(
+            serde_baked_roundtrip_errors.is_empty(),
+            "{serde_baked_roundtrip_errors:?}"
         );
 
         let violations = self
