@@ -703,6 +703,13 @@ macro_rules! source_issue {
         let locale: icu::locale::DataLocale = $locale;
         let msg = format!($($arg)*);
 
+        if let Some(mutex) = crate::WARNING_FILE.get() {
+            use std::io::Write;
+            let mut warning_file = mutex.lock().expect("poison");
+            let message = format!("{locale}: {msg}");
+            warning_file.write_all(message.as_bytes()).unwrap();
+        }
+
         match module {
             "properties::enum_codepointtrie" if msg == r#"UCD does not contain Line_Break "HH""# => {
                 // Expected for RSCD 15.1

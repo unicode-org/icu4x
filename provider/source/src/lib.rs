@@ -44,8 +44,10 @@ use icu_provider::prelude::*;
 use source::{AbstractFs, RscdCache, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
+use std::fs::File;
+use std::io::BufWriter;
 use std::path::Path;
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock};
 
 mod calendar;
 mod casemap;
@@ -771,4 +773,10 @@ impl std::hash::Hasher for DataHasher {
     fn write_usize(&mut self, i: usize) {
         self.write_u64(i as u64);
     }
+}
+
+pub(crate) static WARNING_FILE: OnceLock<Mutex<BufWriter<File>>> = OnceLock::new();
+
+pub fn set_warning_file(file: File) -> Result<(), File> {
+    WARNING_FILE.set(Mutex::new(BufWriter::new(file))).map_err(|mutex_buf_writer| mutex_buf_writer.into_inner().unwrap().into_inner().unwrap())
 }

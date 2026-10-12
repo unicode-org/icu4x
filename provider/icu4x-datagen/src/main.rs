@@ -53,6 +53,7 @@ use icu_provider_source::SourceDataProvider;
 use regex::Regex;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
+use std::fs::File;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -290,6 +291,14 @@ struct Cli {
     )]
     output: Option<PathBuf>,
 
+    #[arg(long = "warning-log", short, value_name = "PATH")]
+    #[arg(
+        help = "Path to a file to which source data log messages will be appended. \
+                  If the file already exists, it will be truncated."
+    )]
+    #[cfg(feature = "provider")]
+    warning_log: Option<PathBuf>,
+
     #[arg(long)]
     #[arg(
         help = "--format=baked only: use types from individual `icu_*` crates instead of the `icu` meta-crate."
@@ -402,6 +411,12 @@ fn main() -> eyre::Result<()> {
 }
 
 fn run(cli: Cli) -> eyre::Result<()> {
+    #[cfg(feature = "provider")]
+    if let Some(path) = cli.warning_log {
+        let file = File::create(path)?;
+        icu_provider_source::set_warning_file(file).unwrap();
+    }
+
     let markers = if !cli.markers.is_empty() {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
