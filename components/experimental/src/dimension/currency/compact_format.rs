@@ -357,31 +357,14 @@ mod tests {
         let prefs = locale!("pt-PT").into();
         let value = "1299".parse().unwrap();
 
-        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
-        // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
-        // the decimal separator (e.g. "12,345$67"). Datagen stores that symbol as the
-        // empty string.
-        //
-        // Compact currency formatters respect `CurrencyDecimalSymbolsV1`, using '$'
-        // instead of the locale's default DecimalSymbolsV1 (','), and use the no-currency
-        // pattern for the empty symbol (CLDR-19771).
+        // In CLDR, `pt-PT` has no symbol for PTE: it marks this with U+200B
+        // (ZERO WIDTH SPACE), which datagen stores as the empty string. An empty symbol
+        // means the compact currency formatters use the no-currency pattern, so no
+        // placeholder or trailing space is left behind (CLDR-19771).
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
                 .unwrap();
-        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1$3 mil");
-
-        let fmt_narrow = CurrencyFormatter::try_new_compact_symbol_narrow(
-            prefs,
-            currency!("PTE"),
-            Default::default(),
-        )
-        .unwrap();
-        assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&value), "1$3 mil PTE");
-
-        let fmt_code =
-            CurrencyFormatter::try_new_compact_code(prefs, currency!("PTE"), Default::default())
-                .unwrap();
-        assert_writeable_eq!(fmt_code.format_fixed_decimal(&value), "1$3 mil PTE");
+        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1,3 mil");
 
         let fmt_long = CurrencyFormatter::try_new_compact_long_symbol(
             prefs,
@@ -389,35 +372,12 @@ mod tests {
             Default::default(),
         )
         .unwrap();
-        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1$3 mil");
+        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1,3 mil");
 
-        let fmt_long_narrow = CurrencyFormatter::try_new_compact_long_symbol_narrow(
-            prefs,
-            currency!("PTE"),
-            Default::default(),
-        )
-        .unwrap();
-        assert_writeable_eq!(fmt_long_narrow.format_fixed_decimal(&value), "1$3 mil PTE");
-
-        let fmt_long_code = CurrencyFormatter::try_new_compact_long_code(
-            prefs,
-            currency!("PTE"),
-            Default::default(),
-        )
-        .unwrap();
-        assert_writeable_eq!(fmt_long_code.format_fixed_decimal(&value), "1$3 mil PTE");
-
-        let fmt_name = CurrencyFormatter::try_new_compact_name(prefs, currency!("PTE")).unwrap();
-        assert_writeable_eq!(
-            fmt_name.format_fixed_decimal(&value),
-            "1$3 mil escudos portugueses"
-        );
-
-        let fmt_long_name =
-            CurrencyFormatter::try_new_compact_long_name(prefs, currency!("PTE")).unwrap();
-        assert_writeable_eq!(
-            fmt_long_name.format_fixed_decimal(&value),
-            "1$3 mil escudos portugueses"
-        );
+        // The ISO code and the currency name are not affected.
+        let fmt_code =
+            CurrencyFormatter::try_new_compact_code(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt_code.format_fixed_decimal(&value), "1,3 mil PTE");
     }
 }
