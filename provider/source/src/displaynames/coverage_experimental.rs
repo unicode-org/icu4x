@@ -42,10 +42,9 @@ fn parse_displaynames_chassis(chassis: &str) -> Option<(CoverageCategory, Chassi
         (CoverageCategory::Territory, r)
     } else if let Some(r) = rest.strip_prefix("scripts/script") {
         (CoverageCategory::Script, r)
-    } else if let Some(r) = rest.strip_prefix("variants/variant") {
-        (CoverageCategory::Variant, r)
     } else {
-        return None;
+        let r = rest.strip_prefix("variants/variant")?;
+        (CoverageCategory::Variant, r)
     };
     let kind = match rest {
         "[@type]" => ChassisKind::Base,
