@@ -399,69 +399,58 @@ fn read_stem<'a>(cldr_cache: &'a CldrCache, stem: &str) -> Result<&'a PathCovera
     )
 }
 
-pub(super) fn get_chain<'a>(
-    cldr_cache: &'a CldrCache,
-    locale: &DataLocale,
-) -> Result<Vec<&'a PathCoverageFile>, DataError> {
-    let mut chain = Vec::with_capacity(3);
-    let mut current_stem = Some(resolve_initial_stem(cldr_cache, locale)?);
-    while let Some(stem) = current_stem.take() {
-        let file = read_stem(cldr_cache, &stem)?;
-        chain.push(file);
-        if let Some(import_stem) = &file.import {
-            if file_exists_for_stem(cldr_cache, import_stem)? {
-                current_stem = Some(import_stem.clone());
-            } else if stem != "root" {
-                current_stem = Some("root".to_string());
+/// The inheritance chain of [`PathCoverageFile`]s for a locale, used to evaluate coverage tiers.
+#[derive(Debug)]
+pub(super) struct PathCoverageChain<'a>(Vec<&'a PathCoverageFile>);
+
+impl<'a> PathCoverageChain<'a> {
+    /// Resolves and loads the fallback chain of [`PathCoverageFile`]s for `locale`.
+    pub(super) fn for_locale(
+        cldr_cache: &'a CldrCache,
+        locale: &DataLocale,
+    ) -> Result<Self, DataError> {
+        let mut chain = Vec::with_capacity(3);
+        let mut current_stem = Some(resolve_initial_stem(cldr_cache, locale)?);
+        while let Some(stem) = current_stem.take() {
+            let file = read_stem(cldr_cache, &stem)?;
+            chain.push(file);
+            if let Some(import_stem) = &file.import {
+                if file_exists_for_stem(cldr_cache, import_stem)? {
+                    current_stem = Some(import_stem.clone());
+                } else if stem != "root" {
+                    current_stem = Some("root".to_string());
+                }
             }
         }
+        Ok(Self(chain))
     }
-    Ok(chain)
-}
 
-pub(super) fn coverage_tier_from_chain(
-    chain: &[&PathCoverageFile],
-    get_category: impl Fn(&PathCoverageFile) -> &CategoryRules,
-    subtag: impl Writeable,
-    alt: Option<Alt>,
-    menu: Option<Menu>,
-) -> CoverageLevelForXPath {
-    let subtag_str = subtag.write_to_string();
-    if subtag_str.is_empty() {
-        return CoverageLevelForXPath::Comprehensive;
-    }
-    let attr1_val = if let Some(alt) = alt {
-        Some(alt.as_str().unwrap_or(""))
-    } else if let Some(menu) = menu {
-        Some(menu.as_str().unwrap_or(""))
-    } else {
-        None
-    };
-    for file in chain {
-        if let Some(rule) = get_category(file).rule_for(alt, menu) {
-            return rule.evaluate(&subtag_str, attr1_val);
+    /// Evaluates the [`CoverageLevelForXPath`] for a subtag target within this chain.
+    pub(super) fn coverage_tier(
+        &self,
+        get_category: impl Fn(&PathCoverageFile) -> &CategoryRules,
+        subtag: impl Writeable,
+        alt: Option<Alt>,
+        menu: Option<Menu>,
+    ) -> CoverageLevelForXPath {
+        let subtag_str = subtag.write_to_string();
+        if subtag_str.is_empty() {
+            return CoverageLevelForXPath::Comprehensive;
         }
+        let attr1_val = if let Some(alt) = alt {
+            Some(alt.as_str().unwrap_or(""))
+        } else if let Some(menu) = menu {
+            Some(menu.as_str().unwrap_or(""))
+        } else {
+            None
+        };
+        for file in &self.0 {
+            if let Some(rule) = get_category(file).rule_for(alt, menu) {
+                return rule.evaluate(&subtag_str, attr1_val);
+            }
+        }
+        CoverageLevelForXPath::Comprehensive
     }
-    CoverageLevelForXPath::Comprehensive
-}
-
-/// Determines the [`CoverageLevelForXPath`] for a given `locale` and subtag item target.
-pub(super) fn coverage_tier(
-    cldr_cache: &CldrCache,
-    locale: &DataLocale,
-    get_category: impl Fn(&PathCoverageFile) -> &CategoryRules,
-    subtag: impl Writeable,
-    alt: Option<Alt>,
-    menu: Option<Menu>,
-) -> Result<CoverageLevelForXPath, DataError> {
-    let chain = get_chain(cldr_cache, locale)?;
-    Ok(coverage_tier_from_chain(
-        &chain,
-        get_category,
-        subtag,
-        alt,
-        menu,
-    ))
 }
 
 #[cfg(test)]
@@ -494,7 +483,7 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
     locales.sort_by(|a, b| a.total_cmp(b));
     for locale in locales {
         if let Ok(res) = displaynames_dir.read_and_parse::<Resource>(&locale, file_name) {
-            let coverage_chain = get_chain(cldr, &locale).unwrap();
+            let coverage_chain = PathCoverageChain::for_locale(cldr, &locale).unwrap();
             let mut keys = extract_keys(res).keys().collect::<Vec<_>>();
             keys.sort_by_cached_key(|k| (k.t.write_to_string().to_string(), k.alt, k.menu));
             for key in keys {
@@ -503,13 +492,7 @@ pub(super) fn for_each_cldr_key_and_tier<Resource, T>(
                 {
                     continue;
                 }
-                let tier = coverage_tier_from_chain(
-                    &coverage_chain,
-                    &get_category,
-                    &key.t,
-                    key.alt,
-                    key.menu,
-                );
+                let tier = coverage_chain.coverage_tier(&get_category, &key.t, key.alt, key.menu);
                 callback(&locale, key, tier);
             }
         }
@@ -525,12 +508,16 @@ fn test_coverage_tier() {
 
     let en = DataLocale::from_str("en").unwrap();
     assert_eq!(
-        coverage_tier(cldr, &en, |l| &l.language, "en", None, None).unwrap(),
+        PathCoverageChain::for_locale(cldr, &en)
+            .unwrap()
+            .coverage_tier(|l| &l.language, "en", None, None),
         CoverageLevelForXPath::Basic
     );
 
     assert_eq!(
-        coverage_tier(cldr, &en, |l| &l.language, "unlisted_test_code", None, None,).unwrap(),
+        PathCoverageChain::for_locale(cldr, &en)
+            .unwrap()
+            .coverage_tier(|l| &l.language, "unlisted_test_code", None, None),
         CoverageLevelForXPath::Comprehensive
     );
 
@@ -539,27 +526,15 @@ fn test_coverage_tier() {
     // and !GB,US short is moderate.
     let en_001 = DataLocale::from_str("en-001").unwrap();
     assert_eq!(
-        coverage_tier(
-            cldr,
-            &en_001,
-            |l| &l.territory,
-            "GB",
-            Some(Alt::Short),
-            None,
-        )
-        .unwrap(),
+        PathCoverageChain::for_locale(cldr, &en_001)
+            .unwrap()
+            .coverage_tier(|l| &l.territory, "GB", Some(Alt::Short), None),
         CoverageLevelForXPath::Basic
     );
     assert_eq!(
-        coverage_tier(
-            cldr,
-            &en_001,
-            |l| &l.territory,
-            "BA",
-            Some(Alt::Short),
-            None,
-        )
-        .unwrap(),
+        PathCoverageChain::for_locale(cldr, &en_001)
+            .unwrap()
+            .coverage_tier(|l| &l.territory, "BA", Some(Alt::Short), None),
         CoverageLevelForXPath::Moderate
     );
 }

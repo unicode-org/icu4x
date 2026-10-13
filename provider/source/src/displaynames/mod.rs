@@ -134,14 +134,12 @@ macro_rules! impl_displaynames_v1 {
                             .with_req($marker::INFO, req)
                     })?;
 
-                let item_tier = crate::displaynames::coverage_experimental::coverage_tier(
-                    cldr,
-                    req.id.locale,
-                    |l| &l.$category,
-                    &subtag,
-                    $alt_variant,
-                    None,
-                )?;
+                let item_tier =
+                    crate::displaynames::coverage_experimental::PathCoverageChain::for_locale(
+                        cldr,
+                        req.id.locale,
+                    )?
+                    .coverage_tier(|l| &l.$category, &subtag, $alt_variant, None);
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -246,14 +244,11 @@ macro_rules! impl_displaynames_menu_v1 {
                     (None, Some($crate::cldr_serde::alt::Menu::Core))
                 };
                 let item_tier =
-                    crate::displaynames::coverage_experimental::coverage_tier(
+                    crate::displaynames::coverage_experimental::PathCoverageChain::for_locale(
                         cldr,
                         req.id.locale,
-                        |l| &l.$category,
-                        &subtag,
-                        alt,
-                        menu,
-                    )?;
+                    )?
+                    .coverage_tier(|l| &l.$category, &subtag, alt, menu);
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -281,38 +276,31 @@ macro_rules! impl_displaynames_menu_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     let coverage_chain =
-                        crate::displaynames::coverage_experimental::get_chain(
+                        crate::displaynames::coverage_experimental::PathCoverageChain::for_locale(
                             cldr, &locale,
                         )?;
 
                     for key in data.main.value.localedisplaynames.$field.keys() {
-                        let matches = key.menu
-                            == Some($crate::cldr_serde::alt::Menu::Core)
+                        let matches = key.menu == Some($crate::cldr_serde::alt::Menu::Core)
                             || key.alt == Some($crate::cldr_serde::alt::Alt::Menu);
 
                         if matches {
-                            let (alt, menu) =
-                                if key.alt == Some($crate::cldr_serde::alt::Alt::Menu) {
-                                    (Some($crate::cldr_serde::alt::Alt::Menu), None)
-                                } else {
-                                    (None, Some($crate::cldr_serde::alt::Menu::Core))
-                                };
+                            let (alt, menu) = if key.alt == Some($crate::cldr_serde::alt::Alt::Menu)
+                            {
+                                (Some($crate::cldr_serde::alt::Alt::Menu), None)
+                            } else {
+                                (None, Some($crate::cldr_serde::alt::Menu::Core))
+                            };
                             let item_tier =
-                                crate::displaynames::coverage_experimental::coverage_tier_from_chain(
-                                    &coverage_chain,
-                                    |l| &l.$category,
-                                    &key.t,
-                                    alt,
-                                    menu,
-                                );
+                                coverage_chain.coverage_tier(|l| &l.$category, &key.t, alt, menu);
                             if matches!(item_tier, $tier) {
                                 let subtag_str = writeable::Writeable::write_to_string(&key.t);
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(subtag_str.into_owned())
                                         .map_err(|_| {
-                                        DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.t)
-                                    })?,
+                                            DataError::custom("Failed to parse attribute")
+                                                .with_debug_context(&key.t)
+                                        })?,
                                     locale,
                                 );
                                 result.insert(data_identifier);
@@ -363,7 +351,7 @@ macro_rules! impl_displaynames_iter_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     let coverage_chain =
-                        crate::displaynames::coverage_experimental::get_chain(
+                        crate::displaynames::coverage_experimental::PathCoverageChain::for_locale(
                             cldr, &locale,
                         )?;
 
@@ -371,22 +359,20 @@ macro_rules! impl_displaynames_iter_v1 {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
-                            let item_tier =
-                                crate::displaynames::coverage_experimental::coverage_tier_from_chain(
-                                    &coverage_chain,
-                                    |l| &l.$category,
-                                    &key.t,
-                                    $alt_variant,
-                                    None,
-                                );
+                            let item_tier = coverage_chain.coverage_tier(
+                                |l| &l.$category,
+                                &key.t,
+                                $alt_variant,
+                                None,
+                            );
                             if matches!(item_tier, $tier) {
                                 let subtag_str = writeable::Writeable::write_to_string(&key.t);
                                 let data_identifier = DataIdentifierCow::from_owned(
                                     DataMarkerAttributes::try_from_string(subtag_str.into_owned())
                                         .map_err(|_| {
-                                        DataError::custom("Failed to parse attribute")
-                                            .with_debug_context(&key.t)
-                                    })?,
+                                            DataError::custom("Failed to parse attribute")
+                                                .with_debug_context(&key.t)
+                                        })?,
                                     locale,
                                 );
                                 result.insert(data_identifier);
