@@ -64531,7 +64531,7 @@ currency/patterns/no/currency/v1, zh-Hant/hanidec, -> af
 currency/patterns/no/currency/v1, zh/hanidec, -> af
 currency/patterns/no/currency/v1, zu, -> af
 currency/symbols/v1, <lookup>, 11591B, 1621 identifiers
-currency/symbols/v1, <total>, 26427B, 7406B, 827 unique payloads
+currency/symbols/v1, <total>, 26424B, 7403B, 827 unique payloads
 currency/symbols/v1, af-NA/s/NAD, 26B, 3B, 8f758e12daad89e7
 currency/symbols/v1, af/n/BYN, 28B, 5B, a21564eab881e652
 currency/symbols/v1, af/n/CHF, 27B, 4B, e941b759e850df12
@@ -65395,7 +65395,7 @@ currency/symbols/v1, ka/n/BYN, -> af/n/BYN
 currency/symbols/v1, ka/n/TWD, -> af/n/TWD
 currency/symbols/v1, ka/s/GEL, -> en-GE/s/GEL
 currency/symbols/v1, kea/s/AUD, -> am/s/AUD
-currency/symbols/v1, kea/s/CVE, 28B, 5B, 3a5e708392779020
+currency/symbols/v1, kea/s/CVE, 25B, 2B, e208bb7d5742213d
 currency/symbols/v1, kea/s/THB, -> af/s/THB
 currency/symbols/v1, kek/n/NIO, -> fr/n/NIO
 currency/symbols/v1, kek/s/ANG, 28B, 5B, 4f885be62aeaf0dd
