@@ -14,7 +14,8 @@
           "AED": {
             "displayName": "درهم إماراتي",
             "displayName-count-other": "درهم إماراتي",
-            "symbol": "د.إ.‏"
+            "symbol": "د.إ.‏",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "أفغاني - 1927-2002",
@@ -749,7 +750,8 @@
           },
           "MVR": {
             "displayName": "روفيه جزر المالديف",
-            "displayName-count-other": "روفيه جزر المالديف"
+            "displayName-count-other": "روفيه جزر المالديف",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "كواشا مالاوي",
@@ -820,7 +822,8 @@
           "OMR": {
             "displayName": "ريال عماني",
             "displayName-count-other": "ريال عماني",
-            "symbol": "ر.ع.‏"
+            "symbol": "ر.ع.‏",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "بالبوا بنمي",

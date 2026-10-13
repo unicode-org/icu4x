@@ -2,7 +2,7 @@
 
 ICU4X is a heavily data-driven library. Most new features or components will require pulling in data from an external source.
 
-This tutorial aims to help ICU4X contributors add new data to the data pipeline. It is recommended that readers review [data_pipeline.md](../design/data_pipeline.md) for additional theory behind the design decisions in the data provider.
+This tutorial aims to help ICU4X contributors add new data to the data pipeline. It is recommended that readers review [`data_pipeline.md`](../design/data_pipeline.md) for additional theory behind the design decisions in the data provider.
 
 ## Lifecycle of ICU4X Data
 
@@ -35,9 +35,9 @@ The data struct definitions should live in the crate that uses them. By conventi
 
 In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
 
-As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
+As explained in `data_pipeline.md`, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
-Additionally, data structs should keep internal invariants to a minimum. For more information, see [data_safety.md](../design/data_safety.md).
+Additionally, data structs should keep internal invariants to a minimum. For more information, see [`data_safety.md`](../design/data_safety.md).
 
 ### Data Download
 

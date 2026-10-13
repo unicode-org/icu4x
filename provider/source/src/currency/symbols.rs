@@ -16,13 +16,16 @@ use icu_provider::DataProvider;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
+/// The symbol CLDR uses when a locale explicitly has no currency symbol (CLDR-19771).
+const CLDR_NO_SYMBOL_MARKER: &str = "\u{200B}";
+
 impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencySymbolsV1>, DataError> {
         self.check_req::<CurrencySymbolsV1>(req)?;
 
-        let letters_set = CodePointMapData::<GeneralCategory>::try_new_unstable(self)?
-            .as_borrowed()
-            .get_set_for_value_group(GeneralCategoryGroup::Letter);
+        let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(self)?;
+        let gc = gc.as_borrowed();
+        let letters_set = gc.get_set_for_value_group(GeneralCategoryGroup::Letter);
 
         let Some((currency, width)) = CurrencySymbolsV1::parse_attributes(req.id.marker_attributes)
         else {
@@ -52,15 +55,44 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
                 .or(currency_pattern.short.as_ref()),
             _ => currency_pattern.short.as_ref(),
         }
-        .unwrap();
+        .unwrap()
+        .as_str();
+
+        // CLDR uses U+200B ZERO WIDTH SPACE as the symbol when a locale explicitly has no
+        // currency symbol, e.g. `PTE` in `pt-PT`, where the cifrão ('$') is the decimal
+        // separator instead (CLDR-19771). CLDR needs a non-empty value there to block
+        // locale inheritance. Datagen already resolves inheritance, so we store the empty
+        // string instead: an empty symbol means "use the no-currency pattern". This is
+        // different from a missing entry, which falls back to the ISO code.
+        let symbol = if symbol == CLDR_NO_SYMBOL_MARKER {
+            ""
+        } else {
+            // If CLDR starts marking "no symbol" in another way (e.g. a different invisible
+            // character, or an empty string), it would end up being formatted as a visible
+            // symbol, or as the no-currency pattern by accident. Warn so that datagen
+            // can be updated.
+            if symbol.chars().all(|c| {
+                let c = gc.get(c);
+                c == GeneralCategory::Format || GeneralCategoryGroup::Separator.contains(c)
+            }) {
+                log::warn!(
+                    "Unexpected invisible currency symbol for {currency} in {}: {symbol:?}; \
+                     only {CLDR_NO_SYMBOL_MARKER:?} is mapped to the no-currency pattern",
+                    req.id.locale,
+                );
+            }
+            symbol
+        };
 
         // TODO: This is not entirely correct. We need to look at the first/last grapheme cluster.
-        let starts_with_letter = letters_set
-            .as_borrowed()
-            .contains(symbol.chars().next().unwrap());
-        let ends_with_letter = letters_set
-            .as_borrowed()
-            .contains(symbol.chars().next_back().unwrap());
+        let starts_with_letter = symbol
+            .chars()
+            .next()
+            .is_some_and(|c| letters_set.as_borrowed().contains(c));
+        let ends_with_letter = symbol
+            .chars()
+            .next_back()
+            .is_some_and(|c| letters_set.as_borrowed().contains(c));
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -148,13 +180,12 @@ fn test_symbols() {
 
     let provider = SourceDataProvider::new_testing();
 
-    #[allow(const_item_mutation)]
     let load = |locale: DataLocale, currency: CurrencyType, width: CurrencySymbolWidth| {
         DataProvider::<CurrencySymbolsV1>::load(
             &provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencySymbolsV1::make_attributes(currency, width, &mut TinyAsciiStr::EMPTY),
+                    CurrencySymbolsV1::make_attributes(currency, width, &mut Default::default()),
                     &locale,
                 ),
                 ..Default::default()
@@ -211,4 +242,17 @@ fn test_symbols() {
     const PTE: CurrencyType = currency!("PTE");
     assert_eq!(load(FR, PTE, CurrencySymbolsV1::SHORT), None);
     assert_eq!(load(FR, PTE, CurrencySymbolsV1::NARROW), None);
+
+    // `pt-PT` has no symbol for `PTE`: CLDR marks this with U+200B, which datagen
+    // stores as the empty string (= use the no-currency pattern). If this fails, CLDR
+    // has changed how it marks "no symbol" (CLDR-19771), and datagen needs updating.
+    const PT_PT: DataLocale = data_locale!("pt-PT");
+    assert_eq!(
+        load(PT_PT, PTE, CurrencySymbolsV1::SHORT).unwrap().get(),
+        &CurrencySymbol::new("", false, false)
+    );
+    assert_eq!(
+        load(PT_PT, PTE, CurrencySymbolsV1::NARROW).unwrap().get(),
+        &CurrencySymbol::new("", false, false)
+    );
 }

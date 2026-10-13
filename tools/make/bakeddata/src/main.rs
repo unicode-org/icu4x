@@ -68,12 +68,11 @@ fn main() {
             .map(|(krate, markers, version)| (krate.to_string(), *markers, *version))
             .collect::<Vec<_>>()
     } else {
-        let map =
-            std::collections::HashMap::<&str, (&'static [DataMarkerInfo], &'static str)>::from_iter(
-                COMPONENTS
-                    .iter()
-                    .map(|(krate, markers, version)| (*krate, (*markers, *version))),
-            );
+        let map = HashMap::<&str, (&'static [DataMarkerInfo], &'static str)>::from_iter(
+            COMPONENTS
+                .iter()
+                .map(|(krate, markers, version)| (*krate, (*markers, *version))),
+        );
         args.into_iter()
             .filter_map(|krate| {
                 map.get(krate.as_str())
@@ -96,18 +95,13 @@ fn main() {
             .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
-    )
-    .with_recommended_segmenter_models();
+    );
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
     options.pretty = true;
 
-    let zero_copy_check_exporter = Box::leak(Box::new(ZeroCopyCheckExporter {
-        zero_copy_violations: Default::default(),
-        zero_copy_transient_violations: Default::default(),
-        roundtrip_errors: Default::default(),
-    }));
+    let zero_copy_check_exporter = Box::leak(Box::new(ZeroCopyCheckExporter::default()));
 
     for (component, markers, version) in &components {
         let path = Path::new("provider/data").join(component);
@@ -176,7 +170,7 @@ fn main() {
         let baked_metadata = export_metadatas[0]
             .take()
             .unwrap()
-            .downcast::<icu_provider_export::baked_exporter::BakedExporterCloseMetadata>()
+            .downcast::<baked_exporter::BakedExporterCloseMetadata>()
             .unwrap();
 
         let fingerprint_metadata = export_metadatas[2]
@@ -270,14 +264,16 @@ fn main() {
     }
 
     if components.len() == COMPONENTS.len() {
-        // On full datagen runs (as in CI) validate that `--markers all --locales full` works
+        // On full datagen runs (as in CI) validate that every struct works
         ExportDriver::new(
             [DataLocaleFamily::FULL],
             DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::try_new_unstable(&source).unwrap(),
         )
-        // These are all supported models
-        .with_recommended_segmenter_models()
+        // All segmenter models
+        .with_marker_attributes_filter("segmenter", |_| true)
+        // All collations
+        .with_marker_attributes_filter("collator", |_| true)
         .export(&source, &*zero_copy_check_exporter)
         .unwrap();
     }
@@ -369,10 +365,12 @@ impl DataExporter for StatisticsExporter {
     }
 }
 
+#[derive(Default)]
 struct ZeroCopyCheckExporter {
     zero_copy_violations: Mutex<BTreeSet<DataMarkerInfo>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataMarkerInfo>>,
-    roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
+    serde_roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
+    serde_baked_roundtrip_errors: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<String>>>,
 }
 
 impl DataExporter for &'_ ZeroCopyCheckExporter {
@@ -426,20 +424,32 @@ impl DataExporter for &'_ ZeroCopyCheckExporter {
         icu_provider_registry::registry!(cb);
 
         if payload_before != &payload_after {
-            self.roundtrip_errors
+            let id = id.locale.to_string()
+                + if id.marker_attributes.is_empty() {
+                    ""
+                } else {
+                    "-x"
+                }
+                + id.marker_attributes.as_str();
+
+            // Even if serde doesn't round-trip, baked -> serde -> baked should
+            if payload_before.tokenize(&Default::default()).to_string()
+                != payload_after.tokenize(&Default::default()).to_string()
+            {
+                self.serde_baked_roundtrip_errors
+                    .lock()
+                    .expect("poison")
+                    .entry(marker)
+                    .or_default()
+                    .insert(id.clone());
+            }
+
+            self.serde_roundtrip_errors
                 .lock()
                 .expect("poison")
                 .entry(marker)
                 .or_default()
-                .insert(
-                    id.locale.to_string()
-                        + if id.marker_attributes.is_empty() {
-                            ""
-                        } else {
-                            "-x"
-                        }
-                        + id.marker_attributes.as_str(),
-                );
+                .insert(id);
         }
 
         if deallocated != allocated {
@@ -490,7 +500,7 @@ impl ZeroCopyCheckExporter {
         icu::list::provider::ListUnitV1::INFO,
     ];
 
-    const EXPECTED_ROUNDTRIP_VIOLATIONS: &[DataMarkerInfo] = &[
+    const EXPECTED_SERDE_ROUNDTRIP_VIOLATIONS: &[DataMarkerInfo] = &[
         // These serialize to a different variant for stability
         icu::datetime::provider::names::DatetimeNamesMonthDangiV1::INFO,
         icu::datetime::provider::names::DatetimeNamesMonthHebrewV1::INFO,
@@ -499,8 +509,8 @@ impl ZeroCopyCheckExporter {
     ];
 
     fn check(&self) {
-        let roundtrip_errors = self
-            .roundtrip_errors
+        let serde_roundtrip_errors = self
+            .serde_roundtrip_errors
             .lock()
             .expect("poison")
             .keys()
@@ -508,10 +518,23 @@ impl ZeroCopyCheckExporter {
             .collect::<Vec<_>>();
 
         assert!(
-            roundtrip_errors
+            serde_roundtrip_errors
                 .iter()
-                .all(|e| Self::EXPECTED_ROUNDTRIP_VIOLATIONS.contains(e)),
-            "{roundtrip_errors:?}"
+                .all(|e| Self::EXPECTED_SERDE_ROUNDTRIP_VIOLATIONS.contains(e)),
+            "{serde_roundtrip_errors:?}"
+        );
+
+        let serde_baked_roundtrip_errors = self
+            .serde_baked_roundtrip_errors
+            .lock()
+            .expect("poison")
+            .keys()
+            .copied()
+            .collect::<Vec<_>>();
+
+        assert!(
+            serde_baked_roundtrip_errors.is_empty(),
+            "{serde_baked_roundtrip_errors:?}"
         );
 
         let violations = self
@@ -538,7 +561,7 @@ impl ZeroCopyCheckExporter {
                     .iter()
                     .all(|e| Self::EXPECTED_VIOLATIONS.contains(e)),
             "Expected violations list does not match found violations!\n\
-            If the new list is smaller, please update EXPECTED_VIOLATIONS in make-testdata.rs\n\
+            If the new list is smaller, please update EXPECTED_VIOLATIONS in tools/make/bakeddata/src/main.rs\n\
             If it is bigger and that was unexpected, please make sure the marker remains zero-copy, or ask ICU4X team members if it is okay \
             to temporarily allow for this marker to be allowlisted.\n\
             Common cause: did you forget to add `serde(borrow)` to all of the fields in your data struct?\n\

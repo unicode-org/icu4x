@@ -220,6 +220,26 @@ export class UtcOffset {
         }
     }
 
+    /**
+     * Formats the {@link UtcOffset} as a string.
+     *
+     * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
+     */
+    toString() {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+    wasm.icu4x_UtcOffset_to_string_mv1(this.ffiValue, write.buffer);
+
+        try {
+            return write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }

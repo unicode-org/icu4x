@@ -8,7 +8,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] The names of exported types should conform to the recommendations in the Style Guide
   - [ ] All Error types should be `Copy`
   - [ ] All constructors should take options structs by value
-  - [ ] All constructors should take arguments in the following order: Provider, Locale, Options
+  - [ ] All constructors should take arguments in the following order: Provider, Preferences, Options
   - [ ] All constructors should have the standard set of overloads for provider types
   - [ ] Runtime dependencies should be minimal and able to be disabled with Cargo features if possible
   - [ ] Any `TODO`, `FIXME`, `todo!`, `unimplemented!`, or other placeholders should either be resolved or link to an issue number. (It is okay to ship a small amount of code with tech debt comments, but anything having to do with code correctness should be resolved)
@@ -18,7 +18,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] Correct repo link, authors, categories, include
   - [ ] Correct docs.rs and cargo-all-features metadata settings
   - [ ] A `rust-version` field with the MSRV of this crate in accordance with the current ICU4X policies on MSRV.
-  - [ ] The crate should have an `std` feature if (and only if) it contains code that depends on `std`, such as file I/O or implementing the Error trait
+  - [ ] The crate should have an `std` feature if (and only if) it contains code that depends on `std`, such as file I/O
   - [ ] Audit all features so that any `foo/bar` in a feature is `foo?/bar` when `foo` is an optional dep; if you intend to enable `foo`, add two entries
   - [ ] Use `dep:` for enabling dependencies
 - [ ] The crate should be fully documented
@@ -33,7 +33,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] If there is a Borrowed type, then compiled data constructors like `Foo::new()` must return `FooBorrowed` ([#5440](https://github.com/unicode-org/icu4x/issues/5440))
   - [ ] Options bag enum fields should consistently be wrapped in an `Option`, ideally with a better-named default/"auto" variant ([#5488](https://github.com/unicode-org/icu4x/issues/5488))
 - [ ] The data structs should fully follow ZeroVec style
-  - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/source/src/tests/make_testdata.rs) test
+  - [ ] Deserialization should not have a "zero-copy violation" in the zero-copy check of [`cargo make bakeddata`](https://github.com/unicode-org/icu4x/blob/main/tools/make/bakeddata/src/main.rs)
   - [ ] Constructors should avoid allocating memory in the common case
   - [ ] Opaque blobs of data should be avoided if possible (instead use VarZeroVec, ZeroMap, etc.)
   - [ ] Data structs should not be panicky to load/deserialize and conform to [data_safety.md](https://github.com/unicode-org/icu4x/blob/main/documents/design/data_safety.md)

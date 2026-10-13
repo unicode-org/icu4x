@@ -54,7 +54,7 @@ fn test_lower_ascii() {
     // Register Latin-ASCII so that the alias mapping gets added
     collection.register_source(
         &"und-t-und-latn-d0-ascii".parse().unwrap(),
-        "<unused>".to_string(),
+        "<unused>",
         ["Latin-ASCII"],
         false,
         true,
@@ -62,7 +62,7 @@ fn test_lower_ascii() {
     // Now register our new transliterator
     collection.register_source(
         &"und-t-und-x0-lowascii".parse().unwrap(),
-        "::NFD; ::[:Nonspacing Mark:] Remove; ::Lower; ::NFC; ::Latin-ASCII;".to_string(),
+        "::NFD; ::[:Nonspacing Mark:] Remove; ::Lower; ::NFC; ::Latin-ASCII;",
         [],
         false,
         true,

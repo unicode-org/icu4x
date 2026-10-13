@@ -12,9 +12,12 @@ edition.workspace = true
 icu = { workspace = true, features = ["unstable"] }
 icu_provider = { workspace = true }
 icu_provider_registry = { workspace = true }
-icu_provider_source = { workspace = true, features = ["networking", "unstable", "use_wasm"] }
+icu_provider_source = { workspace = true, features = ["networking", "unstable"] }
 serde_json = { workspace = true }
 
 [package.metadata.cargo-all-features]
 # Unpublished internal tool; skip
 skip_package = true
+
+[lints]
+workspace = true

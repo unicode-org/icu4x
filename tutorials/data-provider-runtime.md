@@ -68,7 +68,7 @@ assert_eq!(
 
 ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and, for example, a less-efficient data provider such as JSON is being used.
 
-The following example illustrates an LRU cache on top of a data provider. A practical application would be a BufferProvider that saves deserialized data payloads as type-erased objects and then checks for a cache hit before calling the inner provider.
+The following example illustrates an LRU cache on top of a data provider. A practical application would be a `BufferProvider` that saves deserialized data payloads as type-erased objects and then checks for a cache hit before calling the inner provider.
 
 ```rust
 use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};

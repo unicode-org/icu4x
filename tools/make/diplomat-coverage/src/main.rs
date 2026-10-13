@@ -27,7 +27,7 @@ static FILE_HEADER: &str = r##"# This file contains all APIs that are exposed in
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 "##;
-/// RustLink but without display information
+/// [`RustLink`] but without display information
 #[derive(PartialEq, Eq, Debug, Clone, PartialOrd, Ord, Hash)]
 struct RustLinkInfo {
     path: ast::Path,
@@ -159,10 +159,10 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     .map(|l| IGNORED_SUBSTRINGS.iter().any(|i| l.contains(i)))
                     .unwrap_or(false)
         }
-        /// Helper function that ensures that ignored()
+        /// Helper function that ensures that [`ignored`]
         /// is respected for every type inserted
         ///
-        /// (We have a check at the beginning of recurse() but that won't catch leaf nodes)
+        /// (We have a check at the beginning of [`recurse`] but that won't catch leaf nodes)
         fn insert_ty(
             types: &mut HashSet<(Vec<String>, ast::DocType)>,
             path: Vec<String>,
@@ -396,7 +396,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         // Skip
                     }
                     ItemEnum::ProcMacro(..) => {}
-                    _ => todo!("{:?}", item),
+                    _ => unimplemented!("{:?}", item),
                 }
             }
         }

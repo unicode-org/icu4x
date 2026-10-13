@@ -15,7 +15,8 @@
           "AED": {
             "displayName": "dirham dos Emirados Árabes Unidos",
             "displayName-count-one": "dirham dos Emirados Árabes Unidos",
-            "displayName-count-other": "sdirham dos Emirados Árabes Unidos"
+            "displayName-count-other": "sdirham dos Emirados Árabes Unidos",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "Afeghani (1927–2002)",
@@ -958,7 +959,8 @@
           "MVR": {
             "displayName": "rupia maldivana",
             "displayName-count-one": "rupia maldivana",
-            "displayName-count-other": "rupias maldivanas"
+            "displayName-count-other": "rupias maldivanas",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "kwacha malauiano",
@@ -1053,7 +1055,8 @@
           "OMR": {
             "displayName": "rial omanense",
             "displayName-count-one": "rial omanense",
-            "displayName-count-other": "riais omanenses"
+            "displayName-count-other": "riais omanenses",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "balboa do Panamá",

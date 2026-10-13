@@ -256,6 +256,12 @@ final class Decimal implements ffi.Finalizable {
     return write.finalize();
   }
 
+  /// Check whether two [Decimal] values are structurally equal (including sign and trailing zeros).
+  bool equals(Decimal other) {
+    final result = _icu4x_Decimal_equals_mv1(_ffi, other._ffi);
+    return result;
+  }
+
 }
 
 // ignore: experimental_member_use
@@ -443,5 +449,11 @@ external _ResultVoidVoid _icu4x_Decimal_concatenate_end_mv1(ffi.Pointer<ffi.Opaq
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_to_string_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Decimal_to_string_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Decimal_equals_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_Decimal_equals_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
 
 // dart format on

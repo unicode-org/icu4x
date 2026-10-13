@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "1 時間以内"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "1 時間以内"
+  ],
   "past": {
     "other": [
       0,

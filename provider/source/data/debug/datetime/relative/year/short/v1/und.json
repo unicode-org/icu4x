@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "last year",
-    "0": "this year",
-    "1": "next year"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "last year",
+    "this year",
+    "next year"
+  ],
   "past": {
     "other": [
       0,

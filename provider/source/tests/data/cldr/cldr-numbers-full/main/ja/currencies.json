@@ -12,7 +12,8 @@
           },
           "AED": {
             "displayName": "アラブ首長国連邦ディルハム",
-            "displayName-count-other": "UAE ディルハム"
+            "displayName-count-other": "UAE ディルハム",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "アフガニスタン アフガニー (1927–2002)",
@@ -787,7 +788,8 @@
           },
           "MVR": {
             "displayName": "モルディブ ルフィア",
-            "displayName-count-other": "モルディブ ルフィア"
+            "displayName-count-other": "モルディブ ルフィア",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "マラウィ クワチャ",
@@ -865,7 +867,8 @@
           },
           "OMR": {
             "displayName": "オマーン リアル",
-            "displayName-count-other": "オマーン リアル"
+            "displayName-count-other": "オマーン リアル",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "パナマ バルボア",

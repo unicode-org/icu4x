@@ -57,7 +57,26 @@
         "types": {
           "calendar": {
             "buddhist": "calendario budista",
-            "core": "de la República de China",
+            "_core": {
+              "buddhist": "budista",
+              "chinese": "chino",
+              "coptic": "cóptico",
+              "dangi": "dangi",
+              "ethiopic": "etíope",
+              "ethiopic-amete-alem": "etíope Amete Alem",
+              "gregorian": "gregoriano",
+              "hebrew": "hebreo",
+              "indian": "nacional indio",
+              "islamic": "hijri",
+              "islamic-civil": "hijri (tabular, época civil)",
+              "islamic-rgsa": "hijri (avistamiento en Arabia Saudí)",
+              "islamic-tbla": "hijri (tabular, época astronómica)",
+              "islamic-umalqura": "hijri (Umm al-Qura)",
+              "iso8601": "gregoriano",
+              "japanese": "japonés",
+              "persian": "persa",
+              "roc": "de la República de China"
+            },
             "chinese": "calendario chino",
             "coptic": "calendario cóptico",
             "dangi": "calendario dangi",
@@ -76,7 +95,10 @@
           },
           "cf": {
             "account": "formato de moneda de contabilidad",
-            "core": "estándar",
+            "_core": {
+              "account": "contabilidad",
+              "standard": "estándar"
+            },
             "standard": "formato de moneda estándar"
           },
           "colAlternate": {
@@ -89,7 +111,11 @@
           },
           "colCaseFirst": {
             "lower": "Ordenar empezando por minúsculas",
-            "core": "mayúsculas",
+            "_core": {
+              "lower": "minúsculas",
+              "no": "minúsculas",
+              "upper": "mayúsculas"
+            },
             "no": "Ordenar siguiendo orden normal de mayúsculas y minúsculas",
             "upper": "Ordenar empezando por mayúsculas"
           },
@@ -99,7 +125,23 @@
           },
           "collation": {
             "compat": "orden anterior, para compatibilidad",
-            "core": "zhuyin",
+            "_core": {
+              "compat": "compatibilidad",
+              "dictionary": "diccionario",
+              "ducet": "predeterminado de Unicode",
+              "emoji": "emoji",
+              "eor": "normas europeas",
+              "phonebook": "listín telefónico",
+              "phonetic": "fonético",
+              "pinyin": "pinyin",
+              "search": "búsqueda",
+              "searchjl": "consonante inicial coreana",
+              "standard": "estándar",
+              "stroke": "trazos",
+              "traditional": "tradicional",
+              "unihan": "trazos radicales",
+              "zhuyin": "zhuyin"
+            },
             "dictionary": "orden de diccionario",
             "ducet": "orden predeterminado de Unicode",
             "eor": "reglas de ordenación europeas",
@@ -123,11 +165,23 @@
             "yes": "Ordenar dígitos numéricamente"
           },
           "colReorder": {
-            "core": "símbolo"
+            "_core": {
+              "currency": "moneda",
+              "digit": "dígitos",
+              "punct": "puntuación",
+              "space": "espacio en blanco",
+              "symbol": "símbolo"
+            }
           },
           "colStrength": {
             "identical": "Ordenar todo",
-            "core": "base, acentos, mayúsculas/minúsculas, variantes",
+            "_core": {
+              "identical": "todo",
+              "primary": "solo letras base",
+              "quaternary": "base, acentos, mayúsculas/minúsculas, variantes, kana",
+              "secondary": "base, acentos",
+              "tertiary": "base, acentos, mayúsculas/minúsculas, variantes"
+            },
             "primary": "Ordenar solo letras base",
             "quaternary": "Ordenar acentos/mayúsculas y minúsculas/ancho/kana",
             "secondary": "Ordenar acentos",
@@ -139,11 +193,22 @@
             "npinyin": "Numérico"
           },
           "em": {
-            "core": "texto"
+            "_core": {
+              "default": "predeterminado",
+              "emoji": "emoji",
+              "text": "texto"
+            }
           },
           "hc": {
             "c12": "sistema de 12 horas",
-            "core": "24 (1–24)",
+            "_core": {
+              "c12": "12",
+              "c24": "24",
+              "h11": "12 (0–11)",
+              "h12": "12 (1–12)",
+              "h23": "24 (0–23)",
+              "h24": "24 (1–24)"
+            },
             "c24": "sistema de 24 horas",
             "h11": "sistema de 12 horas (0–11)",
             "h12": "sistema de 12 horas (1–12)",
@@ -151,16 +216,30 @@
             "h24": "sistema de 24 horas (1–24)"
           },
           "kv": {
-            "core": "ignorar espacios, puntuación y símbolos no monetarios"
+            "_core": {
+              "currency": "ignorar espacios, puntuación y todos los símbolos",
+              "punct": "ignorar espacios y puntuación",
+              "space": "ignorar espacios y puntuación",
+              "symbol": "ignorar espacios, puntuación y símbolos no monetarios"
+            }
           },
           "lb": {
             "loose": "estilo de salto de línea flexible",
-            "core": "estricto",
+            "_core": {
+              "loose": "flexible",
+              "normal": "normal",
+              "strict": "estricto"
+            },
             "normal": "estilo de salto de línea normal",
             "strict": "estilo de salto de línea estricto"
           },
           "lw": {
-            "core": "conservar en sintagmas"
+            "_core": {
+              "breakall": "dividir todas",
+              "keepall": "conservar todas",
+              "normal": "normal",
+              "phrase": "conservar en sintagmas"
+            }
           },
           "m0": {
             "bgn": "transliteración USBGN",
@@ -168,14 +247,47 @@
           },
           "ms": {
             "metric": "sistema métrico",
-            "core": "estadounidense",
+            "_core": {
+              "metric": "métrico",
+              "uksystem": "británico",
+              "ussystem": "estadounidense"
+            },
             "uksystem": "sistema imperial",
             "ussystem": "sistema estadounidense"
           },
           "numbers": {
             "arab": "dígitos indoarábigos",
             "arabext": "dígitos indoarábigos extendidos",
-            "core": "números tradicionales",
+            "_core": {
+              "arabext": "indoarábigos extendidos",
+              "armnlow": "en armenio en minúscula",
+              "finance": "financieros",
+              "fullwide": "ancho completo",
+              "greklow": "en griego en minúscula",
+              "hanidays": "numeración de días del mes en caracteres han para calendarios tradicionales",
+              "hanidec": "sistema decimal posicional con ideogramas numéricos chinos como dígitos",
+              "hansfin": "financieros en chino simplificado",
+              "hantfin": "financieros en chino tradicional",
+              "jpanfin": "financieros en japonés",
+              "jpanyear": "numeración gannen del primer año en japonés",
+              "lanatham": "tai tham tham (eclesiástico)",
+              "mathbold": "matemáticos en negrita",
+              "mathdbl": "matemáticos de doble trazo",
+              "mathmono": "matemáticos monoespaciados",
+              "mathsanb": "matemáticos en negrita sin serifa",
+              "mathsans": "matemáticos sin serifa",
+              "mymrepka": "karen pwo oriental en birmano",
+              "mymrpao": "pao en birmano",
+              "mymrshan": "shan en birmano",
+              "mymrtlng": "tai laing en birmano",
+              "native": "dígitos nativos",
+              "outlined": "contorneados",
+              "roman": "romanos en mayúscula",
+              "romanlow": "romanos en minúscula",
+              "segment": "segmentados",
+              "tamldec": "tamil moderno",
+              "traditional": "números tradicionales"
+            },
             "armn": "números en armenio",
             "armnlow": "números en armenio en minúscula",
             "beng": "dígitos en bengalí",
@@ -220,18 +332,19 @@
             "vaii": "dígitos en vai"
           },
           "ss": {
-            "core": "activado"
+            "_core": {
+              "none": "desactivado",
+              "standard": "activado"
+            }
           },
           "t0": {
             "und": "traducción automática no especificada"
           },
           "va": {
-            "core": "variante POSIX"
+            "_core": {
+              "posix": "variante POSIX"
+            }
           }
-        },
-        "typeValues": {
-          "no": "No",
-          "yes": "Sí"
         },
         "codePatterns": {
           "language": "Idioma: {0}",

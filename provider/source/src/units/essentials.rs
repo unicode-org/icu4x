@@ -82,13 +82,17 @@ impl DataProvider<UnitsEssentialsV1> for SourceDataProvider {
                 ),
             ]
             .iter()
-            .filter(|(pattern, _)| pattern.is_some())
-            .map(|(pattern, count)| (pattern.unwrap(), count))
+            .filter(|&&(pattern, c)| {
+                pattern.is_some()
+                    && (c == CompoundCount::Other
+                        || pattern != powers.other_compound_unit_pattern1.as_ref())
+            })
+            .map(|&(pattern, count)| (pattern.unwrap(), count))
             .for_each(|(pattern, count)| {
                 prefixes.insert(
                     PatternKey::Power {
                         power: power_value,
-                        count: *count,
+                        count,
                     },
                     pattern.to_string(),
                 );

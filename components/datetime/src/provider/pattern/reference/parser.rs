@@ -5,375 +5,143 @@
 use super::{
     super::error::PatternError,
     super::{GenericPatternItem, PatternItem},
+    tokenizer::{Token, Uts35DateTimePatternTokenizer},
 };
 #[cfg(test)]
 use super::{GenericPattern, Pattern};
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
-use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use core::mem;
-
-#[derive(Debug, PartialEq)]
-struct SegmentSymbol {
-    symbol: FieldSymbol,
-    length: u8,
-}
-
-impl SegmentSymbol {
-    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        let length = FieldLength::from_idx(self.length)
-            .map_err(|_| PatternError::FieldLengthInvalid(self.symbol))?;
-        result.push(PatternItem::from((self.symbol, length)));
-        Ok(())
-    }
-}
-
-#[derive(Debug, PartialEq)]
-struct SegmentSecondSymbol {
-    integer_digits: u8,
-    seen_decimal_separator: bool,
-    fraction_digits: u8,
-}
-
-impl SegmentSecondSymbol {
-    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        let second_symbol = FieldSymbol::Second(fields::Second::Second);
-        let symbol = if self.fraction_digits == 0 {
-            second_symbol
-        } else {
-            let decimal_second = fields::DecimalSecond::from_idx(self.fraction_digits)
-                .map_err(|_| PatternError::FieldLengthInvalid(second_symbol))?;
-            FieldSymbol::DecimalSecond(decimal_second)
-        };
-        let length = FieldLength::from_idx(self.integer_digits)
-            .map_err(|_| PatternError::FieldLengthInvalid(symbol))?;
-        result.push(PatternItem::Field(Field { symbol, length }));
-        if self.seen_decimal_separator && self.fraction_digits == 0 {
-            result.push(PatternItem::Literal('.'));
-        }
-        Ok(())
-    }
-}
-
-#[derive(Debug, PartialEq)]
-struct SegmentLiteral {
-    literal: String,
-    quoted: bool,
-}
-
-impl SegmentLiteral {
-    #[allow(clippy::unnecessary_wraps)] // consistency
-    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        if !self.literal.is_empty() {
-            result.extend(self.literal.chars().map(PatternItem::from));
-        }
-        Ok(())
-    }
-
-    #[allow(clippy::unnecessary_wraps)] // consistency
-    fn finish_generic(self, result: &mut Vec<GenericPatternItem>) -> Result<(), PatternError> {
-        if !self.literal.is_empty() {
-            result.extend(self.literal.chars().map(GenericPatternItem::from));
-        }
-        Ok(())
-    }
-}
-
-#[derive(Debug, PartialEq)]
-struct SymbolAlias {
-    ch: char,
-    length: u8,
-}
-
-impl SymbolAlias {
-    fn try_new(ch: char) -> Option<Self> {
-        matches!(ch, 'Z').then_some(Self { ch, length: 1 })
-    }
-
-    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        match (self.ch, self.length) {
-            // Z..ZZZ => xxxx
-            ('Z', 1..=3) => SegmentSymbol {
-                symbol: FieldSymbol::TimeZone(TimeZone::Iso),
-                length: 4,
-            },
-            // ZZZZ => OOOO
-            ('Z', 4) => SegmentSymbol {
-                symbol: FieldSymbol::TimeZone(TimeZone::LocalizedOffset),
-                length: 4,
-            },
-            // ZZZZZ => XXXXX
-            ('Z', 5) => SegmentSymbol {
-                symbol: FieldSymbol::TimeZone(TimeZone::IsoWithZ),
-                length: 5,
-            },
-            _ => return Err(PatternError::UnknownSubstitution(self.ch)),
-        }
-        .finish(result)
-    }
-}
-
-#[derive(Debug, PartialEq)]
-enum Segment {
-    Symbol(SegmentSymbol),
-    SecondSymbol(SegmentSecondSymbol),
-    Literal(SegmentLiteral),
-    SymbolAlias(SymbolAlias),
-}
-
-impl Segment {
-    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        match self {
-            Self::Symbol(v) => v.finish(result),
-            Self::SecondSymbol(v) => v.finish(result),
-            Self::Literal(v) => v.finish(result),
-            Self::SymbolAlias(v) => v.finish(result),
-        }
-    }
-
-    fn finish_generic(self, result: &mut Vec<GenericPatternItem>) -> Result<(), PatternError> {
-        match self {
-            Self::Symbol(_) => unreachable!("no symbols in generic pattern"),
-            Self::SecondSymbol(_) => unreachable!("no symbols in generic pattern"),
-            Self::Literal(v) => v.finish_generic(result),
-            Self::SymbolAlias(_) => unreachable!("no symbols in generic pattern"),
-        }
-    }
-}
 
 #[derive(Debug)]
 pub struct Parser<'p> {
     source: &'p str,
-    state: Segment,
 }
 
 impl<'p> Parser<'p> {
     pub fn new(source: &'p str) -> Self {
-        Self {
-            source,
-            state: Segment::Literal(SegmentLiteral {
-                literal: String::new(),
-                quoted: false,
-            }),
-        }
+        Self { source }
     }
 
-    fn handle_quoted_literal(
-        &mut self,
-        ch: char,
-        chars: &mut core::iter::Peekable<core::str::Chars>,
-        result: &mut Vec<PatternItem>,
-    ) -> Result<bool, PatternError> {
-        if ch == '\'' {
-            match (&mut self.state, chars.peek() == Some(&'\'')) {
-                (Segment::Literal(literal), true) => {
-                    literal.literal.push('\'');
-                    chars.next();
-                }
-                (Segment::Literal(literal), false) => {
-                    literal.quoted = !literal.quoted;
-                }
-                (state, true) => {
-                    mem::replace(
-                        state,
-                        Segment::Literal(SegmentLiteral {
-                            literal: String::from(ch),
-                            quoted: false,
-                        }),
-                    )
-                    .finish(result)?;
-                    chars.next();
-                }
-                (state, false) => {
-                    mem::replace(
-                        state,
-                        Segment::Literal(SegmentLiteral {
-                            literal: String::new(),
-                            quoted: true,
-                        }),
-                    )
-                    .finish(result)?;
-                }
-            }
-            Ok(true)
-        } else if let Segment::Literal(SegmentLiteral {
-            ref mut literal,
-            quoted: true,
-        }) = self.state
-        {
-            literal.push(ch);
-            Ok(true)
-        } else {
-            Ok(false)
-        }
-    }
-
-    fn handle_generic_quoted_literal(
-        &mut self,
-        ch: char,
-        chars: &mut core::iter::Peekable<core::str::Chars>,
-    ) -> bool {
-        if ch == '\'' {
-            match (&mut self.state, chars.peek() == Some(&'\'')) {
-                (Segment::Literal(literal), true) => {
-                    literal.literal.push('\'');
-                    chars.next();
-                }
-                (Segment::Literal(literal), false) => {
-                    literal.quoted = !literal.quoted;
-                }
-                _ => unreachable!("Generic pattern has no symbols."),
-            }
-            true
-        } else if let Segment::Literal(SegmentLiteral {
-            ref mut literal,
-            quoted: true,
-        }) = self.state
-        {
-            literal.push(ch);
-            true
-        } else {
-            false
-        }
-    }
-
-    pub fn parse(mut self) -> Result<Vec<PatternItem>, PatternError> {
-        let mut chars = self.source.chars().peekable();
+    pub fn parse(self) -> Result<Vec<PatternItem>, PatternError> {
+        let mut tokenizer = Uts35DateTimePatternTokenizer(self.source);
         let mut result = vec![];
 
-        while let Some(ch) = chars.next() {
-            if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
-                if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
-                    match &mut self.state {
-                        Segment::Symbol(SegmentSymbol { symbol, length })
-                            if new_symbol == *symbol =>
-                        {
-                            *length += 1;
+        while let Some(token) = tokenizer.step() {
+            match token {
+                Token::Symbol('s', integer_digits) => {
+                    // Note: this accepts both "ssSSS" and "ss.SSS"
+                    let mut lookahead = tokenizer.clone(); // trivial clone
+                    let fraction_digits = match lookahead.step() {
+                        Some(Token::Symbol('S', fraction_digits)) => {
+                            tokenizer = lookahead;
+                            fraction_digits
                         }
-                        Segment::SecondSymbol(SegmentSecondSymbol {
-                            integer_digits,
-                            seen_decimal_separator: false,
-                            ..
-                        }) if matches!(new_symbol, FieldSymbol::Second(fields::Second::Second)) => {
-                            *integer_digits += 1;
-                        }
-                        state => {
-                            mem::replace(
-                                state,
-                                if matches!(new_symbol, FieldSymbol::Second(fields::Second::Second))
-                                {
-                                    Segment::SecondSymbol(SegmentSecondSymbol {
-                                        integer_digits: 1,
-                                        seen_decimal_separator: false,
-                                        fraction_digits: 0,
-                                    })
-                                } else {
-                                    Segment::Symbol(SegmentSymbol {
-                                        symbol: new_symbol,
-                                        length: 1,
-                                    })
-                                },
-                            )
-                            .finish(&mut result)?;
-                        }
+                        Some(Token::Literal(".")) => match lookahead.step() {
+                            Some(Token::Symbol('S', fraction_digits)) => {
+                                tokenizer = lookahead;
+                                fraction_digits
+                            }
+                            _ => 0,
+                        },
+                        _ => 0,
+                    };
+                    let second_symbol = FieldSymbol::Second(fields::Second::Second);
+                    let symbol = if fraction_digits == 0 {
+                        second_symbol
+                    } else {
+                        let decimal_second = u8::try_from(fraction_digits)
+                            .ok()
+                            .and_then(|d| fields::DecimalSecond::from_idx(d).ok())
+                            .ok_or(PatternError::FieldLengthInvalid(second_symbol))?;
+                        FieldSymbol::DecimalSecond(decimal_second)
+                    };
+                    let length = u8::try_from(integer_digits)
+                        .ok()
+                        .and_then(|d| FieldLength::from_idx(d).ok())
+                        .ok_or(PatternError::FieldLengthInvalid(symbol))?;
+                    result.push(PatternItem::Field(Field { symbol, length }));
+                }
+                Token::Symbol('Z', length) => {
+                    let (symbol, length) = match length {
+                        // Z..ZZZ => xxxx
+                        1..=3 => (FieldSymbol::TimeZone(TimeZone::Iso), FieldLength::Four),
+                        // ZZZZ => OOOO
+                        4 => (
+                            FieldSymbol::TimeZone(TimeZone::LocalizedOffset),
+                            FieldLength::Four,
+                        ),
+                        // ZZZZZ => XXXXX
+                        5 => (FieldSymbol::TimeZone(TimeZone::IsoWithZ), FieldLength::Five),
+                        _ => return Err(PatternError::UnknownSubstitution('Z')),
+                    };
+                    result.push(PatternItem::Field(Field { symbol, length }));
+                }
+                Token::Symbol(ch, length) => {
+                    if let Ok(symbol) = FieldSymbol::try_from(ch) {
+                        let length = u8::try_from(length)
+                            .ok()
+                            .and_then(|d| FieldLength::from_idx(d).ok())
+                            .ok_or(PatternError::FieldLengthInvalid(symbol))?;
+                        result.push(PatternItem::Field(Field { symbol, length }));
+                    } else {
+                        result.extend(core::iter::repeat_n(PatternItem::Literal(ch), length));
                     }
-                } else if let Some(alias) = SymbolAlias::try_new(ch) {
-                    match &mut self.state {
-                        Segment::SymbolAlias(SymbolAlias { ch: ch2, length }) if *ch2 == ch => {
-                            *length += 1;
-                        }
-                        state => {
-                            mem::replace(state, Segment::SymbolAlias(alias)).finish(&mut result)?;
-                        }
-                    }
-                } else {
-                    match &mut self.state {
-                        Segment::SecondSymbol(
-                            second_symbol @ SegmentSecondSymbol {
-                                seen_decimal_separator: false,
-                                ..
-                            },
-                        ) if ch == '.' => second_symbol.seen_decimal_separator = true,
-                        Segment::SecondSymbol(second_symbol) if ch == 'S' => {
-                            // Note: this accepts both "ssSSS" and "ss.SSS"
-                            // We say we've seen the separator to switch to fraction mode
-                            second_symbol.seen_decimal_separator = true;
-                            second_symbol.fraction_digits += 1;
-                        }
-                        Segment::Literal(literal) => literal.literal.push(ch),
-                        state => {
-                            mem::replace(
-                                state,
-                                Segment::Literal(SegmentLiteral {
-                                    literal: String::from(ch),
-                                    quoted: false,
-                                }),
-                            )
-                            .finish(&mut result)?;
-                        }
-                    }
+                }
+                Token::Literal(s) => {
+                    result.extend(s.chars().map(PatternItem::Literal));
+                }
+                Token::UnclosedLiteral(_) => {
+                    return Err(PatternError::UnclosedLiteral);
                 }
             }
         }
-
-        if matches!(
-            self.state,
-            Segment::Literal(SegmentLiteral { quoted: true, .. })
-        ) {
-            return Err(PatternError::UnclosedLiteral);
-        }
-
-        self.state.finish(&mut result)?;
 
         Ok(result)
     }
 
-    pub fn parse_generic(mut self) -> Result<Vec<GenericPatternItem>, PatternError> {
-        let mut chars = self.source.chars().peekable();
-        let mut result = vec![];
+    pub fn parse_generic(self) -> Result<Vec<GenericPatternItem>, PatternError> {
+        #[derive(Debug)]
+        struct DigitPlaceholder(u8);
 
-        while let Some(ch) = chars.next() {
-            if !self.handle_generic_quoted_literal(ch, &mut chars) {
-                if ch == '{' {
-                    mem::replace(
-                        &mut self.state,
-                        Segment::Literal(SegmentLiteral {
-                            literal: String::new(),
-                            quoted: false,
-                        }),
-                    )
-                    .finish_generic(&mut result)?;
-
-                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    let idx = ch
-                        .to_digit(10)
-                        .ok_or(PatternError::UnknownSubstitution(ch))?
-                        as u8;
-                    result.push(GenericPatternItem::Placeholder(idx));
-                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    if ch != '}' {
-                        return Err(PatternError::UnclosedPlaceholder);
-                    }
-                } else if let Segment::Literal(SegmentLiteral {
-                    ref mut literal, ..
-                }) = self.state
-                {
-                    literal.push(ch);
-                } else {
-                    unreachable!()
+        impl core::str::FromStr for DigitPlaceholder {
+            type Err = PatternError;
+            fn from_str(s: &str) -> Result<Self, Self::Err> {
+                let mut it = s.chars();
+                let ch = it.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                let idx = ch
+                    .to_digit(10)
+                    .ok_or(PatternError::UnknownSubstitution(ch))? as u8;
+                if it.next().is_some() {
+                    return Err(PatternError::UnclosedPlaceholder);
                 }
+                Ok(Self(idx))
             }
         }
 
-        if matches!(
-            self.state,
-            Segment::Literal(SegmentLiteral { quoted: true, .. })
-        ) {
-            return Err(PatternError::UnclosedLiteral);
-        }
+        let mut parser = icu_pattern::Parser::<DigitPlaceholder>::new(
+            self.source,
+            icu_pattern::QuoteMode::QuotingSupported.into(),
+        );
+        let mut result = vec![];
 
-        self.state.finish_generic(&mut result)?;
+        while let Some(item) = parser.try_next().map_err(|e| match e {
+            icu_pattern::ParserError::InvalidPlaceholder(err) => err,
+            icu_pattern::ParserError::UnclosedPlaceholder => PatternError::UnclosedPlaceholder,
+            icu_pattern::ParserError::UnclosedQuotedLiteral => PatternError::UnclosedLiteral,
+            icu_pattern::ParserError::IllegalCharacter(ch) => PatternError::InvalidSymbol(ch),
+            _ => PatternError::UnclosedPlaceholder,
+        })? {
+            match item {
+                icu_pattern::ParsedPatternItem::Placeholder(DigitPlaceholder(idx)) => {
+                    result.push(GenericPatternItem::Placeholder(idx));
+                }
+                icu_pattern::ParsedPatternItem::Literal { content, .. } => {
+                    result.extend(content.chars().map(GenericPatternItem::Literal));
+                }
+                _ => {}
+            }
+        }
 
         Ok(result)
     }

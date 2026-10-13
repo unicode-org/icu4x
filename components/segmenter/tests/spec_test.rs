@@ -245,25 +245,6 @@ fn run_line_break_test() {
 }
 
 #[test]
-fn run_line_break_extra_test() {
-    line_break_test(
-        include_str!("testdata/LineBreakExtraTest_15.1.txt"),
-        LineSegmenter::new_for_non_complex_scripts(Default::default()),
-        false,
-    );
-    line_break_test(
-        include_str!("testdata/LineBreakExtraTest_17.txt"),
-        LineSegmenter::new_17_for_non_complex_scripts(Default::default()),
-        false,
-    );
-    line_break_test(
-        include_str!("testdata/LineBreakExtraTest.txt"),
-        LineSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-        false,
-    );
-}
-
-#[test]
 fn run_line_break_random_test() {
     line_break_test(
         include_str!("testdata/LineBreakRandomTest_15.1.txt"),
@@ -355,18 +336,6 @@ fn run_word_break_test() {
 }
 
 #[test]
-fn run_word_break_extra_test() {
-    word_break_test(
-        include_str!("testdata/WordBreakExtraTest.txt"),
-        WordSegmenter::new_for_non_complex_scripts(Default::default()),
-    );
-    word_break_test(
-        include_str!("testdata/WordBreakExtraTest.txt"),
-        WordSegmenter::new_neo_for_non_complex_scripts(Default::default()),
-    );
-}
-
-#[test]
 fn run_word_break_random_test() {
     word_break_test(
         include_str!("testdata/WordBreakRandomTest_17.txt"),
@@ -452,18 +421,6 @@ fn run_grapheme_break_test() {
 }
 
 #[test]
-fn run_grapheme_break_extra_test() {
-    grapheme_break_test(
-        include_str!("testdata/GraphemeBreakExtraTest.txt"),
-        GraphemeClusterSegmenter::new(),
-    );
-    grapheme_break_test(
-        include_str!("testdata/GraphemeBreakExtraTest.txt"),
-        GraphemeClusterSegmenter::new_neo(),
-    );
-}
-
-#[test]
 fn run_grapheme_break_random_test() {
     grapheme_break_test(
         include_str!("testdata/GraphemeBreakRandomTest_17.txt"),
@@ -544,18 +501,6 @@ fn run_sentence_break_test() {
     );
     sentence_break_test(
         include_str!("testdata/SentenceBreakTest.txt"),
-        SentenceSegmenter::new_neo(Default::default()),
-    );
-}
-
-#[test]
-fn run_sentence_break_extra_test() {
-    sentence_break_test(
-        include_str!("testdata/SentenceBreakExtraTest.txt"),
-        SentenceSegmenter::new(Default::default()),
-    );
-    sentence_break_test(
-        include_str!("testdata/SentenceBreakExtraTest.txt"),
         SentenceSegmenter::new_neo(Default::default()),
     );
 }

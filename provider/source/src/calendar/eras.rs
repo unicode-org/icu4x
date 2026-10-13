@@ -6,6 +6,7 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
+use crate::source::source_issue;
 use icu::calendar::provider::*;
 use icu::calendar::{AnyCalendar, Date};
 use icu_provider::prelude::*;
@@ -70,7 +71,10 @@ impl SourceDataProvider {
                             .era()
                             .unwrap();
                             if era_year.era != data.code {
-                                log::warn!("mismatched era code {era_year:?} - {data:?}");
+                                source_issue!(
+                                    Default::default(),
+                                    "mismatched era code {era_year:?} - {data:?}"
+                                );
                             }
                             data.icu4x_era_index = Some(era_year.era_index.unwrap());
                             (key.parse::<usize>().unwrap(), data)

@@ -339,7 +339,7 @@ impl WordSegmenter {
     where
         D: DataProvider<SegmenterBreakWordV1>
             + DataProvider<SegmenterBreakWordOverrideV1>
-            + DataProvider<SegmenterDictionaryAutoV1>
+            + DataProvider<SegmenterDictionaryAutoV2>
             + DataProvider<SegmenterLstmAutoV1>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
@@ -474,8 +474,8 @@ impl WordSegmenter {
     where
         D: DataProvider<SegmenterBreakWordV1>
             + DataProvider<SegmenterBreakWordOverrideV1>
-            + DataProvider<SegmenterDictionaryAutoV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
+            + DataProvider<SegmenterDictionaryAutoV2>
+            + DataProvider<SegmenterDictionaryExtendedV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
@@ -618,8 +618,8 @@ impl WordSegmenter {
     /// [`WordSegmenter::new_for_non_complex_scripts`].
     pub fn load_dictionary_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
-        D: DataProvider<SegmenterDictionaryAutoV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
+        D: DataProvider<SegmenterDictionaryAutoV2>
+            + DataProvider<SegmenterDictionaryExtendedV2>
             + ?Sized,
     {
         let complex = match self.0 {
@@ -645,7 +645,18 @@ impl WordSegmenter {
         &mut self,
         provider: &(impl BufferProvider + ?Sized),
     ) -> Result<(), DataError> {
-        self.load_dictionary_unstable(&provider.as_deserializing())
+        let complex = match self.0 {
+            WordSegmenterInner::V1 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            WordSegmenterInner::V2 {
+                ref mut complex, ..
+            } => complex,
+        };
+        complex.with_southeast_asian_dictionaries_buffer(&provider.as_deserializing())?;
+        complex.with_japanese_dictionary_buffer(&provider.as_deserializing())?;
+        Ok(())
     }
 
     /// Loads the best available complex script data for a [`WordSegmenter`] constructed with
@@ -653,7 +664,7 @@ impl WordSegmenter {
     #[cfg(feature = "auto")]
     pub fn load_auto_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
-        D: DataProvider<SegmenterDictionaryAutoV1> + DataProvider<SegmenterLstmAutoV1> + ?Sized,
+        D: DataProvider<SegmenterDictionaryAutoV2> + DataProvider<SegmenterLstmAutoV1> + ?Sized,
     {
         let complex = match self.0 {
             WordSegmenterInner::V1 {
@@ -1015,6 +1026,60 @@ use crate::{GraphemeClusterSegmenterBorrowed, LineSegmenterBorrowed, SentenceSeg
 #[cfg(test)]
 include!("../tests/helpers.rs.raw");
 
+// The test data files contain the output of the neo implementation.
+// Inputs that the v1 implementation is known to fail are listed here and skipped.
+#[cfg(test)]
+const V1_KNOWN_FAILURES: &[&str] = &["エディターエディ", "コンピューターソ"];
+
+#[cfg(test)]
+fn run_test(file: &'static str, v1: WordSegmenterBorrowed, neo: WordSegmenterBorrowed) {
+    for expected in parse_test_file(file) {
+        let expected = expected.iter().map(String::as_str).collect::<Vec<_>>();
+        let s = expected.concat();
+        check_word(&s, &expected, neo);
+        if V1_KNOWN_FAILURES.contains(&s.as_str()) {
+            let actual = v1
+                .segment_str(&s)
+                .tuple_windows()
+                .map(|(a, b)| &s[a..b])
+                .collect::<Vec<_>>();
+            assert_ne!(
+                actual, expected,
+                "{s} passes on v1, remove it from the known failures"
+            );
+        } else {
+            check_word(&s, &expected, v1);
+        }
+    }
+}
+
+#[test]
+fn lstm() {
+    let mut neo =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    neo.load_auto();
+    run_test(
+        include_str!("../tests/testdata/WordBreakLstm.txt"),
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        neo,
+    );
+}
+
+// The Thai segmentations in the ICU4C section of the test data file match ICU4C (ICU 78).
+// The file is intended to also live in the ICU repository, where the
+// dictionary data lives, and to be tested against ICU4C there.
+#[test]
+fn dictionary() {
+    let mut neo =
+        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
+    neo.load_dictionary();
+    run_test(
+        include_str!("../tests/testdata/WordBreakDictionary.txt"),
+        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
+        neo,
+    );
+}
+
 #[test]
 fn empty_string() {
     let segmenter =
@@ -1029,79 +1094,6 @@ fn empty_string_neo() {
         WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
-}
-
-#[test]
-fn cj_dictionary_test() {
-    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
-
-    // Match case
-    check_word("龟山岛龟山岛", &["龟山岛", "龟山岛"], segmenter);
-
-    // Match case, then no match case
-    check_word("エディターエディ", &["エディターエディ"], segmenter);
-}
-
-#[test]
-fn cj_dictionary_test_neo() {
-    let mut segmenter =
-        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
-    segmenter.load_auto();
-
-    // Match case
-    check_word("龟山岛龟山岛", &["龟山岛", "龟山岛"], segmenter);
-
-    // Match case, then no match case
-    check_word("エディターエディ", &["エディター", "エディ"], segmenter);
-}
-
-#[test]
-fn complex_mixed_thai_cj_word_break() {
-    check_word(
-        "ภาษาไทย龟山岛",
-        &["ภาษา", "ไทย", "龟山岛"],
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-    );
-    check_word(
-        "ภาษาไทย龟山岛",
-        &["ภาษา", "ไทย", "龟山岛"],
-        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
-    );
-
-    check_word(
-        "こんにちは世界ภาษาไทย",
-        &["こんにちは", "世界", "ภาษา", "ไทย"],
-        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
-    );
-    check_word(
-        "こんにちは世界ภาษาไทย",
-        &["こんにちは", "世界", "ภาษา", "ไทย"],
-        WordSegmenter::new_dictionary(WordBreakInvariantOptions::default()),
-    );
-}
-
-#[test]
-fn complex_mixed_thai_cj_word_break_neo() {
-    let mut auto =
-        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
-    auto.load_auto();
-    let mut dictionary =
-        WordSegmenter::new_neo_for_non_complex_scripts(WordBreakInvariantOptions::default());
-    dictionary.load_dictionary();
-
-    check_word("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], auto);
-    check_word("ภาษาไทย龟山岛", &["ภาษา", "ไทย", "龟山岛"], dictionary);
-
-    check_word(
-        "こんにちは世界ภาษาไทย",
-        &["こんにちは", "世界", "ภาษา", "ไทย"],
-        auto,
-    );
-    check_word(
-        "こんにちは世界ภาษาไทย",
-        &["こんにちは", "世界", "ภาษา", "ไทย"],
-        dictionary,
-    );
 }
 
 #[test]

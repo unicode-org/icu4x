@@ -2,6 +2,7 @@
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { Locale } from "./Locale"
+import type { PluralCategories } from "./PluralCategories"
 import type { PluralCategory } from "./PluralCategory"
 import type { PluralOperands } from "./PluralOperands"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
@@ -64,4 +65,31 @@ export class PluralRulesWithRanges {
      * @experimental
      */
     categoryForRange(start: PluralOperands, end: PluralOperands): PluralCategory;
+
+    /**
+     * Get the category for a given number represented as operands
+     *
+     * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
+     *
+     * @experimental
+     */
+    categoryFor(op: PluralOperands): PluralCategory;
+
+    /**
+     * Get all of the categories needed in the current locale
+     *
+     * See the [Rust documentation for `categories`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+     *
+     * @experimental
+     */
+    get categories(): PluralCategories;
+
+    /**
+     * Resolves the plural category for a given range of categories.
+     *
+     * See the [Rust documentation for `resolve_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
+     *
+     * @experimental
+     */
+    resolveRange(start: PluralCategory, end: PluralCategory): PluralCategory;
 }
