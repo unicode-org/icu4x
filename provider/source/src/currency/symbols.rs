@@ -127,36 +127,26 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                     );
                     continue;
                 };
-                if patterns.short.as_ref().is_some_and(|s| s != currency) {
-                    ids.insert(
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            CurrencySymbolsV1::make_attributes(
-                                currency_type,
-                                CurrencySymbolsV1::SHORT,
-                                &mut Default::default(),
-                            ),
-                            &locale,
-                        )
-                        .into_owned(),
-                    );
-                }
-                if patterns
-                    .narrow
-                    .as_ref()
-                    .or(patterns.short.as_ref())
-                    .is_some_and(|s| s != currency)
-                {
-                    ids.insert(
-                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                            CurrencySymbolsV1::make_attributes(
-                                currency_type,
-                                CurrencySymbolsV1::NARROW,
-                                &mut Default::default(),
-                            ),
-                            &locale,
-                        )
-                        .into_owned(),
-                    );
+                for (width, symbol) in [
+                    (CurrencySymbolsV1::SHORT, patterns.short.as_ref()),
+                    (
+                        CurrencySymbolsV1::NARROW,
+                        patterns.narrow.as_ref().or(patterns.short.as_ref()),
+                    ),
+                ] {
+                    if symbol.is_some_and(|s| s != currency) {
+                        ids.insert(
+                            DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                                CurrencySymbolsV1::make_attributes(
+                                    currency_type,
+                                    width,
+                                    &mut Default::default(),
+                                ),
+                                &locale,
+                            )
+                            .into_owned(),
+                        );
+                    }
                 }
             }
         }
