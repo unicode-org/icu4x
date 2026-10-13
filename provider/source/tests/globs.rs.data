@@ -23,6 +23,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-cal-persian-full/main/$LOCALES/ca-persian.json",
     "cldr-cal-roc-full/main/$LOCALES/ca-roc.json",
     "cldr-core/coverageLevels.json",
+    "cldr-core/pathCoverage/$LOCALES.txt",
     "cldr-core/supplemental/dayPeriods.json",
     "cldr-core/scriptMetadata.json",
     "cldr-core/supplemental/aliases.json",

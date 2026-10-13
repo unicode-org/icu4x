@@ -134,15 +134,15 @@ macro_rules! impl_displaynames_v1 {
                             .with_req($marker::INFO, req)
                     })?;
 
-                let item_tier = crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                    .coverage_tier(
-                    req.id.locale,
-                    |l| &l.$category,
-                    &subtag,
-                    $alt_variant,
-                    None,
-                    cldr,
-                )?;
+                let item_tier =
+                    crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier(
+                        cldr,
+                        req.id.locale,
+                        |l| &l.$category,
+                        &subtag,
+                        $alt_variant,
+                        None,
+                    )?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -247,15 +247,14 @@ macro_rules! impl_displaynames_menu_v1 {
                     (None, Some($crate::cldr_serde::alt::Menu::Core))
                 };
                 let item_tier =
-                    crate::displaynames::coverage_experimental::coverage_cldr_cache()
-                        .coverage_tier(
-                            req.id.locale,
-                            |l| &l.$category,
-                            &subtag,
-                            alt,
-                            menu,
-                            cldr,
-                        )?;
+                    crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier(
+                        cldr,
+                        req.id.locale,
+                        |l| &l.$category,
+                        &subtag,
+                        alt,
+                        menu,
+                    )?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -277,15 +276,15 @@ macro_rules! impl_displaynames_menu_v1 {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
-                let coverage_cache =
-                    crate::displaynames::coverage_experimental::coverage_cldr_cache();
-                let root_levels = coverage_cache.get_root_levels()?;
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
-                    let locale_levels = coverage_cache.get_levels_for_locale(&locale, cldr)?;
+                    let coverage_chain =
+                        crate::displaynames::coverage_experimental::PathCoverageFile::get_chain(
+                            cldr, &locale,
+                        )?;
 
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = key.menu
@@ -300,9 +299,8 @@ macro_rules! impl_displaynames_menu_v1 {
                                     (None, Some($crate::cldr_serde::alt::Menu::Core))
                                 };
                             let item_tier =
-                                crate::displaynames::coverage_experimental::CoverageByXPathCache::coverage_tier_from_levels(
-                                    locale_levels,
-                                    root_levels,
+                                crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier_from_chain(
+                                    &coverage_chain,
                                     |l| &l.$category,
                                     &key.t,
                                     alt,
@@ -360,24 +358,23 @@ macro_rules! impl_displaynames_iter_v1 {
                 let mut result = HashSet::new();
                 let cldr = self.cldr()?;
                 let displaynames = cldr.displaynames();
-                let coverage_cache =
-                    crate::displaynames::coverage_experimental::coverage_cldr_cache();
-                let root_levels = coverage_cache.get_root_levels()?;
                 for locale in displaynames.list_locales()?.filter(|locale| {
                     // The directory might exist without the file
                     displaynames.file_exists(locale, $file).unwrap_or_default()
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
-                    let locale_levels = coverage_cache.get_levels_for_locale(&locale, cldr)?;
+                    let coverage_chain =
+                        crate::displaynames::coverage_experimental::PathCoverageFile::get_chain(
+                            cldr, &locale,
+                        )?;
 
                     for key in data.main.value.localedisplaynames.$field.keys() {
                         let matches = $alt_variant == key.alt && key.menu.is_none();
 
                         if matches {
                             let item_tier =
-                                crate::displaynames::coverage_experimental::CoverageByXPathCache::coverage_tier_from_levels(
-                                    locale_levels,
-                                    root_levels,
+                                crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier_from_chain(
+                                    &coverage_chain,
                                     |l| &l.$category,
                                     &key.t,
                                     $alt_variant,

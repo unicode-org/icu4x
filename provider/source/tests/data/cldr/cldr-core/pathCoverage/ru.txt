@@ -1,0 +1,178 @@
+# Tech Preview data for locale coverage levels. For the file format, see the README.md in this directory.
+
+import=root
+
+# Variables
+
+%language35e=ar,ar_001,bn,de,de_AT,de_CH,en_AU,en_CA,en_GB,en_US,es,es_419,es_ES,es_MX,fr,fr_CA,fr_CH,hi,hi_Latn,id,it,ja,ko,nl,nl_BE,pl,pt,pt_BR,pt_PT,th,tr,und,zh,zh_Hans,zh_Hant
+%dateFormatItem51a=Bh,Bhm,Bhms,E,EBh,EBhm,EBhms,EHm,EHms,Ed,Eh,Ehm,Ehms,Gy,GyM,GyMEd,GyMMM,GyMMMEd,GyMMMM,GyMMMMEd,GyMMMMd,GyMMMd,GyMd,H,Hmv,Hv,M,MEd,MMM,MMMEd,MMMMEd,MMMMd,MMMd,MMdd,Md,d,h,hmv,hv,ms,y,yM,yMEd,yMM,yMMM,yMMMEd,yMMMM,yMMMMEd,yMMMMd,yQQQ,yQQQQ
+%dateFormatItem42=E,EHm,EHms,Ed,Eh,Ehm,Ehms,Gy,GyM,GyMEd,GyMMM,GyMMMEd,GyMMMd,GyMd,H,Hm,Hms,Hv,M,MEd,MMM,MMMEd,MMMMd,MMMd,Md,d,h,hm,hms,hv,ms,y,yyyy,yyyyM,yyyyMEd,yyyyMMM,yyyyMMMEd,yyyyMMMM,yyyyMMMd,yyyyMd,yyyyQQQ,yyyyQQQQ
+%language145=af,ak,am,as,ast,az,ba,bal,be,bg,bgc,bho,blo,br,brx,bs,ca,ceb,chr,cs,csw,cv,cy,da,doi,dsb,ee,el,eo,et,eu,fa,ff,fi,fil,fo,fy,ga,gaa,gd,gl,gu,ha,he,hr,hsb,hu,hy,ia,ie,ig,ii,is,jv,ka,kea,kgp,kk,km,kn,kok,ks,ku,kxv,ky,lb,lij,lmo,lo,lt,lv,mai,mi,mk,ml,mn,mni,mr,ms,mt,mul,my,nds,ne,nn,no,nqo,nso,oc,om,or,pa,pcm,pms,prg,ps,qu,raj,rm,ro,rw,sa,sah,sat,sc,scn,sd,shn,si,sk,sl,so,sq,sr,st,su,sv,sw,syr,szl,ta,te,tg,ti,tk,tn,to,tt,tyv,ug,uk,ur,uz,vec,vi,vmw,wo,xh,xnr,yo,yrl,yue,za,zu,zxx
+%intervalFormatItem32=Gy,GyM,GyMEd,GyMMM,GyMMMEd,GyMMMd,GyMd,H,Hm,Hmv,Hv,M,MEd,MMM,MMMEd,MMMM,MMMMd,MMMd,Md,d,h,hm,hmv,hv,y,yM,yMEd,yMMM,yMMMEd,yMMMM,yMMMd,yMd
+%script49=Adlm,Aran,Armn,Beng,Bopo,Brai,Cakm,Cans,Cher,Deva,Ethi,Geor,Grek,Gujr,Guru,Hanb,Hang,Hani,Hebr,Hira,Hrkt,Jamo,Kana,Khmr,Knda,Laoo,Mlym,Mong,Mtei,Mymr,Nkoo,Olck,Orya,Rohg,Sinh,Sund,Syrc,Taml,Telu,Tfng,Thaa,Thai,Tibt,Vaii,Yiii,Zmth,Zsye,Zsym,Zyyy
+%type40=arab,arabext,armn,armnlow,beng,cakm,deva,ethi,fullwide,geor,grek,greklow,gujr,guru,hanidec,hans,hansfin,hant,hantfin,hebr,java,jpan,jpanfin,khmr,knda,laoo,mlym,mtei,mymr,native,olck,orya,roman,romanlow,taml,tamldec,telu,thai,tibt,vaii
+
+# Rules
+
+path=//ldml/contextTransforms/contextTransformUsage[@type]/contextTransform[@type]
+  elseLevel=comprehensive
+
+path=//ldml/dates/calendars/calendar[@type]/dateTimeFormats/availableFormats/dateFormatItem[@id]
+ attr0=gregorian
+ attr1=Hm,Hms,Hmsv,hm,hms,hmsv,yMMMd,yMd
+  level=basic
+ attr0=gregorian
+ attr1=%dateFormatItem51a
+  level=moderate
+ attr0=generic
+ attr1=%dateFormatItem42
+  level=moderate
+ attr0=generic
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/dates/calendars/calendar[@type]/dateTimeFormats/intervalFormats/intervalFormatItem[@id]/greatestDifference[@id]
+ attr0=gregorian
+ attr1=%intervalFormatItem32
+  level=moderate
+ attr0=generic
+ attr1=Gy,GyM,GyMEd,GyMMM,GyMMMEd,GyMMMd,GyMd,M,MEd,MMM,MMMEd,MMMM,MMMMd,MMMd,Md,d,y,yM,yMEd,yMMM,yMMMEd,yMMMM,yMMMd,yMd
+  level=moderate
+ attr0=generic,gregorian
+ attr1=Bh,Bhm
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/dates/calendars/calendar[@type]/dayPeriods/dayPeriodContext[@type]/dayPeriodWidth[@type]/dayPeriod[@type]
+ attr0=gregorian
+ attr1=format
+ attr2=wide
+ attr3=am,pm
+  level=basic
+ attr0=gregorian
+  level=moderate
+  elseLevel=comprehensive
+
+path=//ldml/dates/fields/field[@type]/relative[@type]
+ attr0=day,day-narrow,day-short,month,month-narrow,month-short,week,week-narrow,week-short,year,year-narrow,year-short
+ attr1=-1,0,1
+  level=moderate
+ attr0=day,fri,fri-narrow,fri-short,hour,minute,mon,mon-narrow,mon-short,quarter,sat,sat-narrow,sat-short,second,sun,sun-narrow,sun-short,thu,thu-narrow,thu-short,tue,tue-narrow,tue-short,wed,wed-narrow,wed-short
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/localeDisplayNames/languages/language[@type]
+ attr0=en,ru
+  level=basic
+ attr0=%language35e
+  level=moderate
+ attr0=%language145
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/localeDisplayNames/scripts/script[@type]
+ attr0=Cyrl
+  level=basic
+ attr0=Arab,Hans,Hant,Jpan,Kore,Latn,Zxxx,Zzzz
+  level=moderate
+ attr0=%script49
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/localeDisplayNames/subdivisions/subdivision[@type]
+  elseLevel=modern
+
+path=//ldml/localeDisplayNames/territories/territory[@type]
+ attr0=BY,KG,KZ,MD,RU,UA
+  level=basic
+  elseLevel=moderate
+
+path=//ldml/localeDisplayNames/territories/territory[@type][@alt]
+  elseLevel=moderate
+
+path=//ldml/localeDisplayNames/types/type[@key][@type]
+ attr0=calendar
+ attr1=gregorian,iso8601
+  level=moderate
+ attr0=numbers
+ attr1=latn
+  level=moderate
+ attr0=collation
+ attr1=standard
+  level=moderate
+ attr0=cf
+ attr1=account,standard
+  level=modern
+ attr0=numbers
+ attr1=%type40
+  level=modern
+ attr0=m0
+ attr1=bgn,ungegn
+  level=modern
+ attr0=calendar
+ attr1=buddhist,chinese,coptic,dangi,ethiopic,ethiopic-amete-alem,hebrew,islamic,islamic-civil,islamic-umalqura,japanese,persian,roc
+  level=modern
+ attr0=collation
+ attr1=compat,dictionary,ducet,phonebook,phonetic,pinyin,search,stroke,traditional,unihan,zhuyin
+  level=modern
+ attr0=d0
+ attr1=fwidth,hwidth
+  level=modern
+ attr0=hc
+ attr1=h11,h12,h23,h24
+  level=modern
+ attr0=lb
+ attr1=loose,normal,strict
+  level=modern
+ attr0=ms
+ attr1=metric,uksystem,ussystem
+  level=modern
+ attr0=t0
+ attr1=und
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/localeDisplayNames/types/type[@key][@type][@scope]
+ attr0=calendar
+ attr1=gregorian,iso8601
+  level=moderate
+ attr0=collation
+ attr1=standard
+  level=moderate
+ attr0=calendar,cf,colCaseFirst,colReorder,colStrength,collation,em,hc,kv,lb,lw,ms,numbers,va
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/numbers/currencies/currency[@type]/symbol[@alt]
+ attr0=!ESP,LTL,LVL,RUR,VEF
+  level=moderate
+  elseLevel=comprehensive
+
+path=//ldml/numbers/currencyFormats[@numberSystem]/currencyFormatLength[@type]/currencyFormat[@type]/pattern[@type][@count][@alt]
+ attr0=latn
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/numbers/minimalPairs/caseMinimalPairs[@case]
+  elseLevel=modern
+
+path=//ldml/numbers/minimalPairs/genderMinimalPairs[@gender]
+  elseLevel=modern
+
+path=//ldml/typographicNames/styleName[@type][@subtype][@alt]
+  elseLevel=modern
+
+path=//ldml/units/unitLength[@type]/compoundUnit[@type]/compoundUnitPattern1[@count][@case]
+  elseLevel=modern
+
+path=//ldml/units/unitLength[@type]/compoundUnit[@type]/compoundUnitPattern1[@count][@gender]
+  elseLevel=modern
+
+path=//ldml/units/unitLength[@type]/compoundUnit[@type]/compoundUnitPattern1[@count][@gender][@case]
+  elseLevel=modern
+
+path=//ldml/units/unitLength[@type]/unit[@type]/gender
+  elseLevel=modern
+
+path=//ldml/units/unitLength[@type]/unit[@type]/unitPattern[@count][@case]
+  elseLevel=modern

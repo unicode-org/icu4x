@@ -70,6 +70,8 @@ fn download_repo_sources() {
         let mut paths = BTreeSet::new();
         for pattern in in_paths {
             if pattern.contains("$LOCALES") {
+                let replace_hyphen_by_underscore =
+                    replace_hyphen_by_underscore || pattern.starts_with("cldr-core/pathCoverage/");
                 for locale in LOCALES.iter() {
                     let mut string = locale.to_string();
                     if replace_hyphen_by_underscore {
