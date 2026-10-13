@@ -134,15 +134,14 @@ macro_rules! impl_displaynames_v1 {
                             .with_req($marker::INFO, req)
                     })?;
 
-                let item_tier =
-                    crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier(
-                        cldr,
-                        req.id.locale,
-                        |l| &l.$category,
-                        &subtag,
-                        $alt_variant,
-                        None,
-                    )?;
+                let item_tier = crate::displaynames::coverage_experimental::coverage_tier(
+                    cldr,
+                    req.id.locale,
+                    |l| &l.$category,
+                    &subtag,
+                    $alt_variant,
+                    None,
+                )?;
                 if !matches!(item_tier, $tier) {
                     return Err(DataErrorKind::IdentifierNotFound
                         .into_error()
@@ -247,7 +246,7 @@ macro_rules! impl_displaynames_menu_v1 {
                     (None, Some($crate::cldr_serde::alt::Menu::Core))
                 };
                 let item_tier =
-                    crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier(
+                    crate::displaynames::coverage_experimental::coverage_tier(
                         cldr,
                         req.id.locale,
                         |l| &l.$category,
@@ -282,7 +281,7 @@ macro_rules! impl_displaynames_menu_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     let coverage_chain =
-                        crate::displaynames::coverage_experimental::PathCoverageFile::get_chain(
+                        crate::displaynames::coverage_experimental::get_chain(
                             cldr, &locale,
                         )?;
 
@@ -299,7 +298,7 @@ macro_rules! impl_displaynames_menu_v1 {
                                     (None, Some($crate::cldr_serde::alt::Menu::Core))
                                 };
                             let item_tier =
-                                crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier_from_chain(
+                                crate::displaynames::coverage_experimental::coverage_tier_from_chain(
                                     &coverage_chain,
                                     |l| &l.$category,
                                     &key.t,
@@ -364,7 +363,7 @@ macro_rules! impl_displaynames_iter_v1 {
                 }) {
                     let data: &$resource = displaynames.read_and_parse(&locale, $file)?;
                     let coverage_chain =
-                        crate::displaynames::coverage_experimental::PathCoverageFile::get_chain(
+                        crate::displaynames::coverage_experimental::get_chain(
                             cldr, &locale,
                         )?;
 
@@ -373,7 +372,7 @@ macro_rules! impl_displaynames_iter_v1 {
 
                         if matches {
                             let item_tier =
-                                crate::displaynames::coverage_experimental::PathCoverageFile::coverage_tier_from_chain(
+                                crate::displaynames::coverage_experimental::coverage_tier_from_chain(
                                     &coverage_chain,
                                     |l| &l.$category,
                                     &key.t,
