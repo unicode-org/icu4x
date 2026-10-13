@@ -134,9 +134,11 @@ impl CurrencySymbolsV1 {
     pub fn parse_attributes(
         attrs: &DataMarkerAttributes,
     ) -> Option<(CurrencyType, CurrencySymbolWidth)> {
-        let (currency, width) = match attrs.as_str().strip_suffix('n') {
-            Some(currency) => (currency, CurrencySymbolWidth::Narrow),
-            None => (attrs.as_str(), CurrencySymbolWidth::Short),
+        let attrs = attrs.as_str();
+        let (currency, width) = match attrs.len() {
+            3 => (attrs, CurrencySymbolWidth::Short),
+            4 => (attrs.strip_suffix('n')?, CurrencySymbolWidth::Narrow),
+            _ => return None,
         };
         let currency = CurrencyType::try_from_str(currency).ok()?;
 
@@ -192,6 +194,13 @@ fn test_currency_attributes_roundtrip() {
             ))
             .unwrap(),
             (currency, width)
+        );
+    }
+
+    for invalid in ["EU", "EURx", "EURnn", "latn/EUR"] {
+        assert_eq!(
+            CurrencySymbolsV1::parse_attributes(DataMarkerAttributes::from_str_or_panic(invalid)),
+            None
         );
     }
 }
