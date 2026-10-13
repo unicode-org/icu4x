@@ -50,6 +50,13 @@ impl SourceDataProvider {
         let alphabet = alphabet_builder.clone().build();
 
         let trie = if alphabet.size() <= 128 {
+            // Build a smaller alphabet CPIL. The alphabet might be fratured, and every
+            // block in the CPIL increases runtime cost (binary search). So we fill in
+            // as many gaps as we can, while keeping total size < 128. For Thai and Lao
+            // this results in single blocks (which is equivalent to just storing an 
+            // offset). Burmese and Khmer use ZWJ/ZWNJ, which are too far away from the
+            // respective scripts, so those alphabets contain 2/3 blocks (which should
+            // still be fast enough to look up).
             let mut minimal_alphabet = alphabet_builder;
             let mut size = alphabet.size();
             for gap in alphabet
@@ -64,6 +71,13 @@ impl SourceDataProvider {
             }
 
             let alphabet = minimal_alphabet.build();
+
+            if alphabet.iter_ranges().count() > 3 {
+                log::warn!(
+                    "Fractured alphabet for {}: {alphabet:?}",
+                    req.id.marker_attributes as &str
+                )
+            }
 
             DictionaryBreakData::ZeroTrie {
                 trie: ZeroTrieSimpleAscii::try_from_btree_map_str(
