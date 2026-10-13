@@ -43,20 +43,17 @@ impl SerdeCache {
         }
     }
 
-    fn read_and_parse<S>(
+    pub fn read_and_parse<S: Send + Sync + 'static>(
         &self,
         path: &str,
-        parser: fn(&[u8]) -> Result<S, DataError>,
-    ) -> Result<&S, DataError>
-    where
-        for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
-    {
+        parser: fn(Box<[u8]>) -> Result<S, DataError>,
+    ) -> Result<&S, DataError> {
         match self.cache.get(path) {
             Some(x) => x,
             None => self.cache.insert(
                 path.to_string(),
                 Box::new(
-                    parser(&self.root.read_to_buf(path)?)
+                    parser(self.root.read_to_buf(path)?.into_boxed_slice())
                         .map_err(|e| e.with_path_context(Path::new(path)))?,
                 ),
             ),
@@ -70,7 +67,7 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes)
+            serde_json::from_slice(&bytes)
                 .map_err(|e| DataError::custom("JSON deserialize").with_display_context(&e))
         })
     }
@@ -81,7 +78,7 @@ impl SerdeCache {
     {
         self.read_and_parse(path, |bytes| {
             toml::from_str(
-                std::str::from_utf8(bytes)
+                std::str::from_utf8(&bytes)
                     .map_err(|e| DataError::custom("TOML UTF8").with_display_context(&e))?,
             )
             .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))

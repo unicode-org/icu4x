@@ -109,14 +109,14 @@ impl RuleCollection {
     pub fn register_source<'a>(
         &mut self,
         id: &Locale,
-        source: String,
+        source: &str,
         aliases: impl IntoIterator<Item = &'a str>,
         reverse: bool,
         visible: bool,
     ) {
         self.data.borrow_mut().0.insert(
             id.to_string().to_ascii_lowercase(),
-            (source, reverse, visible),
+            (source.into(), reverse, visible),
         );
         self.register_aliases(id, aliases)
     }
@@ -704,11 +704,11 @@ mod tests {
         ";
 
         let mut collection = RuleCollection::default();
-        collection.register_source(&locale!("fwd"), source.into(), [], false, true);
-        collection.register_source(&locale!("rev"), source.into(), [], true, true);
+        collection.register_source(&locale!("fwd"), source, [], false, true);
+        collection.register_source(&locale!("rev"), source, [], true, true);
         collection.register_source(
             &"und-t-d0-addrndsp-m0-fifty-s0-anyrev".parse().unwrap(),
-            "unparsed dummy".into(),
+            "unparsed dummy",
             ["AnyRev-AddRandomSpaces/FiftyPercent"],
             false,
             true,
