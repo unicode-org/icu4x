@@ -55,15 +55,17 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("currency", |attrs| {
-        // The "currency" attributes domain is shared by several markers; try each format.
+        // The "currency" attributes domain is shared by several markers; try each format,
+        // and fail loudly on an unknown one instead of silently dropping its data.
         let currency = CurrencySymbolsV1::parse_attributes(attrs)
             .map(|(currency, _)| currency)
             .or_else(|| {
                 CurrencyDecimalSymbolsV1::parse_attributes(attrs).map(|(_, currency)| currency)
-            });
+            })
+            .unwrap_or_else(|| panic!("unrecognized currency attributes: {attrs:?}"));
         matches!(
-            currency.as_ref().map(|c| c.iso_code()).as_deref(),
-            Some("CAD" | "EGP" | "EUR" | "GBP" | "USD")
+            currency.iso_code().as_str(),
+            "CAD" | "EGP" | "EUR" | "GBP" | "USD"
         )
     })
     .with_marker_attributes_filter("locale_names_region", |attrs| {
