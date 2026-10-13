@@ -14,7 +14,6 @@ use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
 impl SourceDataProvider {
-    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     pub(super) fn build_enumerated_prop<T: EnumeratedProperty + Debug>(
         &self,
         short_name_to_t: HashMap<&'static str, T>,
@@ -63,7 +62,7 @@ impl SourceDataProvider {
             ),
         };
 
-        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+        let mut builder = icu::collections::codepointtrie::CodePointTrieBuilder::new(
             T::default(),
             T::default(),
             self.trie_type().into(),
@@ -293,30 +292,22 @@ macro_rules! expand {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
 
-                    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-                    return Err(DataError::custom(
-                        "icu_provider_source must be built with use_icu4c or use_wasm to build properties data",
-                    )
-                    .with_req($marker::INFO, req));
-                    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-                    {
-                        let trie = if let Some(t) = self.rscd()?.cpt_cache.get(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
-                            and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
-                            t
-                        } else {
-                            let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
+                    let trie = if let Some(t) = self.rscd()?.cpt_cache.get(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap()).
+                        and_then(|t| t.downcast_ref::<CodePointTrie<'static, $prop>>().cloned()) {
+                        t
+                    } else {
+                        let trie = self.build_enumerated_prop::<$prop>(<$prop>::names().collect())?;
 
-                            self.rscd()?.cpt_cache
-                                .insert(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
+                        self.rscd()?.cpt_cache
+                            .insert(str::from_utf8(<$prop as EnumeratedProperty>::SHORT_NAME).unwrap(), Box::new(trie.clone()));
 
-                            trie
-                        };
+                        trie
+                    };
 
-                        Ok(DataResponse {
-                            metadata: Default::default(),
-                            payload: DataPayload::from_owned(PropertyCodePointMap::CodePointTrie(trie)),
-                        })
-                    }
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(PropertyCodePointMap::CodePointTrie(trie)),
+                    })
                 }
             }
 

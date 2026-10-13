@@ -171,7 +171,6 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "equivalent",
     "filetime",
     "hashbrown",
-    "icu_codepointtrie_builder",
     "icu_provider_adapters",
     "icu_provider_registry",
     "indexmap",

@@ -12,7 +12,7 @@ edition.workspace = true
 icu = { workspace = true, features = ["unstable"] }
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_provider_export = { workspace = true, features = ["baked_exporter", "rayon"] }
-icu_provider_source = { workspace = true, features = ["networking", "unstable", "use_wasm"] }
+icu_provider_source = { workspace = true, features = ["networking", "unstable"] }
 icu_provider_registry = { workspace = true }
 
 log = { workspace = true }

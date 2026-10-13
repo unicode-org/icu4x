@@ -140,6 +140,7 @@ pub(crate) enum AbstractFs {
     #[cfg(feature = "networking")]
     Http(String),
     Memory(BTreeMap<&'static str, &'static [u8]>),
+    #[cfg_attr(not(feature = "unstable"), allow(dead_code))]
     Overlay {
         overlay: Box<AbstractFs>,
         base: Box<AbstractFs>,
