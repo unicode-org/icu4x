@@ -68,12 +68,11 @@ fn main() {
             .map(|(krate, markers, version)| (krate.to_string(), *markers, *version))
             .collect::<Vec<_>>()
     } else {
-        let map =
-            std::collections::HashMap::<&str, (&'static [DataMarkerInfo], &'static str)>::from_iter(
-                COMPONENTS
-                    .iter()
-                    .map(|(krate, markers, version)| (*krate, (*markers, *version))),
-            );
+        let map = HashMap::<&str, (&'static [DataMarkerInfo], &'static str)>::from_iter(
+            COMPONENTS
+                .iter()
+                .map(|(krate, markers, version)| (*krate, (*markers, *version))),
+        );
         args.into_iter()
             .filter_map(|krate| {
                 map.get(krate.as_str())
@@ -171,7 +170,7 @@ fn main() {
         let baked_metadata = export_metadatas[0]
             .take()
             .unwrap()
-            .downcast::<icu_provider_export::baked_exporter::BakedExporterCloseMetadata>()
+            .downcast::<baked_exporter::BakedExporterCloseMetadata>()
             .unwrap();
 
         let fingerprint_metadata = export_metadatas[2]
