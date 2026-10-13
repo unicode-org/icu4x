@@ -36,6 +36,20 @@
         },
         {
           "mapZone": {
+            "_other": "Alberta Standard Time",
+            "_type": "America/Edmonton",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
+            "_other": "Alberta Standard Time",
+            "_type": "America/Edmonton America/Inuvik",
+            "_territory": "CA"
+          }
+        },
+        {
+          "mapZone": {
             "_other": "Aleutian Standard Time",
             "_type": "America/Adak",
             "_territory": "001"
@@ -340,6 +354,20 @@
             "_other": "Bougainville Standard Time",
             "_type": "Pacific/Bougainville",
             "_territory": "PG"
+          }
+        },
+        {
+          "mapZone": {
+            "_other": "British Columbia Standard Time",
+            "_type": "America/Vancouver",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
+            "_other": "British Columbia Standard Time",
+            "_type": "America/Vancouver",
+            "_territory": "CA"
           }
         },
         {
@@ -674,7 +702,7 @@
         {
           "mapZone": {
             "_other": "Central Standard Time",
-            "_type": "America/Winnipeg America/Rankin_Inlet America/Resolute",
+            "_type": "America/Rankin_Inlet America/Resolute",
             "_territory": "CA"
           }
         },
@@ -1506,6 +1534,20 @@
         },
         {
           "mapZone": {
+            "_other": "Manitoba Standard Time",
+            "_type": "America/Winnipeg",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
+            "_other": "Manitoba Standard Time",
+            "_type": "America/Winnipeg",
+            "_territory": "CA"
+          }
+        },
+        {
+          "mapZone": {
             "_other": "Marquesas Standard Time",
             "_type": "Pacific/Marquesas",
             "_territory": "001"
@@ -1605,7 +1647,7 @@
         {
           "mapZone": {
             "_other": "Mountain Standard Time",
-            "_type": "America/Edmonton America/Cambridge_Bay America/Inuvik",
+            "_type": "America/Cambridge_Bay",
             "_territory": "CA"
           }
         },
@@ -1824,13 +1866,6 @@
             "_other": "Pacific Standard Time",
             "_type": "America/Los_Angeles",
             "_territory": "001"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "Pacific Standard Time",
-            "_type": "America/Vancouver",
-            "_territory": "CA"
           }
         },
         {
