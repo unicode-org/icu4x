@@ -76,7 +76,7 @@ impl Direction {
 ///       $UE → UE;
 ///  
 ///       ::Any-ASCII;
-///     "#.to_string(),
+///     "#,
 ///     // legacy alias, doesn't actually do anything in this case
 ///     ["de-ASCII"],
 ///     false,
@@ -84,7 +84,7 @@ impl Direction {
 /// );
 /// collection.register_source(
 ///     &"und-t-und-latn-d0-ascii".parse().unwrap(),
-///     "# ... ".to_string(),
+///     "# ... ",
 ///     // the previous transliterator refers to this one by the `Any-ASCII` ID,
 ///     // so it's important that the alias is listed here.
 ///     ["Latin-Ascii", "Any-ASCII"],

@@ -125,7 +125,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// let mut collection = RuleCollection::default();
 /// collection.register_source(
 ///     &"und-t-und-x0-custom".parse().unwrap(),
-///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing_Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
+///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing_Mark:] Remove; ::AsciiUpper; ::NFC;",
 ///     [],
 ///     false,
 ///     true,
@@ -138,7 +138,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 ///       [ä {a \u0308}] → ae;
 ///       [ö {o \u0308}] → oe;
 ///       [ü {u \u0308}] → ue;
-///     "#.to_string(),
+///     "#,
 ///     ["Any-FlattenLowerUmlaut"],
 ///     false,
 ///     true,
