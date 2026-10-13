@@ -61,3 +61,14 @@ const LOCALES: &[DataLocale] = &[
     // Root data
     data_locale!("und"),
 ];
+
+// Locales that exercise a single feature and are therefore not part of the general
+// test data set: they are only used for the markers listed with them, keeping the
+// generated test data small.
+const EXTRA_NUMBERS_LOCALES: &[DataLocale] = &[
+    // Portuguese (Portugal):
+    // - Formats the escudo (PTE) with its own decimal and grouping separators,
+    //   the only per-currency separator override in the test data.
+    //   Used for `DecimalSymbolsV1`.
+    data_locale!("pt-PT"),
+];
