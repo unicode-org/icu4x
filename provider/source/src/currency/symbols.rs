@@ -9,10 +9,12 @@ use crate::cldr_serde;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency::symbols::*;
+use icu::locale::preferences::extensions::unicode::keywords::CurrencyType;
 use icu::properties::CodePointMapData;
 use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::DataProvider;
 use icu_provider::prelude::*;
+use tinystr::TinyAsciiStr;
 
 impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencySymbolsV1>, DataError> {
@@ -22,9 +24,9 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .as_borrowed()
             .get_set_for_value_group(GeneralCategoryGroup::Letter);
 
-        let (is_narrow, currency) = match req.id.marker_attributes.as_str().strip_suffix('n') {
-            Some(currency) => (true, currency),
-            None => (false, req.id.marker_attributes.as_str()),
+        let Some((currency, width)) = CurrencySymbolsV1::parse_attributes(req.id.marker_attributes)
+        else {
+            return Err(DataErrorKind::IdentifierNotFound.with_req(CurrencySymbolsV1::INFO, req));
         };
 
         let currency_pattern = self
@@ -38,18 +40,17 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .value
             .numbers
             .currencies
-            .get(currency)
+            .get(currency.iso_code().as_str())
             .unwrap();
 
         // UTS #35 lateral inheritance: a missing narrow symbol falls back to the
         // standard symbol. Resolving this here means consumers need a single request.
-        let symbol = if is_narrow {
-            currency_pattern
+        let symbol = match width {
+            CurrencySymbolWidth::Narrow => currency_pattern
                 .narrow
                 .as_ref()
-                .or(currency_pattern.short.as_ref())
-        } else {
-            currency_pattern.short.as_ref()
+                .or(currency_pattern.short.as_ref()),
+            _ => currency_pattern.short.as_ref(),
         }
         .unwrap();
 
@@ -89,11 +90,25 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                 .numbers
                 .currencies
             {
+                let Ok(currency_type) = CurrencyType::try_from_str(currency) else {
+                    log::error!(
+                        "Skipping non-ISO-4217 currency symbol for '{currency}' in locale {locale}"
+                    );
+                    continue;
+                };
                 if patterns.short.as_ref().is_some_and(|s| s != currency) {
-                    ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(currency.clone()).unwrap(),
-                        locale,
-                    ));
+                    #[allow(const_item_mutation)]
+                    ids.insert(
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            CurrencySymbolsV1::make_attributes(
+                                currency_type,
+                                CurrencySymbolsV1::SHORT,
+                                &mut TinyAsciiStr::EMPTY,
+                            ),
+                            &locale,
+                        )
+                        .into_owned(),
+                    );
                 }
                 if patterns
                     .narrow
@@ -101,10 +116,18 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                     .or(patterns.short.as_ref())
                     .is_some_and(|s| s != currency)
                 {
-                    ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{currency}n")).unwrap(),
-                        locale,
-                    ));
+                    #[allow(const_item_mutation)]
+                    ids.insert(
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            CurrencySymbolsV1::make_attributes(
+                                currency_type,
+                                CurrencySymbolsV1::NARROW,
+                                &mut TinyAsciiStr::EMPTY,
+                            ),
+                            &locale,
+                        )
+                        .into_owned(),
+                    );
                 }
             }
         }
@@ -115,10 +138,8 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
 
 #[test]
 fn test_symbols() {
-    use icu::experimental::dimension::currency::CurrencyType;
     use icu::locale::preferences::extensions::unicode::keywords::currency;
     use icu::locale::{DataLocale, data_locale};
-    use tinystr::TinyAsciiStr;
 
     const USD: CurrencyType = currency!("USD");
     const EGP: CurrencyType = currency!("EGP");

@@ -128,6 +128,20 @@ impl CurrencySymbolsV1 {
         // All valid
         DataMarkerAttributes::try_from_str(buffer).unwrap()
     }
+
+    /// Parses attributes for this marker into parts.
+    #[cfg(feature = "datagen")]
+    pub fn parse_attributes(
+        attrs: &DataMarkerAttributes,
+    ) -> Option<(CurrencyType, CurrencySymbolWidth)> {
+        let (currency, width) = match attrs.as_str().strip_suffix('n') {
+            Some(currency) => (currency, CurrencySymbolWidth::Narrow),
+            None => (attrs.as_str(), CurrencySymbolWidth::Short),
+        };
+        let currency = CurrencyType::try_from_str(currency).ok()?;
+
+        Some((currency, width))
+    }
 }
 
 icu_provider::data_struct!(
@@ -169,4 +183,15 @@ fn test_currency_attributes_roundtrip() {
         .unwrap(),
         (None, currency)
     );
+
+    let mut buf = TinyAsciiStr::EMPTY;
+    for width in [CurrencySymbolsV1::SHORT, CurrencySymbolsV1::NARROW] {
+        assert_eq!(
+            CurrencySymbolsV1::parse_attributes(CurrencySymbolsV1::make_attributes(
+                currency, width, &mut buf
+            ))
+            .unwrap(),
+            (currency, width)
+        );
+    }
 }
