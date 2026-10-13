@@ -73,7 +73,7 @@ fn download_repo_sources() {
                 for locale in LOCALES.iter() {
                     paths.insert(pattern.replace(
                         "$LOCALES_UNDERSCORE",
-                        &locale.to_string().replace('-', "_").replace("und", "root")
+                        &locale.to_string().replace('-', "_").replace("und", "root"),
                     ));
                 }
             } else if pattern.contains("$LOCALES") {
