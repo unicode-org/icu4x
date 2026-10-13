@@ -135,14 +135,12 @@ impl CurrencySymbolsV1 {
         attrs: &DataMarkerAttributes,
     ) -> Option<(CurrencyType, CurrencySymbolWidth)> {
         let attrs = attrs.as_str();
-        let (currency, width) = match attrs.len() {
-            3 => (attrs, CurrencySymbolWidth::Short),
-            4 => (attrs.strip_suffix('n')?, CurrencySymbolWidth::Narrow),
-            _ => return None,
-        };
-        let currency = CurrencyType::try_from_str(currency).ok()?;
+        if let Ok(currency) = CurrencyType::try_from_str(attrs) {
+            return Some((currency, CurrencySymbolWidth::Short));
+        }
+        let currency = CurrencyType::try_from_str(attrs.strip_suffix('n')?).ok()?;
 
-        Some((currency, width))
+        Some((currency, CurrencySymbolWidth::Narrow))
     }
 }
 
