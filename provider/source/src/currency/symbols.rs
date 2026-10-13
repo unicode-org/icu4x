@@ -14,7 +14,6 @@ use icu::properties::CodePointMapData;
 use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::DataProvider;
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
 
 /// The symbol CLDR uses when a locale explicitly has no currency symbol (CLDR-19771).
 const CLDR_NO_SYMBOL_MARKER: &str = "\u{200B}";
@@ -129,13 +128,12 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                     continue;
                 };
                 if patterns.short.as_ref().is_some_and(|s| s != currency) {
-                    #[allow(const_item_mutation)]
                     ids.insert(
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             CurrencySymbolsV1::make_attributes(
                                 currency_type,
                                 CurrencySymbolsV1::SHORT,
-                                &mut TinyAsciiStr::EMPTY,
+                                &mut Default::default(),
                             ),
                             &locale,
                         )
@@ -148,13 +146,12 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                     .or(patterns.short.as_ref())
                     .is_some_and(|s| s != currency)
                 {
-                    #[allow(const_item_mutation)]
                     ids.insert(
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             CurrencySymbolsV1::make_attributes(
                                 currency_type,
                                 CurrencySymbolsV1::NARROW,
-                                &mut TinyAsciiStr::EMPTY,
+                                &mut Default::default(),
                             ),
                             &locale,
                         )
