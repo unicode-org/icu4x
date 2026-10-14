@@ -13,6 +13,9 @@ use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use alloc::vec;
 use alloc::vec::Vec;
 
+/// A parser for [UTS #35 Date Format Patterns] and generic combination ("glue") patterns.
+///
+/// [UTS #35 Date Format Patterns]: https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
 #[derive(Debug)]
 pub struct Parser<'p> {
     source: &'p str,
@@ -23,6 +26,26 @@ impl<'p> Parser<'p> {
         Self { source }
     }
 
+    /// Parses a [UTS #35 Date Format Pattern] (such as `"yyyy-MM-dd HH:mm:ss.SSS"`) into
+    /// a sequence of [`PatternItem`]s (date/time fields and literal characters).
+    ///
+    /// # Syntax Summary
+    /// - **Field symbols**: Runs of identical ASCII letters (`a`–`z`, `A`–`Z`) are parsed into
+    ///   a [`Field`] whose [`FieldSymbol`] is determined by the character (e.g. `'y'` for year,
+    ///   `'M'` for month, `'d'` for day) and whose [`FieldLength`] is determined by the number
+    ///   of repetitions (e.g. `"yyyy"` has length 4).
+    /// - **Fractional seconds**: An `'s'` field immediately followed by `'S'` (or `".S"`) is
+    ///   combined into a [`FieldSymbol::DecimalSecond`].
+    /// - **Quoted literals**: Text enclosed in single quotes (`'...'`) is emitted as literal
+    ///   characters (`PatternItem::Literal`). Two consecutive single quotes (`''`), either inside
+    ///   or outside a quoted literal, produce a single `'`.
+    /// - **Unquoted literals**: Non-alphabetic characters outside quotes (such as `:`, `/`, `-`,
+    ///   spaces, and `{` / `}`) are emitted directly as `PatternItem::Literal`.
+    ///
+    /// Unlike [`Self::parse_generic`], this method interprets ASCII letters as date/time fields
+    /// and does not parse `{0}`-style placeholders.
+    ///
+    /// [UTS #35 Date Format Pattern]: https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
     pub fn parse(self) -> Result<Vec<PatternItem>, PatternError> {
         let mut tokenizer = Uts35DateTimePatternTokenizer(self.source);
         let mut result = vec![];
@@ -100,6 +123,15 @@ impl<'p> Parser<'p> {
         Ok(result)
     }
 
+    /// Parses a [UTS #35 date-time combination ("glue") pattern] (such as `"{1} 'at' {0}"`) into
+    /// a sequence of [`GenericPatternItem`]s (numbered placeholders and literal characters).
+    ///
+    /// Unlike [`Self::parse`], which interprets unquoted ASCII letters as date/time field symbols
+    /// (`y`, `M`, `d`, etc.) and treats `{` / `}` as literals, `parse_generic` parses `{0}`..`{9}`
+    /// substitutions into [`GenericPatternItem::Placeholder`] and treats all other unquoted or
+    /// single-quoted characters (including ASCII letters) as [`GenericPatternItem::Literal`].
+    ///
+    /// [UTS #35 date-time combination ("glue") pattern]: https://unicode.org/reports/tr35/tr35-dates.html#dateTimeFormat
     pub fn parse_generic(self) -> Result<Vec<GenericPatternItem>, PatternError> {
         #[derive(Debug)]
         struct DigitPlaceholder(u8);
