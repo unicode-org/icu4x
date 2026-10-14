@@ -5,7 +5,7 @@
 use super::Cow;
 use core::fmt::Write;
 #[cfg(feature = "unstable")]
-use icu_plurals::PluralOperands;
+use icu_plurals::{PluralOperands, PluralSubject};
 use writeable::Part;
 
 use crate::DecimalFormatterPreferences;
@@ -176,9 +176,9 @@ pub struct FormattedUnsignedDecimal<'l> {
     pub(crate) digits: &'l [char; 10],
 }
 
-impl FormattedUnsignedDecimal<'_> {
-    #[cfg(feature = "unstable")]
-    pub(crate) fn plural_operands(&self) -> PluralOperands {
+#[cfg(feature = "unstable")]
+impl PluralSubject for FormattedUnsignedDecimal<'_> {
+    fn plural_operands(&self) -> PluralOperands {
         PluralOperands::from_significand_and_exponent(&self.value, 0)
     }
 }
