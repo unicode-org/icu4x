@@ -69,18 +69,16 @@ fn download_repo_sources() {
     fn expand_paths(in_paths: &[&str]) -> BTreeSet<String> {
         let mut paths = BTreeSet::new();
         for pattern in in_paths {
-            if pattern.contains("$LOCALES_BCP47") {
+            if pattern.contains("$LOCALES_UNDERSCORE") {
                 for locale in LOCALES.iter() {
-                    paths.insert(pattern.replace("$LOCALES_BCP47", &locale.to_string()));
+                    paths.insert(pattern.replace(
+                        "$LOCALES_UNDERSCORE",
+                        &locale.to_string().replace('-', "_").replace("und", "root"),
+                    ));
                 }
-            } else if pattern.contains("$LOCALES_CLDR") {
+            } else if pattern.contains("$LOCALES") {
                 for locale in LOCALES.iter() {
-                    let string = if locale.is_unknown() {
-                        String::from("root")
-                    } else {
-                        locale.to_string().replace('-', "_")
-                    };
-                    paths.insert(pattern.replace("$LOCALES_CLDR", &string));
+                    paths.insert(pattern.replace("$LOCALES", &locale.to_string()));
                 }
             } else {
                 // No variable in pattern

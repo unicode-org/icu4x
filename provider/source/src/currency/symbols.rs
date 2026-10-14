@@ -9,6 +9,7 @@ use crate::cldr_serde;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency::symbols::*;
+use icu::locale::preferences::extensions::unicode::keywords::CurrencyType;
 use icu::properties::CodePointMapData;
 use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::DataProvider;
@@ -25,7 +26,10 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
         let gc = gc.as_borrowed();
         let letters_set = gc.get_set_for_value_group(GeneralCategoryGroup::Letter);
 
-        let (length, currency) = req.id.marker_attributes.as_str().split_once('/').unwrap();
+        let Some((currency, width)) = CurrencySymbolsV1::parse_attributes(req.id.marker_attributes)
+        else {
+            return Err(DataErrorKind::IdentifierNotFound.with_req(CurrencySymbolsV1::INFO, req));
+        };
 
         let currency_pattern = self
             .cldr()?
@@ -38,13 +42,17 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .value
             .numbers
             .currencies
-            .get(currency)
+            .get(currency.iso_code().as_str())
             .unwrap();
 
-        let symbol = match length {
-            s if s == CurrencySymbolsV1::SHORT.as_str() => currency_pattern.short.as_ref(),
-            n if n == CurrencySymbolsV1::NARROW.as_str() => currency_pattern.narrow.as_ref(),
-            _ => unreachable!(),
+        // UTS #35 lateral inheritance: a missing narrow symbol falls back to the
+        // standard symbol. Resolving this here means consumers need a single request.
+        let symbol = match width {
+            CurrencySymbolWidth::Narrow => currency_pattern
+                .narrow
+                .as_ref()
+                .or(currency_pattern.short.as_ref()),
+            _ => currency_pattern.short.as_ref(),
         }
         .unwrap()
         .as_str();
@@ -113,17 +121,32 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                 .numbers
                 .currencies
             {
-                if patterns.short.as_ref().is_some_and(|s| s != currency) {
-                    ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("s/{currency}")).unwrap(),
-                        locale,
-                    ));
-                }
-                if patterns.narrow.as_ref().is_some_and(|s| s != currency) {
-                    ids.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("n/{currency}")).unwrap(),
-                        locale,
-                    ));
+                let Ok(currency_type) = CurrencyType::try_from_str(currency) else {
+                    log::error!(
+                        "Skipping non-ISO-4217 currency symbol for '{currency}' in locale {locale}"
+                    );
+                    continue;
+                };
+                for (width, symbol) in [
+                    (CurrencySymbolsV1::SHORT, patterns.short.as_ref()),
+                    (
+                        CurrencySymbolsV1::NARROW,
+                        patterns.narrow.as_ref().or(patterns.short.as_ref()),
+                    ),
+                ] {
+                    if symbol.is_some_and(|s| s != currency) {
+                        ids.insert(
+                            DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                                CurrencySymbolsV1::make_attributes(
+                                    currency_type,
+                                    width,
+                                    &mut Default::default(),
+                                ),
+                                &locale,
+                            )
+                            .into_owned(),
+                        );
+                    }
                 }
             }
         }
@@ -134,7 +157,6 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
 
 #[test]
 fn test_symbols() {
-    use icu::experimental::dimension::currency::CurrencyType;
     use icu::locale::preferences::extensions::unicode::keywords::currency;
     use icu::locale::{DataLocale, data_locale};
 
@@ -194,13 +216,30 @@ fn test_symbols() {
         &CurrencySymbol::new("US$", true, false)
     );
 
+    // `fr` defines a standard symbol for FRF but no narrow symbol: the narrow entry
+    // carries the standard symbol (UTS #35 lateral inheritance, resolved at datagen).
+    const FRF: CurrencyType = currency!("FRF");
+    const FR: DataLocale = data_locale!("fr");
+    assert_eq!(
+        load(FR, FRF, CurrencySymbolsV1::SHORT).unwrap().get(),
+        load(FR, FRF, CurrencySymbolsV1::NARROW).unwrap().get(),
+    );
+
+    // No symbol of either width: no narrow entry is synthesized either.
+    const PTE: CurrencyType = currency!("PTE");
+    assert_eq!(load(FR, PTE, CurrencySymbolsV1::SHORT), None);
+    assert_eq!(load(FR, PTE, CurrencySymbolsV1::NARROW), None);
+
     // `pt-PT` has no symbol for `PTE`: CLDR marks this with U+200B, which datagen
     // stores as the empty string (= use the no-currency pattern). If this fails, CLDR
     // has changed how it marks "no symbol" (CLDR-19771), and datagen needs updating.
-    const PTE: CurrencyType = currency!("PTE");
     const PT_PT: DataLocale = data_locale!("pt-PT");
     assert_eq!(
         load(PT_PT, PTE, CurrencySymbolsV1::SHORT).unwrap().get(),
+        &CurrencySymbol::new("", false, false)
+    );
+    assert_eq!(
+        load(PT_PT, PTE, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("", false, false)
     );
 }

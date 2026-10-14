@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::experimental::dimension::provider::currency::symbols::{
+    CurrencyDecimalSymbolsV1, CurrencySymbolsV1,
+};
 use icu::locale::{DataLocale, data_locale};
 use icu_provider_export::prelude::*;
 
@@ -51,8 +54,16 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("currency", |attrs| {
+        // The "currency" attributes domain is shared by several markers; try each format,
+        // and fail loudly on an unknown one instead of silently dropping its data.
+        let currency = CurrencySymbolsV1::parse_attributes(attrs)
+            .map(|(currency, _)| currency)
+            .or_else(|| {
+                CurrencyDecimalSymbolsV1::parse_attributes(attrs).map(|(_, currency)| currency)
+            })
+            .unwrap_or_else(|| panic!("unrecognized currency attributes: {attrs:?}"));
         matches!(
-            attrs.as_str().split('/').next_back().unwrap(),
+            currency.iso_code().as_str(),
             "CAD" | "EGP" | "EUR" | "GBP" | "USD"
         )
     })
