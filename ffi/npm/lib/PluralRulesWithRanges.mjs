@@ -2,6 +2,7 @@
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Locale } from "./Locale.mjs"
+import { PluralCategories } from "./PluralCategories.mjs"
 import { PluralCategory } from "./PluralCategory.mjs"
 import { PluralOperands } from "./PluralOperands.mjs"
 import wasm from "./diplomat-wasm.mjs";
@@ -163,6 +164,69 @@ export class PluralRulesWithRanges {
     categoryForRange(start, end) {
 
         const result = wasm.icu4x_PluralRulesWithRanges_category_for_range_mv1(this.ffiValue, start instanceof PluralOperands ? start.ffiValue : typeError('start', 'PluralOperands'), end instanceof PluralOperands ? end.ffiValue : typeError('end', 'PluralOperands'));
+
+        try {
+            return new PluralCategory(diplomatRuntime.internalConstructor, result);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Get the category for a given number represented as operands
+     *
+     * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
+     *
+     * @experimental
+     */
+    categoryFor(op) {
+
+        const result = wasm.icu4x_PluralRulesWithRanges_category_for_mv1(this.ffiValue, op instanceof PluralOperands ? op.ffiValue : typeError('op', 'PluralOperands'));
+
+        try {
+            return new PluralCategory(diplomatRuntime.internalConstructor, result);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Get all of the categories needed in the current locale
+     *
+     * See the [Rust documentation for `categories`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+     *
+     * @experimental
+     */
+    get categories() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 6, 1, false);
+
+
+        const result = wasm.icu4x_PluralRulesWithRanges_categories_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            return PluralCategories._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Resolves the plural category for a given range of categories.
+     *
+     * See the [Rust documentation for `resolve_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
+     *
+     * @experimental
+     */
+    resolveRange(start, end) {
+
+        const result = wasm.icu4x_PluralRulesWithRanges_resolve_range_mv1(this.ffiValue, new PluralCategory(start).ffiValue, new PluralCategory(end).ffiValue);
 
         try {
             return new PluralCategory(diplomatRuntime.internalConstructor, result);

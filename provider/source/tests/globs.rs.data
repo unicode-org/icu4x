@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // Paths from CLDR JSON to copy into test data. Uses gitignore-like syntax.
-// The variable "$LOCALES" is replaced with the list of locales from above.
+// The variables "$LOCALES" and "$LOCALES_UNDERSCORE" are replaced with the
+// list of locales from `locales.rs.data`.
 const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-bcp47/bcp47/timezone.json",
     "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
@@ -23,6 +24,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-cal-persian-full/main/$LOCALES/ca-persian.json",
     "cldr-cal-roc-full/main/$LOCALES/ca-roc.json",
     "cldr-core/coverageLevels.json",
+    "cldr-core/pathCoverage/$LOCALES_UNDERSCORE.txt",
     "cldr-core/supplemental/dayPeriods.json",
     "cldr-core/scriptMetadata.json",
     "cldr-core/supplemental/aliases.json",
@@ -76,21 +78,21 @@ const CLDR_JSON_GLOB: &[&str] = &[
 ];
 
 const ICUEXPORTDATA_GLOB: &[&str] = &[
-    "collation/implicithan/$LOCALES_compat_data.toml",
-    "collation/implicithan/$LOCALES_compat_meta.toml",
-    "collation/implicithan/$LOCALES_compat_reord.toml",
-    "collation/implicithan/$LOCALES_standard_data.toml",
-    "collation/implicithan/$LOCALES_standard_dia.toml",
-    "collation/implicithan/$LOCALES_standard_jamo.toml",
-    "collation/implicithan/$LOCALES_standard_meta.toml",
-    "collation/implicithan/$LOCALES_standard_prim.toml",
-    "collation/implicithan/$LOCALES_standard_reord.toml",
-    "collation/implicithan/$LOCALES_traditional_data.toml",
-    "collation/implicithan/$LOCALES_traditional_meta.toml",
-    "collation/implicithan/$LOCALES_traditional_reord.toml",
-    "collation/implicithan/$LOCALES_unihan_data.toml",
-    "collation/implicithan/$LOCALES_unihan_meta.toml",
-    "collation/implicithan/$LOCALES_unihan_reord.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_compat_data.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_compat_meta.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_compat_reord.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_standard_data.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_standard_dia.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_standard_jamo.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_standard_meta.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_standard_prim.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_standard_reord.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_traditional_data.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_traditional_meta.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_traditional_reord.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_unihan_data.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_unihan_meta.toml",
+    "collation/implicithan/$LOCALES_UNDERSCORE_unihan_reord.toml",
     "collation/implicithan/en_US_POSIX_standard_data.toml",
     "collation/implicithan/en_US_POSIX_standard_meta.toml",
     "collation/implicithan/root_emoji_data.toml",

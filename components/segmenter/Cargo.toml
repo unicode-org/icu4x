@@ -27,6 +27,7 @@ max_combination_size = 3
 icu_collections = { workspace = true }
 icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
+zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 smallvec = { workspace = true } # alloc
 
@@ -54,8 +55,8 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data", "auto"]
-serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake", "icu_provider/export"]
+serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "zerotrie/serde", "icu_collections/serde", "icu_provider/serde"]
+datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "zerotrie/databake", "icu_collections/databake", "icu_provider/export"]
 lstm = ["dep:core_maths"]
 unstable = []
 auto = ["lstm"] # Enables [try_]new_auto constructors

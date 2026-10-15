@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "nakaraang taon",
-    "0": "ngayong taon",
-    "1": "susunod na taon"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "nakaraang taon",
+    "ngayong taon",
+    "susunod na taon"
+  ],
   "past": {
     "other": [
       0,

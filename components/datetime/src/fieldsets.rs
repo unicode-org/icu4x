@@ -1036,20 +1036,18 @@ impl_date_marker!(
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::calendar::types::Weekday;
-    /// use icu::datetime::fieldsets;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldsets;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("fr").into(),
     ///     fieldsets::E::long(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&Weekday::Monday),
-    ///     "lundi"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&Weekday::Monday), "lundi");
     /// ```
     E,
     ET,
@@ -1186,9 +1184,9 @@ impl_time_marker!(
     ///
     /// ```
     /// use icu::datetime::DateTimeFormatterPreferences;
+    /// use icu::datetime::NoCalendarFormatter;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::input::Time;
-    /// use icu::datetime::NoCalendarFormatter;
     /// use icu::datetime::preferences::HourCycle;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -1203,93 +1201,69 @@ impl_time_marker!(
     /// // but we can set overrides.
     ///
     /// let formatter = NoCalendarFormatter::try_new(prefs_en_us, T::hm()).unwrap();
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_midnight),
-    ///     "12:20 AM"
-    /// );
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_afternoon),
-    ///     "4:12 PM"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&time_midnight), "12:20 AM");
+    /// assert_writeable_eq!(formatter.format(&time_afternoon), "4:12 PM");
     ///
-    /// let formatter = NoCalendarFormatter::try_new({
-    ///     let mut prefs = prefs_en_us;
-    ///     prefs.hour_cycle = Some(HourCycle::Clock24);
-    ///     prefs
-    /// }, T::hm())
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     {
+    ///         let mut prefs = prefs_en_us;
+    ///         prefs.hour_cycle = Some(HourCycle::Clock24);
+    ///         prefs
+    ///     },
+    ///     T::hm(),
+    /// )
     /// .unwrap();
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_midnight),
-    ///     "00:20"
-    /// );
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_afternoon),
-    ///     "16:12"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&time_midnight), "00:20");
+    /// assert_writeable_eq!(formatter.format(&time_afternoon), "16:12");
     ///
     /// let formatter = NoCalendarFormatter::try_new(prefs_ja_jp, T::hm()).unwrap();
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_midnight),
-    ///     "0:20"
-    /// );
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_afternoon),
-    ///     "16:12"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&time_midnight), "0:20");
+    /// assert_writeable_eq!(formatter.format(&time_afternoon), "16:12");
     ///
-    /// let formatter = NoCalendarFormatter::try_new({
-    ///     let mut prefs = prefs_ja_jp;
-    ///     prefs.hour_cycle = Some(HourCycle::Clock12);
-    ///     prefs
-    /// }, T::hm())
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     {
+    ///         let mut prefs = prefs_ja_jp;
+    ///         prefs.hour_cycle = Some(HourCycle::Clock12);
+    ///         prefs
+    ///     },
+    ///     T::hm(),
+    /// )
     /// .unwrap();
     /// // Japan uses 0 instead of 12 for midnight and noon.
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_midnight),
-    ///     "午前0:20"
-    /// );
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_afternoon),
-    ///     "午後4:12"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&time_midnight), "午前0:20");
+    /// assert_writeable_eq!(formatter.format(&time_afternoon), "午後4:12");
     /// ```
     ///
     /// Hour cycles `h11`, `h12`, and `h23` are supported, too:
     ///
     /// ```
-    /// use icu::datetime::input::Time;
-    /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::NoCalendarFormatter;
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::input::Time;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("und-u-hc-h11").into(),
-    ///     T::hm(),
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     NoCalendarFormatter::try_new(locale!("und-u-hc-h11").into(), T::hm())
+    ///         .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "0:00 AM"
     /// );
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("und-u-hc-h12").into(),
-    ///     T::hm(),
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     NoCalendarFormatter::try_new(locale!("und-u-hc-h12").into(), T::hm())
+    ///         .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "12:00 AM"
     /// );
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("und-u-hc-h23").into(),
-    ///     T::hm(),
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     NoCalendarFormatter::try_new(locale!("und-u-hc-h23").into(), T::hm())
+    ///         .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
@@ -1300,10 +1274,10 @@ impl_time_marker!(
     /// Conveniently construct a time formatter with subseconds:
     ///
     /// ```
-    /// use icu::datetime::input::Time;
-    /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::options::SubsecondDigits;
     /// use icu::datetime::NoCalendarFormatter;
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::options::SubsecondDigits;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -1338,60 +1312,55 @@ pub mod zone {
         /// If a non-location name is not defined, falls back to the specific location format:
         ///
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificLong;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone::from_iana_id("Europe/Istanbul")
         ///     .with_offset(UtcOffset::try_from_seconds(3 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     SpecificLong,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), SpecificLong)
+        ///     .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&zone),
-        ///     "Türkiye Standard Time"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&zone), "Türkiye Standard Time");
         /// ```
         ///
         /// If the offset doesn't match one of the valid offsets for the zone, falls back to the localized offset format:
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificLong;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
         ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     SpecificLong,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), SpecificLong)
+        ///     .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&wrong_offset),
-        ///     "GMT-04:00"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&wrong_offset), "GMT-04:00");
         ///
         /// // This of course always happens for the unknown time zone
-        /// let unk = TimeZone::UNKNOWN.with_offset(wrong_offset.offset()).with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
+        /// let unk = TimeZone::UNKNOWN
+        ///     .with_offset(wrong_offset.offset())
+        ///     .with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&unk),
-        ///     "GMT-04:00"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&unk), "GMT-04:00");
         /// ```
         ///
         /// Since non-location names might change over time,
@@ -1437,61 +1406,56 @@ pub mod zone {
         /// used locally and generally understood:
         ///
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificShort;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for Asia/Tokyo
         /// let zone = TimeZone::from_iana_id("Asia/Tokyo")
         ///     .with_offset(UtcOffset::try_from_seconds(9 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     SpecificShort,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), SpecificShort)
+        ///     .unwrap();
         ///
         /// // "JST" is not generally known in American English
-        /// assert_writeable_eq!(
-        ///     fmt.format(&zone),
-        ///     "GMT+9"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&zone), "GMT+9");
         /// ```
         ///
         /// If the offset doesn't match one of the valid offsets for the zone, falls back to the localized offset format:
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificShort;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
         ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     SpecificShort,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), SpecificShort)
+        ///     .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&wrong_offset),
-        ///     "GMT-4"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&wrong_offset), "GMT-4");
         ///
         /// // This of course always happens for the unknown time zone
-        /// let unk = TimeZone::UNKNOWN.with_offset(wrong_offset.offset()).with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
+        /// let unk = TimeZone::UNKNOWN
+        ///     .with_offset(wrong_offset.offset())
+        ///     .with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&unk),
-        ///     "GMT-4"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&unk), "GMT-4");
         /// ```
         ///
         /// Since non-location names might change over time,
@@ -1533,17 +1497,20 @@ pub mod zone {
         /// All shapes of time zones can be formatted with this style.
         ///
         /// ```
-        /// use icu::datetime::input::Date;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{DateTime, Time, TimeZone, UtcOffset};
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// let utc_offset = UtcOffset::try_from_seconds(-6 * 3600).unwrap();
-        /// let time_zone_basic = TimeZone::from_iana_id("America/Chicago").with_offset(Some(utc_offset));
+        /// let time_zone_basic =
+        ///     TimeZone::from_iana_id("America/Chicago").with_offset(Some(utc_offset));
         ///
-        /// let time_zone_at_time = time_zone_basic.with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1729202400));
+        /// let time_zone_at_time = time_zone_basic.with_zone_name_timestamp(
+        ///     icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1729202400),
+        /// );
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1551,20 +1518,11 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     formatter.format(&utc_offset),
-        ///     "GMT-06:00"
-        /// );
+        /// assert_writeable_eq!(formatter.format(&utc_offset), "GMT-06:00");
         ///
-        /// assert_writeable_eq!(
-        ///     formatter.format(&time_zone_basic),
-        ///     "GMT-06:00"
-        /// );
+        /// assert_writeable_eq!(formatter.format(&time_zone_basic), "GMT-06:00");
         ///
-        /// assert_writeable_eq!(
-        ///     formatter.format(&time_zone_at_time),
-        ///     "GMT-06:00"
-        /// );
+        /// assert_writeable_eq!(formatter.format(&time_zone_at_time), "GMT-06:00");
         /// ```
         LocalizedOffsetLong,
         description = "UTC offset, long length",
@@ -1578,17 +1536,20 @@ pub mod zone {
         /// All shapes of time zones can be formatted with this style.
         ///
         /// ```
-        /// use icu::datetime::input::Date;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetShort;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{DateTime, Time, TimeZone, UtcOffset};
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// let utc_offset = UtcOffset::try_from_seconds(-6 * 3600).unwrap();
-        /// let time_zone_basic = TimeZone::from_iana_id("America/Chicago").with_offset(Some(utc_offset));
+        /// let time_zone_basic =
+        ///     TimeZone::from_iana_id("America/Chicago").with_offset(Some(utc_offset));
         ///
-        /// let time_zone_at_time = time_zone_basic.with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1729202400));
+        /// let time_zone_at_time = time_zone_basic.with_zone_name_timestamp(
+        ///     icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1729202400),
+        /// );
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1596,20 +1557,11 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     formatter.format(&utc_offset),
-        ///     "GMT-6"
-        /// );
+        /// assert_writeable_eq!(formatter.format(&utc_offset), "GMT-6");
         ///
-        /// assert_writeable_eq!(
-        ///     formatter.format(&time_zone_basic),
-        ///     "GMT-6"
-        /// );
+        /// assert_writeable_eq!(formatter.format(&time_zone_basic), "GMT-6");
         ///
-        /// assert_writeable_eq!(
-        ///     formatter.format(&time_zone_at_time),
-        ///     "GMT-6"
-        /// );
+        /// assert_writeable_eq!(formatter.format(&time_zone_at_time), "GMT-6");
         /// ```
         LocalizedOffsetShort,
         description = "UTC offset, short length",
@@ -1623,60 +1575,55 @@ pub mod zone {
         /// If a non-location name is not defined, falls back to the specific location format:
         ///
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericLong;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone::from_iana_id("Europe/Istanbul")
         ///     .with_offset(UtcOffset::try_from_seconds(3 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     GenericLong,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), GenericLong)
+        ///     .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&zone),
-        ///     "Türkiye Time"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&zone), "Türkiye Time");
         /// ```
         ///
         /// If the offset doesn't match one of the valid offsets for the zone, falls back to the localized offset format:
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericLong;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
         ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     GenericLong,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), GenericLong)
+        ///     .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&wrong_offset),
-        ///     "GMT-04:00"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&wrong_offset), "GMT-04:00");
         ///
         /// // This of course always happens for the unknown time zone
-        /// let unk = TimeZone::UNKNOWN.with_offset(wrong_offset.offset()).with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
+        /// let unk = TimeZone::UNKNOWN
+        ///     .with_offset(wrong_offset.offset())
+        ///     .with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&unk),
-        ///     "GMT-04:00"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&unk), "GMT-04:00");
         /// ```
         ///
         /// Since non-location names might change over time,
@@ -1723,61 +1670,56 @@ pub mod zone {
         /// used locally and generally understood:
         ///
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for Asia/Tokyo
         /// let zone = TimeZone::from_iana_id("Asia/Tokyo")
         ///     .with_offset(UtcOffset::try_from_seconds(9 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1643410800),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     GenericShort,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), GenericShort)
+        ///     .unwrap();
         ///
         /// // "JST" is not generally known in American English
-        /// assert_writeable_eq!(
-        ///     fmt.format(&zone),
-        ///     "Japan Time"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&zone), "Japan Time");
         /// ```
         ///
         /// If the offset doesn't match one of the valid offsets for the zone, falls back to the localized offset format:
         /// ```
-        /// use icu::datetime::input::{Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
+        /// use icu::datetime::input::{
+        ///     Date, DateTime, Time, TimeZone, TimeZoneInfo, UtcOffset,
+        /// };
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for America/Chicago with a wrong offset
         /// let wrong_offset = TimeZone::from_iana_id("America/Chicago")
         ///     .with_offset(UtcOffset::try_from_seconds(-4 * 3600).ok())
-        ///     .with_zone_name_timestamp(icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000));
+        ///     .with_zone_name_timestamp(
+        ///         icu::time::zone::ZoneNameTimestamp::from_epoch_seconds(1661724000),
+        ///     );
         ///
-        /// let fmt = NoCalendarFormatter::try_new(
-        ///     locale!("en").into(),
-        ///     GenericShort,
-        /// )
-        /// .unwrap();
+        /// let fmt = NoCalendarFormatter::try_new(locale!("en").into(), GenericShort)
+        ///     .unwrap();
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&wrong_offset),
-        ///     "GMT-4"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&wrong_offset), "GMT-4");
         ///
         /// // This of course always happens for the unknown time zone
-        /// let unk = TimeZone::UNKNOWN.with_offset(wrong_offset.offset()).with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
+        /// let unk = TimeZone::UNKNOWN
+        ///     .with_offset(wrong_offset.offset())
+        ///     .with_zone_name_timestamp(wrong_offset.zone_name_timestamp());
         ///
-        /// assert_writeable_eq!(
-        ///     fmt.format(&unk),
-        ///     "GMT-4"
-        /// );
+        /// assert_writeable_eq!(fmt.format(&unk), "GMT-4");
         /// ```
         ///
         /// Since non-location names might change over time,

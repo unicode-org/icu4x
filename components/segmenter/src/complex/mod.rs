@@ -240,7 +240,7 @@ impl ComplexPayloadsBorrowed<'static> {
         #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         if self.ja.is_none() {
-            self.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT)
+            self.ja = try_load_static::<SegmenterDictionaryAutoV2, _>(&Baked, CJ_DICT)
                 .unwrap()
                 .map(ComplexPayloadBorrowed::Dict);
         }
@@ -251,22 +251,22 @@ impl ComplexPayloadsBorrowed<'static> {
         #![expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         if self.my.is_none() {
-            self.my = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
+            self.my = try_load_static::<SegmenterDictionaryExtendedV2, _>(&Baked, MY_DICT)
                 .unwrap()
                 .map(ComplexPayloadBorrowed::Dict);
         }
         if self.km.is_none() {
-            self.km = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
+            self.km = try_load_static::<SegmenterDictionaryExtendedV2, _>(&Baked, KM_DICT)
                 .unwrap()
                 .map(ComplexPayloadBorrowed::Dict);
         }
         if self.lo.is_none() {
-            self.lo = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
+            self.lo = try_load_static::<SegmenterDictionaryExtendedV2, _>(&Baked, LO_DICT)
                 .unwrap()
                 .map(ComplexPayloadBorrowed::Dict);
         }
         if self.th.is_none() {
-            self.th = try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
+            self.th = try_load_static::<SegmenterDictionaryExtendedV2, _>(&Baked, TH_DICT)
                 .unwrap()
                 .map(ComplexPayloadBorrowed::Dict);
         }
@@ -351,10 +351,29 @@ impl ComplexPayloads {
 
     pub(crate) fn with_japanese_dictionary<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
-        D: DataProvider<SegmenterDictionaryAutoV1> + ?Sized,
+        D: DataProvider<SegmenterDictionaryAutoV2> + ?Sized,
     {
-        self.ja = try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?
+        self.ja = try_load::<SegmenterDictionaryAutoV2, D>(provider, CJ_DICT)?
             .map(DataPayload::cast)
+            .map(ComplexPayload::Dict);
+        Ok(())
+    }
+
+    #[cfg(feature = "serde")]
+    pub(crate) fn with_japanese_dictionary_buffer<D>(
+        &mut self,
+        provider: &D,
+    ) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterDictionaryAutoV1>
+            + DataProvider<SegmenterDictionaryAutoV2>
+            + ?Sized,
+    {
+        if let Ok(()) = self.with_japanese_dictionary(provider) {
+            return Ok(());
+        }
+        self.ja = try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?
+            .map(|p| p.map_project(|a, _| DictionaryBreakData::Char16Trie(a.clone())))
             .map(ComplexPayload::Dict);
         Ok(())
     }
@@ -364,26 +383,62 @@ impl ComplexPayloads {
         provider: &D,
     ) -> Result<(), DataError>
     where
-        D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
+        D: DataProvider<SegmenterDictionaryExtendedV2> + ?Sized,
     {
         if self.my.is_none() {
-            self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
+            self.my = try_load::<SegmenterDictionaryExtendedV2, _>(provider, MY_DICT)?
                 .map(DataPayload::cast)
                 .map(ComplexPayload::Dict);
         }
         if self.km.is_none() {
-            self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
+            self.km = try_load::<SegmenterDictionaryExtendedV2, _>(provider, KM_DICT)?
                 .map(DataPayload::cast)
                 .map(ComplexPayload::Dict);
         }
         if self.lo.is_none() {
-            self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
+            self.lo = try_load::<SegmenterDictionaryExtendedV2, _>(provider, LO_DICT)?
                 .map(DataPayload::cast)
                 .map(ComplexPayload::Dict);
         }
         if self.th.is_none() {
-            self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
+            self.th = try_load::<SegmenterDictionaryExtendedV2, _>(provider, TH_DICT)?
                 .map(DataPayload::cast)
+                .map(ComplexPayload::Dict);
+        }
+        Ok(())
+    }
+
+    #[cfg(feature = "serde")]
+    pub(crate) fn with_southeast_asian_dictionaries_buffer<D>(
+        &mut self,
+        provider: &D,
+    ) -> Result<(), DataError>
+    where
+        D: DataProvider<SegmenterDictionaryExtendedV1>
+            + DataProvider<SegmenterDictionaryExtendedV2>
+            + ?Sized,
+    {
+        if let Ok(()) = self.with_southeast_asian_dictionaries(provider) {
+            return Ok(());
+        }
+        if self.my.is_none() {
+            self.my = try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
+                .map(|p| p.map_project(|a, _| DictionaryBreakData::Char16Trie(a.clone())))
+                .map(ComplexPayload::Dict);
+        }
+        if self.km.is_none() {
+            self.km = try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
+                .map(|p| p.map_project(|a, _| DictionaryBreakData::Char16Trie(a.clone())))
+                .map(ComplexPayload::Dict);
+        }
+        if self.lo.is_none() {
+            self.lo = try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
+                .map(|p| p.map_project(|a, _| DictionaryBreakData::Char16Trie(a.clone())))
+                .map(ComplexPayload::Dict);
+        }
+        if self.th.is_none() {
+            self.th = try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
+                .map(|p| p.map_project(|a, _| DictionaryBreakData::Char16Trie(a.clone())))
                 .map(ComplexPayload::Dict);
         }
         Ok(())

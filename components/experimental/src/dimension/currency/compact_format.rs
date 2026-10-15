@@ -351,4 +351,33 @@ mod tests {
             "(USD\u{a0}12 thousand)"
         );
     }
+
+    #[test]
+    pub fn test_pt_pt_escudo_compact() {
+        let prefs = locale!("pt-PT").into();
+        let value = "1299".parse().unwrap();
+
+        // In CLDR, `pt-PT` has no symbol for PTE: it marks this with U+200B
+        // (ZERO WIDTH SPACE), which datagen stores as the empty string. An empty symbol
+        // means the compact currency formatters use the no-currency pattern, so no
+        // placeholder or trailing space is left behind (CLDR-19771).
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1,3 mil");
+
+        let fmt_long = CurrencyFormatter::try_new_compact_long_symbol(
+            prefs,
+            currency!("PTE"),
+            Default::default(),
+        )
+        .unwrap();
+        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1,3 mil");
+
+        // The ISO code and the currency name are not affected.
+        let fmt_code =
+            CurrencyFormatter::try_new_compact_code(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt_code.format_fixed_decimal(&value), "1,3 mil PTE");
+    }
 }

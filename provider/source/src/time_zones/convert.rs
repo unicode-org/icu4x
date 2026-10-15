@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{MetazoneInfo, MzMembership};
+use super::MzMembership;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::alt::Alt;
@@ -13,16 +13,10 @@ use icu::locale::subtags::region;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
 use icu_provider::prelude::*;
-use icu_time::zone::VariantOffsets;
 use icu_time::zone::ZoneNameTimestamp;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
-use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::VarZeroVec;
-use zerovec::ZeroVec;
-use zerovec::ule::NichedOption;
-use zerovec::ule::vartuple::VarTuple;
 
 impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesEssentialsV1>, DataError> {
@@ -315,83 +309,28 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
         let metazones = self.metazones()?;
 
-        fn pack_offsets_and_mzmsk(
-            offsets: VariantOffsets,
-            mz: Option<MetazoneInfo>,
-        ) -> VariantOffsetsWithMetazoneMembershipKind {
-            VariantOffsetsWithMetazoneMembershipKind {
-                offsets,
-                mzmsk: mz
-                    .map(|i| i.kind)
-                    .unwrap_or(MetazoneMembershipKind::BehavesLikeGolden),
-            }
-        }
-
-        let mut offsets = BTreeSet::new();
-        for ps in metazones.periods.values() {
-            for &(_, os, mz) in ps {
-                offsets.insert(pack_offsets_and_mzmsk(os, mz));
-            }
-        }
-
-        let offset_index = offsets
+        let periods = metazones
+            .periods
             .iter()
-            .enumerate()
-            .map(|(i, &v)| (v, i as u8))
-            .collect::<BTreeMap<_, _>>();
-
-        let offsets = offsets.into_iter().collect::<ZeroVec<_>>();
-
-        let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
-        for (&tz, value) in &metazones.periods {
-            deduped.entry(value).or_default().insert(tz);
-        }
-
-        let index = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
-            deduped
-                .values()
-                .enumerate()
-                .flat_map(|(i, vs)| vs.iter().map(move |tz| (tz.as_str(), i))),
-        )
-        .convert_store();
-
-        let list = VarZeroVec::from(
-            &deduped
-                .into_keys()
-                .map(|ps| {
-                    let convert = |&(t, os, mz)| {
-                        let t2 = ZoneNameTimestamp::from_zoned_date_time(t);
-                        if t2.to_zoned_date_time_iso() != t {
-                            log::warn!("{t:?} does not round-trip through ZoneNameTimestamp");
-                        }
-                        (
-                            Timestamp24(t2),
-                            offset_index[&pack_offsets_and_mzmsk(os, mz)],
-                            NichedOption(mz.map(|i| i.id)),
-                        )
-                    };
-
-                    let (past, os, mz) = convert(&ps[0]);
-
-                    assert_eq!(past.0, ZoneNameTimestamp::far_in_past());
-
-                    let rest = ps[1..].iter().map(convert).collect::<ZeroVec<_>>();
-
-                    zerovec::ule::encode_varule_to_box(&VarTuple {
-                        sized: (os, mz),
-                        variable: rest.as_slice(),
-                    })
-                })
-                .collect::<Vec<_>>(),
-        );
+            .map(|(&tz, ps)| {
+                (
+                    tz,
+                    ps.iter()
+                        .map(|&(t, os, mz)| {
+                            let t2 = ZoneNameTimestamp::from_zoned_date_time(t);
+                            if t2.to_zoned_date_time_iso() != t {
+                                log::warn!("{t:?} does not round-trip through ZoneNameTimestamp");
+                            }
+                            (t2, (os, mz))
+                        })
+                        .collect(),
+                )
+            })
+            .collect();
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
-            payload: DataPayload::from_owned(TimezonePeriods {
-                index,
-                list,
-                offsets,
-            }),
+            payload: DataPayload::from_owned(TimezonePeriods::new(periods).unwrap()),
         })
     }
 }

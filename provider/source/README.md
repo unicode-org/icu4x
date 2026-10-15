@@ -12,8 +12,6 @@ which can be used to transform the data into a more efficient format.
 
 * `networking`
   * enables networking support to download CLDR and ICU source data from GitHub
-* `use_wasm` / `use_icu4c`
-  * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
 * `unstable`
   * enables unstable data markers
 

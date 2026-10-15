@@ -1,11 +1,12 @@
 {
-  "relatives": {
-    "-2": "anteayer",
-    "-1": "ayer",
-    "0": "hoy",
-    "1": "mañana",
-    "2": "pasado mañana"
-  },
+  "zero_index": 2,
+  "relatives": [
+    "anteayer",
+    "ayer",
+    "hoy",
+    "mañana",
+    "pasado mañana"
+  ],
   "past": {
     "one": [
       0,

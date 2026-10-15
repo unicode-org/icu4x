@@ -18,7 +18,7 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-use icu_collections::char16trie::Char16TrieIterator;
+use icu_collections::char16trie::Char16TrieCursor;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -267,9 +267,9 @@ impl<'data> CollationData<'data> {
     pub(crate) fn get_default_and_trie(
         &'data self,
         index: usize,
-    ) -> (CollationElement32, Char16TrieIterator<'data>) {
+    ) -> (CollationElement32, Char16TrieCursor<'data>) {
         let (ce32, trie) = self.get_default_and_trie_impl(index);
-        (ce32, Char16TrieIterator::new(trie))
+        (ce32, Char16TrieCursor::new(trie))
     }
     pub(crate) fn get_default(&'data self, index: usize) -> CollationElement32 {
         let (ce32, _) = self.get_default_and_trie_impl(index);

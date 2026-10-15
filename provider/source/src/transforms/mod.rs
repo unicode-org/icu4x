@@ -43,10 +43,13 @@ impl CldrCache {
                         .read_and_parse_json::<transforms::Resource>(&format!(
                             "cldr-transforms/transforms/{transform}.json"
                         ))?;
-                    let source = self.serde_cache.root.read_to_string(&format!(
-                        "cldr-transforms/transforms/{}",
-                        metadata.rules_file
-                    ))?;
+                    let source = self.serde_cache.read_and_parse(
+                        &format!("cldr-transforms/transforms/{}", metadata.rules_file),
+                        |x| {
+                            String::from_utf8(x.into_vec())
+                                .map_err(|_| DataError::custom("invalid UTF-8"))
+                        },
+                    )?;
 
                     // Unimplemented built-in transliterators
                     if source.contains("Any-BreakInternal") || source.contains("Any-Title") {
@@ -70,7 +73,7 @@ impl CldrCache {
 
                         provider.register_source(
                             &bcp47_alias,
-                            source.clone(),
+                            source,
                             metadata
                                 .alias
                                 .as_deref()

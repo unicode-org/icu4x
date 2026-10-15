@@ -29,3 +29,6 @@ lru = "0.16.3"
 serde = { workspace = true, features = ["derive", "alloc", "std"] }
 serde-aux = { workspace = true }
 time = { version = "0.3", features = ["local-offset"] }
+
+[lints]
+workspace = true

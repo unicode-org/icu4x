@@ -135441,7 +135441,7 @@ locale/names/script/medium/heavy/v1, zu/Zsye, 31B, 8B, f52cd8489097fb85
 locale/names/script/medium/heavy/v1, zu/Zsym, 34B, 11B, 6bc75ffb5943b267
 locale/names/script/medium/heavy/v1, zu/Zyyy, 35B, 12B, 9bfad8000cb1200
 locale/names/script/medium/light/v1, <lookup>, 9269B, 1251 identifiers
-locale/names/script/medium/light/v1, <total>, 45947B, 20722B, 1097 unique payloads
+locale/names/script/medium/light/v1, <total>, 45970B, 20745B, 1097 unique payloads
 locale/names/script/medium/light/v1, ady/Arab, 32B, 9B, 6cc3c98c2b1be58d
 locale/names/script/medium/light/v1, af/Arab, 31B, 8B, 17d6c6ad44a296bc
 locale/names/script/medium/light/v1, af/Cyrl, 33B, 10B, 6323b457d72e7549
@@ -135969,7 +135969,7 @@ locale/names/script/medium/light/v1, kea/Jpan, 31B, 8B, 54edd4ee5f3cba57
 locale/names/script/medium/light/v1, kea/Kore, 31B, 8B, 66a9b0512ddd02e1
 locale/names/script/medium/light/v1, kea/Zxxx, 35B, 12B, f14810c125f03be1
 locale/names/script/medium/light/v1, kea/Zzzz, 41B, 18B, b0ad0b3ca77c8d87
-locale/names/script/medium/light/v1, kek/Latn, 30B, 7B, 168e265a86c94817
+locale/names/script/medium/light/v1, kek/Zzzz, 53B, 30B, fa61f5c8571c861e
 locale/names/script/medium/light/v1, kgp/Arab, 29B, 6B, 2b8d9b96113ecaf
 locale/names/script/medium/light/v1, kgp/Cyrl, 32B, 9B, 9b5649fcf4852d1c
 locale/names/script/medium/light/v1, kgp/Hans, 34B, 11B, a21a5836af42c4d8
@@ -136694,7 +136694,7 @@ locale/names/script/medium/light/v1, zu/Kore, 34B, 11B, 8da50cb25eb5b70e
 locale/names/script/medium/light/v1, zu/Zxxx, 37B, 14B, cddc18d4d48c0e2e
 locale/names/script/medium/light/v1, zu/Zzzz, 44B, 21B, 1443c25a0bec95b3
 locale/names/script/medium/tiny/v1, <lookup>, 2356B, 245 identifiers
-locale/names/script/medium/tiny/v1, <total>, 6744B, 2627B, 179 unique payloads
+locale/names/script/medium/tiny/v1, <total>, 6721B, 2604B, 179 unique payloads
 locale/names/script/medium/tiny/v1, ady/Cyrl, 34B, 11B, ec045b490e426b4
 locale/names/script/medium/tiny/v1, af/Latn, 29B, 6B, d7b69d1c61776c88
 locale/names/script/medium/tiny/v1, ak/Latn, 30B, 7B, 3a6d7ad92c81b0de
@@ -136780,7 +136780,7 @@ locale/names/script/medium/tiny/v1, jv/Latn, -> ceb/Latn
 locale/names/script/medium/tiny/v1, ka/Geor, 45B, 22B, e336c1834587957b
 locale/names/script/medium/tiny/v1, kbd/Cyrl, -> ady/Cyrl
 locale/names/script/medium/tiny/v1, kea/Latn, 30B, 7B, 51b23e8d3ab62030
-locale/names/script/medium/tiny/v1, kek/Zzzz, 53B, 30B, fa61f5c8571c861e
+locale/names/script/medium/tiny/v1, kek/Latn, 30B, 7B, 168e265a86c94817
 locale/names/script/medium/tiny/v1, kgp/Latn, 31B, 8B, 4d310908283a09c4
 locale/names/script/medium/tiny/v1, ki/Latn, 33B, 10B, 9f8b77b61e9dd970
 locale/names/script/medium/tiny/v1, kk-Arab/Arab, 43B, 20B, 7f4071be05b0c7e8

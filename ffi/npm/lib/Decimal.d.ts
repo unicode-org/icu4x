@@ -216,4 +216,9 @@ export class Decimal {
      * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.2/fixed_decimal/type.Decimal.html#method.write_to) for more information.
      */
     toString(): string;
+
+    /**
+     * Check whether two {@link Decimal} values are structurally equal (including sign and trailing zeros).
+     */
+    equals(other: Decimal): boolean;
 }

@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "sa minutong ito"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "sa minutong ito"
+  ],
   "past": {
     "other": [
       0,
