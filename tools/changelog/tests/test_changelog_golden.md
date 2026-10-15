@@ -63,16 +63,6 @@ Closes #8164
 # Potentially misformatted (double check please!)
 =====================
 
-- Bump diplomat (https://github.com/unicode-org/icu4x/pull/7885)
-- Initial person names formatter (https://github.com/unicode-org/icu4x/pull/9006)
-- Person names titles support (https://github.com/unicode-org/icu4x/pull/9007)
-- Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)
-- Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)
-- Infer region in calendar resolution (https://github.com/unicode-org/icu4x/pull/8102)
-- writeable: impl TryWriteable on references, Either (https://github.com/unicode-org/icu4x/pull/8109)
-- 2026c (https://github.com/unicode-org/icu4x/pull/8200)
-- Add negative currency subpatterns (https://github.com/unicode-org/icu4x/pull/9001)
-- Fix Julian leap year (https://github.com/unicode-org/icu4x/pull/9003)
 
 
 # N/A
