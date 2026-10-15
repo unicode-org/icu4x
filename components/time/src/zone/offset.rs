@@ -368,6 +368,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// # Examples
     ///
     /// ```
+    /// # #![allow(deprecated)]
     /// use icu::calendar::Date;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::Time;

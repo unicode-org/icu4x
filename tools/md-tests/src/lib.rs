@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![allow(clippy::needless_doctest_main)]
+// The documents contain examples of component crate code that use that crate's features
+#![doc(test(attr(allow(unused, unexpected_cfgs))))]
 
 #[doc = include_str!("../../../README.md")]
 mod readme {}

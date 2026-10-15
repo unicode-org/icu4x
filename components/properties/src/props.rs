@@ -780,7 +780,7 @@ make_enumerated_property! {
 /// ); // U+1100
 /// assert_eq!(
 ///     CodePointMapData::<HangulSyllableType>::new().get('가'),
-///     HangulSyllableType::LeadingVowelSyllable
+///     HangulSyllableType::LVSyllable
 /// ); // U+AC00
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
