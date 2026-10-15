@@ -440,7 +440,6 @@ icu_provider::data_marker!(
 size_test!(YearNames, year_names_v1_size, 32);
 
 /// Names used for representing the year.
-///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -603,7 +602,6 @@ pub(crate) fn get_year_name_from_map<'a>(
 size_test!(MonthNames, month_names_v1_size, 32);
 
 /// Names used for representing the month.
-///
 #[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -956,7 +954,6 @@ icu_provider::data_struct!(
 size_test!(WeekdayNames, linear_names_v1_size, 24);
 
 /// Names used for representing the weekday.
-///
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -1018,7 +1015,6 @@ impl WeekdayNames<'_> {
 size_test!(DayPeriodNames, day_period_names_v1_size, 24);
 
 /// Names used for representing the day period.
-///
 #[doc = day_period_names_v1_size!()]
 ///
 /// <div class="stab unstable">
