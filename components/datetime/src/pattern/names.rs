@@ -1213,7 +1213,7 @@ where
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let kind = AnyCalendarKind::new(locale!("es-MX").into());
+    /// let kind = AnyCalendarKind::try_new(locale!("es-MX").into()).unwrap();
     /// let calendar = AnyCalendar::new(kind);
     ///
     /// let names = DateTimeNames::try_new_with_calendar_without_number_formatting(
