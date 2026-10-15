@@ -708,6 +708,13 @@ macro_rules! source_issue {
             "datetime::range_patterns" | "datetime::semantic_skeletons" if msg.contains("conflicting field") => {
                 // https://unicode-org.atlassian.net/browse/CLDR-18540
             }
+            "datetime::range_patterns" if msg.contains("range pattern dropped, field kinds differ") => {
+                // https://unicode-org.atlassian.net/browse/CLDR-14207
+            }
+            "datetime::range_patterns" if msg.contains("range pattern dropped, names not available") => {
+                // CLDR has no interval pattern for many skeletons, so the closest one is
+                // used and it has fields that the single pattern does not.
+            }
             _ if locale.is_unknown() => log::warn!("{msg}"),
             _ => log::warn!("{locale}: {msg}"),
         }

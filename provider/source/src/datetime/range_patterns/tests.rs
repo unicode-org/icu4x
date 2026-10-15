@@ -124,3 +124,102 @@ fn test_ej_overlap_coverage_all_locales() {
     let provider = SourceDataProvider::new();
     check_all_calendars!(&provider);
 }
+
+/// A range formatter only loads the names of the single pattern, so a range pattern that uses
+/// other names fails when it is formatted (in debug builds that is a panic).
+fn check_names_consistency(provider: &SourceDataProvider, locales: &[DataLocale]) {
+    use icu::calendar::Date;
+    use icu::datetime::DateTimeFormatterPreferences;
+    use icu::datetime::fieldsets::enums::{
+        CalendarPeriodFieldSet, CompositeDateTimeFieldSet, DateFieldSet,
+    };
+    use icu::datetime::fieldsets::*;
+    use icu::datetime::input::{DateTime, Time};
+    use icu::datetime::options::Length;
+    use icu::datetime::range::DateRangeFormatter;
+    use icu::locale::Locale;
+
+    let at_noon = |y, m, d| DateTime {
+        date: Date::try_new_gregorian(y, m, d).unwrap(),
+        time: Time::try_new(12, 0, 0, 0).unwrap(),
+    };
+    let start = at_noon(2023, 12, 22);
+    // One for each field that can differ, and none.
+    let ends = [
+        at_noon(2023, 12, 22),
+        at_noon(2023, 12, 23),
+        at_noon(2024, 1, 5),
+        at_noon(2025, 12, 22),
+    ];
+
+    for locale in locales {
+        for calendar in [
+            "gregory", "buddhist", "chinese", "coptic", "dangi", "ethiopic", "hebrew", "indian",
+            "islamic", "japanese", "persian", "roc",
+        ] {
+            let locale: Locale = format!("{locale}-u-ca-{calendar}").parse().unwrap();
+            for length in [Length::Long, Length::Medium, Length::Short] {
+                let field_sets = [
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::D(D::for_length(length))),
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::MD(MD::for_length(length))),
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(YMD::for_length(length))),
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::DE(DE::for_length(length))),
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::MDE(MDE::for_length(length))),
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::YMDE(YMDE::for_length(length))),
+                    CompositeDateTimeFieldSet::Date(DateFieldSet::E(E::for_length(length))),
+                    CompositeDateTimeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::M(
+                        M::for_length(length),
+                    )),
+                    CompositeDateTimeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::YM(
+                        YM::for_length(length),
+                    )),
+                    CompositeDateTimeFieldSet::CalendarPeriod(CalendarPeriodFieldSet::Y(
+                        Y::for_length(length),
+                    )),
+                ];
+                for field_set in field_sets {
+                    let prefs = DateTimeFormatterPreferences::from(&locale);
+                    // Not every locale has the data for every field set.
+                    let Ok(formatter) =
+                        DateRangeFormatter::try_new_unstable(provider, prefs, field_set)
+                    else {
+                        continue;
+                    };
+                    for end in &ends {
+                        // A missing name is an error part, and a panic in debug builds.
+                        let _ = formatter.format(&start, end).to_string();
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn test_range_pattern_names_consistency_testing() {
+    let provider = SourceDataProvider::new_testing();
+    let locales: Vec<DataLocale> = provider
+        .cldr()
+        .unwrap()
+        .dates(Some(DatagenCalendar::Gregorian))
+        .list_locales()
+        .unwrap()
+        .collect();
+    check_names_consistency(&provider, &locales);
+}
+
+/// Runs over all modern locales of the complete CLDR.
+#[test]
+#[ignore]
+#[cfg(feature = "networking")]
+fn test_range_pattern_names_consistency_all_locales() {
+    use crate::CoverageLevel;
+
+    let provider = SourceDataProvider::new();
+    let locales: Vec<DataLocale> = provider
+        .locales_for_coverage_levels([CoverageLevel::Modern])
+        .unwrap()
+        .into_iter()
+        .collect();
+    check_names_consistency(&provider, &locales);
+}
