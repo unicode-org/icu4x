@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::CaseMapWriteable;
 use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::CaseMap;
 use crate::provider::CaseMapV1;
@@ -11,7 +12,6 @@ use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
 use alloc::borrow::Cow;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-use writeable::Writeable;
 
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
@@ -101,7 +101,7 @@ impl Default for CaseMapperBorrowed<'static> {
 }
 
 impl<'a> CaseMapperBorrowed<'a> {
-    /// Returns the full lowercase mapping of the given string as a [`Writeable`].
+    /// Returns the full lowercase mapping of the given string as a [`CaseMapWriteable`].
     /// This function is context and language sensitive. Callers should pass the text's language
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
@@ -112,7 +112,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         self,
         src: &'a str,
         langid: &LanguageIdentifier,
-    ) -> impl Writeable + 'a + use<'a> {
+    ) -> impl CaseMapWriteable + 'a + use<'a> {
         self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::from_langid(langid),
@@ -121,7 +121,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         )
     }
 
-    /// Returns the full uppercase mapping of the given string as a [`Writeable`].
+    /// Returns the full uppercase mapping of the given string as a [`CaseMapWriteable`].
     /// This function is context and language sensitive. Callers should pass the text's language
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
@@ -132,7 +132,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         self,
         src: &'a str,
         langid: &LanguageIdentifier,
-    ) -> impl Writeable + 'a + use<'a> {
+    ) -> impl CaseMapWriteable + 'a + use<'a> {
         self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::from_langid(langid),
@@ -141,7 +141,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         )
     }
 
-    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// Returns the full titlecase mapping of the given string as a [`CaseMapWriteable`], treating
     /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
     /// the specified leading adjustment behavior from the options without loading additional data.
     ///
@@ -169,7 +169,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-    ) -> impl Writeable + 'a + use<'a> {
+    ) -> impl CaseMapWriteable + 'a + use<'a> {
         self.titlecase_segment_with_adjustment(src, langid, options, |data, ch| data.is_cased(ch))
     }
 
@@ -213,14 +213,14 @@ impl<'a> CaseMapperBorrowed<'a> {
             writeable,
         }
     }
-    /// Case-folds the characters in the given string as a [`Writeable`].
+    /// Case-folds the characters in the given string as a [`CaseMapWriteable`].
     /// This function is locale-independent and context-insensitive.
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
     /// See [`Self::fold_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
-    pub fn fold(self, src: &'a str) -> impl Writeable + 'a {
+    pub fn fold(self, src: &'a str) -> impl CaseMapWriteable + 'a {
         self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::Root,
@@ -229,7 +229,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         )
     }
 
-    /// Case-folds the characters in the given string as a [`Writeable`],
+    /// Case-folds the characters in the given string as a [`CaseMapWriteable`],
     /// using Turkic (T) mappings for dotted/dotless I.
     /// This function is locale-independent and context-insensitive.
     ///
@@ -237,7 +237,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     ///
     /// See [`Self::fold_turkic_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
-    pub fn fold_turkic(self, src: &'a str) -> impl Writeable + 'a {
+    pub fn fold_turkic(self, src: &'a str) -> impl CaseMapWriteable + 'a {
         self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::Turkish,
@@ -252,7 +252,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::lowercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::lowercase()`] for the equivalent lower-level function that returns a [`CaseMapWriteable`]
     ///
     /// # Examples
     ///
@@ -286,7 +286,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::uppercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::uppercase()`] for the equivalent lower-level function that returns a [`CaseMapWriteable`]
     ///
     /// # Examples
     ///
@@ -317,7 +317,7 @@ impl<'a> CaseMapperBorrowed<'a> {
         writeable::to_string_or_borrow(&self.uppercase(src, langid), src.as_bytes())
     }
 
-    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// Returns the full titlecase mapping of the given string as a [`CaseMapWriteable`], treating
     /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
     /// the specified leading adjustment behavior from the options without loading additional data.
     ///
@@ -339,7 +339,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
     /// is [`LeadingAdjustment::None`].
     ///
-    /// See [`Self::titlecase_segment_with_only_case_data()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::titlecase_segment_with_only_case_data()`] for the equivalent lower-level function that returns a [`CaseMapWriteable`]
     ///
     /// # Examples
     ///
@@ -388,7 +388,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::fold()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::fold()`] for the equivalent lower-level function that returns a [`CaseMapWriteable`]
     ///s s
     /// # Examples
     ///
@@ -415,7 +415,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::fold_turkic()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`Self::fold_turkic()`] for the equivalent lower-level function that returns a [`CaseMapWriteable`]
     ///
     /// # Examples
     ///
