@@ -6,6 +6,7 @@
 - Components
   - General
     - Updated data to TZDB 2026c (unicode-org#8200)
+    - Updated to Unicode 18 (unicode-org#9010)
   - `icu_calendar`
     - Add `AnyCalendarKind::try_new` and deprecate  `AnyCalendarKind::new`. The new version uses locale data to infer calendars from locales. (unicode-org#8102)
     - Deprecate `CalendarPreferences::resolve_calendar`. This method did not perform likely-subtags expansion. (unicode-org#8102)
@@ -18,6 +19,8 @@
       - Optimized cache lookup
       - Reduced allocations in helper functions
         - Avoided cloning locale in hot path
+  - `icu_experimental`
+    - Renamed data marker `UnitIdsV1` to `UnitsIdV1`. (unicode-org#9009)
   - `icu_experimental/currency`
     - Add formatting support for negative currency subpatterns (unicode-org#9001)
   - `icu_experimental/personnames`
@@ -37,13 +40,26 @@
       - Updated script definitions
         - Added new scripts
         - Updated aliases for existing scripts
+    - Add `Block` enumerated property (unicode-org#9008)
+  - `icu_segmenter`
+    - Fix a panic on empty input (unicode-org#9008)
+      - New method: `LineSegmenter::is_empty`
+    - Fix line breaks at the end of Southeast Asian runs (unicode-org#9011)
+      - Breaks at the end of Thai runs now follow the UAX #14 rules, so lines no longer break before closing punctuation.
+      - Thai followed by Latin letters no longer breaks.
 - FFI
   - General
     - Fix an issue in JS bindings where enums in objects were not parsed correctly (unicode-org#7885)
 - Utils
+  - `retired_crate`
+    - Retired (unicode-org#9010)
   - `writeable`
     - impl TryWriteable on references (unicode-org#8109)
     - impl TryWriteable on Either (unicode-org#8109)
+  - `zerovec`
+    - Add `ZeroVec::frobnicate` (unicode-org#9010)
+  - `zerovec_derive`
+    - Minor soundness improvement (unicode-org#9012)
 
 
 # PRs with additional notes
@@ -69,3 +85,4 @@ Closes #8164
 =====================
 
 - fix Send/Sync impls on CartableOptionPointer, yoke 0.8.3 (https://github.com/unicode-org/icu4x/pull/8029)
+- Template comment with N/A (https://github.com/unicode-org/icu4x/pull/9013)

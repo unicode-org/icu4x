@@ -119,6 +119,54 @@
       "author": {
         "login": "gemini"
       }
+    },
+    "mock_commit_8": {
+      "number": 9008,
+      "body": "Fixes #1234\r\n\r\n## Changelog\r\n\r\n* `icu_properties`\r\n  * Add `Block` enumerated property\r\n* `icu_segmenter`: Fix a panic on empty input\r\n  - New method: `LineSegmenter::is_empty`",
+      "title": "Bulleted crate header",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_9": {
+      "number": 9009,
+      "body": "## Changelog\r\n\r\n* [icu_experimental] Renamed data marker `UnitIdsV1` to `UnitsIdV1`.",
+      "title": "Bracketed crate",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_10": {
+      "number": 9010,
+      "body": "## Changelog\r\n\r\n* General\r\n  * Updated to Unicode 18\r\n* Utils:\r\n  * `retired_crate`: Retired\r\n  * `zerovec`: Add `ZeroVec::frobnicate`",
+      "title": "Retire a crate",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_11": {
+      "number": 9011,
+      "body": "## Changelog\r\n\r\nicu_segmenter: \r\n  * Fix line breaks at the end of Southeast Asian runs\r\n    - Breaks at the end of Thai runs now follow the UAX #14\r\n    rules, so lines no longer break before closing punctuation.\r\n    - Thai followed by Latin letters no longer breaks.\r\n",
+      "title": "Wrapped bullets",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_12": {
+      "number": 9012,
+      "body": "## Changelog\n\nzerovec_derive: Minor soundness improvement \r\n\r\n<!-- Please fill in according to documents/process/changelog.md -->\r\n",
+      "title": "Template comment with entry",
+      "author": {
+        "login": "gemini"
+      }
+    },
+    "mock_commit_13": {
+      "number": 9013,
+      "body": "## Changelog\r\n\r\n<!-- Please fill in according to documents/process/changelog.md -->\r\nN/A",
+      "title": "Template comment with N/A",
+      "author": {
+        "login": "gemini"
+      }
     }
   }
 }
