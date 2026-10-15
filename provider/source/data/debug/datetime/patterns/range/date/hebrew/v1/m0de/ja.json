@@ -1,4 +1,5 @@
 {
+  "has_explicit_medium": true,
   "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
@@ -9,6 +10,13 @@
     0
   ],
   "elements": [
+    {
+      "header": 6,
+      "patterns": [
+        "M月d日(EEEE)～d日(EEEE)",
+        "M月d日(EEEE)"
+      ]
+    },
     {
       "header": 6,
       "patterns": [

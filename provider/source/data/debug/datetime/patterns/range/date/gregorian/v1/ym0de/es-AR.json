@@ -6,15 +6,15 @@
     0,
     0,
     4,
-    4,
-    5
+    5,
+    6
   ],
   "elements": [
     {
       "header": 40,
       "patterns": [
-        "E, d 'de' MMMM – E, d 'de' MMMM 'de' y",
-        "E, d 'de' MMMM 'de' y – E, d 'de' MMMM 'de' y"
+        "EEEE, d 'de' MMMM – EEEE, d 'de' MMMM 'de' y",
+        "EEEE, d 'de' MMMM 'de' y – EEEE, d 'de' MMMM 'de' y"
       ]
     },
     {
@@ -34,6 +34,14 @@
     {
       "header": 168,
       "patterns": [
+        "EEEE d MMMM – EEEE d MMMM 'de' y G",
+        "EEEE d MMMM 'de' y – EEEE d MMMM 'de' y G",
+        "EEEE d MMMM 'de' y G – EEEE d MMMM 'de' y G"
+      ]
+    },
+    {
+      "header": 168,
+      "patterns": [
         "E d MMM – E d MMM 'de' y G",
         "E d MMM 'de' y – E d MMM 'de' y G",
         "E d MMM 'de' y G – E d MMM 'de' y G"
@@ -42,8 +50,8 @@
     {
       "header": 160,
       "patterns": [
-        "E, dd/MM/y – E, dd/MM/y GGGGG",
-        "E, dd/MM/y GGGGG – E, dd/MM/y GGGGG"
+        "E, dd/MM/y – E, dd/MM/y GGG",
+        "E, dd/MM/y GGG – E, dd/MM/y GGG"
       ]
     }
   ]

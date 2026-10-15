@@ -35,9 +35,9 @@
     {
       "header": 104,
       "patterns": [
-        "EEEE d MMM – EEEE d MMM y G",
-        "EEEE d MMM y – EEEE d MMM y G",
-        "EEEE d MMM y G"
+        "EEEE d MMMM – EEEE d MMMM y G",
+        "EEEE d MMMM y – EEEE d MMMM y G",
+        "EEEE d MMMM y G"
       ]
     },
     {

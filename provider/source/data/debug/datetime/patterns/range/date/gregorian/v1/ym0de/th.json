@@ -6,16 +6,16 @@
     0,
     0,
     0,
-    1,
-    4
+    4,
+    5
   ],
   "elements": [
     {
       "header": 104,
       "patterns": [
-        "E d MMM – E d MMM G y",
-        "E d MMM G y – E d MMM y",
-        "E d MMM G y"
+        "EEEE d MMMM – EEEE d MMMM G y",
+        "EEEE d MMMM G y – EEEE d MMMM y",
+        "EEEE d MMMM G y"
       ]
     },
     {
@@ -32,9 +32,17 @@
       ]
     },
     {
+      "header": 104,
+      "patterns": [
+        "E d MMM – E d MMM G y",
+        "E d MMM G y – E d MMM y",
+        "E d MMM G y"
+      ]
+    },
+    {
       "header": 64,
       "patterns": [
-        "E d/MM/GGGGG y"
+        "E d/MM/GGG y"
       ]
     }
   ]

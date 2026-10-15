@@ -13,7 +13,7 @@
     {
       "header": 8,
       "patterns": [
-        "E, d 'de' MMMM – E, d 'de' MMMM"
+        "EEEE, d 'de' MMMM – EEEE, d 'de' MMMM"
       ]
     },
     {

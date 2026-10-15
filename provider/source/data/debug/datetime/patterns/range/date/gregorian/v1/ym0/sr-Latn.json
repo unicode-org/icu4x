@@ -26,9 +26,9 @@
     {
       "header": 104,
       "patterns": [
-        "G y MMM–MMM",
-        "G y MMM – y MMM",
-        "G y MMM"
+        "G y MMMM–MMMM",
+        "G y MMMM – y MMMM",
+        "G y MMMM"
       ]
     },
     {

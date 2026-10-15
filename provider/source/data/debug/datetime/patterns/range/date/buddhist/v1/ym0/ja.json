@@ -12,16 +12,16 @@
     {
       "header": 104,
       "patterns": [
-        "Gy年M月～M月",
-        "Gy年M月～y年M月",
-        "Gy年M月"
+        "GGGGy年M月～M月",
+        "GGGGy年M月～y年M月",
+        "GGGGy年M月"
       ]
     },
     {
       "header": 96,
       "patterns": [
-        "GGGGGy/MM～y/MM",
-        "GGGGGy/MM"
+        "GGGy/MM～y/MM",
+        "GGGy/MM"
       ]
     }
   ]

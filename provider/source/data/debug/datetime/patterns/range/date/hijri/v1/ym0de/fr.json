@@ -1,4 +1,5 @@
 {
+  "has_explicit_medium": true,
   "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
@@ -12,6 +13,15 @@
     {
       "header": 170,
       "patterns": [
+        "EEEE d à EEEE d MMMM y G",
+        "EEEE d MMMM à EEEE d MMMM y G",
+        "EEEE d MMMM y à EEEE d MMMM y G",
+        "EEEE d MMMM y G à EEEE d MMMM y G"
+      ]
+    },
+    {
+      "header": 170,
+      "patterns": [
         "E d à E d MMM y G",
         "E d MMM à E d MMM y G",
         "E d MMM y à E d MMM y G",
@@ -21,10 +31,10 @@
     {
       "header": 170,
       "patterns": [
-        "E d à E d/M/y G",
-        "E d/M à E d/M/y G",
-        "E d/M/y à E d/M/y G",
-        "E d/M/y G à E d/M/y G"
+        "E d à E d/M/y GGGGG",
+        "E d/M à E d/M/y GGGGG",
+        "E d/M/y à E d/M/y GGGGG",
+        "E d/M/y GGGGG à E d/M/y GGGGG"
       ]
     }
   ]

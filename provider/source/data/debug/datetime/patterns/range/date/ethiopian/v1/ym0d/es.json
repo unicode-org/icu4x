@@ -12,10 +12,10 @@
     {
       "header": 106,
       "patterns": [
-        "d–d 'de' MMM 'de' y G",
-        "d 'de' MMM – d 'de' MMM 'de' y G",
-        "d 'de' MMM 'de' y – d 'de' MMM 'de' y G",
-        "d 'de' MMM 'de' y G"
+        "d–d 'de' MMMM 'de' y G",
+        "d 'de' MMMM – d 'de' MMMM 'de' y G",
+        "d 'de' MMMM 'de' y – d 'de' MMMM 'de' y G",
+        "d 'de' MMMM 'de' y G"
       ]
     },
     {

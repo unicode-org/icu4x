@@ -1,0 +1,31 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 6,
+      "patterns": [
+        "MMMM d–d",
+        "MMMM d"
+      ]
+    },
+    {
+      "header": 0,
+      "patterns": []
+    },
+    {
+      "header": 4,
+      "patterns": [
+        "MM-dd"
+      ]
+    }
+  ]
+}

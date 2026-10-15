@@ -6,8 +6,8 @@
     0,
     0,
     4,
-    4,
-    5
+    5,
+    6
   ],
   "elements": [
     {
@@ -30,6 +30,15 @@
       "header": 16,
       "patterns": [
         "d/M/y"
+      ]
+    },
+    {
+      "header": 106,
+      "patterns": [
+        "d–d MMMM y G",
+        "d MMMM – d MMMM y G",
+        "d MMMM y – d MMMM y G",
+        "d MMMM y G"
       ]
     },
     {

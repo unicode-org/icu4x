@@ -1,0 +1,34 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 24,
+      "patterns": [
+        "U MMMM d, EEEE – MMMM d, EEEE",
+        "U MMMM d, EEEE"
+      ]
+    },
+    {
+      "header": 24,
+      "patterns": [
+        "U MMM d, E – MMM d, E",
+        "U MMM d, E"
+      ]
+    },
+    {
+      "header": 16,
+      "patterns": [
+        "y-MM-dd, E"
+      ]
+    }
+  ]
+}

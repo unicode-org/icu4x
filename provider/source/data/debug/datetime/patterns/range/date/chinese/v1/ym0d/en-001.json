@@ -1,4 +1,5 @@
 {
+  "has_explicit_medium": true,
   "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
@@ -12,10 +13,14 @@
     {
       "header": 26,
       "patterns": [
-        "d – d MMM U",
-        "d MMM – d MMM U",
-        "d MMM U"
+        "d – d MMMM U",
+        "d MMMM – d MMMM U",
+        "d MMMM U"
       ]
+    },
+    {
+      "header": 0,
+      "patterns": []
     },
     {
       "header": 16,
