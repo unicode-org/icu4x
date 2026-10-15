@@ -1,5 +1,85 @@
 # Changelog
 
+## icu4x 2.4
+
+- Components
+  - General
+    - Updated to Unicode 18
+    - Updated to CLDR 49
+    - Updated to TZDB 2026e
+  - `icu_codepointtrie_builder`
+    - Retired (unicode-org#8540)
+  - `icu_collator`
+    - Retain trie value for Hangul syllables in `push_decomposed_starter` (unicode-org#8484)
+    - Don't output a trailing `NO_CE` (0x01) byte when generating sort keys in order to match ICU4C's pre-existing behavior.  (unicode-org#8536)
+      - ⚠️ This changes sort key output incompatibly!
+    - Fix human-readable serde deserialization of `CollationSpecialPrimaries` (unicode-org#8551)
+  - `icu_collections`
+    - Fix a bug in `CodePointInversionList::iter_ranges_complemented` when the last range includes U+10FFFF (unicode-org#8456)
+    - Add `CodePointTrie::null_value()` accessor (unicode-org#8544)
+    - Add `Char16Trie::cursor` API, deprecating `Char16Trie::iter` (which was not an `Iterator`) (unicode-org#8547)
+    - New `icu_collections::codepointtrie::CodePointTrieBuilder` (unicode-org#8540)
+    - Add `Char16Trie::iter2` to iterate over key-value pairs (unicode-org#8548)
+  - `icu_datetime`
+    - Reduce ambiguity in Medium and Long formats for `fieldsets::MD` and `fieldsets::MDE` (unicode-org#8447)
+    - implement source parts for `DateRangeFormatter` (unicode-org#8448)
+      - New items: `parts::RANGE_START` and `parts::RANGE_END`
+    - New module `fieldbag` for expressing field-by-field models for datetime formats. (unicode-org#8503)
+    - Added `DateTimeFieldBagParseError::SyntaxError` (unstable, part of #8503) (unicode-org#8511)
+    - new fns `DateTimeFieldBag::to_composite_field_set` and `DateTimeFieldBag::to_field_set_builder` and `DateTimeFieldBag::from_field_set_builder` (unicode-org#8517)
+    - Complete UTS 35 skeleton parsing and serialization for `DateTimeFieldBag` (unstable) (unicode-org#8527)
+      - New enum variants on `fieldbag::DateTimeFieldBagParseError`: `InvalidFieldLength`, `NonCanonicalField`, `UnknownField`
+      - New trait implementations on `fieldbag::DateTimeFieldBagParseError`: `Display`, `Error`
+    - Add `VALUES` associated constants to `options` and `fieldbag::field` enums, and complete `FieldSetBuilder` <-> `DateTimeFieldBag` conversions (unicode-org#8532)
+      - New associated constants in `icu_datetime::options`: `Length::VALUES`, `Alignment::VALUES`, `YearStyle::VALUES`, `TimePrecision::VALUES`, `SubsecondDigits::VALUES`
+      - New associated constants in `icu_datetime::fieldbag::field` (unstable): `Era::VALUES`, `Year::VALUES`, `Month::VALUES`, `Day::VALUES`, `Weekday::VALUES`, `DayPeriod::VALUES`, `HourKind::VALUES`, `Hour::VALUES`, `Minute::VALUES`, `Second::VALUES`, `FractionalSecondDigits::VALUES`, `TimeZoneName::VALUES`
+    - Implement fallback to single-value formatting when there is no diff during range formatting (unicode-org#8480)
+  - `icu_experimental`
+    - Renamed data marker `UnitIdsV1` to `UnitsIdV1`. (unicode-org#8473)
+    - Added `CurrencyDecimalSymbolsV1` data marker for per-currency decimal symbol overrides. (unicode-org#8463)
+    - Currency formatting uses the no-currency pattern when CLDR defines no symbol for a currency in a locale (e.g. `PTE` in `pt-PT`) (unicode-org#8485)
+    - `RuleCollection::register_source` now takes the source by reference (unicode-org#8597)
+  - `icu_properties`
+    - Add `Block` enumerated property (unicode-org#8409)
+    - Fix UnicodeSet parser to support surrogate code points in escape sequences (unicode-org#8507)
+      - Escape sequences like `\uD800`, `\x{D800}`, and `\U0000D800` now parse correctly
+      - Surrogates in string contexts (e.g., `{\uD800}`) are still rejected
+  - `icu_segmenter`
+    - Performance improvements for V1/V3 complex word and line segmenters. (unicode-org#8144)
+    - Fix dropped breakpoints at the end of the text in the dictionary segmenter (unicode-org#8523)
+    - Fix line breaks at the end of Southeast Asian (SA) runs in the V1/V3 line segmenters (unicode-org#8574)
+      - Breaks at the end of Thai, Lao, Khmer and Myanmar runs now follow the UAX #14 rules, so lines no longer break before closing punctuation, spaces, or a word joiner.
+      - Thai directly followed by Latin letters or digits no longer breaks, matching V2.
+    - Replaced `SegmenterDictionaryV1` data structs by `V2`. This affects the signature of unstable constructors for `WordSegmenter` and `LineSegmenter`, but significantly reduces data size (unicode-org#8548)
+  - `icu_time`
+    - Support seconds in `ZoneNameTimestamp` human-readable serde deserialization (unicode-org#8553)
+    - `VariantOffsets` and `UtcOffset` human-readable serde roundtrip (unicode-org#8552)
+      - New trait impl: `Writeable for UtcOffset`
+    - Implement human-readable serde deserialization for `TimezonePeriods` (unicode-org#8554)
+- Data model and providers
+  - `icu_provider_source`
+    - Use `Month::Short` (MMM) and `Month::Long` (MMMM) for `Medium` and `Long` semantic skeleton lengths on yearless date patterns in datagen. (unicode-org#8447)
+    - Always select numeric day for `Medium` and `Long` yearless date patterns in datagen, inheriting day width from stock patterns only for Short width. (unicode-org#8497)
+- FFI
+  - `icu_capi`
+    - Expose `category_for`, `categories`, and `resolve_range` on `PluralRulesWithRanges` (unicode-org#8583)
+    - Expose `PluralOperands::from_significand_and_exponent` and `Decimal::equals` (unicode-org#8565)
+    - Dart
+      - Cache downloaded pre-built binaries across build hook invocations in `outputDirectoryShared`. (unicode-org#8426)
+- Utils
+  - `bies`
+    - Retired (unicode-org#8457)
+  - `tinystr`
+    - Add `impl Default for TinyAsciiStr<N>` (unicode-org#8524)
+  - `yoke`
+    - Implement `AsRef<T>` for `Yoke<impl AsRef<T>, _>` (unicode-org#8542)
+  - `zerovec`
+    - Improve soundness of `cast_box` so that it extracts DST metadata in a more stable (though not 100% stable) way. Full soundness will have to wait for stable ptr metadata APIs. (unicode-org#8413)
+    - make tests pass on s390x (unicode-org#8420)
+    - Make `VarZeroVecOwned` mutation operations panic-safe (unicode-org#8535)
+  - `zerovec_derive`
+    - Minor soundness improvement around slice layout assumptions (unicode-org#8451)
+
 ## icu4x 2.3.x
 
 Several crates have had patch releases in the 2.3 stream:
