@@ -23,10 +23,7 @@ pub enum Era {
     /// bag.era = Some(Era::Short);
     ///
     /// assert_writeable_eq!(bag, "G");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Short,
     /// Example: Anno Domini
@@ -44,10 +41,7 @@ pub enum Era {
     /// bag.era = Some(Era::Long);
     ///
     /// assert_writeable_eq!(bag, "GGGG");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Long,
     /// Example: A
@@ -65,10 +59,7 @@ pub enum Era {
     /// bag.era = Some(Era::Narrow);
     ///
     /// assert_writeable_eq!(bag, "GGGGG");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Narrow,
 }
@@ -97,10 +88,7 @@ pub enum Year {
     /// bag.year = Some(Year::Numeric);
     ///
     /// assert_writeable_eq!(bag, "y");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Numeric,
     /// Example: 03
@@ -118,10 +106,7 @@ pub enum Year {
     /// bag.year = Some(Year::TwoDigit);
     ///
     /// assert_writeable_eq!(bag, "yy");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     TwoDigit,
 }
@@ -150,10 +135,7 @@ pub enum Month {
     /// bag.month = Some(Month::Numeric);
     ///
     /// assert_writeable_eq!(bag, "M");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Numeric,
     /// Example: 03
@@ -171,10 +153,7 @@ pub enum Month {
     /// bag.month = Some(Month::TwoDigit);
     ///
     /// assert_writeable_eq!(bag, "MM");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     TwoDigit,
     /// Example: Mar
@@ -192,10 +171,7 @@ pub enum Month {
     /// bag.month = Some(Month::Short);
     ///
     /// assert_writeable_eq!(bag, "MMM");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Short,
     /// Example: March
@@ -213,10 +189,7 @@ pub enum Month {
     /// bag.month = Some(Month::Long);
     ///
     /// assert_writeable_eq!(bag, "MMMM");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Long,
     /// Example: M
@@ -238,10 +211,7 @@ pub enum Month {
     /// bag.month = Some(Month::Narrow);
     ///
     /// assert_writeable_eq!(bag, "MMMMM");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Narrow,
 }
@@ -276,10 +246,7 @@ pub enum Day {
     /// bag.day = Some(Day::Numeric);
     ///
     /// assert_writeable_eq!(bag, "d");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Numeric,
     /// Example: 08
@@ -297,10 +264,7 @@ pub enum Day {
     /// bag.day = Some(Day::TwoDigit);
     ///
     /// assert_writeable_eq!(bag, "dd");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     TwoDigit,
 }
@@ -329,10 +293,7 @@ pub enum Weekday {
     /// bag.weekday = Some(Weekday::Short);
     ///
     /// assert_writeable_eq!(bag, "E");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Short,
     /// Example: Thursday
@@ -350,10 +311,7 @@ pub enum Weekday {
     /// bag.weekday = Some(Weekday::Long);
     ///
     /// assert_writeable_eq!(bag, "EEEE");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Long,
     /// Example: T
@@ -375,10 +333,7 @@ pub enum Weekday {
     /// bag.weekday = Some(Weekday::Narrow);
     ///
     /// assert_writeable_eq!(bag, "EEEEE");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Narrow,
 }
@@ -407,10 +362,7 @@ pub enum DayPeriod {
     /// bag.day_period = Some(DayPeriod::FlexibleShort);
     ///
     /// assert_writeable_eq!(bag, "B");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     FlexibleShort,
     /// Example: in the evening
@@ -428,10 +380,7 @@ pub enum DayPeriod {
     /// bag.day_period = Some(DayPeriod::FlexibleLong);
     ///
     /// assert_writeable_eq!(bag, "BBBB");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     FlexibleLong,
     /// Example: in the evening
@@ -449,10 +398,7 @@ pub enum DayPeriod {
     /// bag.day_period = Some(DayPeriod::FlexibleNarrow);
     ///
     /// assert_writeable_eq!(bag, "BBBBB");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     FlexibleNarrow,
 }
@@ -489,10 +435,7 @@ pub enum HourKind {
     /// bag.hour_kind = Some(HourKind::Clock12);
     ///
     /// assert_writeable_eq!(bag, "h");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Clock12,
     /// Example: 16
@@ -514,10 +457,7 @@ pub enum HourKind {
     /// bag.hour_kind = Some(HourKind::Clock24);
     ///
     /// assert_writeable_eq!(bag, "H");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Clock24,
 }
@@ -546,10 +486,7 @@ pub enum Hour {
     /// bag.hour = Some(Hour::Numeric);
     ///
     /// assert_writeable_eq!(bag, "j");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Numeric,
     /// Example: 06
@@ -567,10 +504,7 @@ pub enum Hour {
     /// bag.hour = Some(Hour::TwoDigit);
     ///
     /// assert_writeable_eq!(bag, "jj");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     TwoDigit,
 }
@@ -599,10 +533,7 @@ pub enum Minute {
     /// bag.minute = Some(Minute::Numeric);
     ///
     /// assert_writeable_eq!(bag, "m");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Numeric,
     /// Example: 05
@@ -620,10 +551,7 @@ pub enum Minute {
     /// bag.minute = Some(Minute::TwoDigit);
     ///
     /// assert_writeable_eq!(bag, "mm");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     TwoDigit,
 }
@@ -652,10 +580,7 @@ pub enum Second {
     /// bag.second = Some(Second::Numeric);
     ///
     /// assert_writeable_eq!(bag, "s");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     Numeric,
     /// Example: 02
@@ -673,10 +598,7 @@ pub enum Second {
     /// bag.second = Some(Second::TwoDigit);
     ///
     /// assert_writeable_eq!(bag, "ss");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     TwoDigit,
 }
@@ -705,10 +627,7 @@ pub enum FractionalSecondDigits {
     /// bag.fractional_second_digits = Some(FractionalSecondDigits::F1);
     ///
     /// assert_writeable_eq!(bag, "S");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     F1,
     /// Two fraction digits for seconds.
@@ -726,10 +645,7 @@ pub enum FractionalSecondDigits {
     /// bag.fractional_second_digits = Some(FractionalSecondDigits::F2);
     ///
     /// assert_writeable_eq!(bag, "SS");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     F2,
     /// Three fraction digits for seconds.
@@ -747,10 +663,7 @@ pub enum FractionalSecondDigits {
     /// bag.fractional_second_digits = Some(FractionalSecondDigits::F3);
     ///
     /// assert_writeable_eq!(bag, "SSS");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     F3,
 }
@@ -781,10 +694,7 @@ pub enum TimeZoneName {
     /// bag.time_zone_name = Some(TimeZoneName::ShortSpecific);
     ///
     /// assert_writeable_eq!(bag, "z");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     ShortSpecific,
     /// Long localized form (example: Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit).
@@ -804,10 +714,7 @@ pub enum TimeZoneName {
     /// bag.time_zone_name = Some(TimeZoneName::LongSpecific);
     ///
     /// assert_writeable_eq!(bag, "zzzz");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     LongSpecific,
     /// Short localized GMT format (example: GMT-8).
@@ -825,10 +732,7 @@ pub enum TimeZoneName {
     /// bag.time_zone_name = Some(TimeZoneName::ShortOffset);
     ///
     /// assert_writeable_eq!(bag, "O");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     ShortOffset,
     /// Long localized GMT format (example: GMT-08:00).
@@ -846,10 +750,7 @@ pub enum TimeZoneName {
     /// bag.time_zone_name = Some(TimeZoneName::LongOffset);
     ///
     /// assert_writeable_eq!(bag, "OOOO");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     LongOffset,
     /// Short generic non-location format (example: PT, Los Angeles Zeit).
@@ -867,10 +768,7 @@ pub enum TimeZoneName {
     /// bag.time_zone_name = Some(TimeZoneName::ShortGeneric);
     ///
     /// assert_writeable_eq!(bag, "v");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     ShortGeneric,
     /// Long generic non-location format (example: Pacific Time, Nordamerikanische Westküstenzeit).
@@ -888,10 +786,7 @@ pub enum TimeZoneName {
     /// bag.time_zone_name = Some(TimeZoneName::LongGeneric);
     ///
     /// assert_writeable_eq!(bag, "vvvv");
-    /// assert_eq!(
-    ///     bag.to_string().parse::<DateTimeFieldBag>(),
-    ///     Ok(bag)
-    /// );
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     LongGeneric,
 }

@@ -130,10 +130,7 @@ make_enumerated_property! {
 ///     CodePointMapData::<Block>::new().get('α'),
 ///     Block::GreekAndCoptic,
 /// );
-/// assert_eq!(
-///     CodePointMapData::<Block>::new().get('a'),
-///     Block::BasicLatin,
-/// );
+/// assert_eq!(CodePointMapData::<Block>::new().get('a'), Block::BasicLatin,);
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
