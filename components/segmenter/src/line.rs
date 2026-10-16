@@ -1147,7 +1147,6 @@ struct ComplexLine<Y>(core::marker::PhantomData<Y>);
 
 #[cfg(feature = "unstable")]
 impl<Y: RuleBreakType> crate::rule_segmenter_v2::ComplexHandler<Y> for ComplexLine<Y> {
-    const BREAK_AT_BOUNDARIES: bool = false;
     const BREAK_STATUS: u8 = false as u8;
     type Cache = [usize; 16];
 

@@ -27,7 +27,23 @@ START ; Hebrew_Letter ; Hebrew_Letter
 START ; ZWJ ; ZWJ
 START ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 START ; RI ; RI
-START ; XX_Hiragana|XX_Han|XX_ComplexContext ; XXmExtPictmHiraganamHanmComplexContext
+START ; XX_Hiragana|XX_Han ; KanaKanji
+START ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+ALettermExtPictmHangulSyllablemHan Single_Quote ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+ExtendNumLet ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+ExtendNumLet ZWJ ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Hebrew_Letter Single_Quote ZWJ ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Numeric ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Numeric ExtendNumLet ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Numeric ZWJ ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+ALettermExtPictmHangulSyllablemHan ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Hebrew_Letter ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+ALettermExtPictmHangulSyllablemHan ExtendNumLet ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+ALettermExtPictmHangulSyllablemHan ZWJ ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Hebrew_Letter Single_Quote ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Hebrew_Letter ZWJ ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
+Katakana ExtendNumLet ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
 START ; Extend_Han|Extend_ComplexContext ; XXmExtPictmHiraganamHanmComplexContext
 START ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 START ; Katakana ; Katakana
@@ -231,3 +247,17 @@ Katakana ZWJ ; ZWJ ; Katakana ZWJ
 Katakana ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Katakana ZWJ ; Extend_Han|Extend_ComplexContext ; Katakana
 Katakana ZWJ ; Katakana ; Katakana
+KanaKanji ; XX_Hiragana|XX_Han ; KanaKanji
+KanaKanji ; Katakana ; Katakana
+KanaKanji ; ExtendmHanmComplexContext|Format ; KanaKanji
+KanaKanji ; Extend_Han|Extend_ComplexContext ; KanaKanji
+KanaKanji ; ZWJ ; KanaKanji ZWJ
+KanaKanji ZWJ ; XX_Hiragana|XX_Han ; KanaKanji
+KanaKanji ZWJ ; Katakana ; Katakana
+KanaKanji ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
+KanaKanji ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
+KanaKanji ZWJ ; ExtendmHanmComplexContext|Format ; KanaKanji
+KanaKanji ZWJ ; Extend_Han|Extend_ComplexContext ; KanaKanji
+KanaKanji ZWJ ; ZWJ ; KanaKanji ZWJ
+Katakana ; XX_Hiragana|XX_Han ; KanaKanji
+Katakana ZWJ ; XX_Hiragana|XX_Han ; KanaKanji

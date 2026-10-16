@@ -54,7 +54,17 @@ COVID|-|19| |ระบาด
 สุขภาพ|จิต
 ภาษา|ไทย| |ไม่|มี|การ|เว้นวรรคทุก|คำ
 กรุงเทพ|ฯ| |เป็น|เมืองหลวง|ของ|ประเทศ|ไทย
-a|ภาษา|ไทย|ภาษา|ไทย|b
+aภาษา|ไทย|ภาษา|ไทยb
+# Thai runs are subject to the word break rules at their boundaries,
+# with Thai letters treated as ALetter. These match ICU4C (ICU 79).
+พ.ศ
+ค.ศ
+พ.ศ|.| |๒๕๖๙
+ภาษา|ไทย123ภาษา
+ภาษา๑๒ไทย
+ก\u{AD}ข
+ก\u{200D}ข
+ภาษา|ไทย\u{AD}ภาษา
 
 # Myanmar
 မြန်မာစာ|မြန်မာစာ|မြန်မာ|စာ
@@ -64,6 +74,7 @@ a|ภาษา|ไทย|ภาษา|ไทย|b
 Welcome|龟山岛|龟山岛|Welcome
 龟山岛|龟山岛
 エディター|エディ
+カタカナ_|かな
 
 # Mixed scripts
 ภาษา|ไทย|龟山岛

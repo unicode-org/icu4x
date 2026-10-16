@@ -13,7 +13,6 @@ use smallvec::SmallVec;
 
 pub(crate) trait ComplexHandler<Y: RuleBreakType> {
     const BREAK_STATUS: u8;
-    const BREAK_AT_BOUNDARIES: bool;
     type Cache: smallvec::Array<Item = usize>;
     type ComplexPayloads<'s>: core::fmt::Debug;
     type ComplexPayload<'s>: core::fmt::Debug;
@@ -34,7 +33,6 @@ pub(crate) trait ComplexHandler<Y: RuleBreakType> {
 pub(crate) struct NoComplexHandler;
 impl<Y: RuleBreakType> ComplexHandler<Y> for NoComplexHandler {
     const BREAK_STATUS: u8 = 0;
-    const BREAK_AT_BOUNDARIES: bool = false;
     type Cache = [usize; 1];
     type ComplexPayloads<'s> = core::convert::Infallible;
     type ComplexPayload<'s> = core::convert::Infallible;
@@ -176,26 +174,13 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
                 let complex_breaks = C::handle(&complex_payload, &iter, &past_complex);
                 self.cache = complex_breaks.collect::<SmallVec<_>>().into_iter();
 
-                if C::BREAK_AT_BOUNDARIES {
-                    // `self.cache` contains a break point at the end of the run, but not at the start.
-                    // Store the position of the end of the run, and return the current position
-                    // for the start break point (unless it's 0, which we already returned earlier).
-                    self.remaining_input = past_complex;
-                    self.last_accepting_status = C::BREAK_STATUS;
-                    return if state == SegmenterStateMachine::START_STATE {
-                        self.cache.next()
-                    } else {
-                        Some(Y::offset(&iter))
-                    };
-                } else {
-                    // Remove the break point at the end of the run, and store `last_complex`, the location
-                    // of the last complex code point of the run. We'll later restart the state machine
-                    // from this code point, in order to correctly break after it.
-                    self.cache.next_back();
-                    complex_state = Some(last_complex);
+                // Remove the break point at the end of the run, and store `last_complex`, the location
+                // of the last complex code point of the run. We'll later restart the state machine
+                // from this code point, in order to correctly break after it.
+                self.cache.next_back();
+                complex_state = Some(last_complex);
 
-                    // We keep running the state machine to figure out if there's a break point at the start.
-                }
+                // We keep running the state machine to figure out if there's a break point at the start.
             }
 
             iter.next();
@@ -247,8 +232,8 @@ impl<'s, Y: RuleBreakType, C: ComplexHandler<Y>> Iterator for RuleBreakIterator<
             && let Some(last_complex_cp) = complex_state
         {
             self.remaining_input = last_complex_cp;
-            // return the complex break if it's before the break we calculated using the state machine
-            if first_complex_break < break_index {
+            // return the complex break if it's not after the break we calculated using the state machine
+            if first_complex_break <= break_index {
                 self.last_accepting_status = C::BREAK_STATUS;
                 return self.cache.next();
             }

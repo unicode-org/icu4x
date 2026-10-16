@@ -28,7 +28,8 @@ Hebrew_Letter ; [\p{Word_Break=Hebrew_Letter}] ;
 ZWJ ; [\p{Word_Break=ZWJ}] ; 
 ALetter_ExtPict ; [\p{Word_Break=ALetter}&\p{Extended_Pictographic=True}] ; 
 RI ; [\p{Word_Break=Regional_Indicator}] ; 
-XX_Hiragana|XX_Han|XX_ComplexContext ; [[\p{Word_Break=Other}&[:Hiragana:]] [\p{Word_Break=Other}&[:Han:]] [\p{Word_Break=Other}&[:LineBreak = Complex_Context:]]] ; XXmExtPictmHiraganamHanmComplexContext
+XX_Hiragana|XX_Han ; [[\p{Word_Break=Other}&[:Hiragana:]] [\p{Word_Break=Other}&[:Han:]]] ; XX_Hiragana|XX_Han
+XX_ComplexContext ; [\p{Word_Break=Other}&[:LineBreak = Complex_Context:]] ; ALettermExtPictmHangulSyllablemHan
 Extend_Han|Extend_ComplexContext ; [[\p{Word_Break=Extend}&[:Han:]] [\p{Word_Break=Extend}&[:LineBreak = Complex_Context:]]] ; ExtendmHanmComplexContext|Format
 ALetter_HangulSyllable|ALetter_Han ; [[\p{Word_Break=ALetter}&[\uac00-\ud7a3]] [\p{Word_Break=ALetter}&[:Han:]]] ; ALettermExtPictmHangulSyllablemHan
 Katakana ; [\p{Word_Break=Katakana}] ; Katakana
