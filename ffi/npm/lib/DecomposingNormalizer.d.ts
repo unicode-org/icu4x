@@ -49,7 +49,7 @@ export class DecomposingNormalizer {
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+     * See the [Rust documentation for `normalize_utf16`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf16) for more information.
      */
     normalize(s: string): string;
 

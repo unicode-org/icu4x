@@ -11,7 +11,7 @@ internal interface DecomposingNormalizerLib: Library {
     fun icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_DecomposingNormalizer_create_nfkd_mv1(): Pointer
     fun icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_DecomposingNormalizer_normalize_mv1(handle: Pointer, s: Slice, write: Pointer): Unit
+    fun icu4x_DecomposingNormalizer_normalize_utf16_mv1(handle: Pointer, s: Slice, write: Pointer): Unit
     fun icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(handle: Pointer, s: Slice): Byte
     fun icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(handle: Pointer, s: Slice): FFISizet
 }
@@ -122,15 +122,15 @@ class DecomposingNormalizer internal constructor (
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+     * See the [Rust documentation for `normalize_utf16`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf16) for more information.
      */
     fun normalize(s: String): String {
-        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_DecomposingNormalizer_normalize_mv1(handle, sSliceMemory.slice, write);
+        val returnVal = lib.icu4x_DecomposingNormalizer_normalize_utf16_mv1(handle, sSliceMemory.slice, write);
         try {
             
-            val returnString = DW.writeToString(write)
+            val returnString = DW.writeToString16(write)
             return returnString
         } finally {
             sSliceMemory.close()
