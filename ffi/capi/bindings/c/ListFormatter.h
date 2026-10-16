@@ -11,6 +11,7 @@
 #include "DataProvider.d.h"
 #include "ListLength.d.h"
 #include "Locale.d.h"
+#include "PartsSink.d.h"
 
 #include "ListFormatter.d.h"
 
@@ -40,6 +41,10 @@ icu4x_ListFormatter_create_unit_with_length_and_provider_mv1_result icu4x_ListFo
 void icu4x_ListFormatter_format_utf8_mv1(const ListFormatter* self, DiplomatStringsView list, DiplomatWrite* write);
 
 void icu4x_ListFormatter_format_utf16_mv1(const ListFormatter* self, DiplomatStrings16View list, DiplomatWrite* write);
+
+void icu4x_ListFormatter_format_utf8_to_parts_mv1(const ListFormatter* self, DiplomatStringsView list, PartsSink* parts, DiplomatWrite* write);
+
+void icu4x_ListFormatter_format_utf16_to_parts_mv1(const ListFormatter* self, DiplomatStrings16View list, PartsSink* parts, DiplomatWrite* write);
 
 void icu4x_ListFormatter_destroy_mv1(ListFormatter* self);
 

@@ -28,6 +28,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
+export { PartSpan } from "./PartSpan.mjs"
+
 export { BidiMirroringGlyph } from "./BidiMirroringGlyph.mjs"
 
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
@@ -147,6 +149,10 @@ export { CanonicalCombiningClassMap } from "./CanonicalCombiningClassMap.mjs"
 export { CanonicalComposition } from "./CanonicalComposition.mjs"
 
 export { CanonicalDecomposition } from "./CanonicalDecomposition.mjs"
+
+export { Parts } from "./Parts.mjs"
+
+export { PartsSink } from "./PartsSink.mjs"
 
 export { PluralOperands } from "./PluralOperands.mjs"
 
@@ -321,6 +327,8 @@ export { TransformResult } from "./TransformResult.mjs"
 export { LocaleDirection } from "./LocaleDirection.mjs"
 
 export { LanguageDisplayUnstable } from "./LanguageDisplayUnstable.mjs"
+
+export { PartKind } from "./PartKind.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 

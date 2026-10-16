@@ -136,6 +136,10 @@ part 'LocaleNamesUnstable.g.dart';
 part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'NumericType.g.dart';
+part 'PartKind.g.dart';
+part 'PartSpan.g.dart';
+part 'Parts.g.dart';
+part 'PartsSink.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
@@ -548,6 +552,32 @@ final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
   // ignore: unused_element
   factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.err() {
     final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultPartSpanFfiVoidUnion extends ffi.Union {
+  external _PartSpanFfi ok;
+
+}
+
+final class _ResultPartSpanFfiVoid extends ffi.Struct {
+  external _ResultPartSpanFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultPartSpanFfiVoid.ok(_PartSpanFfi val) {
+    final struct = ffi.Struct.create<_ResultPartSpanFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultPartSpanFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultPartSpanFfiVoid>();
     struct.isOk = false;
     return struct;
   }

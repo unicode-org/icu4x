@@ -17,6 +17,8 @@ namespace capi { struct ListFormatter; }
 class ListFormatter;
 namespace capi { struct Locale; }
 class Locale;
+namespace capi { struct PartsSink; }
+class PartsSink;
 class DataError;
 class ListLength;
 } // namespace icu4x
@@ -91,6 +93,24 @@ public:
   inline std::string format16(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list) const;
   template<typename W>
   inline void format16_write(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list, W& writeable_output) const;
+
+  /**
+   * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline std::string format_to_parts(icu4x::diplomat::span<const diplomat::string_view_for_slice> list, icu4x::PartsSink& parts) const;
+  template<typename W>
+  inline void format_to_parts_write(icu4x::diplomat::span<const diplomat::string_view_for_slice> list, icu4x::PartsSink& parts, W& writeable_output) const;
+
+  /**
+   * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline std::string format_to_parts16(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list, icu4x::PartsSink& parts) const;
+  template<typename W>
+  inline void format_to_parts16_write(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list, icu4x::PartsSink& parts, W& writeable_output) const;
 
     inline const icu4x::capi::ListFormatter* AsFFI() const;
     inline icu4x::capi::ListFormatter* AsFFI();

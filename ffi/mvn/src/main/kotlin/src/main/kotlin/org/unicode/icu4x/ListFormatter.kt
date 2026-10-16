@@ -14,6 +14,7 @@ internal interface ListFormatterLib: Library {
     fun icu4x_ListFormatter_create_unit_with_length_mv1(locale: Pointer, length: Int): ResultPointerInt
     fun icu4x_ListFormatter_create_unit_with_length_and_provider_mv1(provider: Pointer, locale: Pointer, length: Int): ResultPointerInt
     fun icu4x_ListFormatter_format_utf16_mv1(handle: Pointer, list: Slice, write: Pointer): Unit
+    fun icu4x_ListFormatter_format_utf16_to_parts_mv1(handle: Pointer, list: Slice, parts: Pointer, write: Pointer): Unit
 }
 /**
  * See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html) for more information.
@@ -173,6 +174,24 @@ class ListFormatter internal constructor (
         val listSliceMemory = PrimitiveArrayTools.borrowUtf16s(list)
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_ListFormatter_format_utf16_mv1(handle, listSliceMemory.slice, write);
+        try {
+            
+            val returnString = DW.writeToString(write)
+            return returnString
+        } finally {
+            listSliceMemory.close()
+        }
+    }
+    
+    /**
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/list/struct.ListFormatter.html#method.format) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     */
+    fun format_to_parts(list: Array<String>, parts: PartsSink): String {
+        val listSliceMemory = PrimitiveArrayTools.borrowUtf16s(list)
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_ListFormatter_format_utf16_to_parts_mv1(handle, listSliceMemory.slice, parts.handle /* note this is a mutable reference. Think carefully about using, especially concurrently */, write);
         try {
             
             val returnString = DW.writeToString(write)
