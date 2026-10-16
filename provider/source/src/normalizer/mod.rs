@@ -17,8 +17,8 @@
 use crate::SourceDataProvider;
 use crate::TrieType;
 use crate::properties::ucd_helpers;
-use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-use icu::collections::codepointtrie::{CodePointTrie, CodePointTrieBuilder};
+use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use icu::collections::codepointtrie::CodePointTrieBuilder;
 use icu::normalizer::provider::*;
 use icu::normalizer::{ComposingNormalizer, ComposingNormalizerBorrowed};
 use icu::properties::props::{CanonicalCombiningClass, FullCompositionExclusion};
@@ -26,15 +26,23 @@ use icu::properties::{
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData, CodePointSetDataBorrowed,
 };
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use zerovec::ZeroVec;
 
+// These constants originate from page 143 of Unicode 14.0
+/// Syllable base
 const HANGUL_S_BASE: u32 = 0xAC00;
+/// Lead jamo base
 const HANGUL_L_BASE: u32 = 0x1100;
+/// Vowel jamo base
 const HANGUL_V_BASE: u32 = 0x1161;
+/// Trail jamo base (deliberately off by one to account for the absence of a trail)
 const HANGUL_T_BASE: u32 = 0x11A7;
+/// Trail jamo count (deliberately off by one to account for the absence of a trail)
 const HANGUL_T_COUNT: u32 = 28;
+/// Vowel jamo count times trail jamo count
 const HANGUL_N_COUNT: u32 = 588;
+/// Hangul syllables
 const HANGUL_SYLLABLES: std::ops::RangeInclusive<u32> = 0xAC00..=0xD7A3;
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
@@ -75,17 +83,9 @@ fn full_decomposition(
     let mut out = Vec::new();
     push_full_decomposition(c, mapping, &mut out);
     // Canonical ordering: stably sort each run of non-starters by ccc.
-    let mut i = 0;
-    while i < out.len() {
-        if ccc.get(out[i]) == CanonicalCombiningClass::NotReordered {
-            i += 1;
-            continue;
-        }
-        let start = i;
-        while i < out.len() && ccc.get(out[i]) != CanonicalCombiningClass::NotReordered {
-            i += 1;
-        }
-        out[start..i].sort_by_key(|&c| ccc.get(c));
+    let is_non_starter = |c: char| ccc.get(c) != CanonicalCombiningClass::NotReordered;
+    for run in out.chunk_by_mut(|&a, &b| is_non_starter(a) && is_non_starter(b)) {
+        run.sort_by_key(|&c| ccc.get(c));
     }
     out
 }
@@ -96,128 +96,335 @@ fn canonical_compositions(
     nfd_mapping: &Mapping,
     ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
     full_composition_exclusion: CodePointSetDataBorrowed,
-) -> (CanonicalCompositions<'static>, HashSet<char>) {
-    let mut backward_combining_starters = HashSet::new();
+) -> (
+    CanonicalCompositions<'static>,
+    CodePointInversionList<'static>,
+) {
+    let mut backward_combining_starters = CodePointInversionListBuilder::new();
     let mut compositions = Vec::new();
     for composite in (0..=char::MAX as u32).filter_map(char::from_u32) {
-        let is_hangul = HANGUL_SYLLABLES.contains(&(composite as u32));
-        let (starter, second) = if is_hangul {
+        if HANGUL_SYLLABLES.contains(&(composite as u32)) {
             let s = composite as u32 - HANGUL_S_BASE;
             let t = s % HANGUL_T_COUNT;
             if t == 0 {
                 // LV syllable
-                let l = HANGUL_L_BASE + s / HANGUL_N_COUNT;
-                let v = HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                (l, v)
+                let v =
+                    char::from_u32(HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT).unwrap();
+                if ccc.get(v) == CanonicalCombiningClass::NotReordered {
+                    backward_combining_starters.add_char(v);
+                }
             } else {
                 // LVT syllable
-                (composite as u32 - t, HANGUL_T_BASE + t)
+                let t = char::from_u32(HANGUL_T_BASE + t).unwrap();
+                if ccc.get(t) == CanonicalCombiningClass::NotReordered {
+                    backward_combining_starters.add_char(t);
+                }
             }
         } else {
             match nfd_mapping(composite) {
                 Some(&[starter, second]) if !full_composition_exclusion.contains(composite) => {
-                    (starter as u32, second as u32)
+                    compositions.push((starter, second, composite));
+
+                    if ccc.get(second) == CanonicalCombiningClass::NotReordered {
+                        backward_combining_starters.add_char(second);
+                    }
                 }
                 _ => continue,
             }
         };
-        let (Some(starter), Some(second)) = (char::from_u32(starter), char::from_u32(second))
-        else {
-            unreachable!()
-        };
-        if ccc.get(second) == CanonicalCombiningClass::NotReordered {
-            backward_combining_starters.insert(second);
-        }
-        if is_hangul {
-            // Hangul is handled algorithmically at runtime.
-            continue;
-        }
-        compositions.push((starter, second, composite));
     }
     (
         CanonicalCompositions::from_compositions(compositions),
-        backward_combining_starters,
+        backward_combining_starters.build(),
     )
 }
 
-/// A trie value that might need to be adjusted when the final storage layout is known.
-#[derive(Debug, Clone, Copy)]
-enum PendingDescriptor {
-    Simple(u32),
-    Complex {
+/// How a character decomposes in a normalization flavor. Each variant corresponds to one
+/// of the trie value types described in `trie-value-format.md`.
+///
+/// Starters that decompose to themselves and cannot combine backwards are not represented.
+#[derive(Debug, Clone, PartialEq)]
+enum Decomposition {
+    /// A starter that decomposes to itself and can combine backwards.
+    BackwardCombiningStarter,
+    /// U+FFFD, a starter that decomposes to itself. In the potentially-ill-formed UTF-8
+    /// case, UTF-8 errors return U+FFFD from the iterator, and errors need to be treated
+    /// as ineligible for passthrough on the slice fast path. Giving U+FFFD a trie value
+    /// whose flags make it ineligible for passthrough avoids a specific U+FFFD branch on
+    /// the passthrough fast path.
+    ReplacementCharacter,
+    /// A non-starter that decomposes to itself.
+    NonStarter(CanonicalCombiningClass),
+    /// A character in [`DecompositionData::SPECIAL_NON_STARTER_DECOMPOSITIONS`], with the
+    /// canonical combining class of the undecomposed character.
+    SpecialNonStarter(CanonicalCombiningClass),
+    /// A UTS 46 ignorable.
+    Ignorable,
+    /// A singleton decomposition to a BMP starter.
+    Singleton { c: char, backward_combining: bool },
+    /// A decomposition to a starter followed by a non-starter, stored inline.
+    Pair {
+        starter: char,
+        non_starter: char,
         round_trips: bool,
-        backward_combining: bool,
+    },
+    /// A decomposition stored in the tables.
+    Complex {
+        chars: Vec<char>,
         supplementary: bool,
         only_non_starters_in_trail: bool,
-        len: usize,
-        offset: usize,
+        round_trips: bool,
+        backward_combining: bool,
     },
+    /// The NFKD decomposition of U+FDFA, which is too long to be stored in the tables
+    /// and is hard-coded instead.
+    Fdfa,
 }
 
-/// Sizes of the 16-bit and 32-bit storage for the NFD tables and the
-/// (NFKD and UTS 46) supplementary tables.
-#[derive(Debug, Clone, Copy)]
-struct StorageLayout {
-    base_size_16: usize,
-    base_size_32: usize,
-    supplement_size_16: usize,
-}
+impl Decomposition {
+    /// Whether characters with this decomposition can be passed through by the decomposing
+    /// normalizer without looking at their trie value.
+    fn is_decomposition_passthrough(&self) -> bool {
+        matches!(self, Self::BackwardCombiningStarter)
+    }
 
-impl PendingDescriptor {
-    fn resolve(self, c: char, layout: StorageLayout) -> Result<u32, DataError> {
-        let (
-            round_trips,
-            backward_combining,
-            supplementary,
-            only_non_starters_in_trail,
-            len,
-            offset,
-        ) = match self {
-            Self::Simple(value) => return Ok(value),
-            Self::Complex {
-                round_trips,
-                backward_combining,
-                supplementary,
-                only_non_starters_in_trail,
-                len,
-                offset,
-            } => (
-                round_trips,
-                backward_combining,
-                supplementary,
-                only_non_starters_in_trail,
-                len,
-                offset,
-            ),
-        };
-        // Convert the offset into the 16-bit or 32-bit storage into an offset into
-        // the logical concatenation of NFD 16-bit, NFD 32-bit, supplementary 16-bit,
-        // and supplementary 32-bit storage.
-        let offset = match (
-            supplementary,
-            offset >= layout.base_size_16,
-            offset >= layout.base_size_32,
-        ) {
-            // NFD 16-bit
-            (false, false, _) => offset,
-            // Supplementary 16-bit (the 16-bit base data length is already part of offset)
-            (false, true, _) => offset + layout.base_size_32,
-            // NFD 32-bit
-            (true, _, false) => offset + layout.base_size_16,
-            // Supplementary 32-bit (the 32-bit base data length is already part of offset)
-            (true, _, true) => offset + layout.base_size_16 + layout.supplement_size_16,
-        };
-        DecompositionData::encode_complex(
-            offset,
-            len,
-            supplementary,
-            only_non_starters_in_trail,
-            round_trips,
-            backward_combining,
+    /// Whether characters with this decomposition can be passed through by the composing
+    /// normalizer without looking at their trie value.
+    fn is_composition_passthrough(&self) -> bool {
+        matches!(
+            self,
+            Self::Pair {
+                round_trips: true,
+                ..
+            } | Self::Complex {
+                round_trips: true,
+                backward_combining: false,
+                ..
+            }
         )
-        .ok_or_else(|| {
-            DataError::custom("Complex decomposition cannot be encoded").with_debug_context(&c)
-        })
+    }
+
+    fn starts_with_non_starter(&self) -> bool {
+        matches!(self, Self::NonStarter(_) | Self::SpecialNonStarter(_))
+    }
+
+    /// Encodes the trie value. `offset` is the offset of a complex decomposition into the
+    /// logical concatenation of the tables, see [`DecompositionData::encode_complex`].
+    fn encode(&self, offset: Option<usize>) -> Option<u32> {
+        match *self {
+            Self::BackwardCombiningStarter => Some(DecompositionData::BACKWARD_COMBINING_MARKER),
+            Self::ReplacementCharacter => Some(
+                DecompositionData::NON_ROUND_TRIP_MARKER
+                    | DecompositionData::BACKWARD_COMBINING_MARKER,
+            ),
+            Self::NonStarter(ccc) => Some(DecompositionData::encode_non_starter(ccc)),
+            Self::SpecialNonStarter(ccc) => {
+                Some(DecompositionData::encode_special_non_starter(ccc))
+            }
+            Self::Ignorable => Some(DecompositionData::IGNORABLE_MARKER),
+            Self::Singleton {
+                c,
+                backward_combining,
+            } => DecompositionData::encode_singleton(c, backward_combining),
+            Self::Pair {
+                starter,
+                non_starter,
+                round_trips,
+            } => DecompositionData::encode_pair(starter, non_starter, round_trips),
+            Self::Complex {
+                ref chars,
+                supplementary,
+                only_non_starters_in_trail,
+                round_trips,
+                backward_combining,
+            } => DecompositionData::encode_complex(
+                offset?,
+                chars.len(),
+                supplementary,
+                only_non_starters_in_trail,
+                round_trips,
+                backward_combining,
+            ),
+            Self::Fdfa => Some(DecompositionData::encode_fdfa()),
+        }
+    }
+}
+
+/// Computes the decompositions of characters.
+struct Classifier<'a, 'm> {
+    ccc: CodePointMapDataBorrowed<'a, CanonicalCombiningClass>,
+    nfd_mapping: &'a Mapping<'m>,
+    backward_combining_starters: &'a CodePointInversionList<'a>,
+    /// If `None`, all decompositions are treated as not round-tripping via canonical
+    /// composition.
+    nfc: Option<&'a ComposingNormalizerBorrowed<'a>>,
+}
+
+impl Classifier<'_, '_> {
+    /// Computes the decompositions of `candidates` in `flavor`, whose raw decomposition
+    /// mappings are `mapping`. For flavors other than NFD, only the decompositions that
+    /// differ from NFD are returned.
+    ///
+    /// `candidates` must contain all characters that don't trivially decompose to
+    /// themselves: characters with a decomposition mapping, non-starters, and starters
+    /// that can combine backwards.
+    fn classify_all(
+        &self,
+        flavor: Flavor,
+        mapping: &Mapping,
+        candidates: &CodePointInversionList,
+    ) -> Result<BTreeMap<char, Decomposition>, DataError> {
+        candidates
+            .iter_chars()
+            .filter_map(|c| {
+                self.classify(c, flavor, mapping)
+                    .transpose()
+                    .map(|d| d.map(|d| (c, d)))
+            })
+            .collect()
+    }
+
+    fn classify(
+        &self,
+        c: char,
+        flavor: Flavor,
+        mapping: &Mapping,
+    ) -> Result<Option<Decomposition>, DataError> {
+        let error = |message: &'static str| {
+            DataError::custom(message)
+                .with_debug_context(&c)
+                .with_debug_context(&flavor)
+        };
+        let ccc = |c: char| self.ccc.get(c);
+
+        if HANGUL_SYLLABLES.contains(&(c as u32)) {
+            // Hangul syllables are decomposed algorithmically.
+            return Ok(None);
+        }
+
+        if c == char::REPLACEMENT_CHARACTER {
+            return Ok(Some(Decomposition::ReplacementCharacter));
+        }
+
+        let dst = full_decomposition(c, mapping, self.ccc);
+        if flavor != Flavor::Nfd && dst == full_decomposition(c, self.nfd_mapping, self.ccc) {
+            return Ok(None);
+        }
+
+        if flavor != Flavor::Uts46 && (dst.is_empty() || dst == [char::REPLACEMENT_CHARACTER]) {
+            return Err(error("Unexpected empty or U+FFFD decomposition"));
+        }
+
+        let Some(&first) = dst.first() else {
+            // Ignorable in UTS 46 (the non-UTS 46 case has errored above).
+            return Ok(Some(Decomposition::Ignorable));
+        };
+
+        if ccc(first) != CanonicalCombiningClass::NotReordered {
+            return if dst == [c] {
+                Ok(Some(Decomposition::NonStarter(ccc(first))))
+            } else if DecompositionData::SPECIAL_NON_STARTER_DECOMPOSITIONS
+                .iter()
+                .any(|&(s, d)| s == c && d == dst.as_slice())
+            {
+                Ok(Some(Decomposition::SpecialNonStarter(ccc(c))))
+            } else {
+                // A character whose decomposition starts with a non-starter and isn't the
+                // same as the character itself and isn't already hard-coded into ICU4X.
+                Err(error("Unexpected non-starter decomposition"))
+            };
+        }
+
+        let backward_combining = self.backward_combining_starters.contains(first);
+
+        if dst == [c] {
+            return Ok(backward_combining.then_some(Decomposition::BackwardCombiningStarter));
+        }
+
+        let round_trips = self
+            .nfc
+            .is_some_and(|nfc| nfc.normalize_iter(dst.iter().copied()).eq([c]));
+
+        // Iota subscript and half-width voicing marks must never occur in expansions in
+        // the normalization forms where they are special.
+        let is_special_in_flavor = |d: char| {
+            (d == DecompositionData::IOTA_SUBSCRIPT && flavor == Flavor::Uts46)
+                || d == DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK
+                || d == DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK
+        };
+
+        Ok(Some(match *dst {
+            // Singleton decompositions to conjoining jamo.
+            [d] if ('\u{1161}'..='\u{1175}').contains(&d)
+                || ('\u{11A8}'..='\u{11C2}').contains(&d) =>
+            {
+                if flavor == Flavor::Nfd {
+                    return Err(error("Unexpected decomposition to conjoining jamo"));
+                }
+                Decomposition::Singleton {
+                    c: d,
+                    backward_combining,
+                }
+            }
+            [d] if !backward_combining && d as u32 <= 0xFFFF => Decomposition::Singleton {
+                c: d,
+                backward_combining: false,
+            },
+            // ANGSTROM SIGN is special to make the Harfbuzz case branch less in the more common case.
+            [a, b]
+                if c != DecompositionData::ANGSTROM_SIGN
+                    && !backward_combining
+                    && ccc(a) == CanonicalCombiningClass::NotReordered
+                    && ccc(b) != CanonicalCombiningClass::NotReordered
+                    && DecompositionData::encode_pair(a, b, round_trips).is_some() =>
+            {
+                if is_special_in_flavor(a) || is_special_in_flavor(b) {
+                    return Err(error("Unexpected special character in expansion"));
+                }
+                Decomposition::Pair {
+                    starter: a,
+                    non_starter: b,
+                    round_trips,
+                }
+            }
+            _ => {
+                if dst.iter().copied().any(is_special_in_flavor) {
+                    return Err(error("Unexpected special character in expansion"));
+                }
+                if dst.contains(&'\0') {
+                    return Err(error("Unexpected NUL in expansion"));
+                }
+                // The format doesn't allow for length 1 for BMP, so these need to be
+                // promoted to wider storage.
+                let supplementary = dst.len() == 1 || dst.iter().any(|&d| d as u32 > 0xFFFF);
+                let max_len = if supplementary {
+                    DecompositionData::COMPLEX_MAX_LEN_24
+                } else {
+                    DecompositionData::COMPLEX_MAX_LEN_16
+                };
+                if dst.len() > max_len {
+                    if c == '\u{FDFA}'
+                        && dst
+                            .iter()
+                            .skip(1)
+                            .map(|&d| d as u32)
+                            .eq(DecompositionData::FDFA_NFKD.iter().map(|&d| u32::from(d)))
+                    {
+                        return Ok(Some(Decomposition::Fdfa));
+                    }
+                    return Err(error("Decomposition too long"));
+                }
+                Decomposition::Complex {
+                    only_non_starters_in_trail: dst[1..]
+                        .iter()
+                        .all(|&d| ccc(d) != CanonicalCombiningClass::NotReordered),
+                    chars: dst,
+                    supplementary,
+                    round_trips,
+                    backward_combining,
+                }
+            }
+        }))
     }
 }
 
@@ -232,312 +439,204 @@ fn find_or_append<T: Copy + PartialEq>(storage: &mut Vec<T>, needle: &[T]) -> us
     index
 }
 
-#[derive(Debug)]
-struct DecompositionsOutput {
-    pending: BTreeMap<char, PendingDescriptor>,
-    /// The complex decompositions that were not already present in the previous tables.
-    tables: DecompositionTables<'static>,
-    decomposition_passthrough_bound: u32,
-    composition_passthrough_bound: u32,
-    decomposition_starts_with_non_starter: BTreeSet<char>,
-    non_recursive: BTreeMap<char, u32>,
-    non_recursive_32: Vec<char>,
+/// The tables storing complex decompositions.
+struct ComplexDecompositionTables {
+    nfd: DecompositionTables<'static>,
+    /// The supplementary (NFKD and UTS 46) tables.
+    supplementary: DecompositionTables<'static>,
+    /// For each flavor, the offset of each complex decomposition into the logical
+    /// concatenation of NFD 16-bit, NFD 32-bit, supplementary 16-bit, and supplementary
+    /// 32-bit storage.
+    offsets: Vec<BTreeMap<char, usize>>,
 }
 
-/// Computes decomposition data for `flavor`, whose raw decomposition mappings are `mapping`.
-///
-/// Complex decompositions are looked up in the concatenation of the `previous` tables, and
-/// the returned tables contain those that are not already present there. Offsets in the
-/// pending descriptors are relative to the concatenation of the `previous` tables and the
-/// returned tables.
-///
-/// If `nfc` is `None`, all decompositions are treated as not round-tripping via canonical
-/// composition.
-fn compute_decompositions(
-    flavor: Flavor,
-    mapping: &Mapping,
-    nfd_mapping: &Mapping,
-    ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
-    backward_combining_starters: &HashSet<char>,
-    nfc: Option<&ComposingNormalizerBorrowed>,
-    previous: &[&DecompositionTables],
-) -> Result<DecompositionsOutput, DataError> {
-    let mut storage16 = previous
-        .iter()
-        .flat_map(|t| t.scalars16.iter())
-        .collect::<Vec<_>>();
-    let mut storage32 = previous
-        .iter()
-        .flat_map(|t| t.scalars24.iter())
-        .collect::<Vec<_>>();
-    let previous_len_16 = storage16.len();
-    let previous_len_32 = storage32.len();
-
-    let error = |message: &'static str, c: char| {
-        DataError::custom(message)
-            .with_debug_context(&c)
-            .with_debug_context(&flavor)
-    };
-
-    let mut output = DecompositionsOutput {
-        pending: BTreeMap::new(),
-        tables: DecompositionTables {
-            scalars16: ZeroVec::new(),
-            scalars24: ZeroVec::new(),
-        },
-        decomposition_passthrough_bound: 0x10FFFF,
-        composition_passthrough_bound: 0x10FFFF,
-        decomposition_starts_with_non_starter: BTreeSet::new(),
-        non_recursive: BTreeMap::new(),
-        non_recursive_32: Vec::new(),
-    };
-
-    // Iterate over all scalar values excluding Hangul syllables.
-    //
-    // We go backwards in order to better find overlapping decompositions.
-    for c in (0..=char::MAX as u32).rev().filter_map(char::from_u32) {
-        if HANGUL_SYLLABLES.contains(&(c as u32)) {
-            continue;
-        }
-        if c == char::REPLACEMENT_CHARACTER {
-            // This character is a starter that decomposes to self, so without a special
-            // case here it would end up as passthrough-eligible in all normalizations forms.
-            // However, in the potentially-ill-formed UTF-8 case UTF-8 errors return U+FFFD
-            // from the iterator, and errors need to be treated as ineligible for passthrough
-            // on the slice fast path. By giving U+FFFD a trie value whose flags make it
-            // ineligible for passthrough avoids a specific U+FFFD branch on the passthrough
-            // fast path.
-            output.pending.insert(
-                c,
-                PendingDescriptor::Simple(
-                    DecompositionData::NON_ROUND_TRIP_MARKER
-                        | DecompositionData::BACKWARD_COMBINING_MARKER,
-                ),
-            );
-            continue;
-        }
-
-        let dst = full_decomposition(c, mapping, ccc);
-        let decomposes_to_self = dst == [c];
-        let round_trips_via_canonical_composition =
-            || nfc.is_some_and(|nfc| nfc.normalize_iter(dst.iter().copied()).eq([c]));
-
-        if flavor != Flavor::Uts46
-            && (dst.is_empty()
-                || (dst == [char::REPLACEMENT_CHARACTER] && c != char::REPLACEMENT_CHARACTER))
-        {
-            return Err(error("Unexpected empty or U+FFFD decomposition", c));
-        }
-
-        let first = dst.first().copied();
-        let first_combining_class = first.map(|f| ccc.get(f).0).unwrap_or_default();
-        let mut special_non_starter_decomposition = false;
-        let mut starts_with_backward_combining_starter = false;
-        if first_combining_class != 0 {
-            output.decomposition_passthrough_bound = c as u32;
-            output.composition_passthrough_bound = c as u32;
-            output.decomposition_starts_with_non_starter.insert(c);
-            if !decomposes_to_self {
-                if DecompositionData::SPECIAL_NON_STARTER_DECOMPOSITIONS
+impl ComplexDecompositionTables {
+    /// Stores the complex decompositions of `flavors`. The first flavor is stored in the
+    /// NFD tables, all others in the supplementary tables.
+    fn new(flavors: &[&BTreeMap<char, Decomposition>]) -> Result<Self, DataError> {
+        let mut storage16 = Vec::<u16>::new();
+        let mut storage32 = Vec::<char>::new();
+        let mut nfd_len = (0, 0);
+        let mut offsets = Vec::new();
+        for (i, decompositions) in flavors.iter().enumerate() {
+            // Iterate backwards in order to better find overlapping decompositions.
+            offsets.push(
+                decompositions
                     .iter()
-                    .any(|&(s, d)| s == c && d == dst.as_slice())
-                {
-                    special_non_starter_decomposition = true;
-                } else {
-                    // A character whose decomposition starts with a non-starter and isn't the
-                    // same as the character itself and isn't already hard-coded into ICU4X.
-                    return Err(error("Unexpected non-starter decomposition", c));
-                }
-            }
-        } else if first.is_some_and(|f| backward_combining_starters.contains(&f)) {
-            output.composition_passthrough_bound = c as u32;
-            starts_with_backward_combining_starter = true;
-        }
-
-        if flavor != Flavor::Nfd {
-            if dst == full_decomposition(c, nfd_mapping, ccc) {
-                continue;
-            }
-            output.decomposition_passthrough_bound = c as u32;
-            output.composition_passthrough_bound = c as u32;
-        }
-
-        if first_combining_class != 0 {
-            output.pending.insert(
-                c,
-                PendingDescriptor::Simple(if special_non_starter_decomposition {
-                    DecompositionData::encode_special_non_starter(ccc.get(c).0)
-                } else {
-                    DecompositionData::encode_non_starter(first_combining_class)
-                }),
+                    .rev()
+                    .filter_map(|(&c, d)| match d {
+                        Decomposition::Complex {
+                            chars,
+                            supplementary: true,
+                            ..
+                        } => Some((c, (true, find_or_append(&mut storage32, chars)))),
+                        Decomposition::Complex { chars, .. } => {
+                            let chars = chars.iter().map(|&c| c as u16).collect::<Vec<_>>();
+                            Some((c, (false, find_or_append(&mut storage16, &chars))))
+                        }
+                        _ => None,
+                    })
+                    .collect::<Vec<_>>(),
             );
-            continue;
-        }
-
-        if decomposes_to_self {
-            if starts_with_backward_combining_starter {
-                output.pending.insert(
-                    c,
-                    PendingDescriptor::Simple(DecompositionData::BACKWARD_COMBINING_MARKER),
-                );
-            }
-            continue;
-        }
-
-        output.decomposition_passthrough_bound = c as u32;
-
-        // ICU4X hard-codes ANGSTROM SIGN
-        if c != DecompositionData::ANGSTROM_SIGN && flavor == Flavor::Nfd {
-            let raw =
-                nfd_mapping(c).ok_or_else(|| error("Missing non-recursive decomposition", c))?;
-            // In addition to actual difference, put the whole range that contains characters
-            // with oxia into the non-recursive trie in order to catch cases where characters
-            // with oxia have singleton decompositions to corresponding characters with tonos.
-            // This way, the run-time decision to fall through can be done on the range
-            // without checking for individual characters inside the range.
-            if raw != dst.as_slice() || NonRecursiveDecompositionSupplement::OXIA_RANGE.contains(&c)
-            {
-                let value =
-                    NonRecursiveDecompositionSupplement::encode(raw, &mut output.non_recursive_32)
-                        .ok_or_else(|| error("Non-recursive decomposition cannot be encoded", c))?;
-                output.non_recursive.insert(c, value);
+            if i == 0 {
+                nfd_len = (storage16.len(), storage32.len());
             }
         }
 
-        let round_trips = round_trips_via_canonical_composition();
-        if !round_trips {
-            output.composition_passthrough_bound = c as u32;
+        if storage16.len() + storage32.len() > DecompositionTables::MAX_COMBINED_LEN {
+            // We actually have 14 bits available, but let's error out so that docs can be
+            // updated when taking a reserved bit out of potential future flag usage.
+            return Err(DataError::custom("Decomposition storage too large"));
         }
 
-        let is_special_in_flavor = |d: char| {
-            (d == DecompositionData::IOTA_SUBSCRIPT && flavor == Flavor::Uts46)
-                || d == DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK
-                || d == DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK
+        let (nfd_len_16, nfd_len_32) = nfd_len;
+        let total_len_16 = storage16.len();
+        let logical_offset = |(supplementary, offset)| match (supplementary, offset) {
+            // NFD 16-bit
+            (false, o) if o < nfd_len_16 => o,
+            // Supplementary 16-bit (the NFD 16-bit length is already part of the offset)
+            (false, o) => o + nfd_len_32,
+            // NFD 32-bit
+            (true, o) if o < nfd_len_32 => nfd_len_16 + o,
+            // Supplementary 32-bit (the NFD 32-bit length is already part of the offset)
+            (true, o) => total_len_16 + o,
         };
 
-        let descriptor = match *dst {
-            [] => {
-                // Ignorable in UTS 46 (the non-UTS 46 case has errored above).
-                PendingDescriptor::Simple(DecompositionData::IGNORABLE_MARKER)
-            }
-            // Singleton decompositions to conjoining jamo.
-            [d] if ('\u{1161}'..='\u{1175}').contains(&d)
-                || ('\u{11A8}'..='\u{11C2}').contains(&d) =>
-            {
-                if flavor == Flavor::Nfd {
-                    return Err(error("Unexpected decomposition to conjoining jamo", c));
-                }
-                PendingDescriptor::Simple(
-                    DecompositionData::encode_singleton(d, starts_with_backward_combining_starter)
-                        .ok_or_else(|| error("Singleton cannot be encoded", c))?,
-                )
-            }
-            [d] if !starts_with_backward_combining_starter && d as u32 <= 0xFFFF => {
-                PendingDescriptor::Simple(
-                    DecompositionData::encode_singleton(d, false)
-                        .ok_or_else(|| error("Singleton cannot be encoded", c))?,
-                )
-            }
-            // ANGSTROM SIGN is special to make the Harfbuzz case branch less in the more common case.
-            [a, b]
-                if c != DecompositionData::ANGSTROM_SIGN
-                    && !starts_with_backward_combining_starter
-                    && ccc.get(a).0 == 0
-                    && ccc.get(b).0 != 0
-                    && let Some(value) = DecompositionData::encode_pair(a, b, round_trips) =>
-            {
-                if is_special_in_flavor(a) || is_special_in_flavor(b) {
-                    // Iota subscript and half-width voicing marks must never occur in these
-                    // expansions in the normalization forms where they are special.
-                    return Err(error("Unexpected special character in expansion", c));
-                }
-                PendingDescriptor::Simple(value)
-            }
-            _ => {
-                if dst.iter().copied().any(is_special_in_flavor) {
-                    // Iota subscript and half-width voicing marks must never occur in these
-                    // expansions in the normalization forms where they are special.
-                    return Err(error("Unexpected special character in expansion", c));
-                }
-                if dst.contains(&'\0') {
-                    return Err(error("Unexpected NUL in expansion", c));
-                }
-                let non_initial_starter = dst.iter().skip(1).any(|&d| ccc.get(d).0 == 0);
-                // The format doesn't allow for length 1 for BMP, so these need to be
-                // promoted to wider storage.
-                let supplementary = dst.len() == 1 || dst.iter().any(|&d| d as u32 > 0xFFFF);
-                // Check whether the length can be encoded (offset 0 is always encodable).
-                if DecompositionData::encode_complex(
-                    0,
-                    dst.len(),
-                    supplementary,
-                    false,
-                    true,
-                    false,
-                )
-                .is_none()
-                {
-                    if c == '\u{FDFA}'
-                        && dst
-                            .iter()
-                            .skip(1)
-                            .map(|&d| d as u32)
-                            .eq(DecompositionData::FDFA_NFKD.iter().map(|&d| u32::from(d)))
-                    {
-                        // Special marker for the one character whose decomposition is too long.
-                        output.pending.insert(
-                            c,
-                            PendingDescriptor::Simple(DecompositionData::encode_fdfa()),
-                        );
-                        continue;
-                    }
-                    return Err(error("Decomposition too long", c));
-                }
-                let offset = if supplementary {
-                    find_or_append(&mut storage32, &dst)
-                } else {
-                    find_or_append(
-                        &mut storage16,
-                        &dst.iter().map(|&d| d as u16).collect::<Vec<_>>(),
-                    )
-                };
-                PendingDescriptor::Complex {
-                    round_trips,
-                    backward_combining: starts_with_backward_combining_starter,
-                    supplementary,
-                    only_non_starters_in_trail: !non_initial_starter,
-                    len: dst.len(),
-                    offset,
-                }
-            }
-        };
-        output.pending.insert(c, descriptor);
+        Ok(Self {
+            nfd: DecompositionTables {
+                scalars16: ZeroVec::alloc_from_slice(&storage16[..nfd_len_16]),
+                scalars24: ZeroVec::alloc_from_slice(&storage32[..nfd_len_32]),
+            },
+            supplementary: DecompositionTables {
+                scalars16: ZeroVec::alloc_from_slice(&storage16[nfd_len_16..]),
+                scalars24: ZeroVec::alloc_from_slice(&storage32[nfd_len_32..]),
+            },
+            offsets: offsets
+                .into_iter()
+                .map(|offsets| {
+                    offsets
+                        .into_iter()
+                        .map(|(c, offset)| (c, logical_offset(offset)))
+                        .collect()
+                })
+                .collect(),
+        })
     }
-
-    if storage16.len() + storage32.len() > DecompositionTables::MAX_COMBINED_LEN {
-        // We actually have 14 bits available, but let's error out so that docs can be
-        // updated when taking a reserved bit out of potential future flag usage.
-        return Err(
-            DataError::custom("Decomposition storage too large").with_debug_context(&flavor)
-        );
-    }
-
-    output.tables = DecompositionTables {
-        scalars16: ZeroVec::alloc_from_slice(&storage16[previous_len_16..]),
-        scalars24: ZeroVec::alloc_from_slice(&storage32[previous_len_32..]),
-    };
-    Ok(output)
 }
 
-fn resolve_all(
-    pending: &BTreeMap<char, PendingDescriptor>,
-    layout: StorageLayout,
+/// Encodes `decompositions` into `values`, using the complex decomposition `offsets`.
+fn encode_all(
+    decompositions: &BTreeMap<char, Decomposition>,
+    offsets: &BTreeMap<char, usize>,
     values: &mut BTreeMap<char, u32>,
 ) -> Result<(), DataError> {
-    for (&c, &descriptor) in pending {
-        values.insert(c, descriptor.resolve(c, layout)?);
+    for (&c, decomposition) in decompositions {
+        let value = decomposition
+            .encode(offsets.get(&c).copied())
+            .ok_or_else(|| {
+                DataError::custom("Decomposition cannot be encoded").with_debug_context(&c)
+            })?;
+        values.insert(c, value);
     }
     Ok(())
+}
+
+/// The decompositions of a flavor: the NFD decompositions, overridden by the flavor's own.
+fn merged<'a>(
+    nfd: &'a BTreeMap<char, Decomposition>,
+    flavor: &'a BTreeMap<char, Decomposition>,
+) -> BTreeMap<char, &'a Decomposition> {
+    nfd.iter().chain(flavor).map(|(&c, d)| (c, d)).collect()
+}
+
+/// The characters whose decompositions start with a non-starter.
+fn non_starters(
+    decompositions: &BTreeMap<char, &Decomposition>,
+) -> CodePointInversionList<'static> {
+    decompositions
+        .iter()
+        .filter(|(_, d)| d.starts_with_non_starter())
+        .map(|(&c, _)| c as u32..=c as u32)
+        .collect()
+}
+
+/// Validates the expectations that ICU4X hard-codes about which characters'
+/// decompositions start with a non-starter.
+fn check_non_starters(
+    flavor: Flavor,
+    set: &CodePointInversionList,
+    nfd_set: &CodePointInversionList,
+) -> Result<(), DataError> {
+    let error = |message: &'static str| DataError::custom(message).with_debug_context(&flavor);
+    let set_of = |chars: &[char]| {
+        chars
+            .iter()
+            .map(|&c| c as u32..=c as u32)
+            .collect::<CodePointInversionList>()
+    };
+    let difference = |a: &CodePointInversionList, b: &CodePointInversionList| {
+        let mut builder = CodePointInversionListBuilder::new();
+        builder.add_set(a);
+        builder.remove_set(b);
+        builder.build()
+    };
+
+    let half_width = set_of(&[
+        DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK,
+        DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK,
+    ]);
+    let iota = set_of(&[DecompositionData::IOTA_SUBSCRIPT]);
+
+    if nfd_set.contains_set(&half_width) || !nfd_set.contains_set(&iota) {
+        // NFD expectations don't hold. The set must not contain the half-width
+        // kana voicing marks and must contain iota subscript.
+        return Err(error("Unexpected NFD non-starters"));
+    }
+    let additional = difference(set, nfd_set);
+    if !additional.is_empty() && additional != half_width {
+        // The result was neither empty nor contained exactly the two half-width voicing
+        // marks. The ICU4X normalizer doesn't know how to deal with this case.
+        return Err(error("Unexpected additional non-starters"));
+    }
+    let missing = difference(nfd_set, set);
+    if !missing.is_empty() && missing != iota {
+        // The result was neither empty nor contained exactly the iota subscript. The
+        // ICU4X normalizer doesn't know how to deal with this case.
+        return Err(error("Unexpected missing non-starters"));
+    }
+    Ok(())
+}
+
+/// Computes the passthrough bounds, checks that they are within the ranges ICU4X expects,
+/// and returns the passthrough cap for the data.
+fn passthrough_cap(
+    flavor: Flavor,
+    decompositions: &BTreeMap<char, &Decomposition>,
+) -> Result<u16, DataError> {
+    let bound = |is_passthrough: fn(&Decomposition) -> bool| {
+        decompositions
+            .iter()
+            .find(|(_, d)| !is_passthrough(d))
+            .map_or(0x10FFFF, |(&c, _)| c as u32)
+    };
+    let decomposition_bound = bound(Decomposition::is_decomposition_passthrough);
+    let composition_bound = bound(Decomposition::is_composition_passthrough);
+
+    let valid = if flavor == Flavor::Nfd {
+        decomposition_bound == 0xC0 && composition_bound == 0x300
+    } else {
+        decomposition_bound <= 0xC0
+            && composition_bound <= 0x300
+            && if composition_bound > 0xC0 {
+                decomposition_bound == 0xC0
+            } else {
+                decomposition_bound == composition_bound
+            }
+    };
+    if !valid {
+        return Err(DataError::custom("Unexpected passthrough bounds").with_debug_context(&flavor));
+    }
+    Ok(composition_bound as u16)
 }
 
 /// The trie values of a decomposition trie.
@@ -578,6 +677,64 @@ impl DecompositionTrieValues {
     }
 }
 
+/// The values of the non-recursive decomposition supplement.
+#[derive(Debug, Default)]
+struct NonRecursiveValues {
+    values: BTreeMap<char, u32>,
+    scalars24: Vec<char>,
+}
+
+impl NonRecursiveValues {
+    /// Computes the non-recursive canonical decompositions that differ from the (recursive)
+    /// NFD decompositions.
+    fn new(
+        nfd: &BTreeMap<char, Decomposition>,
+        nfd_mapping: &Mapping,
+        ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
+    ) -> Result<Self, DataError> {
+        let mut result = Self::default();
+        // Iterate backwards. The iteration order determines the layout of `scalars24`.
+        for (&c, decomposition) in nfd.iter().rev() {
+            if !matches!(
+                decomposition,
+                Decomposition::Singleton { .. }
+                    | Decomposition::Pair { .. }
+                    | Decomposition::Complex { .. }
+            ) || c == DecompositionData::ANGSTROM_SIGN
+            {
+                // Only starters that decompose. ICU4X hard-codes ANGSTROM SIGN.
+                continue;
+            }
+            let error = |message: &'static str| DataError::custom(message).with_debug_context(&c);
+            let raw = nfd_mapping(c).ok_or_else(|| error("Missing non-recursive decomposition"))?;
+            // In addition to actual difference, put the whole range that contains characters
+            // with oxia into the non-recursive trie in order to catch cases where characters
+            // with oxia have singleton decompositions to corresponding characters with tonos.
+            // This way, the run-time decision to fall through can be done on the range
+            // without checking for individual characters inside the range.
+            if raw != full_decomposition(c, nfd_mapping, ccc)
+                || NonRecursiveDecompositionSupplement::OXIA_RANGE.contains(&c)
+            {
+                let value = NonRecursiveDecompositionSupplement::encode(raw, &mut result.scalars24)
+                    .ok_or_else(|| error("Non-recursive decomposition cannot be encoded"))?;
+                result.values.insert(c, value);
+            }
+        }
+        Ok(result)
+    }
+
+    fn build(&self, trie_type: TrieType) -> NonRecursiveDecompositionSupplement<'static> {
+        let mut builder = CodePointTrieBuilder::new(0, 0, trie_type.into());
+        for (&c, &value) in &self.values {
+            builder.set_value(c as u32, value);
+        }
+        NonRecursiveDecompositionSupplement {
+            trie: builder.build(),
+            scalars24: ZeroVec::alloc_from_slice(&self.scalars24),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct NormalizerData {
     nfd: DecompositionTrieValues,
@@ -586,64 +743,7 @@ pub(crate) struct NormalizerData {
     nfd_tables: DecompositionTables<'static>,
     nfkd_tables: DecompositionTables<'static>,
     canonical_compositions: CanonicalCompositions<'static>,
-    non_recursive: BTreeMap<char, u32>,
-    non_recursive_32: Vec<char>,
-}
-
-/// Validates the expectations that ICU4X hard-codes about which characters'
-/// decompositions start with a non-starter.
-fn check_non_starters(
-    flavor: Flavor,
-    set: &BTreeSet<char>,
-    nfd_set: &BTreeSet<char>,
-) -> Result<(), DataError> {
-    let error = |message: &'static str| DataError::custom(message).with_debug_context(&flavor);
-    if nfd_set.contains(&DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK)
-        || nfd_set.contains(&DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK)
-        || !nfd_set.contains(&DecompositionData::IOTA_SUBSCRIPT)
-    {
-        // NFD expectations don't hold. The set must not contain the half-width
-        // kana voicing marks and must contain iota subscript.
-        return Err(error("Unexpected NFD non-starters"));
-    }
-    let half_width_check = set.difference(nfd_set).copied().collect::<Vec<_>>();
-    if !half_width_check.is_empty()
-        && half_width_check
-            != [
-                DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK,
-                DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK,
-            ]
-    {
-        // The result was neither empty nor contained exactly the two half-width voicing
-        // marks. The ICU4X normalizer doesn't know how to deal with this case.
-        return Err(error("Unexpected additional non-starters"));
-    }
-    let iota_check = nfd_set.difference(set).copied().collect::<Vec<_>>();
-    if !iota_check.is_empty() && iota_check != [DecompositionData::IOTA_SUBSCRIPT] {
-        // The result was neither empty nor contained exactly the iota subscript. The
-        // ICU4X normalizer doesn't know how to deal with this case.
-        return Err(error("Unexpected missing non-starters"));
-    }
-    Ok(())
-}
-
-/// Checks that the passthrough bounds are within the ranges ICU4X expects, and returns
-/// the passthrough cap for the data.
-fn passthrough_cap(output: &DecompositionsOutput, flavor: Flavor) -> Result<u16, DataError> {
-    let error = || DataError::custom("Unexpected passthrough bounds").with_debug_context(&flavor);
-    let decomposition_bound = output.decomposition_passthrough_bound;
-    let composition_bound = output.composition_passthrough_bound;
-    if flavor == Flavor::Nfd {
-        if !(decomposition_bound == 0xC0 && composition_bound == 0x300) {
-            return Err(error());
-        }
-    } else if !(decomposition_bound <= 0xC0 && composition_bound <= 0x300)
-        || (composition_bound > 0xC0 && decomposition_bound != 0xC0)
-        || (composition_bound <= 0xC0 && decomposition_bound != composition_bound)
-    {
-        return Err(error());
-    }
-    Ok(composition_bound as u16)
+    non_recursive: NonRecursiveValues,
 }
 
 impl NormalizerData {
@@ -740,110 +840,92 @@ impl NormalizerData {
         let (canonical_compositions, backward_combining_starters) =
             canonical_compositions(&nfd_mapping, ccc, full_composition_exclusion.as_borrowed());
 
+        // The characters that don't trivially decompose to themselves in each flavor:
+        // U+FFFD, non-starters, starters that can combine backwards, and characters with
+        // a decomposition mapping.
+        let mut candidates = CodePointInversionListBuilder::new();
+        candidates.add_char(char::REPLACEMENT_CHARACTER);
+        for range in ccc.iter_ranges_for_value_complemented(CanonicalCombiningClass::NotReordered) {
+            candidates.add_range32(range);
+        }
+        candidates.add_set(&backward_combining_starters);
+        canonical.keys().for_each(|&c| candidates.add_char(c));
+        let nfd_candidates = candidates.clone().build();
+        compatibility.keys().for_each(|&c| candidates.add_char(c));
+        let nfkd_candidates = candidates.clone().build();
+        uts46.keys().for_each(|&c| candidates.add_char(c));
+        candidates.add_set(&uts46_disallowed);
+        let uts46_candidates = candidates.build();
+
         let nfc = Self::bootstrap_nfc(
             &nfd_mapping,
             ccc,
             &backward_combining_starters,
+            &nfd_candidates,
             &canonical_compositions,
         )?;
         let nfc = nfc.as_borrowed();
-
-        let nfd = compute_decompositions(
-            Flavor::Nfd,
-            &nfd_mapping,
-            &nfd_mapping,
+        let classifier = Classifier {
             ccc,
-            &backward_combining_starters,
-            Some(&nfc),
-            &[],
-        )?;
-        let nfd_cap = passthrough_cap(&nfd, Flavor::Nfd)?;
-
-        let nfkd = compute_decompositions(
-            Flavor::Nfkd,
-            &nfkd_mapping,
-            &nfd_mapping,
-            ccc,
-            &backward_combining_starters,
-            Some(&nfc),
-            &[&nfd.tables],
-        )?;
-        let nfkd_cap = passthrough_cap(&nfkd, Flavor::Nfkd)?;
-        check_non_starters(
-            Flavor::Nfkd,
-            &nfkd.decomposition_starts_with_non_starter,
-            &nfd.decomposition_starts_with_non_starter,
-        )?;
-
-        let uts46 = compute_decompositions(
-            Flavor::Uts46,
-            &uts46_mapping,
-            &nfd_mapping,
-            ccc,
-            &backward_combining_starters,
-            Some(&nfc),
-            &[&nfd.tables, &nfkd.tables],
-        )?;
-        let uts46_cap = passthrough_cap(&uts46, Flavor::Uts46)?;
-        check_non_starters(
-            Flavor::Uts46,
-            &uts46.decomposition_starts_with_non_starter,
-            &nfd.decomposition_starts_with_non_starter,
-        )?;
-
-        // The UTS 46 decompositions that are not in the NFD or NFKD tables are added
-        // to the supplementary tables.
-        let nfkd_tables = DecompositionTables {
-            scalars16: nfkd
-                .tables
-                .scalars16
-                .iter()
-                .chain(uts46.tables.scalars16.iter())
-                .collect(),
-            scalars24: nfkd
-                .tables
-                .scalars24
-                .iter()
-                .chain(uts46.tables.scalars24.iter())
-                .collect(),
+            nfd_mapping: &nfd_mapping,
+            backward_combining_starters: &backward_combining_starters,
+            nfc: Some(&nfc),
         };
 
-        let layout = StorageLayout {
-            base_size_16: nfd.tables.scalars16.len(),
-            base_size_32: nfd.tables.scalars24.len(),
-            supplement_size_16: nfkd_tables.scalars16.len(),
-        };
+        let nfd = classifier.classify_all(Flavor::Nfd, &nfd_mapping, &nfd_candidates)?;
+        let nfkd = classifier.classify_all(Flavor::Nfkd, &nfkd_mapping, &nfkd_candidates)?;
+        let uts46 = classifier.classify_all(Flavor::Uts46, &uts46_mapping, &uts46_candidates)?;
+
+        let no_overrides = BTreeMap::new();
+        let nfd_merged = merged(&nfd, &no_overrides);
+        let nfkd_merged = merged(&nfd, &nfkd);
+        let uts46_merged = merged(&nfd, &uts46);
+
+        let nfd_non_starters = non_starters(&nfd_merged);
+        check_non_starters(Flavor::Nfkd, &non_starters(&nfkd_merged), &nfd_non_starters)?;
+        check_non_starters(
+            Flavor::Uts46,
+            &non_starters(&uts46_merged),
+            &nfd_non_starters,
+        )?;
+
+        let ComplexDecompositionTables {
+            nfd: nfd_tables,
+            supplementary: nfkd_tables,
+            offsets,
+        } = ComplexDecompositionTables::new(&[&nfd, &nfkd, &uts46])?;
 
         // The NFKD and UTS 46 tries are the NFD trie, partially overwritten.
         let mut nfd_values = BTreeMap::new();
-        resolve_all(&nfd.pending, layout, &mut nfd_values)?;
+        encode_all(&nfd, &offsets[0], &mut nfd_values)?;
         let mut nfkd_values = nfd_values.clone();
-        resolve_all(&nfkd.pending, layout, &mut nfkd_values)?;
+        encode_all(&nfkd, &offsets[1], &mut nfkd_values)?;
         let mut uts46_values = nfd_values.clone();
-        resolve_all(&uts46.pending, layout, &mut uts46_values)?;
+        encode_all(&uts46, &offsets[2], &mut uts46_values)?;
 
         Ok(Self {
             nfd: DecompositionTrieValues {
                 values: nfd_values,
                 surrogates_to_replacement_character: true,
-                passthrough_cap: nfd_cap,
+                passthrough_cap: passthrough_cap(Flavor::Nfd, &nfd_merged)?,
             },
             nfkd: DecompositionTrieValues {
                 values: nfkd_values,
                 surrogates_to_replacement_character: true,
-                passthrough_cap: nfkd_cap,
+                passthrough_cap: passthrough_cap(Flavor::Nfkd, &nfkd_merged)?,
             },
             uts46: DecompositionTrieValues {
                 values: uts46_values,
                 // UTS 46 is not supported in slice modes
                 surrogates_to_replacement_character: false,
-                passthrough_cap: uts46_cap,
+                passthrough_cap: passthrough_cap(Flavor::Uts46, &uts46_merged)?,
             },
-            nfd_tables: nfd.tables,
+            nfd_tables,
+            // The supplementary tables also contain the UTS 46 decompositions that are not
+            // in the NFD or NFKD tables.
             nfkd_tables,
             canonical_compositions,
-            non_recursive: nfd.non_recursive,
-            non_recursive_32: nfd.non_recursive_32,
+            non_recursive: NonRecursiveValues::new(&nfd, &nfd_mapping, ccc)?,
         })
     }
 
@@ -852,28 +934,20 @@ impl NormalizerData {
     fn bootstrap_nfc(
         nfd_mapping: &Mapping,
         ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
-        backward_combining_starters: &HashSet<char>,
+        backward_combining_starters: &CodePointInversionList,
+        candidates: &CodePointInversionList,
         canonical_compositions: &CanonicalCompositions<'static>,
     ) -> Result<ComposingNormalizer, DataError> {
-        let nfd = compute_decompositions(
-            Flavor::Nfd,
-            nfd_mapping,
-            nfd_mapping,
+        let nfd = Classifier {
             ccc,
+            nfd_mapping,
             backward_combining_starters,
-            None,
-            &[],
-        )?;
+            nfc: None,
+        }
+        .classify_all(Flavor::Nfd, nfd_mapping, candidates)?;
+        let tables = ComplexDecompositionTables::new(&[&nfd])?;
         let mut values = BTreeMap::new();
-        resolve_all(
-            &nfd.pending,
-            StorageLayout {
-                base_size_16: nfd.tables.scalars16.len(),
-                base_size_32: nfd.tables.scalars24.len(),
-                supplement_size_16: 0,
-            },
-            &mut values,
-        )?;
+        encode_all(&nfd, &tables.offsets[0], &mut values)?;
 
         struct BootstrapProvider {
             data: DecompositionData<'static>,
@@ -918,7 +992,7 @@ impl NormalizerData {
                 passthrough_cap: 0,
             }
             .build(TrieType::Fast),
-            tables: nfd.tables,
+            tables: tables.nfd,
             canonical_compositions: canonical_compositions.clone(),
         })
     }
@@ -974,17 +1048,9 @@ normalization_provider!(NormalizerNfkdTablesV1, |_p, data| data.nfkd_tables.clon
 normalization_provider!(NormalizerNfcV1, |_p, data| data
     .canonical_compositions
     .clone());
-normalization_provider!(NormalizerNfdSupplementV1, |p, data| {
-    let mut builder = CodePointTrieBuilder::new(0, 0, p.trie_type().into());
-    for (&c, &value) in &data.non_recursive {
-        builder.set_value(c as u32, value);
-    }
-    let trie: CodePointTrie<'static, u32> = builder.build();
-    NonRecursiveDecompositionSupplement {
-        trie,
-        scalars24: data.non_recursive_32.iter().copied().collect(),
-    }
-});
+normalization_provider!(NormalizerNfdSupplementV1, |p, data| data
+    .non_recursive
+    .build(p.trie_type()));
 
 // These macros implement ICU4C-internal properties that we have accidentally exposed (#7892).
 // They are slated for removal.
