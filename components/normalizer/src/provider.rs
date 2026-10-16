@@ -243,6 +243,16 @@ impl DecompositionData<'_> {
 
     /// Shift of the (one-based) offset of a complex decomposition.
     pub const COMPLEX_OFFSET_SHIFT: u32 = 16;
+
+    /// The maximum length of a complex decomposition stored in
+    /// [`DecompositionTables::scalars16`]. The length bits store the length minus 2, and the
+    /// fourth length bit is reserved.
+    pub const COMPLEX_MAX_LEN_16: usize = 0b111 + 2;
+
+    /// The maximum length of a complex decomposition stored in
+    /// [`DecompositionTables::scalars24`]. The length bits store the length minus 1, and the
+    /// fourth length bit is reserved.
+    pub const COMPLEX_MAX_LEN_24: usize = 0b111 + 1;
 }
 
 /// Encoders for the trie value format of [`DecompositionData`].
@@ -261,17 +271,17 @@ impl DecompositionData<'_> {
     }
 
     /// Encodes a non-starter that decomposes to itself.
-    pub fn encode_non_starter(ccc: u8) -> u32 {
-        Self::BACKWARD_COMBINING_MARKER | Self::NON_STARTER_MARKER | u32::from(ccc)
+    pub fn encode_non_starter(ccc: icu_properties::props::CanonicalCombiningClass) -> u32 {
+        Self::BACKWARD_COMBINING_MARKER | Self::NON_STARTER_MARKER | u32::from(ccc.0)
     }
 
     /// Encodes a character listed in [`Self::SPECIAL_NON_STARTER_DECOMPOSITIONS`] with the
     /// given canonical combining class.
-    pub fn encode_special_non_starter(ccc: u8) -> u32 {
+    pub fn encode_special_non_starter(ccc: icu_properties::props::CanonicalCombiningClass) -> u32 {
         Self::NON_ROUND_TRIP_MARKER
             | Self::BACKWARD_COMBINING_MARKER
             | Self::SPECIAL_NON_STARTER_MARKER
-            | u32::from(ccc)
+            | u32::from(ccc.0)
     }
 
     /// Encodes the NFKD decomposition of U+FDFA.
@@ -325,11 +335,15 @@ impl DecompositionData<'_> {
         round_trips: bool,
         backward_combining: bool,
     ) -> Option<u32> {
-        let len_bits = len.checked_sub(if supplementary { 1 } else { 2 })?;
-        // The fourth bit is reserved.
-        if len_bits > 0b111 {
+        let (min_len, max_len) = if supplementary {
+            (1, Self::COMPLEX_MAX_LEN_24)
+        } else {
+            (2, Self::COMPLEX_MAX_LEN_16)
+        };
+        if !(min_len..=max_len).contains(&len) {
             return None;
         }
+        let len_bits = len - min_len;
         // +1 to make the offset always non-zero
         let offset = offset + 1;
         if offset > DecompositionTables::MAX_COMBINED_LEN {
