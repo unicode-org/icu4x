@@ -104,7 +104,10 @@ impl ZipData {
         let archive = ZipArchive::new(Cursor::new(bytes))
             .map_err(|e| DataError::custom("Invalid ZIP file").with_display_context(&e))?;
 
-        let file_list = archive.file_names().map(String::from).collect();
+        let file_list = archive
+            .file_names()
+            .filter_map(|f| Some(f.ok()?.to_string()))
+            .collect();
         Ok(Self { archive, file_list })
     }
 }
