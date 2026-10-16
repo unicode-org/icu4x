@@ -27,7 +27,7 @@ START ; Hebrew_Letter ; Hebrew_Letter
 START ; ZWJ ; ZWJ
 START ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 START ; RI ; RI
-START ; XX_Hiragana|XX_Han ; KanaKanji
+START ; XX_Hiragana|XX_Han|ALetter_Han ; KanaKanji
 START ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan Single_Quote ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
 ExtendNumLet ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
@@ -45,7 +45,6 @@ Hebrew_Letter Single_Quote ; XX_ComplexContext ; ALettermExtPictmHangulSyllablem
 Hebrew_Letter ZWJ ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
 Katakana ExtendNumLet ; XX_ComplexContext ; ALettermExtPictmHangulSyllablemHan
 START ; Extend_Han|Extend_ComplexContext ; XXmExtPictmHiraganamHanmComplexContext
-START ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 START ; Katakana ; Katakana
 Numeric Single_Quote ; Numeric ; Numeric
 Numeric Single_Quote ; ExtendmHanmComplexContext|Format ; Numeric Single_Quote
@@ -57,7 +56,6 @@ ALettermExtPictmHangulSyllablemHan Single_Quote ; Hebrew_Letter ; Hebrew_Letter
 ALettermExtPictmHangulSyllablemHan Single_Quote ; ZWJ ; ALettermExtPictmHangulSyllablemHan Single_Quote
 ALettermExtPictmHangulSyllablemHan Single_Quote ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan Single_Quote ; Extend_Han|Extend_ComplexContext ; ALettermExtPictmHangulSyllablemHan Single_Quote
-ALettermExtPictmHangulSyllablemHan Single_Quote ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Double_Quote ; ExtendmHanmComplexContext|Format ; Hebrew_Letter Double_Quote
 Hebrew_Letter Double_Quote ; Hebrew_Letter ; Hebrew_Letter
 Hebrew_Letter Double_Quote ; ZWJ ; Hebrew_Letter Double_Quote
@@ -78,7 +76,6 @@ ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
 ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
 ExtendNumLet ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 ExtendNumLet ; Extend_Han|Extend_ComplexContext ; ExtendNumLet
-ExtendNumLet ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 ExtendNumLet ; Katakana ; Katakana
 ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
 ZWJ ; ExtendmHanmComplexContext|Format ; XXmExtPictmHiraganamHanmComplexContext
@@ -98,7 +95,6 @@ ExtendNumLet ZWJ ; Hebrew_Letter ; Hebrew_Letter
 ExtendNumLet ZWJ ; ZWJ ; ExtendNumLet ZWJ
 ExtendNumLet ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 ExtendNumLet ZWJ ; Extend_Han|Extend_ComplexContext ; ExtendNumLet
-ExtendNumLet ZWJ ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 ExtendNumLet ZWJ ; Katakana ; Katakana
 RI ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
 RI ZWJ ; ExtendmHanmComplexContext|Format ; RI
@@ -112,7 +108,6 @@ Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; Hebrew_Letter ; Hebrew_Le
 Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; ZWJ ; Hebrew_Letter Single_Quote ZWJ
 Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; Extend_Han|Extend_ComplexContext ; Hebrew_Letter Single_Quote ExtendmHanmComplexContext
-Hebrew_Letter Single_Quote ExtendmHanmComplexContext ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ZWJ ; ALettermExtPictmHangulSyllablemHan ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
 Hebrew_Letter Single_Quote ZWJ ; ExtendmHanmComplexContext|Format ; Hebrew_Letter Single_Quote ExtendmHanmComplexContext
@@ -120,7 +115,6 @@ Hebrew_Letter Single_Quote ZWJ ; Hebrew_Letter ; Hebrew_Letter
 Hebrew_Letter Single_Quote ZWJ ; ZWJ ; Hebrew_Letter Single_Quote ZWJ
 Hebrew_Letter Single_Quote ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ZWJ ; Extend_Han|Extend_ComplexContext ; Hebrew_Letter Single_Quote ExtendmHanmComplexContext
-Hebrew_Letter Single_Quote ZWJ ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Numeric ; Single_Quote ; Numeric Single_Quote
 Numeric ; MidNum ; Numeric Single_Quote
 Numeric ; MidNumLet ; Numeric Single_Quote
@@ -132,7 +126,6 @@ Numeric ; Hebrew_Letter ; Hebrew_Letter
 Numeric ; ZWJ ; Numeric ZWJ
 Numeric ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Numeric ; Extend_Han|Extend_ComplexContext ; Numeric
-Numeric ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Numeric ExtendNumLet ; Numeric ; Numeric
 Numeric ExtendNumLet ; ALettermExtPictmHangulSyllablemHan ; ALettermExtPictmHangulSyllablemHan
 Numeric ExtendNumLet ; ExtendNumLet ; ALettermExtPictmHangulSyllablemHan ExtendNumLet
@@ -141,7 +134,6 @@ Numeric ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
 Numeric ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
 Numeric ExtendNumLet ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Numeric ExtendNumLet ; Extend_Han|Extend_ComplexContext ; ExtendNumLet
-Numeric ExtendNumLet ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Numeric ExtendNumLet ; Katakana ; Katakana
 Numeric ZWJ ; Single_Quote ; Numeric Single_Quote
 Numeric ZWJ ; MidNum ; Numeric Single_Quote
@@ -155,7 +147,6 @@ Numeric ZWJ ; Hebrew_Letter ; Hebrew_Letter
 Numeric ZWJ ; ZWJ ; Numeric ZWJ
 Numeric ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Numeric ZWJ ; Extend_Han|Extend_ComplexContext ; Numeric
-Numeric ZWJ ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ; Single_Quote ; ALettermExtPictmHangulSyllablemHan Single_Quote
 ALettermExtPictmHangulSyllablemHan ; MidNumLet ; ALettermExtPictmHangulSyllablemHan Single_Quote
 ALettermExtPictmHangulSyllablemHan ; Numeric ; Numeric
@@ -167,7 +158,6 @@ ALettermExtPictmHangulSyllablemHan ; Hebrew_Letter ; Hebrew_Letter
 ALettermExtPictmHangulSyllablemHan ; ZWJ ; ALettermExtPictmHangulSyllablemHan ZWJ
 ALettermExtPictmHangulSyllablemHan ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ; Extend_Han|Extend_ComplexContext ; ALettermExtPictmHangulSyllablemHan
-ALettermExtPictmHangulSyllablemHan ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter ; Double_Quote ; Hebrew_Letter Double_Quote
 Hebrew_Letter ; Single_Quote ; Hebrew_Letter Single_Quote
 Hebrew_Letter ; MidNumLet ; ALettermExtPictmHangulSyllablemHan Single_Quote
@@ -180,7 +170,6 @@ Hebrew_Letter ; Hebrew_Letter ; Hebrew_Letter
 Hebrew_Letter ; ZWJ ; Hebrew_Letter ZWJ
 Hebrew_Letter ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter ; Extend_Han|Extend_ComplexContext ; Hebrew_Letter
-Hebrew_Letter ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; Numeric ; Numeric
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; ALettermExtPictmHangulSyllablemHan ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; ExtendNumLet ; ALettermExtPictmHangulSyllablemHan ExtendNumLet
@@ -189,7 +178,6 @@ ALettermExtPictmHangulSyllablemHan ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; Extend_Han|Extend_ComplexContext ; ExtendNumLet
-ALettermExtPictmHangulSyllablemHan ExtendNumLet ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ExtendNumLet ; Katakana ; Katakana
 ALettermExtPictmHangulSyllablemHan ZWJ ; Single_Quote ; ALettermExtPictmHangulSyllablemHan Single_Quote
 ALettermExtPictmHangulSyllablemHan ZWJ ; MidNumLet ; ALettermExtPictmHangulSyllablemHan Single_Quote
@@ -203,14 +191,12 @@ ALettermExtPictmHangulSyllablemHan ZWJ ; Hebrew_Letter ; Hebrew_Letter
 ALettermExtPictmHangulSyllablemHan ZWJ ; ZWJ ; ALettermExtPictmHangulSyllablemHan ZWJ
 ALettermExtPictmHangulSyllablemHan ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 ALettermExtPictmHangulSyllablemHan ZWJ ; Extend_Han|Extend_ComplexContext ; ALettermExtPictmHangulSyllablemHan
-ALettermExtPictmHangulSyllablemHan ZWJ ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ; ALettermExtPictmHangulSyllablemHan ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ; ExtendmHanmComplexContext|Format ; Hebrew_Letter Single_Quote ExtendmHanmComplexContext
 Hebrew_Letter Single_Quote ; Hebrew_Letter ; Hebrew_Letter
 Hebrew_Letter Single_Quote ; ZWJ ; Hebrew_Letter Single_Quote ZWJ
 Hebrew_Letter Single_Quote ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter Single_Quote ; Extend_Han|Extend_ComplexContext ; Hebrew_Letter Single_Quote ExtendmHanmComplexContext
-Hebrew_Letter Single_Quote ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter ZWJ ; Double_Quote ; Hebrew_Letter Double_Quote
 Hebrew_Letter ZWJ ; Single_Quote ; Hebrew_Letter Single_Quote
 Hebrew_Letter ZWJ ; MidNumLet ; ALettermExtPictmHangulSyllablemHan Single_Quote
@@ -224,7 +210,6 @@ Hebrew_Letter ZWJ ; Hebrew_Letter ; Hebrew_Letter
 Hebrew_Letter ZWJ ; ZWJ ; Hebrew_Letter ZWJ
 Hebrew_Letter ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Hebrew_Letter ZWJ ; Extend_Han|Extend_ComplexContext ; Hebrew_Letter
-Hebrew_Letter ZWJ ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Katakana ; ExtendNumLet ; Katakana ExtendNumLet
 Katakana ; ExtendmHanmComplexContext|Format ; Katakana
 Katakana ; ZWJ ; Katakana ZWJ
@@ -238,7 +223,6 @@ Katakana ExtendNumLet ; Hebrew_Letter ; Hebrew_Letter
 Katakana ExtendNumLet ; ZWJ ; ExtendNumLet ZWJ
 Katakana ExtendNumLet ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Katakana ExtendNumLet ; Extend_Han|Extend_ComplexContext ; ExtendNumLet
-Katakana ExtendNumLet ; ALetter_HangulSyllable|ALetter_Han ; ALettermExtPictmHangulSyllablemHan
 Katakana ExtendNumLet ; Katakana ; Katakana
 Katakana ZWJ ; ExtendNumLet ; Katakana ExtendNumLet
 Katakana ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
@@ -247,17 +231,28 @@ Katakana ZWJ ; ZWJ ; Katakana ZWJ
 Katakana ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 Katakana ZWJ ; Extend_Han|Extend_ComplexContext ; Katakana
 Katakana ZWJ ; Katakana ; Katakana
-KanaKanji ; XX_Hiragana|XX_Han ; KanaKanji
+KanaKanji ; XX_Hiragana|XX_Han|ALetter_Han ; KanaKanji
 KanaKanji ; Katakana ; Katakana
 KanaKanji ; ExtendmHanmComplexContext|Format ; KanaKanji
 KanaKanji ; Extend_Han|Extend_ComplexContext ; KanaKanji
 KanaKanji ; ZWJ ; KanaKanji ZWJ
-KanaKanji ZWJ ; XX_Hiragana|XX_Han ; KanaKanji
+KanaKanji ZWJ ; XX_Hiragana|XX_Han|ALetter_Han ; KanaKanji
 KanaKanji ZWJ ; Katakana ; Katakana
 KanaKanji ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
 KanaKanji ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
 KanaKanji ZWJ ; ExtendmHanmComplexContext|Format ; KanaKanji
 KanaKanji ZWJ ; Extend_Han|Extend_ComplexContext ; KanaKanji
 KanaKanji ZWJ ; ZWJ ; KanaKanji ZWJ
-Katakana ; XX_Hiragana|XX_Han ; KanaKanji
-Katakana ZWJ ; XX_Hiragana|XX_Han ; KanaKanji
+Katakana ; XX_Hiragana|XX_Han|ALetter_Han ; KanaKanji
+Katakana ZWJ ; XX_Hiragana|XX_Han|ALetter_Han ; KanaKanji
+START ; ALetter_HangulSyllable ; HangulSyllable
+HangulSyllable ; ALetter_HangulSyllable ; HangulSyllable
+HangulSyllable ; ExtendmHanmComplexContext|Format ; HangulSyllable
+HangulSyllable ; Extend_Han|Extend_ComplexContext ; HangulSyllable
+HangulSyllable ; ZWJ ; HangulSyllable ZWJ
+HangulSyllable ZWJ ; ALetter_HangulSyllable ; HangulSyllable
+HangulSyllable ZWJ ; ExtPictmALetter ; XXmExtPictmHiraganamHanmComplexContext
+HangulSyllable ZWJ ; ALetter_ExtPict ; ALettermExtPictmHangulSyllablemHan
+HangulSyllable ZWJ ; ExtendmHanmComplexContext|Format ; HangulSyllable
+HangulSyllable ZWJ ; Extend_Han|Extend_ComplexContext ; HangulSyllable
+HangulSyllable ZWJ ; ZWJ ; HangulSyllable ZWJ

@@ -80,6 +80,16 @@ Welcome|龟山岛|龟山岛|Welcome
 エディター|エディ
 カタカナ_|かな
 
+# Korean
+# Hangul syllables are not segmented with the dictionary. They only chain with
+# each other, like in ICU4C (ICU 79).
+한국어
+한국어|漢字
+漢字|한국어
+한국어| |문장입니다
+abc|한국어
+한국어|123
+
 # Mixed scripts
 ภาษา|ไทย|龟山岛
 こんにちは|世界|ภาษา|ไทย

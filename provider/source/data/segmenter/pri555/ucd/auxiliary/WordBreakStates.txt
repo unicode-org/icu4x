@@ -35,5 +35,7 @@ Hebrew_Letter ZWJ ; Yes ;  ; Letter
 Katakana ; Yes ;  ; Letter
 KanaKanji ; Yes ;  ; Letter
 KanaKanji ZWJ ; Yes ;  ; Letter
+HangulSyllable ; Yes ;  ; Letter
+HangulSyllable ZWJ ; Yes ;  ; Letter
 Katakana ExtendNumLet ; Yes ;  ; Letter
 Katakana ZWJ ; Yes ;  ; Letter

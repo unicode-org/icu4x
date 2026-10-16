@@ -1040,6 +1040,8 @@ const V1_KNOWN_FAILURES: &[&str] = &[
     "ก\u{AD}ข",
     "ก\u{200D}ข",
     "ภาษาไทย\u{AD}ภาษา",
+    "abc한국어",
+    "한국어123",
 ];
 
 #[cfg(test)]
