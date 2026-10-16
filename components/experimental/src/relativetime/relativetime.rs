@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
 use fixed_decimal::{Decimal, Sign};
 use icu_decimal::{
     DecimalFormatter, DecimalFormatterPreferences, provider::DecimalDigitsV1,
@@ -63,12 +64,11 @@ pub mod preferences {
 /// )
 /// .expect("locale should be present");
 ///
+/// let five = Decimal::from(5i8);
+/// assert_writeable_eq!(relative_time_formatter.format(&five), "in 5 seconds");
+/// let minus_ten = Decimal::from(-10i8);
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(5i8)),
-///     "in 5 seconds"
-/// );
-/// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(-10i8)),
+///     relative_time_formatter.format(&minus_ten),
 ///     "10 seconds ago"
 /// );
 /// ```
@@ -90,20 +90,18 @@ pub mod preferences {
 /// )
 /// .expect("locale should be present");
 ///
+/// let zero = Decimal::from(0u8);
+/// assert_writeable_eq!(relative_time_formatter.format(&zero), "hoy");
+/// let minus_two = Decimal::from(-2i8);
+/// assert_writeable_eq!(relative_time_formatter.format(&minus_two), "anteayer");
+/// let two = Decimal::from(2u8);
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(0u8)),
-///     "hoy"
-/// );
-/// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(-2i8)),
-///     "anteayer"
-/// );
-/// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(2u8)),
+///     relative_time_formatter.format(&two),
 ///     "pasado mañana"
 /// );
+/// let fifteen = Decimal::from(15i8);
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(15i8)),
+///     relative_time_formatter.format(&fifteen),
 ///     "dentro de 15 d"
 /// );
 /// ```
@@ -123,12 +121,11 @@ pub mod preferences {
 /// )
 /// .expect("locale should be present");
 ///
+/// let three = Decimal::from(3u8);
+/// assert_writeable_eq!(relative_time_formatter.format(&three), "৩ বছরে");
+/// let minus_fifteen = Decimal::from(-15i8);
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(3u8)),
-///     "৩ বছরে"
-/// );
-/// assert_writeable_eq!(
-///     relative_time_formatter.format(Decimal::from(-15i8)),
+///     relative_time_formatter.format(&minus_fifteen),
 ///     "১৫ বছর আগে"
 /// );
 /// ```
@@ -367,13 +364,20 @@ impl RelativeTimeFormatter {
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format(&self, value: Decimal) -> FormattedRelativeTime<'_> {
+    pub fn format<'a>(&'a self, value: &'a Decimal) -> FormattedRelativeTime<'a> {
         let is_negative = value.sign() == Sign::Negative;
         FormattedRelativeTime {
             options: &self.options,
             formatter: self,
-            value: value.with_sign(Sign::None),
+            value,
             is_negative,
         }
+    }
+
+    /// Format a `value` according to the locale and formatting options of
+    /// [`RelativeTimeFormatter`], returning a [`String`].
+    pub fn format_to_string(&self, value: &Decimal) -> String {
+        use writeable::Writeable;
+        self.format(value).write_to_string().into_owned()
     }
 }
