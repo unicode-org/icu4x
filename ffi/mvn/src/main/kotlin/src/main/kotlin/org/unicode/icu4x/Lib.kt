@@ -38,6 +38,24 @@ object DW {
             lib.diplomat_buffer_write_destroy(write);
         }
     }
+
+    fun writeToString16 (write: Pointer): String {
+        try {
+            val pointer = lib.diplomat_buffer_write_get_bytes(write)
+            if (pointer == null) {
+                throw OutOfMemoryError();
+            }
+            val len = (lib.diplomat_buffer_write_len(write) / 2).toInt()
+            if (len == 0) {
+                return ""
+            }
+            val shorts = pointer.getShortArray(0, len)
+            val chars = CharArray(len) { shorts[it].toInt().toChar() }
+            return String(chars)
+        } finally {
+            lib.diplomat_buffer_write_destroy(write);
+        }
+    }
 }
 
 internal interface DiplomatJVMRuntimeLib: Library {
