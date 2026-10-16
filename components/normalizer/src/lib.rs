@@ -180,49 +180,20 @@ enum IgnorableBehavior {
     ReplacementCharacter,
 }
 
-/// Marker for UTS 46 ignorables.
-///
-/// See trie-value-format.md
-const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
-
-/// Marker that the decomposition does not round trip via NFC.
-///
-/// See trie-value-format.md
-const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
-
-/// Marker that the first character of the decomposition
-/// can combine backwards.
-///
-/// See trie-value-format.md
-const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
-
-/// Mask for the bits have to be zero for this to be a BMP
-/// singleton decomposition, or value baked into the surrogate
-/// range.
-///
-/// See trie-value-format.md
-const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
-
-/// Mask for the bits have to be zero for this to be a complex
-/// decomposition.
-///
-/// See trie-value-format.md
-const LOW_ZEROS_MASK: u32 = 0xFFE0;
-
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
 ///
 /// See trie-value-format.md
 #[inline]
 fn trie_value_has_ccc(trie_value: u32) -> bool {
-    (trie_value & 0x3FFFFE00) == 0xD800
+    (trie_value & 0x3FFFFE00) == DecompositionData::NON_STARTER_MARKER
 }
 
 /// Checks if the trie signifies a special non-starter decomposition.
 ///
 /// See trie-value-format.md
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
-    (trie_value & 0x3FFFFF00) == 0xD900
+    (trie_value & 0x3FFFFF00) == DecompositionData::SPECIAL_NON_STARTER_MARKER
 }
 
 /// Checks if a trie value signifies a character whose decomposition
@@ -243,19 +214,6 @@ fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
         CanonicalCombiningClass::NotReordered
     }
 }
-
-/// The tail (everything after the first character) of the NFKD form U+FDFA
-/// as 16-bit units.
-static FDFA_NFKD: [u16; 17] = [
-    0x644, 0x649, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x639, 0x644, 0x64A, 0x647, 0x20, 0x648,
-    0x633, 0x644, 0x645,
-];
-
-/// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
-/// but they differ by `NON_ROUND_TRIP_MARKER`.)
-///
-/// See trie-value-format.md
-const FDFA_MARKER: u16 = 1;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -393,15 +351,20 @@ fn compose_non_hangul(
 /// See trie-value-format.md
 #[inline(always)]
 fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
-    // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+    // The REPLACEMENT CHARACTER has `DecompositionData::NON_ROUND_TRIP_MARKER` set,
     // and this function needs to ignore that.
-    (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0
+    (trie_val
+        & !(DecompositionData::BACKWARD_COMBINING_MARKER
+            | DecompositionData::NON_ROUND_TRIP_MARKER))
+        == 0
 }
 
 /// See trie-value-format.md
 #[inline(always)]
 fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
-    (trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
+    (trie_val
+        & (DecompositionData::NON_ROUND_TRIP_MARKER | DecompositionData::BACKWARD_COMBINING_MARKER))
+        == 0
 }
 
 /// Struct for holding together a character and the value
@@ -433,22 +396,22 @@ impl CharacterAndTrieValue {
     #[inline(always)]
     #[cfg(feature = "utf8_iter")]
     pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
-        // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
+        // This intentionally leaves `DecompositionData::NON_ROUND_TRIP_MARKER` in the value
         // to be compared with zero. U+FFFD has that flag set despite really
         // being being round-tripping in order to make UTF-8 errors
         // ineligible for passthrough.
-        (self.trie_val & !BACKWARD_COMBINING_MARKER) == 0
+        (self.trie_val & !DecompositionData::BACKWARD_COMBINING_MARKER) == 0
     }
 
     /// See trie-value-format.md
     #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
-        (self.trie_val & BACKWARD_COMBINING_MARKER) != 0
+        (self.trie_val & DecompositionData::BACKWARD_COMBINING_MARKER) != 0
     }
     /// See trie-value-format.md
     #[inline(always)]
     pub fn potential_passthrough(&self) -> bool {
-        (self.trie_val & NON_ROUND_TRIP_MARKER) == 0
+        (self.trie_val & DecompositionData::NON_ROUND_TRIP_MARKER) == 0
     }
     /// See trie-value-format.md
     #[inline(always)]
@@ -675,7 +638,8 @@ where
                 ));
                 i += 1;
                 // Half-width kana and iota subscript don't occur in the tails
-                // of these multicharacter decompositions.
+                // of these multicharacter decompositions. See
+                // `DecompositionData::IOTA_SUBSCRIPT`.
                 if !decomposition_starts_with_non_starter(trie_value) {
                     combining_start = i;
                 }
@@ -714,7 +678,8 @@ where
                 ));
                 i += 1;
                 // Half-width kana and iota subscript don't occur in the tails
-                // of these multicharacter decompositions.
+                // of these multicharacter decompositions. See
+                // `DecompositionData::IOTA_SUBSCRIPT`.
                 if !decomposition_starts_with_non_starter(trie_value) {
                     combining_start = i;
                 }
@@ -741,7 +706,7 @@ where
             let trie_val = self.trie.get(c);
             // TODO: Can we do something better about the cost of this branch in the
             // non-UTS 46 case?
-            if trie_val == IGNORABLE_MARKER {
+            if trie_val == DecompositionData::IGNORABLE_MARKER {
                 match self.ignorable_behavior {
                     IgnorableBehavior::Unsupported => {
                         debug_assert!(false);
@@ -749,7 +714,8 @@ where
                     IgnorableBehavior::ReplacementCharacter => {
                         return Some(CharacterAndTrieValue::new(
                             c,
-                            u32::from(char::REPLACEMENT_CHARACTER) | NON_ROUND_TRIP_MARKER,
+                            u32::from(char::REPLACEMENT_CHARACTER)
+                                | DecompositionData::NON_ROUND_TRIP_MARKER,
                         ));
                     }
                     IgnorableBehavior::Ignored => {
@@ -779,18 +745,25 @@ where
             let c = c_and_trie_val.character;
             // See trie-value-format.md
             let decomposition = c_and_trie_val.trie_val;
-            // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+            // The REPLACEMENT CHARACTER has `DecompositionData::NON_ROUND_TRIP_MARKER` set,
             // and that flag needs to be ignored here.
-            if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+            if (decomposition
+                & !(DecompositionData::BACKWARD_COMBINING_MARKER
+                    | DecompositionData::NON_ROUND_TRIP_MARKER))
+                == 0
+            {
                 // The character is its own decomposition
                 (c, 0)
             } else {
-                let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
-                let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                let high_zeros = (decomposition & DecompositionData::HIGH_ZEROS_MASK) == 0;
+                let low_zeros = (decomposition & DecompositionData::LOW_ZEROS_MASK) == 0;
                 if !high_zeros && !low_zeros {
                     // Decomposition into two BMP characters: starter and non-starter
-                    let starter = char_from_u32(decomposition & 0x7FFF);
-                    let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                    let starter = char_from_u32(decomposition & DecompositionData::PAIR_CHAR_MASK);
+                    let combining = char_from_u32(
+                        (decomposition >> DecompositionData::PAIR_TRAIL_SHIFT)
+                            & DecompositionData::PAIR_CHAR_MASK,
+                    );
                     self.buffer
                         .push(CharacterAndClass::new_with_placeholder(combining));
                     (starter, 0)
@@ -800,7 +773,7 @@ where
                     // we'd still have to check that `c` is in the Hangul syllable
                     // range in order for the subsequent interpretations as `char`
                     // to be safe.
-                    // Alternatively, `FDFA_MARKER` and the Hangul marker could
+                    // Alternatively, `DecompositionData::FDFA_MARKER` and the Hangul marker could
                     // be unified. That would add a branch for Hangul and remove
                     // a branch from singleton decompositions. It seems more
                     // important to favor Hangul syllables than singleton
@@ -815,7 +788,7 @@ where
                     // operations on `c` and `decomposition`.
                     let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
                     if hangul_offset < HANGUL_S_COUNT {
-                        debug_assert_eq!(decomposition, 1);
+                        debug_assert_eq!(decomposition, DecompositionData::HANGUL_SYLLABLE_MARKER);
                         // Hangul syllable
                         // The math here comes from page 144 of Unicode 14.0
                         let l = hangul_offset / HANGUL_N_COUNT;
@@ -839,14 +812,14 @@ where
                         }
                     } else {
                         let singleton = decomposition as u16;
-                        if singleton != FDFA_MARKER {
+                        if singleton != DecompositionData::FDFA_MARKER {
                             // Decomposition into one BMP character
                             let starter = char_from_u16(singleton);
                             (starter, 0)
                         } else {
                             // Special case for the NFKD form of U+FDFA.
-                            self.buffer.extend(FDFA_NFKD.map(|u| {
-                                // SAFETY: `FDFA_NFKD` is known not to contain
+                            self.buffer.extend(DecompositionData::FDFA_NFKD.map(|u| {
+                                // SAFETY: `DecompositionData::FDFA_NFKD` is known not to contain
                                 // surrogates.
                                 CharacterAndClass::new_starter(unsafe {
                                     char::from_u32_unchecked(u32::from(u))
@@ -858,10 +831,17 @@ where
                 } else {
                     debug_assert!(low_zeros);
                     // Only 12 of 14 bits used as of Unicode 16.
-                    let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                    let offset = (((decomposition
+                        & !(DecompositionData::NON_ROUND_TRIP_MARKER
+                            | DecompositionData::BACKWARD_COMBINING_MARKER))
+                        >> DecompositionData::COMPLEX_OFFSET_SHIFT)
+                        as usize)
+                        - 1;
                     // Only 3 of 4 bits used as of Unicode 16.
-                    let len_bits = decomposition & 0b1111;
-                    let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
+                    let len_bits = decomposition & DecompositionData::COMPLEX_LENGTH_MASK;
+                    let only_non_starters_in_trail = (decomposition
+                        & DecompositionData::COMPLEX_ONLY_NON_STARTERS_IN_TRAIL_MARKER)
+                        != 0;
                     if offset < self.scalars16.len() {
                         self.push_decomposition16(
                             offset,
@@ -966,12 +946,10 @@ where
                         ));
                         CharacterAndClass::new('\u{0F80}', CanonicalCombiningClass(130))
                     }
-                    '\u{FF9E}' => {
-                        // HALFWIDTH KATAKANA VOICED SOUND MARK
+                    DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK => {
                         CharacterAndClass::new('\u{3099}', CanonicalCombiningClass::KanaVoicing)
                     }
-                    '\u{FF9F}' => {
-                        // HALFWIDTH KATAKANA VOICED SOUND MARK
+                    DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK => {
                         CharacterAndClass::new('\u{309A}', CanonicalCombiningClass::KanaVoicing)
                     }
                     _ => {
@@ -1690,7 +1668,7 @@ impl DecomposingNormalizerBorrowed<'static> {
                 + provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                     .scalars24
                     .const_len()
-                <= 0xFFF,
+                <= DecompositionTables::MAX_COMBINED_LEN,
             "future extension"
         );
 
@@ -1723,7 +1701,7 @@ impl DecomposingNormalizerBorrowed<'static> {
                 + provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
                     .scalars24
                     .const_len()
-                <= 0xFFF,
+                <= DecompositionTables::MAX_COMBINED_LEN,
             "future extension"
         );
 
@@ -1769,7 +1747,7 @@ impl DecomposingNormalizerBorrowed<'static> {
                 + provider::Baked::SINGLETON_NORMALIZER_NFKD_TABLES_V1
                     .scalars24
                     .const_len()
-                <= 0xFFF,
+                <= DecompositionTables::MAX_COMBINED_LEN,
             "future extension"
         );
 
@@ -2243,7 +2221,9 @@ impl DecomposingNormalizer {
             provider.load(Default::default())?.payload;
         let tables: DataPayload<NormalizerNfdTablesV1> = provider.load(Default::default())?.payload;
 
-        if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
+        if tables.get().scalars16.len() + tables.get().scalars24.len()
+            > DecompositionTables::MAX_COMBINED_LEN
+        {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
             // of space. If a good use case from such a decomposition flavor arises, we can
@@ -2316,7 +2296,7 @@ impl DecomposingNormalizer {
             + tables.get().scalars24.len()
             + supplementary_tables.get().scalars16.len()
             + supplementary_tables.get().scalars24.len()
-            > 0xFFF
+            > DecompositionTables::MAX_COMBINED_LEN
         {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
@@ -2387,7 +2367,7 @@ impl DecomposingNormalizer {
             + tables.get().scalars24.len()
             + supplementary_tables.get().scalars16.len()
             + supplementary_tables.get().scalars24.len()
-            > 0xFFF
+            > DecompositionTables::MAX_COMBINED_LEN
         {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
@@ -2805,7 +2785,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                             // unpaired surrogate
                             upcoming32 = 0xFFFD; // Safe value for `char::from_u32_unchecked` and matches later potential error check.
                             // trie_value already holds a decomposition to U+FFFD.
-                            debug_assert_eq!(trie_value, NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER | 0xFFFD);
+                            debug_assert_eq!(trie_value, DecompositionData::NON_ROUND_TRIP_MARKER | DecompositionData::BACKWARD_COMBINING_MARKER | 0xFFFD);
                             break 'surrogateloop;
                         }
 
