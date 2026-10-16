@@ -194,8 +194,8 @@ icu_experimental_data = { version = "~0.6.0", path = "provider/data/experimental
 # See the "Updating the dependency specification of a util" section of documents/process/release.md
 calendrical_calculations = { version = "0.2.4", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false } # Current version: 1.0.5
-databake = { version = "0.2.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
-databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false } # Current version: 0.2.2
+databake = { version = "0.3.0", path = "utils/databake", default-features = false } # Current version: 0.2.1
+databake-derive = { version = "0.3.0", path = "utils/databake/derive", default-features = false } # Current version: 0.2.2
 fixed_decimal = { version = "0.7.2", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.6.5", path = "utils/ixdtf", default-features = false } # Current version: 0.6.6
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false } # Current version: 0.8.3
@@ -221,9 +221,9 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "0664ec0b6da77707571da646868137606091ee02", default-features = false }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "0664ec0b6da77707571da646868137606091ee02", default-features = false }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "0664ec0b6da77707571da646868137606091ee02" }
+diplomat = { version = "0.16.1", default-features = false }
+diplomat_core = { version = "0.16.1", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "edcbab4a09fe579dd5de5b5034053ef5babc38de" }
 # Range dep for better compatability. We will not have this problem
 # after diplomat-runtime 1.0.0
 # <https://github.com/rust-diplomat/diplomat/issues/958>
