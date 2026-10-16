@@ -18,6 +18,8 @@ Several crates have had patch releases in the 2.3 stream:
 - Data model and providers
   - (2.3.1) `icu_provider`
     - Improve performance of data loading that uses locale fallback (unicode-org#8406)
+  - (2.3.2) `icu_provider_source`
+    - Upgrade `zip` dependency to 9.x to resolve yanked pre-9.x versions
   - (2.3.1) `icu_provider_source`
     - Fix checksum on 32-bit systems (unicode-org#8401)
 - FFI
