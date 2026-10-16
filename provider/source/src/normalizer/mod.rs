@@ -22,9 +22,7 @@ use icu::collections::codepointtrie::CodePointTrieBuilder;
 use icu::normalizer::provider::*;
 use icu::normalizer::{ComposingNormalizer, ComposingNormalizerBorrowed};
 use icu::properties::props::{CanonicalCombiningClass, FullCompositionExclusion};
-use icu::properties::{
-    CodePointMapData, CodePointMapDataBorrowed, CodePointSetData, CodePointSetDataBorrowed,
-};
+use icu::properties::{CodePointMapData, CodePointMapDataBorrowed, CodePointSetData};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use zerovec::ZeroVec;
@@ -55,31 +53,31 @@ enum Flavor {
 /// Raw (non-recursive) decomposition mappings of a flavor, excluding Hangul syllables.
 type Mapping<'a> = dyn Fn(char) -> Option<&'a [char]> + 'a;
 
-fn push_full_decomposition(c: char, mapping: &Mapping, out: &mut Vec<char>) {
-    if HANGUL_SYLLABLES.contains(&(c as u32)) {
-        let s = c as u32 - HANGUL_S_BASE;
-        let l = HANGUL_L_BASE + s / HANGUL_N_COUNT;
-        let v = HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-        let t = HANGUL_T_BASE + s % HANGUL_T_COUNT;
-        out.extend([l, v].into_iter().filter_map(char::from_u32));
-        if t != HANGUL_T_BASE {
-            out.extend(char::from_u32(t));
-        }
-    } else if let Some(m) = mapping(c) {
-        for &m in m {
-            push_full_decomposition(m, mapping, out);
-        }
-    } else {
-        out.push(c);
-    }
-}
-
 /// The full (recursive, canonically ordered) decomposition of `c` under `mapping`.
 fn full_decomposition(
     c: char,
     mapping: &Mapping,
     ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
 ) -> Vec<char> {
+    fn push_full_decomposition(c: char, mapping: &Mapping, out: &mut Vec<char>) {
+        if HANGUL_SYLLABLES.contains(&(c as u32)) {
+            let s = c as u32 - HANGUL_S_BASE;
+            let l = HANGUL_L_BASE + s / HANGUL_N_COUNT;
+            let v = HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+            let t = HANGUL_T_BASE + s % HANGUL_T_COUNT;
+            out.extend([l, v].into_iter().filter_map(char::from_u32));
+            if t != HANGUL_T_BASE {
+                out.extend(char::from_u32(t));
+            }
+        } else if let Some(m) = mapping(c) {
+            for &m in m {
+                push_full_decomposition(m, mapping, out);
+            }
+        } else {
+            out.push(c);
+        }
+    }
+
     let mut out = Vec::new();
     push_full_decomposition(c, mapping, &mut out);
     // Canonical ordering: stably sort each run of non-starters by ccc.
@@ -88,55 +86,6 @@ fn full_decomposition(
         run.sort_by_key(|&c| ccc.get(c));
     }
     out
-}
-
-/// Computes the canonical compositions trie and the set of starters that can combine
-/// backwards.
-fn canonical_compositions(
-    nfd_mapping: &Mapping,
-    ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
-    full_composition_exclusion: CodePointSetDataBorrowed,
-) -> (
-    CanonicalCompositions<'static>,
-    CodePointInversionList<'static>,
-) {
-    let mut backward_combining_starters = CodePointInversionListBuilder::new();
-    let mut compositions = Vec::new();
-    for composite in (0..=char::MAX as u32).filter_map(char::from_u32) {
-        if HANGUL_SYLLABLES.contains(&(composite as u32)) {
-            let s = composite as u32 - HANGUL_S_BASE;
-            let t = s % HANGUL_T_COUNT;
-            if t == 0 {
-                // LV syllable
-                let v =
-                    char::from_u32(HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT).unwrap();
-                if ccc.get(v) == CanonicalCombiningClass::NotReordered {
-                    backward_combining_starters.add_char(v);
-                }
-            } else {
-                // LVT syllable
-                let t = char::from_u32(HANGUL_T_BASE + t).unwrap();
-                if ccc.get(t) == CanonicalCombiningClass::NotReordered {
-                    backward_combining_starters.add_char(t);
-                }
-            }
-        } else {
-            match nfd_mapping(composite) {
-                Some(&[starter, second]) if !full_composition_exclusion.contains(composite) => {
-                    compositions.push((starter, second, composite));
-
-                    if ccc.get(second) == CanonicalCombiningClass::NotReordered {
-                        backward_combining_starters.add_char(second);
-                    }
-                }
-                _ => continue,
-            }
-        };
-    }
-    (
-        CanonicalCompositions::from_compositions(compositions),
-        backward_combining_starters.build(),
-    )
 }
 
 /// How a character decomposes in a normalization flavor. Each variant corresponds to one
@@ -458,38 +407,6 @@ fn pack<T: Copy + PartialEq>(
     (packed.split_off(prefix.len()), positions)
 }
 
-/// A complex decomposition of a character in a flavor.
-type ComplexDecomposition<T> = ((Flavor, char), Vec<T>);
-
-/// The complex decompositions of `flavors` that are stored in the 16-bit and 24-bit
-/// tables, respectively, in the order in which they are packed.
-fn complex_decompositions(
-    flavors: &[(Flavor, &BTreeMap<char, Decomposition>)],
-) -> (
-    Vec<ComplexDecomposition<u16>>,
-    Vec<ComplexDecomposition<char>>,
-) {
-    let mut scalars16 = Vec::new();
-    let mut scalars24 = Vec::new();
-    for &(flavor, decompositions) in flavors {
-        // Iterate backwards in order to better find overlapping decompositions.
-        for (&c, decomposition) in decompositions.iter().rev() {
-            match decomposition {
-                Decomposition::Complex {
-                    chars,
-                    supplementary: true,
-                    ..
-                } => scalars24.push(((flavor, c), chars.clone())),
-                Decomposition::Complex { chars, .. } => {
-                    scalars16.push(((flavor, c), chars.iter().map(|&c| c as u16).collect()))
-                }
-                _ => {}
-            }
-        }
-    }
-    (scalars16, scalars24)
-}
-
 /// The tables storing complex decompositions.
 struct ComplexDecompositionTables {
     nfd: DecompositionTables<'static>,
@@ -511,6 +428,31 @@ impl ComplexDecompositionTables {
         nfd: &BTreeMap<char, Decomposition>,
         supplementary: &[(Flavor, &BTreeMap<char, Decomposition>)],
     ) -> Result<Self, DataError> {
+        /// A complex decomposition of a character in a flavor.
+        type ComplexDecomposition<T> = ((Flavor, char), Vec<T>);
+
+        let complex_decompositions = |flavors: &[(Flavor, &BTreeMap<char, Decomposition>)]| {
+            let mut scalars16 = Vec::new();
+            let mut scalars24 = Vec::new();
+            for &(flavor, decompositions) in flavors {
+                // Iterate backwards in order to better find overlapping decompositions.
+                for (&c, decomposition) in decompositions.iter().rev() {
+                    match decomposition {
+                        Decomposition::Complex {
+                            chars,
+                            supplementary: true,
+                            ..
+                        } => scalars24.push(((flavor, c), chars.clone())),
+                        Decomposition::Complex { chars, .. } => {
+                            scalars16.push(((flavor, c), chars.iter().map(|&c| c as u16).collect()))
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            (scalars16, scalars24)
+        };
+
         let (nfd16, nfd24) = complex_decompositions(&[(Flavor::Nfd, nfd)]);
         let (supplementary16, supplementary24) = complex_decompositions(supplementary);
 
@@ -520,6 +462,7 @@ impl ComplexDecompositionTables {
                 .map(|(_, sequence)| sequence.clone())
                 .collect()
         }
+
         let (nfd16_scalars, nfd16_positions) = pack(&[], sequences(&nfd16));
         let (nfd24_scalars, nfd24_positions) = pack(&[], sequences(&nfd24));
         let (supplementary16_scalars, supplementary16_positions) =
@@ -902,8 +845,43 @@ impl NormalizerData {
             }
         };
 
-        let (canonical_compositions, backward_combining_starters) =
-            canonical_compositions(&nfd_mapping, ccc, full_composition_exclusion.as_borrowed());
+        let nfd_mapping: &Mapping = &nfd_mapping;
+        let full_composition_exclusion = full_composition_exclusion.as_borrowed();
+        let mut backward_combining_starters = CodePointInversionListBuilder::new();
+        let mut compositions = Vec::new();
+        for composite in (0..=char::MAX as u32).filter_map(char::from_u32) {
+            if HANGUL_SYLLABLES.contains(&(composite as u32)) {
+                let s = composite as u32 - HANGUL_S_BASE;
+                let t = s % HANGUL_T_COUNT;
+                if t == 0 {
+                    // LV syllable
+                    let v = char::from_u32(HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT)
+                        .unwrap();
+                    if ccc.get(v) == CanonicalCombiningClass::NotReordered {
+                        backward_combining_starters.add_char(v);
+                    }
+                } else {
+                    // LVT syllable
+                    let t = char::from_u32(HANGUL_T_BASE + t).unwrap();
+                    if ccc.get(t) == CanonicalCombiningClass::NotReordered {
+                        backward_combining_starters.add_char(t);
+                    }
+                }
+            } else {
+                match nfd_mapping(composite) {
+                    Some(&[starter, second]) if !full_composition_exclusion.contains(composite) => {
+                        compositions.push((starter, second, composite));
+
+                        if ccc.get(second) == CanonicalCombiningClass::NotReordered {
+                            backward_combining_starters.add_char(second);
+                        }
+                    }
+                    _ => continue,
+                }
+            };
+        }
+        let canonical_compositions = CanonicalCompositions::from_compositions(compositions);
+        let backward_combining_starters = backward_combining_starters.build();
 
         // The characters that don't trivially decompose to themselves in each flavor:
         // U+FFFD, non-starters, starters that can combine backwards, and characters with
