@@ -11,8 +11,12 @@ use potential_utf::PotentialUtf8;
 use utf8_iter::{Utf8CharIndices, Utf8Chars};
 use zerovec::maps::ZeroMapBorrowed;
 
+mod kernel;
 mod matrix;
+use alloc::vec;
+use kernel::Direction;
 use matrix::*;
+use zerovec::ule::AsULE;
 
 // A word break iterator using LSTM model. Input string have to be same complex script.
 #[derive(Debug)]
@@ -220,17 +224,17 @@ impl<'data> LstmSegmenter<'data> {
 
 #[derive(Debug)]
 struct BiesIterator<'data> {
-    embedding: MatrixZero<'data, 2>,
-    fw_w: MatrixZero<'data, 3>,
-    fw_u: MatrixZero<'data, 3>,
-    fw_b: MatrixZero<'data, 2>,
+    fw: Direction,
     timew_fw: MatrixZero<'data, 2>,
     timew_bw: MatrixZero<'data, 2>,
     time_b: MatrixZero<'data, 1>,
-    input_seq: core::iter::Enumerate<alloc::vec::IntoIter<u16>>,
-    h_bw: MatrixOwned<2>,
-    curr_fw: MatrixOwned<1>,
-    c_fw: MatrixOwned<1>,
+    /// For each position, the index of its id in the sorted distinct ids of the input.
+    input_seq: core::iter::Enumerate<vec::IntoIter<u16>>,
+    /// The backward hidden states, `hunits` values per position.
+    h_bw: Vec<f32>,
+    h_fw: Vec<f32>,
+    c_fw: Vec<f32>,
+    scratch: Vec<f32>,
 }
 
 impl<'data> BiesIterator<'data> {
@@ -254,36 +258,39 @@ impl<'data> BiesIterator<'data> {
     ) -> Self {
         let hunits = fw_u.dim().1;
 
-        // Backward LSTM
-        let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
-        let mut h_bw = MatrixOwned::<2>::new_zero([input_seq.len(), hunits]);
-        for (i, &g_id) in input_seq.iter().enumerate().rev() {
-            if i + 1 < input_seq.len() {
-                h_bw.as_mut().copy_submatrix::<1>(i + 1, i);
-            }
-            #[expect(clippy::unwrap_used)]
-            compute_hc(
-                embedding.submatrix::<1>(g_id as usize).unwrap(), /* shape (dict.len() + 1, hunit), g_id is at most dict.len() */
-                h_bw.submatrix_mut(i).unwrap(),                   // shape (input_seq.len(), hunits)
-                c_bw.as_mut(),
-                bw_w,
-                bw_u,
-                bw_b,
-            );
+        let mut ids = input_seq.clone();
+        ids.sort_unstable();
+        ids.dedup();
+        let slots: Vec<u16> = input_seq
+            .iter()
+            .map(|id| ids.binary_search(id).unwrap_or_default() as u16)
+            .collect();
+
+        // Backward LSTM. Its weights are dropped before the forward weights are
+        // prepared, so only one direction is held in memory at a time.
+        let bw = Direction::new(embedding, bw_w, bw_u, bw_b, &ids);
+        let mut scratch = vec![0.0; bw.scratch_len()];
+        let mut c_bw = vec![0.0; hunits];
+        let mut h = vec![0.0; hunits];
+        let mut h_bw = vec![0.0; slots.len() * hunits];
+        for (&slot, h_out) in slots.iter().zip(h_bw.chunks_exact_mut(hunits.max(1))).rev() {
+            bw.step(slot as usize, &mut h, &mut c_bw, &mut scratch);
+            h_out.copy_from_slice(&h);
         }
+        drop(bw);
+
+        let fw = Direction::new(embedding, fw_w, fw_u, fw_b, &ids);
 
         Self {
-            input_seq: input_seq.into_iter().enumerate(),
-            h_bw,
-            c_fw: MatrixOwned::<1>::new_zero([hunits]),
-            curr_fw: MatrixOwned::<1>::new_zero([hunits]),
-            embedding,
-            fw_w,
-            fw_u,
-            fw_b,
+            fw,
             timew_fw,
             timew_bw,
             time_b,
+            input_seq: slots.into_iter().enumerate(),
+            h_bw,
+            h_fw: vec![0.0; hunits],
+            c_fw: vec![0.0; hunits],
+            scratch,
         }
     }
 }
@@ -292,78 +299,55 @@ impl Iterator for BiesIterator<'_> {
     type Item = bool;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let (i, g_id) = self.input_seq.next()?;
+        let (i, slot) = self.input_seq.next()?;
+        let hunits = self.h_fw.len();
 
-        #[expect(clippy::unwrap_used)]
-        compute_hc(
-            self.embedding.submatrix::<1>(g_id as usize).unwrap(), // shape (dict.len() + 1, hunit), g_id is at most dict.len()
-            self.curr_fw.as_mut(),
-            self.c_fw.as_mut(),
-            self.fw_w,
-            self.fw_u,
-            self.fw_b,
+        self.fw.step(
+            slot as usize,
+            &mut self.h_fw,
+            &mut self.c_fw,
+            &mut self.scratch,
         );
 
-        #[expect(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
-        let curr_bw = self.h_bw.submatrix::<1>(i).unwrap();
+        let curr_bw = self
+            .h_bw
+            .get(i * hunits..(i + 1) * hunits)
+            .unwrap_or_default();
         let mut weights = [0.0; 4];
-        let mut curr_est = MatrixBorrowedMut {
-            data: &mut weights,
-            dims: [4],
-        };
-        curr_est.add_dot_2d(self.curr_fw.as_borrowed(), self.timew_fw);
-        curr_est.add_dot_2d(curr_bw, self.timew_bw);
-        #[expect(clippy::unwrap_used)] // both shape (4)
-        curr_est.add(self.time_b).unwrap();
+        for (((w, fw_row), bw_row), b) in weights
+            .iter_mut()
+            .zip(
+                self.timew_fw
+                    .as_slice()
+                    .as_ule_slice()
+                    .chunks_exact(hunits.max(1)),
+            )
+            .zip(
+                self.timew_bw
+                    .as_slice()
+                    .as_ule_slice()
+                    .chunks_exact(hunits.max(1)),
+            )
+            .zip(self.time_b.as_slice().iter())
+        {
+            let fw: f32 = self
+                .h_fw
+                .iter()
+                .zip(fw_row)
+                .map(|(h, w)| h * f32::from_unaligned(*w))
+                .sum();
+            let bw: f32 = curr_bw
+                .iter()
+                .zip(bw_row)
+                .map(|(h, w)| h * f32::from_unaligned(*w))
+                .sum();
+            *w = fw + bw + b;
+        }
         // For correct BIES weight calculation we'd now have to apply softmax, however
         // we're only doing a naive argmax, so a monotonic function doesn't make a difference.
 
         Some(weights[2] > weights[0] && weights[2] > weights[1] && weights[2] > weights[3])
     }
-}
-
-/// `compute_hc1` implemens the evaluation of one LSTM layer.
-fn compute_hc<'a>(
-    x_t: MatrixZero<'a, 1>,
-    mut h_tm1: MatrixBorrowedMut<'a, 1>,
-    mut c_tm1: MatrixBorrowedMut<'a, 1>,
-    w: MatrixZero<'a, 3>,
-    u: MatrixZero<'a, 3>,
-    b: MatrixZero<'a, 2>,
-) {
-    #[cfg(debug_assertions)]
-    {
-        let hunits = h_tm1.dim();
-        let embedd_dim = x_t.dim();
-        c_tm1.as_borrowed().debug_assert_dims([hunits]);
-        w.debug_assert_dims([4, hunits, embedd_dim]);
-        u.debug_assert_dims([4, hunits, hunits]);
-        b.debug_assert_dims([4, hunits]);
-    }
-
-    let mut s_t = b.to_owned();
-
-    s_t.as_mut().add_dot_3d_2(x_t, w);
-    s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
-
-    #[expect(clippy::unwrap_used)] // first dimension is 4
-    s_t.submatrix_mut::<1>(0).unwrap().sigmoid_transform();
-    #[expect(clippy::unwrap_used)] // first dimension is 4
-    s_t.submatrix_mut::<1>(1).unwrap().sigmoid_transform();
-    #[expect(clippy::unwrap_used)] // first dimension is 4
-    s_t.submatrix_mut::<1>(2).unwrap().tanh_transform();
-    #[expect(clippy::unwrap_used)] // first dimension is 4
-    s_t.submatrix_mut::<1>(3).unwrap().sigmoid_transform();
-
-    #[expect(clippy::unwrap_used)] // first dimension is 4
-    c_tm1.convolve(
-        s_t.as_borrowed().submatrix(0).unwrap(),
-        s_t.as_borrowed().submatrix(2).unwrap(),
-        s_t.as_borrowed().submatrix(1).unwrap(),
-    );
-
-    #[expect(clippy::unwrap_used)] // first dimension is 4
-    h_tm1.mul_tanh(s_t.as_borrowed().submatrix(3).unwrap(), c_tm1.as_borrowed());
 }
 
 #[cfg(test)]
