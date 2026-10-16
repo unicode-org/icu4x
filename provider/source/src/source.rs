@@ -548,6 +548,8 @@ pub(crate) struct RscdCache {
     // CPT building is a big bottleneck, so we don't want to build the same one twice.
     #[allow(dead_code)]
     pub(crate) cpt_cache: FrozenMap<&'static str, Box<dyn Any + Send + Sync>>,
+    // Cache of computed normalization data.
+    pub(crate) normalizer_cache: OnceLock<Result<crate::normalizer::NormalizerData, DataError>>,
 
     #[cfg(feature = "unstable")]
     #[allow(dead_code)]
@@ -585,6 +587,7 @@ impl RscdCache {
             cpt_cache: Default::default(),
             #[cfg(feature = "unstable")]
             segmenter_cache: Default::default(),
+            normalizer_cache: Default::default(),
         }
     }
 
