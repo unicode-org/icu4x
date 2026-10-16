@@ -15,6 +15,8 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+#[cfg(feature = "datagen")]
+use alloc::vec::Vec;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
@@ -243,6 +245,109 @@ impl DecompositionData<'_> {
     pub const COMPLEX_OFFSET_SHIFT: u32 = 16;
 }
 
+/// Encoders for the trie value format of [`DecompositionData`].
+#[cfg(feature = "datagen")]
+impl DecompositionData<'_> {
+    fn encode_flags(round_trips: bool, backward_combining: bool) -> u32 {
+        (if round_trips {
+            0
+        } else {
+            Self::NON_ROUND_TRIP_MARKER
+        }) | (if backward_combining {
+            Self::BACKWARD_COMBINING_MARKER
+        } else {
+            0
+        })
+    }
+
+    /// Encodes a non-starter that decomposes to itself.
+    pub fn encode_non_starter(ccc: u8) -> u32 {
+        Self::BACKWARD_COMBINING_MARKER | Self::NON_STARTER_MARKER | u32::from(ccc)
+    }
+
+    /// Encodes a character listed in [`Self::SPECIAL_NON_STARTER_DECOMPOSITIONS`] with the
+    /// given canonical combining class.
+    pub fn encode_special_non_starter(ccc: u8) -> u32 {
+        Self::NON_ROUND_TRIP_MARKER
+            | Self::BACKWARD_COMBINING_MARKER
+            | Self::SPECIAL_NON_STARTER_MARKER
+            | u32::from(ccc)
+    }
+
+    /// Encodes the NFKD decomposition of U+FDFA.
+    pub fn encode_fdfa() -> u32 {
+        Self::NON_ROUND_TRIP_MARKER | u32::from(Self::FDFA_MARKER)
+    }
+
+    /// Encodes a singleton decomposition to a BMP starter > U+001F.
+    ///
+    /// Returns `None` if the decomposition cannot be encoded this way.
+    pub fn encode_singleton(c: char, backward_combining: bool) -> Option<u32> {
+        let c = u32::from(c);
+        if !(0x20..=0xFFFF).contains(&c) {
+            return None;
+        }
+        Some(c | Self::encode_flags(false, backward_combining))
+    }
+
+    /// Encodes a decomposition to a starter <= U+7FFF and > U+001F that cannot combine
+    /// backwards, followed by a non-starter <= U+7FFF and > U+001F.
+    ///
+    /// Returns `None` if the characters are out of range.
+    pub fn encode_pair(starter: char, non_starter: char, round_trips: bool) -> Option<u32> {
+        let starter = u32::from(starter);
+        let non_starter = u32::from(non_starter);
+        if !(0x20..=Self::PAIR_CHAR_MASK).contains(&starter)
+            || !(0x20..=Self::PAIR_CHAR_MASK).contains(&non_starter)
+        {
+            return None;
+        }
+        Some(
+            starter
+                | (non_starter << Self::PAIR_TRAIL_SHIFT)
+                | Self::encode_flags(round_trips, false),
+        )
+    }
+
+    /// Encodes a complex decomposition of `len` characters, stored at `offset` in the
+    /// logical concatenation of the NFD [`DecompositionTables::scalars16`], the NFD
+    /// [`DecompositionTables::scalars24`], the supplementary (NFKD)
+    /// [`DecompositionTables::scalars16`], and the supplementary
+    /// [`DecompositionTables::scalars24`]. `supplementary` indicates whether the
+    /// decomposition is stored in one of the `scalars24` tables.
+    ///
+    /// Returns `None` if the offset or length cannot be encoded.
+    pub fn encode_complex(
+        offset: usize,
+        len: usize,
+        supplementary: bool,
+        only_non_starters_in_trail: bool,
+        round_trips: bool,
+        backward_combining: bool,
+    ) -> Option<u32> {
+        let len_bits = len.checked_sub(if supplementary { 1 } else { 2 })?;
+        // The fourth bit is reserved.
+        if len_bits > 0b111 {
+            return None;
+        }
+        // +1 to make the offset always non-zero
+        let offset = offset + 1;
+        if offset > DecompositionTables::MAX_COMBINED_LEN {
+            return None;
+        }
+        Some(
+            Self::encode_flags(round_trips, backward_combining)
+                | (if only_non_starters_in_trail {
+                    Self::COMPLEX_ONLY_NON_STARTERS_IN_TRAIL_MARKER
+                } else {
+                    0
+                })
+                | len_bits as u32
+                | ((offset as u32) << Self::COMPLEX_OFFSET_SHIFT),
+        )
+    }
+}
+
 /// The expansion tables for cases where the decomposition isn't
 /// contained in the trie value
 ///
@@ -300,6 +405,24 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+#[cfg(feature = "datagen")]
+impl CanonicalCompositions<'_> {
+    /// Builds the canonical compositions from `(starter, second, composite)` triples.
+    pub fn from_compositions(compositions: impl IntoIterator<Item = (char, char, char)>) -> Self {
+        let mut builder = icu_collections::char16trie::Char16TrieBuilder::new();
+        for (starter, second, composite) in compositions {
+            // The pairs are stored second character first.
+            let mut key = Vec::with_capacity(4);
+            key.extend_from_slice(second.encode_utf16(&mut [0; 2]));
+            key.extend_from_slice(starter.encode_utf16(&mut [0; 2]));
+            builder.insert(&key, u32::from(composite) as i32);
+        }
+        Self {
+            canonical_compositions: builder.build(),
+        }
+    }
+}
+
 /// Non-recursive canonical decompositions that differ from
 /// `DecompositionData`.
 ///
@@ -333,3 +456,28 @@ impl NonRecursiveDecompositionSupplement<'_> {
     pub const OXIA_RANGE: core::ops::RangeInclusive<char> = '\u{1F71}'..='\u{1FFB}';
 }
 
+#[cfg(feature = "datagen")]
+impl NonRecursiveDecompositionSupplement<'_> {
+    /// Encodes a non-recursive canonical decomposition, appending to `scalars24` if
+    /// necessary.
+    ///
+    /// Returns `None` if the decomposition cannot be encoded.
+    pub fn encode(decomposition: &[char], scalars24: &mut Vec<char>) -> Option<u32> {
+        match *decomposition {
+            [c] if u32::from(c) <= 0xFFFF => Some(u32::from(c)),
+            // Swapped for consistency with the primary trie
+            [a, b] if u32::from(a) <= 0xFFFF && u32::from(b) <= 0xFFFF => {
+                Some((u32::from(b) << 16) | u32::from(a))
+            }
+            [a, b] => {
+                // +1 to make the index always non-zero
+                let index = u32::try_from(scalars24.len() + 1)
+                    .ok()
+                    .filter(|&i| i <= 0xFFFF)?;
+                scalars24.extend([a, b]);
+                Some(index << 16)
+            }
+            _ => None,
+        }
+    }
+}
