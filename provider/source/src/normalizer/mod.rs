@@ -45,7 +45,7 @@ const HANGUL_N_COUNT: u32 = 588;
 /// Hangul syllables
 const HANGUL_SYLLABLES: std::ops::RangeInclusive<u32> = 0xAC00..=0xD7A3;
 
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 enum Flavor {
     Nfd,
     Nfkd,
@@ -428,114 +428,179 @@ impl Classifier<'_, '_> {
     }
 }
 
-/// Find `needle` within `storage` and return its index, failing which, append
-/// `needle` to `storage` and return the index of it at the end.
-fn find_or_append<T: Copy + PartialEq>(storage: &mut Vec<T>, needle: &[T]) -> usize {
-    if let Some(index) = storage.windows(needle.len()).position(|w| w == needle) {
-        return index;
+/// Packs `sequences` into an array that follows `prefix`. Sequences that already occur in
+/// `prefix` or in the array, including at positions spanning multiple earlier sequences,
+/// are not added again.
+///
+/// Returns the array, and the position of each sequence in the concatenation of `prefix`
+/// and the array, as found when the sequence was added. Looking sequences up in the
+/// finished array instead could find earlier occurrences that span the end of one sequence
+/// and the start of a later one. These would be equally valid, and would remove the need
+/// to track positions (see [`ComplexDecompositionTables::offsets`]), but change the data.
+fn pack<T: Copy + PartialEq>(
+    prefix: &[T],
+    sequences: impl IntoIterator<Item = Vec<T>>,
+) -> (Vec<T>, Vec<usize>) {
+    let mut packed = prefix.to_vec();
+    let positions = sequences
+        .into_iter()
+        .map(
+            |sequence| match packed.windows(sequence.len()).position(|w| w == sequence) {
+                Some(position) => position,
+                None => {
+                    let position = packed.len();
+                    packed.extend(sequence);
+                    position
+                }
+            },
+        )
+        .collect();
+    (packed.split_off(prefix.len()), positions)
+}
+
+/// A complex decomposition of a character in a flavor.
+type ComplexDecomposition<T> = ((Flavor, char), Vec<T>);
+
+/// The complex decompositions of `flavors` that are stored in the 16-bit and 24-bit
+/// tables, respectively, in the order in which they are packed.
+fn complex_decompositions(
+    flavors: &[(Flavor, &BTreeMap<char, Decomposition>)],
+) -> (
+    Vec<ComplexDecomposition<u16>>,
+    Vec<ComplexDecomposition<char>>,
+) {
+    let mut scalars16 = Vec::new();
+    let mut scalars24 = Vec::new();
+    for &(flavor, decompositions) in flavors {
+        // Iterate backwards in order to better find overlapping decompositions.
+        for (&c, decomposition) in decompositions.iter().rev() {
+            match decomposition {
+                Decomposition::Complex {
+                    chars,
+                    supplementary: true,
+                    ..
+                } => scalars24.push(((flavor, c), chars.clone())),
+                Decomposition::Complex { chars, .. } => {
+                    scalars16.push(((flavor, c), chars.iter().map(|&c| c as u16).collect()))
+                }
+                _ => {}
+            }
+        }
     }
-    let index = storage.len();
-    storage.extend_from_slice(needle);
-    index
+    (scalars16, scalars24)
 }
 
 /// The tables storing complex decompositions.
 struct ComplexDecompositionTables {
     nfd: DecompositionTables<'static>,
-    /// The supplementary (NFKD and UTS 46) tables.
+    /// The supplementary (NFKD and UTS 46) tables, which only contain the decompositions
+    /// that don't occur in the NFD tables.
     supplementary: DecompositionTables<'static>,
-    /// For each flavor, the offset of each complex decomposition into the logical
-    /// concatenation of NFD 16-bit, NFD 32-bit, supplementary 16-bit, and supplementary
-    /// 32-bit storage.
-    offsets: Vec<BTreeMap<char, usize>>,
+    /// The offset of each complex decomposition into the logical concatenation of NFD
+    /// 16-bit, NFD 24-bit, supplementary 16-bit, and supplementary 24-bit tables.
+    ///
+    /// These are the positions found while packing (see [`pack`]). Instead, they could be
+    /// looked up in the finished tables when encoding, which would remove this field.
+    offsets: HashMap<(Flavor, char), usize>,
 }
 
 impl ComplexDecompositionTables {
-    /// Stores the complex decompositions of `flavors`. The first flavor is stored in the
-    /// NFD tables, all others in the supplementary tables.
-    fn new(flavors: &[&BTreeMap<char, Decomposition>]) -> Result<Self, DataError> {
-        let mut storage16 = Vec::<u16>::new();
-        let mut storage32 = Vec::<char>::new();
-        let mut nfd_len = (0, 0);
-        let mut offsets = Vec::new();
-        for (i, decompositions) in flavors.iter().enumerate() {
-            // Iterate backwards in order to better find overlapping decompositions.
-            offsets.push(
-                decompositions
-                    .iter()
-                    .rev()
-                    .filter_map(|(&c, d)| match d {
-                        Decomposition::Complex {
-                            chars,
-                            supplementary: true,
-                            ..
-                        } => Some((c, (true, find_or_append(&mut storage32, chars)))),
-                        Decomposition::Complex { chars, .. } => {
-                            let chars = chars.iter().map(|&c| c as u16).collect::<Vec<_>>();
-                            Some((c, (false, find_or_append(&mut storage16, &chars))))
-                        }
-                        _ => None,
-                    })
-                    .collect::<Vec<_>>(),
-            );
-            if i == 0 {
-                nfd_len = (storage16.len(), storage32.len());
-            }
-        }
+    /// Stores the complex decompositions of `nfd` in the NFD tables, and those of
+    /// `supplementary` in the supplementary tables.
+    fn new(
+        nfd: &BTreeMap<char, Decomposition>,
+        supplementary: &[(Flavor, &BTreeMap<char, Decomposition>)],
+    ) -> Result<Self, DataError> {
+        let (nfd16, nfd24) = complex_decompositions(&[(Flavor::Nfd, nfd)]);
+        let (supplementary16, supplementary24) = complex_decompositions(supplementary);
 
-        if storage16.len() + storage32.len() > DecompositionTables::MAX_COMBINED_LEN {
+        fn sequences<T: Clone>(decompositions: &[ComplexDecomposition<T>]) -> Vec<Vec<T>> {
+            decompositions
+                .iter()
+                .map(|(_, sequence)| sequence.clone())
+                .collect()
+        }
+        let (nfd16_scalars, nfd16_positions) = pack(&[], sequences(&nfd16));
+        let (nfd24_scalars, nfd24_positions) = pack(&[], sequences(&nfd24));
+        let (supplementary16_scalars, supplementary16_positions) =
+            pack(&nfd16_scalars, sequences(&supplementary16));
+        let (supplementary24_scalars, supplementary24_positions) =
+            pack(&nfd24_scalars, sequences(&supplementary24));
+
+        let nfd16_len = nfd16_scalars.len();
+        let nfd24_len = nfd24_scalars.len();
+        let supplementary16_len = supplementary16_scalars.len();
+        if nfd16_len + nfd24_len + supplementary16_len + supplementary24_scalars.len()
+            > DecompositionTables::MAX_COMBINED_LEN
+        {
             // We actually have 14 bits available, but let's error out so that docs can be
             // updated when taking a reserved bit out of potential future flag usage.
             return Err(DataError::custom("Decomposition storage too large"));
         }
 
-        let (nfd_len_16, nfd_len_32) = nfd_len;
-        let total_len_16 = storage16.len();
-        let logical_offset = |(supplementary, offset)| match (supplementary, offset) {
-            // NFD 16-bit
-            (false, o) if o < nfd_len_16 => o,
-            // Supplementary 16-bit (the NFD 16-bit length is already part of the offset)
-            (false, o) => o + nfd_len_32,
-            // NFD 32-bit
-            (true, o) if o < nfd_len_32 => nfd_len_16 + o,
-            // Supplementary 32-bit (the NFD 32-bit length is already part of the offset)
-            (true, o) => total_len_16 + o,
-        };
+        // Convert positions in the tables into offsets into the logical concatenation of
+        // the tables. Positions in the supplementary tables are relative to the
+        // concatenation of the corresponding NFD table and the supplementary table.
+        let offsets = (nfd16
+            .iter()
+            .zip(nfd16_positions)
+            .map(|((key, _), p)| (*key, p)))
+        .chain(
+            nfd24
+                .iter()
+                .zip(nfd24_positions)
+                .map(|((key, _), p)| (*key, nfd16_len + p)),
+        )
+        .chain(
+            supplementary16
+                .iter()
+                .zip(supplementary16_positions)
+                .map(|((key, _), p)| (*key, if p < nfd16_len { p } else { nfd24_len + p })),
+        )
+        .chain(
+            supplementary24
+                .iter()
+                .zip(supplementary24_positions)
+                .map(|((key, _), p)| {
+                    (
+                        *key,
+                        if p < nfd24_len {
+                            nfd16_len + p
+                        } else {
+                            nfd16_len + supplementary16_len + p
+                        },
+                    )
+                }),
+        )
+        .collect();
 
         Ok(Self {
             nfd: DecompositionTables {
-                scalars16: ZeroVec::alloc_from_slice(&storage16[..nfd_len_16]),
-                scalars24: ZeroVec::alloc_from_slice(&storage32[..nfd_len_32]),
+                scalars16: ZeroVec::alloc_from_slice(&nfd16_scalars),
+                scalars24: ZeroVec::alloc_from_slice(&nfd24_scalars),
             },
             supplementary: DecompositionTables {
-                scalars16: ZeroVec::alloc_from_slice(&storage16[nfd_len_16..]),
-                scalars24: ZeroVec::alloc_from_slice(&storage32[nfd_len_32..]),
+                scalars16: ZeroVec::alloc_from_slice(&supplementary16_scalars),
+                scalars24: ZeroVec::alloc_from_slice(&supplementary24_scalars),
             },
-            offsets: offsets
-                .into_iter()
-                .map(|offsets| {
-                    offsets
-                        .into_iter()
-                        .map(|(c, offset)| (c, logical_offset(offset)))
-                        .collect()
-                })
-                .collect(),
+            offsets,
         })
     }
 }
 
-/// Encodes `decompositions` into `values`, using the complex decomposition `offsets`.
+/// Encodes the `decompositions` of `flavor` into `values`, looking up complex
+/// decompositions in `tables`.
 fn encode_all(
+    flavor: Flavor,
     decompositions: &BTreeMap<char, Decomposition>,
-    offsets: &BTreeMap<char, usize>,
+    tables: &ComplexDecompositionTables,
     values: &mut BTreeMap<char, u32>,
 ) -> Result<(), DataError> {
     for (&c, decomposition) in decompositions {
-        let value = decomposition
-            .encode(offsets.get(&c).copied())
-            .ok_or_else(|| {
-                DataError::custom("Decomposition cannot be encoded").with_debug_context(&c)
-            })?;
+        let offset = tables.offsets.get(&(flavor, c)).copied();
+        let value = decomposition.encode(offset).ok_or_else(|| {
+            DataError::custom("Decomposition cannot be encoded").with_debug_context(&c)
+        })?;
         values.insert(c, value);
     }
     Ok(())
@@ -889,19 +954,18 @@ impl NormalizerData {
             &nfd_non_starters,
         )?;
 
-        let ComplexDecompositionTables {
-            nfd: nfd_tables,
-            supplementary: nfkd_tables,
-            offsets,
-        } = ComplexDecompositionTables::new(&[&nfd, &nfkd, &uts46])?;
+        let tables = ComplexDecompositionTables::new(
+            &nfd,
+            &[(Flavor::Nfkd, &nfkd), (Flavor::Uts46, &uts46)],
+        )?;
 
         // The NFKD and UTS 46 tries are the NFD trie, partially overwritten.
         let mut nfd_values = BTreeMap::new();
-        encode_all(&nfd, &offsets[0], &mut nfd_values)?;
+        encode_all(Flavor::Nfd, &nfd, &tables, &mut nfd_values)?;
         let mut nfkd_values = nfd_values.clone();
-        encode_all(&nfkd, &offsets[1], &mut nfkd_values)?;
+        encode_all(Flavor::Nfkd, &nfkd, &tables, &mut nfkd_values)?;
         let mut uts46_values = nfd_values.clone();
-        encode_all(&uts46, &offsets[2], &mut uts46_values)?;
+        encode_all(Flavor::Uts46, &uts46, &tables, &mut uts46_values)?;
 
         Ok(Self {
             nfd: DecompositionTrieValues {
@@ -920,10 +984,10 @@ impl NormalizerData {
                 surrogates_to_replacement_character: false,
                 passthrough_cap: passthrough_cap(Flavor::Uts46, &uts46_merged)?,
             },
-            nfd_tables,
+            nfd_tables: tables.nfd,
             // The supplementary tables also contain the UTS 46 decompositions that are not
             // in the NFD or NFKD tables.
-            nfkd_tables,
+            nfkd_tables: tables.supplementary,
             canonical_compositions,
             non_recursive: NonRecursiveValues::new(&nfd, &nfd_mapping, ccc)?,
         })
@@ -945,9 +1009,9 @@ impl NormalizerData {
             nfc: None,
         }
         .classify_all(Flavor::Nfd, nfd_mapping, candidates)?;
-        let tables = ComplexDecompositionTables::new(&[&nfd])?;
+        let tables = ComplexDecompositionTables::new(&nfd, &[])?;
         let mut values = BTreeMap::new();
-        encode_all(&nfd, &tables.offsets[0], &mut values)?;
+        encode_all(Flavor::Nfd, &nfd, &tables, &mut values)?;
 
         struct BootstrapProvider {
             data: DecompositionData<'static>,
