@@ -376,4 +376,20 @@ void main() {
       true,
     );
   });
+
+  test('Normalizer', () {
+    final nfc = ComposingNormalizer.nfc();
+    final nfd = DecomposingNormalizer.nfd();
+
+    const decomposed = 'a\u0308\u1100\u1161😊';
+    const composed = '\u00e4\uac00😊';
+
+    expect(nfc.isNormalized(decomposed), false);
+    expect(nfc.isNormalized(composed), true);
+    expect(nfc.normalize(decomposed), composed);
+
+    expect(nfd.isNormalized(composed), false);
+    expect(nfd.isNormalized(decomposed), true);
+    expect(nfd.normalize(composed), decomposed);
+  });
 }

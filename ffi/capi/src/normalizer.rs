@@ -132,7 +132,7 @@ pub mod ffi {
             let _infallible = self.0.as_borrowed().normalize_utf8_to(s, write);
         }
 
-        /// Normalize a UTF-16 string
+        /// Normalize a string
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
@@ -319,7 +319,7 @@ pub mod ffi {
             let _infallible = self.0.as_borrowed().normalize_utf8_to(s, write);
         }
 
-        /// Normalize a UTF-16 string
+        /// Normalize a string
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
