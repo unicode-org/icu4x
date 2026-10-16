@@ -74,7 +74,7 @@ public:
   inline void normalize_write(std::string_view s, W& writeable_output) const;
 
   /**
-   * Normalize a UTF-16 string
+   * Normalize a string
    *
    * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
    * to the WHATWG Encoding Standard.

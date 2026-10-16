@@ -44,7 +44,7 @@ export class DecomposingNormalizer {
     static createNfkdWithProvider(provider: DataProvider): DecomposingNormalizer;
 
     /**
-     * Normalize a UTF-16 string
+     * Normalize a string
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
