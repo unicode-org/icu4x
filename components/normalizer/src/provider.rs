@@ -137,6 +137,112 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+/// Constants describing the trie value format of [`DecompositionData`].
+///
+/// See `trie-value-format.md` in the `icu_normalizer` crate for the full description.
+impl DecompositionData<'_> {
+    /// Marker for UTS 46 ignorables. Not supported in NFD or NFKD data.
+    pub const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
+
+    /// Marker that the decomposition does not round trip via NFC.
+    pub const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
+
+    /// Marker that the first character of the decomposition can combine backwards.
+    pub const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
+
+    /// Mask for the bits that have to be zero for the trie value to be a BMP singleton
+    /// decomposition, or a value baked into the surrogate range.
+    pub const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
+
+    /// Mask for the bits that have to be zero for the trie value to be a complex
+    /// decomposition.
+    pub const LOW_ZEROS_MASK: u32 = 0xFFE0;
+
+    /// Marker (in the second-least-significant byte) for non-starters that decompose to
+    /// themselves. The least-significant byte is the canonical combining class.
+    pub const NON_STARTER_MARKER: u32 = 0xD800;
+
+    /// Marker (in the second-least-significant byte) for non-starters whose decomposition
+    /// starts with a non-starter. The least-significant byte is the canonical combining
+    /// class of the undecomposed character. The decompositions are hard-coded, see
+    /// [`Self::SPECIAL_NON_STARTER_DECOMPOSITIONS`].
+    pub const SPECIAL_NON_STARTER_MARKER: u32 = 0xD900;
+
+    /// COMBINING GREEK YPOGEGRAMMENI, a non-starter that UTS 46 maps to a starter.
+    //
+    /// Like [`Self::HALF_WIDTH_VOICED_SOUND_MARK`] and
+    /// [`Self::HALF_WIDTH_SEMI_VOICED_SOUND_MARK`], this character must not occur in the
+    /// tail of a complex decomposition in UTS 46 data, because whether a tail character is
+    /// a non-starter is determined from its trie value, which differs between flavors.
+    pub const IOTA_SUBSCRIPT: char = '\u{0345}';
+
+    /// HALFWIDTH KATAKANA VOICED SOUND MARK, a starter that decomposes to a non-starter in
+    /// NFKD and UTS 46. Must not occur in the tail of a complex decomposition.
+    pub const HALF_WIDTH_VOICED_SOUND_MARK: char = '\u{FF9E}';
+
+    /// HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK, a starter that decomposes to a non-starter
+    /// in NFKD and UTS 46. Must not occur in the tail of a complex decomposition.
+    pub const HALF_WIDTH_SEMI_VOICED_SOUND_MARK: char = '\u{FF9F}';
+
+    /// The characters whose trie values use [`Self::SPECIAL_NON_STARTER_MARKER`], with
+    /// their hard-coded decompositions.
+    pub const SPECIAL_NON_STARTER_DECOMPOSITIONS: &'static [(char, &'static [char])] = &[
+        // COMBINING GRAVE TONE MARK
+        ('\u{0340}', &['\u{0300}']),
+        // COMBINING ACUTE TONE MARK
+        ('\u{0341}', &['\u{0301}']),
+        // COMBINING GREEK KORONIS
+        ('\u{0343}', &['\u{0313}']),
+        // COMBINING GREEK DIALYTIKA TONOS
+        ('\u{0344}', &['\u{0308}', '\u{0301}']),
+        // TIBETAN VOWEL SIGN II
+        ('\u{0F73}', &['\u{0F71}', '\u{0F72}']),
+        // TIBETAN VOWEL SIGN UU
+        ('\u{0F75}', &['\u{0F71}', '\u{0F74}']),
+        // TIBETAN VOWEL SIGN REVERSED II
+        ('\u{0F81}', &['\u{0F71}', '\u{0F80}']),
+        // NFKD and UTS 46 only
+        (Self::HALF_WIDTH_VOICED_SOUND_MARK, &['\u{3099}']),
+        // NFKD and UTS 46 only
+        (Self::HALF_WIDTH_SEMI_VOICED_SOUND_MARK, &['\u{309A}']),
+    ];
+
+    /// Trie value of Hangul syllables, which are decomposed algorithmically.
+    pub const HANGUL_SYLLABLE_MARKER: u32 = 1;
+
+    /// Low half of the trie value for U+FDFA in NFKD, whose decomposition is too long to
+    /// be stored in the tables. Deliberately unified with
+    /// [`Self::HANGUL_SYLLABLE_MARKER`], but differs from it by
+    /// [`Self::NON_ROUND_TRIP_MARKER`].
+    pub const FDFA_MARKER: u16 = 1;
+
+    /// The tail (everything after the first character) of the NFKD form of U+FDFA as
+    /// 16-bit units.
+    pub const FDFA_NFKD: [u16; 17] = [
+        0x644, 0x649, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x639, 0x644, 0x64A, 0x647, 0x20,
+        0x648, 0x633, 0x644, 0x645,
+    ];
+
+    /// ANGSTROM SIGN, which never uses the inline two-character form, and whose
+    /// non-recursive decomposition is hard-coded.
+    pub const ANGSTROM_SIGN: char = '\u{212B}';
+
+    /// Shift of the trailing non-starter in the inline two-character form.
+    pub const PAIR_TRAIL_SHIFT: u32 = 15;
+
+    /// Mask of a character in the inline two-character form.
+    pub const PAIR_CHAR_MASK: u32 = 0x7FFF;
+
+    /// Mask of the length bits of a complex decomposition.
+    pub const COMPLEX_LENGTH_MASK: u32 = 0b1111;
+
+    /// Marker that all trailing characters of a complex decomposition are non-starters.
+    pub const COMPLEX_ONLY_NON_STARTERS_IN_TRAIL_MARKER: u32 = 0b10000;
+
+    /// Shift of the (one-based) offset of a complex decomposition.
+    pub const COMPLEX_OFFSET_SHIFT: u32 = 16;
+}
+
 /// The expansion tables for cases where the decomposition isn't
 /// contained in the trie value
 ///
@@ -163,6 +269,12 @@ icu_provider::data_struct!(
     DecompositionTables<'_>,
     #[cfg(feature = "datagen")]
 );
+
+impl DecompositionTables<'_> {
+    /// The maximum combined length of the NFD and supplementary (NFKD) tables, as
+    /// limited by the offset bits of complex decompositions in [`DecompositionData`].
+    pub const MAX_COMBINED_LEN: usize = 0xFFF;
+}
 
 /// Non-Hangul canonical compositions
 ///
@@ -214,3 +326,9 @@ icu_provider::data_struct!(
     NonRecursiveDecompositionSupplement<'_>,
     #[cfg(feature = "datagen")]
 );
+
+impl NonRecursiveDecompositionSupplement<'_> {
+    /// Characters with oxia, which are always included in the supplement in order to
+    /// catch singleton decompositions to the corresponding characters with tonos.
+    pub const OXIA_RANGE: core::ops::RangeInclusive<char> = '\u{1F71}'..='\u{1FFB}';
+}
