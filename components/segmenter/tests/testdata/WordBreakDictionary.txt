@@ -56,8 +56,18 @@ COVID|-|19| |ระบาด
 กรุงเทพฯ| |เป็น|เมือง|หลวง|ของ|ประเทศไทย
 
 # Thai
-# ICU4C glues Latin script to Thai; ICU4X separates.
-a|ภาษา|ไทย|ภาษา|ไทย|b
+# Latin letters attach to Thai letters, like in ICU4C.
+aภาษา|ไทย|ภาษา|ไทยb
+# Thai runs are subject to the word break rules at their boundaries,
+# with Thai letters treated as ALetter. These match ICU4C (ICU 79).
+พ.ศ
+ค.ศ
+พ.ศ|.| |๒๕๖๙
+ภาษา|ไทย123ภาษา
+ภาษา๑๒ไทย
+ก\u{AD}ข
+ก\u{200D}ข
+ภาษา|ไทย\u{AD}ภาษา
 
 # Myanmar
 # From css/css-text/word-break/word-break-normal-my-000.html
@@ -68,6 +78,17 @@ a|ภาษา|ไทย|ภาษา|ไทย|b
 Welcome|龟山岛|龟山岛|Welcome
 龟山岛|龟山岛
 エディター|エディ
+カタカナ_|かな
+
+# Korean
+# Hangul syllables are not segmented with the dictionary. They only chain with
+# each other, like in ICU4C (ICU 79).
+한국어
+한국어|漢字
+漢字|한국어
+한국어| |문장입니다
+abc|한국어
+한국어|123
 
 # Mixed scripts
 ภาษา|ไทย|龟山岛
