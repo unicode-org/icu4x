@@ -6,8 +6,8 @@
     0,
     0,
     4,
-    4,
-    5
+    5,
+    6
   ],
   "elements": [
     {
@@ -33,6 +33,14 @@
     {
       "header": 104,
       "patterns": [
+        "G MMMM–MMMM y",
+        "G MMMM y – MMMM y",
+        "G MMMM y"
+      ]
+    },
+    {
+      "header": 104,
+      "patterns": [
         "G MMM–MMM y",
         "G MMM y – MMM y",
         "G MMM y"
@@ -41,9 +49,9 @@
     {
       "header": 104,
       "patterns": [
-        "GGGGG MM.y – MM.y",
+        "GGG MM.y – MM.y",
         "G MM.y – MM.y",
-        "GGGGG MM.y"
+        "GGG MM.y"
       ]
     }
   ]

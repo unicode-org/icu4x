@@ -13,20 +13,18 @@
     {
       "header": 4,
       "patterns": [
-        "MMMM"
+        "LLLL"
       ]
     },
     {
       "header": 4,
       "patterns": [
-        "MMM"
+        "LLL"
       ]
     },
     {
-      "header": 4,
-      "patterns": [
-        "M月"
-      ]
+      "header": 0,
+      "patterns": []
     }
   ]
 }

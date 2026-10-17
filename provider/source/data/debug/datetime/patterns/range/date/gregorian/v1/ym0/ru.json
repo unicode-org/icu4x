@@ -6,8 +6,8 @@
     0,
     0,
     4,
-    4,
-    5
+    5,
+    6
   ],
   "elements": [
     {
@@ -28,6 +28,14 @@
       "header": 32,
       "patterns": [
         "MM.y—MM.y"
+      ]
+    },
+    {
+      "header": 104,
+      "patterns": [
+        "LLLL — LLLL y г. G",
+        "LLLL y г. — LLLL y г. G",
+        "LLLL y г. G"
       ]
     },
     {

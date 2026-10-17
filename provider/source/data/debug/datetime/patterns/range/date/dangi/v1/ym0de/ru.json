@@ -12,8 +12,8 @@
     {
       "header": 24,
       "patterns": [
-        "U MMM d, E – MMM d, E",
-        "U MMM d, E"
+        "U MMMM d, EEEE – MMMM d, EEEE",
+        "U MMMM d, EEEE"
       ]
     },
     {

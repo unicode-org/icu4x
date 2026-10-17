@@ -6,17 +6,17 @@
     0,
     0,
     0,
-    1,
-    4
+    4,
+    5
   ],
   "elements": [
     {
       "header": 106,
       "patterns": [
-        "d – d MMM G y",
-        "d MMM – d MMM G y",
-        "d MMM G y – d MMM y",
-        "d MMM G y"
+        "d – d MMMM G y",
+        "d MMMM – d MMMM G y",
+        "d MMMM G y – d MMMM y",
+        "d MMMM G y"
       ]
     },
     {
@@ -34,9 +34,18 @@
       ]
     },
     {
+      "header": 106,
+      "patterns": [
+        "d – d MMM G y",
+        "d MMM – d MMM G y",
+        "d MMM G y – d MMM y",
+        "d MMM G y"
+      ]
+    },
+    {
       "header": 64,
       "patterns": [
-        "d/MM/GGGGG y"
+        "d/MM/GGG y"
       ]
     }
   ]

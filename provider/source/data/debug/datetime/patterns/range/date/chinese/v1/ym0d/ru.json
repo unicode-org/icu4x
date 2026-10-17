@@ -12,9 +12,9 @@
     {
       "header": 26,
       "patterns": [
-        "U MMM d–d",
-        "U MMM d – MMM d",
-        "U MMM d"
+        "U MMMM d–d",
+        "U MMMM d – MMMM d",
+        "U MMMM d"
       ]
     },
     {

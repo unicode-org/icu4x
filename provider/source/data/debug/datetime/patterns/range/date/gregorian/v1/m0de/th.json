@@ -13,8 +13,8 @@
     {
       "header": 6,
       "patterns": [
-        "EEEEที่ d – EEEEที่ d MMM",
-        "EEEEที่ d MMM"
+        "EEEEที่ d – EEEEที่ d MMMM",
+        "EEEEที่ d MMMM"
       ]
     },
     {

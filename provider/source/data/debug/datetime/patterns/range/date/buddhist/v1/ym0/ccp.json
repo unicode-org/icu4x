@@ -1,4 +1,5 @@
 {
+  "has_explicit_medium": true,
   "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
@@ -12,6 +13,14 @@
     {
       "header": 168,
       "patterns": [
+        "G y MMMM–MMMM",
+        "G y MMMM – y MMMM",
+        "G y MMMM – G y MMMM"
+      ]
+    },
+    {
+      "header": 168,
+      "patterns": [
         "G y MMM–MMM",
         "G y MMM – y MMM",
         "G y MMM – G y MMM"
@@ -20,8 +29,8 @@
     {
       "header": 160,
       "patterns": [
-        "G y-MM – y-MM",
-        "G y-MM – G y-MM"
+        "GGGGG y-MM – y-MM",
+        "GGGGG y-MM – GGGGG y-MM"
       ]
     }
   ]

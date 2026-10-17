@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::semantic_skeletons::{gen_date_components, gen_time_components};
+use super::semantic_skeletons::{gen_date_components, gen_time_components, replace_field};
 use super::{DatagenCalendar, PackedPatternItem};
 use crate::source::source_issue;
 use crate::{
@@ -94,6 +94,24 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
         // Maybe we can steal overrides from date formatting patterns if needed in the future.
     }
 
+    /// Makes every range pattern formattable with the names of the single pattern.
+    ///
+    /// A range formatter loads names for the single pattern of the requested length and
+    /// nothing else, so a range pattern that needs other names would be formatted with a
+    /// placeholder. CLDR is not consistent here: a range pattern often uses a different
+    /// width or context of the same field than the single pattern (`MMM` where the single
+    /// pattern has `MMMM`, `M` where it has `L`, see CLDR-14207), or comes from the closest
+    /// skeleton and has fields that the requested skeleton does not.
+    ///
+    /// The single pattern wins:
+    /// - a field of the same kind (text and text, or numeric and numeric) is replaced by the
+    ///   field that is already loaded;
+    /// - when text and numeric cross, or the pattern needs names that the single pattern does
+    ///   not load, only that pattern is dropped. A difference without a pattern uses the
+    ///   next larger field, and without any the glue pattern, which formats two single
+    ///   patterns and always works.
+    ///
+    /// This can be removed, or turned into a plain warning, once CLDR is consistent.
     fn enforce_consistency(
         &mut self,
         names: &mut icu::datetime::pattern::FixedCalendarDateTimeNames<()>,
@@ -102,27 +120,60 @@ impl<'a> PackedPatternItem for PatternsByGreatestDifference<'a> {
         attributes: &DataMarkerAttributes,
     ) {
         use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
-        use icu::datetime::provider::fields::Field;
+        use icu_provider_adapters::empty::EmptyDataProvider;
+
+        let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
+        let attributes = attributes.as_str();
+        let header = self.header;
+        // One pattern for each field that is present, in the order of the field index.
+        let mut present =
+            (0..4).filter(|&i| !matches!(header.get_state(i), RangeStructure::Absent));
+        let mut new_header = header;
+        let mut kept: Vec<Pattern<'static>> = Vec::new();
 
         for pattern in self.patterns.iter() {
-            let runtime_pattern = Pattern::zero_from(pattern);
-            let dt_pattern = DateTimePattern::from(runtime_pattern);
-            if let Err(e) = names.load_for_pattern(&DebugProvider, &dt_pattern)
-                && let PatternLoadError::ConflictingField {
-                    field: requested_field,
+            let field_index = present.next().expect("a pattern for every present field");
+            let mut pattern =
+                Pattern::from(reference::Pattern::from(&Pattern::zero_from(pattern)).into_items());
+            // Each iteration fixes one conflicting field, so this ends.
+            let outcome = loop {
+                let e = match names.load_for_pattern(
+                    &EmptyDataProvider::new(),
+                    &DateTimePattern::from(pattern.clone()),
+                ) {
+                    Ok(_) => break Ok(()),
+                    Err(e) => e,
+                };
+                let PatternLoadError::ConflictingField {
+                    field,
                     previous_field,
                 } = e
-            {
-                let requested_field = Field::from(requested_field);
-                let previous_field = Field::from(previous_field);
-                let attributes = attributes.as_str();
-                let calendar = calendar.map(|c| c.cldr_name()).unwrap_or("generic");
-                source_issue!(
-                    *locale,
-                    "{calendar}/{attributes}: conflicting field in range pattern: {previous_field} <=> {requested_field}"
-                );
+                else {
+                    // The single pattern does not load what this one needs: the closest
+                    // skeleton has a field that the requested skeleton does not.
+                    break Err(format!("range pattern dropped, names not available: {e:?}"));
+                };
+                let (field, previous_field) = (Field::from(field), Field::from(previous_field));
+                if field.get_length_type() != previous_field.get_length_type() {
+                    // `M月` against `MMM`: the literals around the field depend on the kind,
+                    // so there is no safe rewrite.
+                    break Err(format!(
+                        "range pattern dropped, field kinds differ: {previous_field} <=> {field}"
+                    ));
+                }
+                replace_field(&mut pattern, field, previous_field);
+            };
+            match outcome {
+                Ok(()) => kept.push(pattern),
+                Err(reason) => {
+                    new_header.set_state(field_index, RangeStructure::Absent);
+                    source_issue!(*locale, "{calendar}/{attributes}: {reason}");
+                }
             }
         }
+
+        self.header = new_header;
+        self.patterns = zerovec::VarZeroVec::from(kept.as_slice());
     }
 }
 
@@ -376,14 +427,50 @@ impl SourceDataProvider {
 
         let skeletons_coerced: BTreeMap<Skeleton, PatternsByGreatestDifference<'data>> = skeletons;
 
+        let to_components_bag =
+            |length, attributes: &DataMarkerAttributes, data: &cldr_serde::ca::Dates| {
+                match components_type {
+                    ComponentsType::Time => gen_time_components(length, attributes, data),
+                    ComponentsType::Date => gen_date_components(length, attributes, data),
+                }
+            };
+
+        // A range formatter is built on top of the formatter for the single pattern and loads
+        // names for that pattern only, so a range pattern may only use what the single pattern
+        // of the same length has loaded (see `enforce_consistency` below).
+        let single = self
+            .make_single_skeleton_data(locale, calendar, attributes, to_components_bag)
+            .ok();
+        let single_builder = single.as_ref().map(|single| single.to_builder());
+
         let packed_data = self.make_packed_skeleton_data::<PatternsByGreatestDifference<'data>>(
             locale,
             calendar,
             attributes,
             |_data| skeletons_coerced,
-            |length, attributes, data| match components_type {
-                ComponentsType::Time => gen_time_components(length, attributes, data),
-                ComponentsType::Date => gen_date_components(length, attributes, data),
+            to_components_bag,
+            |length| {
+                use icu::datetime::options::Length;
+                use icu::datetime::pattern::{DateTimePattern, FixedCalendarDateTimeNames};
+                let mut names = FixedCalendarDateTimeNames::<()>::new_without_number_formatting(
+                    Default::default(),
+                );
+                // The formatter loads names for the variant with the most fields.
+                if let Some(builder) = &single_builder {
+                    let lengths = builder.variant1.as_ref().unwrap_or(&builder.standard);
+                    let plural = match length {
+                        Length::Long => &lengths.long,
+                        Length::Medium => &lengths.medium,
+                        _ => &lengths.short,
+                    };
+                    if let Some(pattern) = plural.clone().try_into_other() {
+                        // Cannot fail: names for the single pattern were already
+                        // validated when the single data was generated.
+                        let _ =
+                            names.load_for_pattern(&DebugProvider, &DateTimePattern::from(pattern));
+                    }
+                }
+                names
             },
         )?;
 

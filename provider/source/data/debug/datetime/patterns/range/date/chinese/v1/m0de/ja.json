@@ -10,11 +10,8 @@
   ],
   "elements": [
     {
-      "header": 6,
-      "patterns": [
-        "MMMd日(E)～d日(E)",
-        "MMMd日(E)"
-      ]
+      "header": 0,
+      "patterns": []
     },
     {
       "header": 4,

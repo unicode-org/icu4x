@@ -1,4 +1,5 @@
 {
+  "has_explicit_medium": true,
   "variant_pattern_indices": [
     0,
     0,
@@ -8,6 +9,12 @@
     0
   ],
   "elements": [
+    {
+      "header": 16,
+      "patterns": [
+        "y-MM-dd, EEEE"
+      ]
+    },
     {
       "header": 16,
       "patterns": [

@@ -1,4 +1,5 @@
 {
+  "has_explicit_medium": true,
   "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
@@ -12,16 +13,24 @@
     {
       "header": 104,
       "patterns": [
-        "ccc, d MMM — ccc, d MMM y г. G",
-        "ccc, d MMM y — ccc, d MMM y гг. G",
-        "ccc, d MMM y г. G"
+        "EEEE, d MMMM — EEEE, d MMMM y г. G",
+        "EEEE, d MMMM y — EEEE, d MMMM y гг. G",
+        "EEEE, d MMMM y г. G"
+      ]
+    },
+    {
+      "header": 104,
+      "patterns": [
+        "EEE, d MMM — EEE, d MMM y г. G",
+        "EEE, d MMM y — EEE, d MMM y гг. G",
+        "EEE, d MMM y г. G"
       ]
     },
     {
       "header": 96,
       "patterns": [
-        "ccc, dd.MM.y — ccc, dd.MM.y G",
-        "ccc, dd.MM.y G"
+        "EEE, dd.MM.y — EEE, dd.MM.y G",
+        "EEE, dd.MM.y G"
       ]
     }
   ]

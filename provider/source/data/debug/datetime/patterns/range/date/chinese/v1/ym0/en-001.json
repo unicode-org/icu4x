@@ -18,11 +18,8 @@
       ]
     },
     {
-      "header": 24,
-      "patterns": [
-        "MMM – MMM U",
-        "MMM U"
-      ]
+      "header": 0,
+      "patterns": []
     },
     {
       "header": 16,

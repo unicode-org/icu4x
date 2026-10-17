@@ -1,14 +1,23 @@
 {
+  "has_explicit_medium": true,
   "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
     0,
     0,
-    3,
-    3,
-    4
+    4,
+    5,
+    6
   ],
   "elements": [
+    {
+      "header": 26,
+      "patterns": [
+        "MMMM d–d, y",
+        "MMMM d – MMMM d, y",
+        "MMMM d, y"
+      ]
+    },
     {
       "header": 26,
       "patterns": [
@@ -21,6 +30,15 @@
       "header": 16,
       "patterns": [
         "M/d/y"
+      ]
+    },
+    {
+      "header": 106,
+      "patterns": [
+        "MMMM d – d, y G",
+        "MMMM d – MMMM d, y G",
+        "MMMM d, y – MMMM d, y G",
+        "MMMM d, y G"
       ]
     },
     {

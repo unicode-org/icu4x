@@ -83,7 +83,6 @@ fn enforce_consistent_field_length(
 ) {
     use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
     use icu::datetime::provider::fields::Field;
-    use icu::datetime::provider::pattern::PatternItem;
     // We need to fix conflicting field errors. We keep checking until we can
     // load data for a pattern without errors. Each evaluation of the loop will
     // reduce the number of errors by 1.
@@ -98,19 +97,27 @@ fn enforce_consistent_field_length(
             panic!("only know how to fix ConflictingField, but got: {e:?}")
         };
         log_fn(previous_field, requested_field);
-        let requested_field = Field::from(requested_field);
-        let previous_field = Field::from(previous_field);
-        let mut pattern_items = reference::Pattern::from(&*pattern).into_items();
-        for pattern_item in pattern_items.iter_mut() {
-            let PatternItem::Field(field) = pattern_item else {
-                continue; // nothing to do: not a Field
-            };
-            if *field == requested_field {
-                *field = previous_field;
-            }
-        }
-        *pattern = runtime::Pattern::from(pattern_items);
+        replace_field(
+            pattern,
+            Field::from(requested_field),
+            Field::from(previous_field),
+        );
     }
+}
+
+/// Replaces every occurrence of the field `from` in the pattern with the field `to`.
+pub(crate) fn replace_field(pattern: &mut runtime::Pattern<'_>, from: Field, to: Field) {
+    use icu::datetime::provider::pattern::PatternItem;
+    let mut pattern_items = reference::Pattern::from(&*pattern).into_items();
+    for pattern_item in pattern_items.iter_mut() {
+        let PatternItem::Field(field) = pattern_item else {
+            continue; // nothing to do: not a Field
+        };
+        if *field == from {
+            *field = to;
+        }
+    }
+    *pattern = runtime::Pattern::from(pattern_items);
 }
 
 pub(crate) struct SemanticSkeletonsContext<'a> {
@@ -226,8 +233,8 @@ impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Patt
 }
 
 impl SourceDataProvider {
-    fn load_datetime_skeletons_key<'data, M>(
-        &'data self,
+    fn load_datetime_skeletons_key<M>(
+        &self,
         req: DataRequest,
         calendar: Option<DatagenCalendar>,
         to_components_bag: impl Fn(
@@ -241,14 +248,37 @@ impl SourceDataProvider {
         Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
-        // let neo_components = from_id_str(req.id.marker_attributes)
-        //     .expect("Skeleton data provider called with unknown skeleton");
-        let packed_skeleton_data = self.make_packed_skeleton_data::<PatternsWithDistance<
-            PluralElements<runtime::Pattern<'data>>,
-        >>(
+        let packed_skeleton_data = self.make_single_skeleton_data(
             req.id.locale,
             calendar,
             req.id.marker_attributes,
+            to_components_bag,
+        )?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(packed_skeleton_data),
+        })
+    }
+
+    /// The date or time patterns of one skeleton for a locale, as shown by a formatter
+    /// without a range.
+    pub(crate) fn make_single_skeleton_data<'data>(
+        &'data self,
+        locale: &DataLocale,
+        calendar: Option<DatagenCalendar>,
+        attributes: &DataMarkerAttributes,
+        to_components_bag: impl Fn(
+            Length,
+            &DataMarkerAttributes,
+            &cldr_serde::ca::Dates,
+        ) -> components::Bag,
+    ) -> Result<PackedPatterns<'static>, DataError> {
+        self.make_packed_skeleton_data::<PatternsWithDistance<
+            PluralElements<runtime::Pattern<'data>>,
+        >>(
+            locale,
+            calendar,
+            attributes,
             |data| {
                 // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
                 let length_combinations_v1 = convert_length_patterns(
@@ -265,11 +295,11 @@ impl SourceDataProvider {
                 }
             },
             to_components_bag,
-        )?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(packed_skeleton_data),
-        })
+            // A single pattern is only checked against itself.
+            |_length| {
+                FixedCalendarDateTimeNames::<()>::new_without_number_formatting(Default::default())
+            },
+        )
     }
 
     pub(crate) fn make_packed_skeleton_data<'data, T>(
@@ -283,6 +313,8 @@ impl SourceDataProvider {
             &DataMarkerAttributes,
             &cldr_serde::ca::Dates,
         ) -> components::Bag,
+        // The names that are already loaded when the patterns of `length` are checked.
+        init_names: impl Fn(Length) -> FixedCalendarDateTimeNames<()>,
     ) -> Result<GenericPackedPatterns<'static, T::Ule>, DataError>
     where
         T: PackedPatternItem,
@@ -290,91 +322,85 @@ impl SourceDataProvider {
         let data = self.get_dates_resource(locale, calendar)?;
         let context = create_context(data);
 
-        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
-            .map(|length| {
-                let components = to_components_bag(length, attributes, data);
-                let preferred_hour_cycle = preferred_hour_cycle(data, locale);
-                // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
-                let standard = select_pattern::<T>(&context, components, preferred_hour_cycle);
+        let [long, medium, short] = [Length::Long, Length::Medium, Length::Short].map(|length| {
+            let components = to_components_bag(length, attributes, data);
+            let preferred_hour_cycle = preferred_hour_cycle(data, locale);
+            // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
+            let standard = select_pattern::<T>(&context, components, preferred_hour_cycle);
 
-                let mut variant_patterns = match components {
-                    components::Bag {
-                        era: None,
-                        year: Some(_),
-                        ..
-                    } => {
-                        // TODO(#4478): Use CLDR data when it becomes available
-                        // TODO: Set the length to _markerSkeletonLength? Or not, because
-                        // the era should normally be displayed as short?
-                        let mut components_with_full_year = components;
-                        components_with_full_year.year = Some(components::Year::Numeric);
-                        let mut components_with_era = components_with_full_year;
-                        components_with_era.era = Some(components::Text::Short);
-                        Trio {
-                            standard,
-                            variant0: Some(select_pattern::<T>(
-                                &context,
-                                components_with_full_year,
-                                preferred_hour_cycle,
-                            )),
-                            variant1: Some(select_pattern::<T>(
-                                &context,
-                                components_with_era,
-                                preferred_hour_cycle,
-                            )),
-                        }
-                    }
-                    components::Bag { hour: Some(_), .. } => {
-                        let mut components_with_minute = components;
-                        components_with_minute.minute = Some(components::Numeric::Numeric);
-                        let mut components_with_second = components;
-                        components_with_second.minute = Some(components::Numeric::Numeric);
-                        components_with_second.second = Some(components::Numeric::Numeric);
-                        Trio {
-                            standard,
-                            variant0: Some(select_pattern::<T>(
-                                &context,
-                                components_with_minute,
-                                preferred_hour_cycle,
-                            )),
-                            variant1: Some(select_pattern::<T>(
-                                &context,
-                                components_with_second,
-                                preferred_hour_cycle,
-                            )),
-                        }
-                    }
-                    _ => Trio {
+            let mut variant_patterns = match components {
+                components::Bag {
+                    era: None,
+                    year: Some(_),
+                    ..
+                } => {
+                    // TODO(#4478): Use CLDR data when it becomes available
+                    // TODO: Set the length to _markerSkeletonLength? Or not, because
+                    // the era should normally be displayed as short?
+                    let mut components_with_full_year = components;
+                    components_with_full_year.year = Some(components::Year::Numeric);
+                    let mut components_with_era = components_with_full_year;
+                    components_with_era.era = Some(components::Text::Short);
+                    Trio {
                         standard,
-                        variant0: None,
-                        variant1: None,
-                    },
-                };
+                        variant0: Some(select_pattern::<T>(
+                            &context,
+                            components_with_full_year,
+                            preferred_hour_cycle,
+                        )),
+                        variant1: Some(select_pattern::<T>(
+                            &context,
+                            components_with_era,
+                            preferred_hour_cycle,
+                        )),
+                    }
+                }
+                components::Bag { hour: Some(_), .. } => {
+                    let mut components_with_minute = components;
+                    components_with_minute.minute = Some(components::Numeric::Numeric);
+                    let mut components_with_second = components;
+                    components_with_second.minute = Some(components::Numeric::Numeric);
+                    components_with_second.second = Some(components::Numeric::Numeric);
+                    Trio {
+                        standard,
+                        variant0: Some(select_pattern::<T>(
+                            &context,
+                            components_with_minute,
+                            preferred_hour_cycle,
+                        )),
+                        variant1: Some(select_pattern::<T>(
+                            &context,
+                            components_with_second,
+                            preferred_hour_cycle,
+                        )),
+                    }
+                }
+                _ => Trio {
+                    standard,
+                    variant0: None,
+                    variant1: None,
+                },
+            };
 
-                // Because we infer the field lengths from the stock date format
-                // skeletons, we will inherit the numbering system override from
-                // the stock patterns. This is non-standard behavior! See:
-                // <https://unicode-org.atlassian.net/browse/CLDR-19423>
-                let lp = match length {
-                    Length::Long => &data.date_formats.long,
-                    Length::Medium => &data.date_formats.medium,
-                    Length::Short => &data.date_formats.short,
-                    _ => unreachable!(),
-                };
-                for variant in variant_patterns.iter_in_quality_order_mut(|v| v.match_quality()) {
-                    variant.apply_numeric_overrides(lp);
-                }
-                variant_patterns
-            })
-            .map(|mut trio| {
-                let mut names = FixedCalendarDateTimeNames::<()>::new_without_number_formatting(
-                    Default::default(),
-                );
-                for variant in trio.iter_in_quality_order_mut(|v| v.match_quality()) {
-                    variant.enforce_consistency(&mut names, locale, calendar, attributes);
-                }
-                trio
-            });
+            // Because we infer the field lengths from the stock date format
+            // skeletons, we will inherit the numbering system override from
+            // the stock patterns. This is non-standard behavior! See:
+            // <https://unicode-org.atlassian.net/browse/CLDR-19423>
+            let lp = match length {
+                Length::Long => &data.date_formats.long,
+                Length::Medium => &data.date_formats.medium,
+                Length::Short => &data.date_formats.short,
+                _ => unreachable!(),
+            };
+            for variant in variant_patterns.iter_in_quality_order_mut(|v| v.match_quality()) {
+                variant.apply_numeric_overrides(lp);
+            }
+            let mut names = init_names(length);
+            for variant in variant_patterns.iter_in_quality_order_mut(|v| v.match_quality()) {
+                variant.enforce_consistency(&mut names, locale, calendar, attributes);
+            }
+            variant_patterns
+        });
 
         let trios = GenericLengthElements {
             long: long.map(|x| x.finalize_item()),

@@ -12,9 +12,9 @@
     {
       "header": 26,
       "patterns": [
-        "d–d MMM y",
-        "d MMM – d MMM y",
-        "d MMM y"
+        "d–d MMMM y",
+        "d MMMM – d MMMM y",
+        "d MMMM y"
       ]
     },
     {
@@ -26,18 +26,18 @@
     {
       "header": 106,
       "patterns": [
-        "d–d MMM y G",
-        "d MMM – d MMM y G",
-        "d MMM y – d MMM y G",
-        "d MMM y G"
+        "d–d MMMM y G",
+        "d MMMM – d MMMM y G",
+        "d MMMM y – d MMMM y G",
+        "d MMMM y G"
       ]
     },
     {
       "header": 98,
       "patterns": [
-        "d-MM-y – d-MM-y GGGG",
-        "dd-MM-y – dd-MM-y GGGG",
-        "dd-MM-y GGGG"
+        "d-MM-y – d-MM-y GGG",
+        "dd-MM-y – dd-MM-y GGG",
+        "dd-MM-y GGG"
       ]
     }
   ]

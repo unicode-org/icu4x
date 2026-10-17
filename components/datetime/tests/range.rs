@@ -392,11 +392,10 @@ fn test_date_range_ej() {
 /// Single date pattern is "y年M月d日" (numeric month 'M').
 /// Single `DateTimeFormatter` only loads numeric month data, not abbreviated month names ("MMM").
 /// But range pattern falls back to `root` (`und`), which specifies "y MMM d–d".
-/// When executing the `root` pattern, `FormattedSingleSide` fails with `NamesNotLoaded`.
-#[cfg(debug_assertions)]
+/// Datagen makes the range patterns use the names of the single pattern, and where text and
+/// numeric months cross it drops them, so the glue pattern is used and no name is missing.
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
-fn test_root_fallback_names_not_loaded_zh() {
+fn test_range_names_consistent_zh() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
@@ -414,16 +413,17 @@ fn test_root_fallback_names_not_loaded_zh() {
 
     let fmt_zh =
         DateRangeFormatter::try_new(locale!("zh").into(), fieldsets::YMD::medium()).unwrap();
-    let _ = fmt_zh.format(&start, &end_day).to_string();
+    assert_writeable_eq!(
+        fmt_zh.format(&start, &end_day),
+        "2023年12月22日 – 2023年12月23日"
+    );
 }
 
 /// Spanish with Hebrew calendar (es-u-ca-hebrew) and `YMD::long()`:
 /// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
 /// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
-#[cfg(debug_assertions)]
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
-fn test_root_fallback_names_not_loaded_es_hebrew() {
+fn test_range_names_consistent_es_hebrew() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
@@ -442,16 +442,17 @@ fn test_root_fallback_names_not_loaded_es_hebrew() {
     let fmt_es_hebrew =
         DateRangeFormatter::try_new(locale!("es-u-ca-hebrew").into(), fieldsets::YMD::long())
             .unwrap();
-    let _ = fmt_es_hebrew.format(&start, &end_day).to_string();
+    assert_writeable_eq!(
+        fmt_es_hebrew.format(&start, &end_day),
+        "10–11 de tevet de 5784 AM"
+    );
 }
 
 /// German with Buddhist calendar (de-u-ca-buddhist) and `YMD::long()`:
 /// Single `DateTimeFormatter` for `YMD::long()` loads full month names ("MMMM"), but range pattern
 /// falls back to `root` (`und`), which uses abbreviated month names ("MMM").
-#[cfg(debug_assertions)]
 #[test]
-#[should_panic(expected = "unexpected error in FormattedSingleSide: NamesNotLoaded")]
-fn test_root_fallback_names_not_loaded_de_buddhist() {
+fn test_range_names_consistent_de_buddhist() {
     use icu_calendar::Date;
     use icu_datetime::fieldsets;
     use icu_datetime::input::{DateTime, Time};
@@ -470,7 +471,10 @@ fn test_root_fallback_names_not_loaded_de_buddhist() {
     let fmt_de_buddhist =
         DateRangeFormatter::try_new(locale!("de-u-ca-buddhist").into(), fieldsets::YMD::long())
             .unwrap();
-    let _ = fmt_de_buddhist.format(&start, &end_day).to_string();
+    assert_writeable_eq!(
+        fmt_de_buddhist.format(&start, &end_day),
+        "BE 2566 Dezember 22–23"
+    );
 }
 
 #[test]
@@ -752,5 +756,78 @@ fn test_step_5_single_date_fallback() {
     assert_writeable_eq!(
         fmt_ymdt_hm.format(&dt_1, &dt_3),
         "Dec 1, 2023, 9:30\u{202f}AM\u{2009}–\u{2009}5:30\u{202f}PM"
+    );
+}
+
+/// Fields that are not part of the field set must not influence a range: a dynamic field set
+/// receives all fields of the input (including the zone), a typed one only its own.
+/// <https://github.com/unicode-org/icu4x/issues/8382>
+#[test]
+fn test_range_ignores_fields_outside_the_field_set() {
+    use icu_datetime::fieldsets::enums::{CompositeFieldSet, DateFieldSet};
+    use icu_time::{ZonedDateTime, zone::IanaParser};
+
+    let zoned = |s: &str| {
+        ZonedDateTime::try_lenient_from_str(s, icu_calendar::Iso, IanaParser::new()).unwrap()
+    };
+
+    // The zone differs between start and end, but the field set has no zone.
+    let ymd = DateRangeFormatter::try_new(
+        locale!("th-u-ca-buddhist").into(),
+        CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium())),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymd.format(
+            &zoned("2023-12-22T09:00:00+00:00[Etc/UTC]"),
+            &zoned("2023-12-23T17:00:00+00:00[Etc/UTC]")
+        ),
+        "22–23 ธ.ค. 2566"
+    );
+
+    // Only the year differs, and the field set has no year.
+    let md = DateRangeFormatter::try_new(
+        locale!("en").into(),
+        CompositeFieldSet::Date(DateFieldSet::MD(fieldsets::MD::long())),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        md.format(
+            &zoned("2022-12-22T09:00:00+00:00[Etc/UTC]"),
+            &zoned("2023-12-22T09:00:00+00:00[Etc/UTC]")
+        ),
+        "December 22"
+    );
+}
+
+/// A weekday-only field set differs when the weekday differs.
+#[test]
+fn test_range_weekday_only() {
+    let start = Date::try_new_gregorian(2023, 12, 22).unwrap();
+    let next_day = Date::try_new_gregorian(2023, 12, 23).unwrap();
+    let next_week = Date::try_new_gregorian(2023, 12, 29).unwrap();
+    let fmt = DateRangeFormatter::try_new(locale!("en").into(), fieldsets::E::long()).unwrap();
+    assert_writeable_eq!(
+        fmt.format(&start, &next_day),
+        "Friday\u{2009}–\u{2009}Saturday"
+    );
+    assert_writeable_eq!(fmt.format(&start, &next_week), "Friday");
+}
+
+/// The range pattern of CLDR has `MMM` where the single pattern has `MMMM`: the range uses the
+/// month width of the single pattern. <https://github.com/unicode-org/icu4x/issues/8533>
+#[test]
+fn test_range_uses_month_width_of_single_pattern() {
+    let start = Date::try_new_gregorian(2023, 12, 22).unwrap();
+    let end = Date::try_new_gregorian(2023, 12, 23).unwrap();
+    let next_month = Date::try_new_gregorian(2024, 1, 5).unwrap();
+    let fmt = DateRangeFormatter::try_new(locale!("en").into(), fieldsets::YMD::long()).unwrap();
+    assert_writeable_eq!(
+        fmt.format(&start, &end),
+        "December 22\u{2009}–\u{2009}23, 2023"
+    );
+    assert_writeable_eq!(
+        fmt.format(&start, &next_month),
+        "December 22, 2023\u{2009}–\u{2009}January 5, 2024"
     );
 }

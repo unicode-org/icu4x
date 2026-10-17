@@ -21,8 +21,8 @@
     {
       "header": 96,
       "patterns": [
-        "GGGGGy/MM/dd～y/MM/dd",
-        "GGGGGy/MM/dd"
+        "GGGy/MM/dd～y/MM/dd",
+        "GGGy/MM/dd"
       ]
     }
   ]
