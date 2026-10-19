@@ -40,12 +40,7 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
     let mut peek = *cursor;
     // Peek position + 1 to check for critical flag.
     let _ = peek.next()?;
-    let critical = peek.check(is_critical_flag)?.ok_or(ParseError::AbruptEnd {
-        location: "AmbiguousAnnotation",
-    })?;
-
-    // Advance cursor if critical flag present.
-    peek.advance_if(critical);
+    let _ = peek.next_if(is_critical_flag)?;
 
     let leading_char = peek.next_or(ParseError::AbruptEnd {
         location: "AmbiguousAnnotation",
@@ -82,8 +77,7 @@ fn parse_tz_annotation<'a, T: EncodingType>(
         AnnotationOpen
     );
 
-    let critical = cursor.check_or(false, is_critical_flag)?;
-    cursor.advance_if(critical);
+    let critical = cursor.next_if(is_critical_flag)?.is_some();
 
     let tz = parse_time_zone(cursor)?;
 
@@ -144,8 +138,7 @@ pub(crate) fn parse_tz_iana_name<'a, T: EncodingType>(
 pub(crate) fn parse_date_time_utc_offset<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<UtcOffsetRecordOrZ> {
-    if cursor.check_or(false, is_utc_designator)? {
-        cursor.advance();
+    if cursor.next_if(is_utc_designator)?.is_some() {
         return Ok(UtcOffsetRecordOrZ::Z);
     }
 
@@ -164,10 +157,9 @@ pub(crate) fn parse_utc_offset<T: EncodingType>(
         return Ok(UtcOffsetRecord::MinutePrecision(minute_precision_offset));
     }
 
-    if Some(separated) != cursor.check(is_time_separator)? {
+    if separated != cursor.next_if(is_time_separator)?.is_some() {
         return Err(ParseError::UtcTimeSeparator);
     }
-    cursor.advance_if(cursor.check_or(false, is_time_separator)?);
 
     let second = parse_minute_second(cursor, false)?;
 
@@ -217,8 +209,7 @@ pub(crate) fn parse_utc_offset_minute_precision<T: EncodingType>(
         return Ok((offset, false));
     }
     // Advance cursor beyond any TimeSeparator
-    let separated = cursor.check_or(false, is_time_separator)?;
-    cursor.advance_if(separated);
+    let separated = cursor.next_if(is_time_separator)?.is_some();
 
     let minute = parse_minute_second(cursor, false)?;
 

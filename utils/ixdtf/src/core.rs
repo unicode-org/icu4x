@@ -65,7 +65,7 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
     /// Returns `Cursor`'s current char and advances to the next position.
     pub(crate) fn next(&mut self) -> ParserResult<Option<u8>> {
         let result = self.current();
-        self.advance_n(1);
+        self.pos += 1;
         result
     }
 
@@ -105,23 +105,6 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
     /// A utility next method that returns an [`ParseError::AbruptEnd`] error if invalid.
     pub(crate) fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
         self.next()?.ok_or(err)
-    }
-
-    /// Advances the cursor's position by n code points.
-    pub(crate) fn advance_n(&mut self, n: usize) {
-        self.pos += n;
-    }
-
-    // Advances the cursor by 1 code point.
-    pub(crate) fn advance(&mut self) {
-        self.advance_n(1)
-    }
-
-    /// Utility function to advance when a condition is true
-    pub(crate) fn advance_if(&mut self, condition: bool) {
-        if condition {
-            self.advance();
-        }
     }
 
     /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.

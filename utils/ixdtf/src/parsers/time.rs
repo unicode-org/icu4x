@@ -30,8 +30,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let mut start = *cursor;
-    let designator = cursor.check_or(false, is_time_designator)?;
-    cursor.advance_if(designator);
+    cursor.next_if(is_time_designator)?;
 
     let time = parse_time_record(cursor)?;
 
@@ -107,8 +106,7 @@ pub(crate) fn parse_time_record<T: EncodingType>(
         });
     }
 
-    let separator_present = cursor.check_or(false, is_time_separator)?;
-    cursor.advance_if(separator_present);
+    let separator_present = cursor.next_if(is_time_separator)?.is_some();
 
     let minute = parse_minute_second(cursor, false)?;
 
@@ -121,9 +119,8 @@ pub(crate) fn parse_time_record<T: EncodingType>(
         });
     }
 
-    let second_separator = cursor.check_or(false, is_time_separator)?;
+    let second_separator = cursor.next_if(is_time_separator)?.is_some();
     assert_syntax!(separator_present == second_separator, TimeSeparator);
-    cursor.advance_if(second_separator);
 
     let second = parse_minute_second(cursor, true)?;
 
@@ -176,15 +173,14 @@ pub(crate) fn parse_fraction<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<Option<Fraction>> {
     // Assert that the first char provided is a decimal separator.
-    if !cursor.check_or(false, is_decimal_separator)? {
+    if cursor.next_if(is_decimal_separator)?.is_none() {
         return Ok(None);
     }
-    cursor.next_or(ParseError::FractionPart)?;
 
     let mut value = 0;
     let mut digits: u8 = 0;
-    while cursor.check_or(false, |ch| ch.is_ascii_digit())? {
-        let next_value = u64::from(cursor.next_digit()?.ok_or(ParseError::ImplAssert)?);
+    while let Some(ch) = cursor.next_if(|ch| ch.is_ascii_digit())? {
+        let next_value = u64::from(ch - b'0');
         if digits < 18 {
             value = value * 10 + next_value;
         }

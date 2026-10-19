@@ -76,15 +76,13 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
     let date = parse_date(cursor)?;
 
     // If there is no `DateTimeSeparator`, return date early.
-    if !cursor.check_or(false, is_date_time_separator)? {
+    if cursor.next_if(is_date_time_separator)?.is_none() {
         return Ok(DateTimeRecord {
             date: Some(date),
             time: None,
             time_zone: None,
         });
     }
-
-    cursor.advance();
 
     let time = parse_time_record(cursor)?;
 
@@ -104,17 +102,15 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
 /// Parses `Date` record.
 fn parse_date<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
-    let hyphenated = cursor
-        .check(is_hyphen)?
-        .ok_or(ParseError::AbruptEnd { location: "Date" })?;
-
-    cursor.advance_if(hyphenated);
+    if cursor.current()?.is_none() {
+        return Err(ParseError::AbruptEnd { location: "Date" });
+    }
+    let hyphenated = cursor.next_if(is_hyphen)?.is_some();
 
     let month = parse_date_month(cursor)?;
 
-    let second_hyphen = cursor.check_or(false, is_hyphen)?;
+    let second_hyphen = cursor.next_if(is_hyphen)?.is_some();
     assert_syntax!(hyphenated == second_hyphen, DateSeparator);
-    cursor.advance_if(second_hyphen);
 
     let day = parse_date_day(cursor)?;
 
@@ -159,7 +155,7 @@ pub(crate) fn parse_year_month<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
-    cursor.advance_if(cursor.check_or(false, is_hyphen)?);
+    cursor.next_if(is_hyphen)?;
     let month = parse_date_month(cursor)?;
 
     Ok(DateRecord {
@@ -204,23 +200,23 @@ pub(crate) fn parse_annotated_month_day<'a, T: EncodingType>(
 
 /// Parses a `DateSpecMonthDay`
 pub(crate) fn parse_month_day<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecord> {
-    let hyphenated = cursor.check(is_hyphen)?.ok_or(ParseError::AbruptEnd {
-        location: "MonthDay",
-    })?;
-    cursor.advance_if(hyphenated);
-    let balanced_hyphens = hyphenated
-        && cursor.check(is_hyphen)?.ok_or(ParseError::AbruptEnd {
+    if cursor.current()?.is_none() {
+        return Err(ParseError::AbruptEnd {
             location: "MonthDay",
-        })?;
-    cursor.advance_if(balanced_hyphens);
-
-    if hyphenated && !balanced_hyphens {
-        return Err(ParseError::MonthDayHyphen);
+        });
+    }
+    if cursor.next_if(is_hyphen)?.is_some() {
+        if cursor.current()?.is_none() {
+            return Err(ParseError::AbruptEnd {
+                location: "MonthDay",
+            });
+        }
+        assert_syntax!(cursor.next_if(is_hyphen)?.is_some(), MonthDayHyphen);
     }
 
     let month = parse_date_month(cursor)?;
 
-    cursor.advance_if(cursor.check_or(false, is_hyphen)?);
+    cursor.next_if(is_hyphen)?;
 
     let day = parse_date_day(cursor)?;
 
@@ -247,12 +243,8 @@ fn is_valid_month_day(month: u8, day: u8) -> bool {
 
 #[inline]
 fn parse_date_year<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<i32> {
-    if cursor.check_or(false, is_ascii_sign)? {
-        let sign = if cursor.next_or(ParseError::ImplAssert)? == b'+' {
-            1
-        } else {
-            -1
-        };
+    if let Some(sign_ch) = cursor.next_if(is_ascii_sign)? {
+        let sign = if sign_ch == b'+' { 1 } else { -1 };
 
         let first = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 100_000;
         let second = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 10_000;

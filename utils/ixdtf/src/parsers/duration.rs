@@ -23,13 +23,12 @@ use crate::{
 pub(crate) fn parse_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<DurationParseRecord> {
-    let sign = if cursor.check(is_ascii_sign)?.ok_or(ParseError::AbruptEnd {
-        location: "DurationStart",
-    })? {
-        cursor.next_or(ParseError::ImplAssert)? == b'+'
-    } else {
-        true
-    };
+    if cursor.current()?.is_none() {
+        return Err(ParseError::AbruptEnd {
+            location: "DurationStart",
+        });
+    }
+    let sign = cursor.next_if(is_ascii_sign)?.is_none_or(|ch| ch == b'+');
 
     assert_syntax!(
         is_duration_designator(cursor.next_or(ParseError::AbruptEnd {
@@ -74,16 +73,13 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
     let mut date = DateDurationRecord::default();
     let mut previous_unit = DateUnit::None;
 
-    while cursor.check_or(false, |ch| ch.is_ascii_digit())? {
-        let mut value: u64 = 0;
-        while cursor.check_or(false, |ch| ch.is_ascii_digit())? {
-            let digit = cursor.next_digit()?.ok_or(ParseError::AbruptEnd {
-                location: "DateDuration",
-            })?;
+    while let Some(first_digit) = cursor.next_if(|ch| ch.is_ascii_digit())? {
+        let mut value = u64::from(first_digit - b'0');
+        while let Some(ch) = cursor.next_if(|ch| ch.is_ascii_digit())? {
             value = value
                 .checked_mul(10)
-                .and_then(|v| v.checked_add(u64::from(digit)))
-                .ok_or(ParseError::DurationValueExceededRange)?
+                .and_then(|v| v.checked_add(u64::from(ch - b'0')))
+                .ok_or(ParseError::DurationValueExceededRange)?;
         }
 
         match cursor.next()? {
@@ -140,11 +136,10 @@ enum TimeUnit {
 pub(crate) fn parse_time_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<Option<TimeDurationRecord>> {
-    if !cursor.check_or(false, is_time_designator)? {
+    if cursor.next_if(is_time_designator)?.is_none() {
         return Ok(None);
-    };
+    }
 
-    cursor.advance();
     assert_syntax!(
         cursor.check_or(false, |c| c.is_ascii_digit())?,
         TimeDurationDesignator,
@@ -152,16 +147,13 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
 
     let mut time: (u64, u64, u64, Option<Fraction>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
-    while cursor.check_or(false, |c| c.is_ascii_digit())? {
-        let mut value: u64 = 0;
-        while cursor.check_or(false, |c| c.is_ascii_digit())? {
-            let digit = cursor.next_digit()?.ok_or(ParseError::AbruptEnd {
-                location: "TimeDurationDigit",
-            })?;
+    while let Some(first_digit) = cursor.next_if(|c| c.is_ascii_digit())? {
+        let mut value = u64::from(first_digit - b'0');
+        while let Some(ch) = cursor.next_if(|c| c.is_ascii_digit())? {
             value = value
                 .checked_mul(10)
-                .and_then(|v| v.checked_add(u64::from(digit)))
-                .ok_or(ParseError::DurationValueExceededRange)?
+                .and_then(|v| v.checked_add(u64::from(ch - b'0')))
+                .ok_or(ParseError::DurationValueExceededRange)?;
         }
 
         let fraction = parse_fraction(cursor)?;

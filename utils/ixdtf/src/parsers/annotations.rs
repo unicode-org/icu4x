@@ -98,8 +98,7 @@ fn parse_kv_annotation<'a, T: EncodingType>(
         AnnotationOpen
     );
 
-    let critical = cursor.check_or(false, is_critical_flag)?;
-    cursor.advance_if(critical);
+    let critical = cursor.next_if(is_critical_flag)?.is_some();
 
     // Parse AnnotationKey.
     let annotation_key = parse_annotation_key(cursor)?;
