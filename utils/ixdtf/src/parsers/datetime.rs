@@ -9,7 +9,7 @@ use crate::{
     encoding::EncodingType,
     parsers::{
         annotations,
-        grammar::{is_annotation_open, is_date_time_separator, is_hyphen, is_utc_designator},
+        grammar::{is_date_time_separator, is_hyphen, is_utc_designator},
         time::parse_time_record,
         timezone, Cursor, IxdtfParseRecord,
     },
@@ -43,23 +43,7 @@ pub(crate) fn parse_annotated_date_time<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let date_time = parse_date_time(cursor)?;
-
-    // Peek Annotation presence
-    // Throw error if annotation does not exist and zoned is true, else return.
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-
-        return Ok(IxdtfParseRecord {
-            date: date_time.date,
-            time: date_time.time,
-            offset: date_time.time_zone,
-            tz: None,
-            calendar: None,
-        });
-    }
-
     let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
-
     cursor.close()?;
 
     Ok(IxdtfParseRecord {
@@ -127,18 +111,6 @@ pub(crate) fn parse_annotated_year_month<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let year_month = parse_year_month(cursor)?;
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-
-        return Ok(IxdtfParseRecord {
-            date: Some(year_month),
-            time: None,
-            offset: None,
-            tz: None,
-            calendar: None,
-        });
-    }
-
     let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
     cursor.close()?;
 
@@ -173,19 +145,6 @@ pub(crate) fn parse_annotated_month_day<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let date = parse_month_day(cursor)?;
-
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-
-        return Ok(IxdtfParseRecord {
-            date: Some(date),
-            time: None,
-            offset: None,
-            tz: None,
-            calendar: None,
-        });
-    }
-
     let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
     cursor.close()?;
 

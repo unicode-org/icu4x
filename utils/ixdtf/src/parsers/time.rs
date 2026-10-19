@@ -11,10 +11,7 @@ use crate::{
     encoding::EncodingType,
     parsers::{
         datetime::{parse_month_day, parse_year_month},
-        grammar::{
-            is_annotation_open, is_decimal_separator, is_time_designator, is_time_separator,
-            is_utc_designator,
-        },
+        grammar::{is_decimal_separator, is_time_designator, is_time_separator, is_utc_designator},
         Cursor,
     },
     records::{Annotation, Fraction, IxdtfParseRecord, TimeRecord},
@@ -43,24 +40,10 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
         None
     };
 
-    // Check if annotations exist.
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-        check_time_ambiguity(&mut start)?;
-
-        return Ok(IxdtfParseRecord {
-            date: None,
-            time: Some(time),
-            offset,
-            tz: None,
-            calendar: None,
-        });
-    }
-
-    check_time_ambiguity(&mut start)?;
     let annotations = annotations::parse_annotation_set(cursor, handler)?;
 
     cursor.close()?;
+    check_time_ambiguity(&mut start)?;
 
     Ok(IxdtfParseRecord {
         date: None,

@@ -37,56 +37,48 @@ use crate::{
 pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<Option<TimeZoneAnnotation<'a, T>>> {
-    let mut peek = *cursor;
-    // Peek position + 1 to check for critical flag.
-    let _ = peek.next()?;
-    let _ = peek.next_if(is_critical_flag)?;
+    cursor.speculative_parse(parse_tz_annotation)
+}
 
+fn parse_tz_annotation<'a, T: EncodingType>(
+    cursor: &mut Cursor<'a, T>,
+) -> ParserResult<Option<TimeZoneAnnotation<'a, T>>> {
+    if cursor.next_if(is_annotation_open)?.is_none() {
+        return Ok(None);
+    }
+
+    let critical = cursor.next_if(is_critical_flag)?.is_some();
+
+    // Ambiguous start values when lowercase alpha that is shared between `TzLeadingChar` and `KeyLeadingChar`.
+    let mut peek = *cursor;
     let leading_char = peek.next_or(ParseError::AbruptEnd {
         location: "AmbiguousAnnotation",
     })?;
 
-    // Ambigious start values when lowercase alpha that is shared between `TzLeadingChar` and `KeyLeadingChar`.
     if is_a_key_leading_char(leading_char) {
-        // Go through looking for `=`
-        while let Some(ch) = peek.next()? {
+        // Go through looking for `=` or `]`
+        loop {
+            let ch = peek.next_or(ParseError::AbruptEnd {
+                location: "AmbiguousAnnotation",
+            })?;
             if is_annotation_key_value_separator(ch) {
                 // We have an `=` sign, this is a non-tz annotation
                 return Ok(None);
             } else if is_annotation_close(ch) {
                 // We found a `]` without an `=`, this is a time zone
-                let tz = parse_tz_annotation(cursor)?;
-                return Ok(Some(tz));
+                break;
             }
         }
-        Err(ParseError::AbruptEnd {
-            location: "AmbiguousAnnotation",
-        })
-    } else {
-        // Unambiguously not a non-tz annotation, try parsing a tz annotation
-        let tz = parse_tz_annotation(cursor)?;
-        Ok(Some(tz))
     }
-}
-
-fn parse_tz_annotation<'a, T: EncodingType>(
-    cursor: &mut Cursor<'a, T>,
-) -> ParserResult<TimeZoneAnnotation<'a, T>> {
-    assert_syntax!(
-        is_annotation_open(cursor.next_or(ParseError::AnnotationOpen)?),
-        AnnotationOpen
-    );
-
-    let critical = cursor.next_if(is_critical_flag)?.is_some();
 
     let tz = parse_time_zone(cursor)?;
 
     assert_syntax!(
-        is_annotation_close(cursor.next_or(ParseError::AnnotationClose)?),
+        cursor.next_if(is_annotation_close)?.is_some(),
         AnnotationClose
     );
 
-    Ok(TimeZoneAnnotation { critical, tz })
+    Ok(Some(TimeZoneAnnotation { critical, tz }))
 }
 
 /// Parses the [`TimeZoneIdentifier`][tz] node.
