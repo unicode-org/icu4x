@@ -132,9 +132,9 @@ fn parse_annotation_key<'a, T: EncodingType>(
         AnnotationKeyLeadingChar,
     );
 
-    while let Some(potential_key_char) = cursor.next()? {
+    while let Some(potential_key_char) = cursor.current()? {
         // End of key.
-        if cursor.check_or(false, is_annotation_key_value_separator)? {
+        if is_annotation_key_value_separator(potential_key_char) {
             // Return found key
             return cursor
                 .slice(key_start, cursor.pos())
@@ -142,6 +142,7 @@ fn parse_annotation_key<'a, T: EncodingType>(
         }
 
         assert_syntax!(is_a_key_char(potential_key_char), AnnotationKeyChar);
+        cursor.advance();
     }
 
     Err(ParseError::AnnotationChar)
@@ -152,21 +153,24 @@ fn parse_annotation_value<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<&'a [T::CodeUnit]> {
     let value_start = cursor.pos();
-    cursor.advance();
-    while let Some(potential_value_char) = cursor.next()? {
-        if cursor.check_or(false, is_annotation_close)? {
+    assert_syntax!(
+        cursor.check_or(false, is_annotation_value_component)?,
+        AnnotationValueChar,
+    );
+    while let Some(potential_value_char) = cursor.current()? {
+        if is_annotation_close(potential_value_char) {
             // Return the determined AnnotationValue.
             return cursor
                 .slice(value_start, cursor.pos())
                 .ok_or(ParseError::ImplAssert);
         }
+        cursor.advance();
 
         if is_hyphen(potential_value_char) {
             assert_syntax!(
-                cursor.peek()?.is_some_and(is_annotation_value_component),
+                cursor.check_or(false, is_annotation_value_component)?,
                 AnnotationValueCharPostHyphen,
             );
-            cursor.advance();
             continue;
         }
 

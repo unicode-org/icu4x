@@ -1528,3 +1528,35 @@ fn utf16_basic_test() {
     };
     assert_eq!(String::from_utf16_lossy(id), "America/Chicago");
 }
+
+#[test]
+fn annotation_key_and_value_characters() {
+    // Single character keys and values, and single character value components
+    let valid = [
+        ("2020-01-01[a=b]", None),
+        ("2020-01-01[u-ca=x]", Some("x")),
+        ("2020-01-01[u-ca=a-b]", Some("a-b")),
+        ("2020-01-01[u-ca=ab-c]", Some("ab-c")),
+    ];
+    for (test, calendar) in valid {
+        let result = IxdtfParser::from_str(test).parse().expect(test);
+        assert_eq!(result.calendar, calendar.map(str::as_bytes), "{test}");
+    }
+
+    let invalid = [
+        ("2020-01-01[u-cA=gregory]", ParseError::AnnotationKeyChar),
+        ("2020-01-01[foO=bar]", ParseError::AnnotationKeyChar),
+        ("2020-01-01[u-ca=!!]", ParseError::AnnotationValueChar),
+        ("2020-01-01[u-ca=!gregory]", ParseError::AnnotationValueChar),
+        ("2020-01-01[u-ca=gregory!]", ParseError::AnnotationValueChar),
+        ("2020-01-01[foo=!b!]", ParseError::AnnotationValueChar),
+        (
+            "2020-01-01[u-ca=ab-]",
+            ParseError::AnnotationValueCharPostHyphen,
+        ),
+    ];
+    for (test, error) in invalid {
+        let err = IxdtfParser::from_str(test).parse().unwrap_err();
+        assert_eq!(err, error, "{test}");
+    }
+}

@@ -38,11 +38,6 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         self.pos = pos;
     }
 
-    /// Peek the value at next position (current + 1).
-    pub(crate) fn peek(&self) -> ParserResult<Option<u8>> {
-        self.peek_n(1)
-    }
-
     /// Returns current position in source as `char`.
     pub(crate) fn current(&self) -> ParserResult<Option<u8>> {
         self.peek_n(0)
