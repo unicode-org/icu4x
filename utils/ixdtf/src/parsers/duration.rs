@@ -23,11 +23,6 @@ use crate::{
 pub(crate) fn parse_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<DurationParseRecord> {
-    if cursor.current()?.is_none() {
-        return Err(ParseError::AbruptEnd {
-            location: "DurationStart",
-        });
-    }
     let sign = cursor.next_if(is_ascii_sign)?.is_none_or(|ch| ch == b'+');
 
     assert_syntax!(
@@ -37,17 +32,10 @@ pub(crate) fn parse_duration<T: EncodingType>(
         DurationDisgnator,
     );
 
-    let date = if cursor
-        .check(is_time_designator)?
-        .ok_or(ParseError::AbruptEnd {
-            location: "Duration",
-        })? {
-        None
-    } else {
-        Some(parse_date_duration(cursor)?)
-    };
-
+    let date = parse_date_duration(cursor)?;
     let time = parse_time_duration(cursor)?;
+
+    assert_syntax!(date.is_some() || time.is_some(), DurationDisgnator);
 
     cursor.close()?;
 
@@ -69,7 +57,7 @@ enum DateUnit {
 
 pub(crate) fn parse_date_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
-) -> ParserResult<DateDurationRecord> {
+) -> ParserResult<Option<DateDurationRecord>> {
     let mut date = DateDurationRecord::default();
     let mut previous_unit = DateUnit::None;
 
@@ -122,7 +110,7 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
         }
     }
 
-    Ok(date)
+    Ok((previous_unit != DateUnit::None).then_some(date))
 }
 
 #[derive(PartialEq, PartialOrd, Eq, Ord)]
@@ -139,11 +127,6 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
     if cursor.next_if(is_time_designator)?.is_none() {
         return Ok(None);
     }
-
-    assert_syntax!(
-        cursor.check_or(false, |c| c.is_ascii_digit())?,
-        TimeDurationDesignator,
-    );
 
     let mut time: (u64, u64, u64, Option<Fraction>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
@@ -197,10 +180,6 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
         }
 
         if fraction.is_some() {
-            assert_syntax!(
-                cursor.check_or(true, |ch| !ch.is_ascii_digit())?,
-                InvalidEnd,
-            );
             break;
         }
     }

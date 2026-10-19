@@ -87,21 +87,10 @@ fn parse_tz_annotation<'a, T: EncodingType>(
 pub(crate) fn parse_time_zone<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<TimeZoneRecord<'a, T>> {
-    let is_iana = cursor
-        .check(is_tz_leading_char)?
-        .ok_or(ParseError::AbruptEnd {
-            location: "TimeZoneAnnotation",
-        })?;
-    let is_offset = cursor.check_or(false, is_ascii_sign)?;
-
-    if is_iana {
-        return Ok(TimeZoneRecord::Name(parse_tz_iana_name(cursor)?));
-    } else if is_offset {
-        let offset = parse_utc_offset_minute_precision_strict(cursor)?;
+    if let Some(offset) = parse_utc_offset_minute_precision_strict(cursor)? {
         return Ok(TimeZoneRecord::Offset(offset));
     }
-
-    Err(ParseError::TzLeadingChar)
+    Ok(TimeZoneRecord::Name(parse_tz_iana_name(cursor)?))
 }
 
 /// Parse a `TimeZoneIANAName` Parse Node
@@ -109,7 +98,10 @@ pub(crate) fn parse_tz_iana_name<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<&'a [T::CodeUnit]> {
     let tz_name_start = cursor.pos();
-    assert_syntax!(cursor.next_if(is_tz_leading_char)?.is_some(), TzLeadingChar,);
+    let leading_char = cursor.next_or(ParseError::AbruptEnd {
+        location: "TimeZoneAnnotation",
+    })?;
+    assert_syntax!(is_tz_leading_char(leading_char), TzLeadingChar);
     while let Some(potential_value_char) = cursor.next_if(|ch| !is_annotation_close(ch))? {
         if is_tz_name_separator(potential_value_char) {
             assert_syntax!(cursor.next_if(is_tz_char)?.is_some(), IanaCharPostSeparator,);
@@ -129,49 +121,68 @@ pub(crate) fn parse_tz_iana_name<'a, T: EncodingType>(
 /// Parses a potentially full precision UTC offset or Z
 pub(crate) fn parse_date_time_utc_offset<T: EncodingType>(
     cursor: &mut Cursor<T>,
-) -> ParserResult<UtcOffsetRecordOrZ> {
+) -> ParserResult<Option<UtcOffsetRecordOrZ>> {
     if cursor.next_if(is_utc_designator)?.is_some() {
-        return Ok(UtcOffsetRecordOrZ::Z);
+        return Ok(Some(UtcOffsetRecordOrZ::Z));
     }
 
     let utc_offset = parse_utc_offset(cursor)?;
-    Ok(UtcOffsetRecordOrZ::Offset(utc_offset))
+    Ok(utc_offset.map(UtcOffsetRecordOrZ::Offset))
 }
 
 /// Parse a potentially full precision `UtcOffset`
 pub(crate) fn parse_utc_offset<T: EncodingType>(
     cursor: &mut Cursor<T>,
-) -> ParserResult<UtcOffsetRecord> {
-    let (minute_precision_offset, separated) = parse_utc_offset_minute_precision(cursor)?;
+) -> ParserResult<Option<UtcOffsetRecord>> {
+    let Some((minute_precision_offset, separated)) = parse_utc_offset_minute_precision(cursor)?
+    else {
+        return Ok(None);
+    };
+
+    let second_separated = cursor.next_if(is_time_separator)?.is_some();
+    let second = match (separated, second_separated) {
+        (true, true) | (false, false) => parse_minute_second(cursor, false, second_separated)?,
+        (false, true) => return Err(ParseError::UtcTimeSeparator),
+        (true, false) => {
+            assert_syntax!(
+                cursor.next_if(|ch| ch.is_ascii_digit())?.is_none(),
+                UtcTimeSeparator
+            );
+            None
+        }
+    };
 
     // If `UtcOffsetWithSubMinuteComponents`, continue parsing.
-    if !cursor.check_or(false, |ch| ch.is_ascii_digit() || is_time_separator(ch))? {
-        return Ok(UtcOffsetRecord::MinutePrecision(minute_precision_offset));
-    }
-
-    if separated != cursor.next_if(is_time_separator)?.is_some() {
-        return Err(ParseError::UtcTimeSeparator);
-    }
-
-    let second = parse_minute_second(cursor, false)?;
+    let Some(second) = second else {
+        return Ok(Some(UtcOffsetRecord::MinutePrecision(
+            minute_precision_offset,
+        )));
+    };
 
     let fraction = parse_fraction(cursor)?;
 
-    Ok(UtcOffsetRecord::FullPrecisionOffset(FullPrecisionOffset {
-        minute_precision_offset,
-        second,
-        fraction,
-    }))
+    Ok(Some(UtcOffsetRecord::FullPrecisionOffset(
+        FullPrecisionOffset {
+            minute_precision_offset,
+            second,
+            fraction,
+        },
+    )))
 }
 
 pub(crate) fn parse_utc_offset_minute_precision_strict<T: EncodingType>(
     cursor: &mut Cursor<T>,
-) -> ParserResult<MinutePrecisionOffset> {
-    let (offset, _) = parse_utc_offset_minute_precision(cursor)?;
-    if cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
+) -> ParserResult<Option<MinutePrecisionOffset>> {
+    let Some((offset, _)) = parse_utc_offset_minute_precision(cursor)? else {
+        return Ok(None);
+    };
+    if cursor
+        .next_if(|ch| is_time_separator(ch) || ch.is_ascii_digit())?
+        .is_some()
+    {
         return Err(ParseError::InvalidMinutePrecisionOffset);
     }
-    Ok(offset)
+    Ok(Some(offset))
 }
 
 /// Parse an `UtcOffsetMinutePrecision` node
@@ -179,31 +190,30 @@ pub(crate) fn parse_utc_offset_minute_precision_strict<T: EncodingType>(
 /// Returns the offset and whether the utc parsing includes a minute separator.
 pub(crate) fn parse_utc_offset_minute_precision<T: EncodingType>(
     cursor: &mut Cursor<T>,
-) -> ParserResult<(MinutePrecisionOffset, bool)> {
+) -> ParserResult<Option<(MinutePrecisionOffset, bool)>> {
     // https://www.rfc-editor.org/rfc/rfc3339#section-5.6
-    let sign = cursor.next_or(ParseError::AbruptEnd {
-        location: "time-numoffset",
-    })?;
-    if !is_ascii_sign(sign) {
-        return Err(ParseError::OffsetNeedsSign);
-    }
+    let Some(sign) = cursor.next_if(is_ascii_sign)? else {
+        return Ok(None);
+    };
     let sign = Sign::from(sign == b'+');
 
     let hour = parse_hour(cursor)?;
 
+    // Advance cursor beyond any TimeSeparator
+    let separated = cursor.next_if(is_time_separator)?.is_some();
+
     // If at the end of the utc, then return.
-    if !cursor.check_or(false, |ch| ch.is_ascii_digit() || is_time_separator(ch))? {
+    let Some(minute) = parse_minute_second(cursor, false, separated)? else {
         let offset = MinutePrecisionOffset {
             sign,
             hour,
             minute: 0,
         };
-        return Ok((offset, false));
-    }
-    // Advance cursor beyond any TimeSeparator
-    let separated = cursor.next_if(is_time_separator)?.is_some();
+        return Ok(Some((offset, false)));
+    };
 
-    let minute = parse_minute_second(cursor, false)?;
-
-    Ok((MinutePrecisionOffset { sign, hour, minute }, separated))
+    Ok(Some((
+        MinutePrecisionOffset { sign, hour, minute },
+        separated,
+    )))
 }

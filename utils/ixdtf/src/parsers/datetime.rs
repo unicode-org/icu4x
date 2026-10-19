@@ -9,7 +9,7 @@ use crate::{
     encoding::EncodingType,
     parsers::{
         annotations,
-        grammar::{is_date_time_separator, is_hyphen, is_utc_designator},
+        grammar::{is_date_time_separator, is_hyphen},
         time::parse_time_record,
         timezone, Cursor, IxdtfParseRecord,
     },
@@ -70,11 +70,7 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
 
     let time = parse_time_record(cursor)?;
 
-    let time_zone = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch))? {
-        Some(timezone::parse_date_time_utc_offset(cursor)?)
-    } else {
-        None
-    };
+    let time_zone = timezone::parse_date_time_utc_offset(cursor)?;
 
     Ok(DateTimeRecord {
         date: Some(date),
@@ -86,9 +82,6 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
 /// Parses `Date` record.
 fn parse_date<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
-    if cursor.current()?.is_none() {
-        return Err(ParseError::AbruptEnd { location: "Date" });
-    }
     let hyphenated = cursor.next_if(is_hyphen)?.is_some();
 
     let month = parse_date_month(cursor)?;
@@ -159,18 +152,11 @@ pub(crate) fn parse_annotated_month_day<'a, T: EncodingType>(
 
 /// Parses a `DateSpecMonthDay`
 pub(crate) fn parse_month_day<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecord> {
-    if cursor.current()?.is_none() {
-        return Err(ParseError::AbruptEnd {
-            location: "MonthDay",
-        });
-    }
     if cursor.next_if(is_hyphen)?.is_some() {
-        if cursor.current()?.is_none() {
-            return Err(ParseError::AbruptEnd {
-                location: "MonthDay",
-            });
-        }
-        assert_syntax!(cursor.next_if(is_hyphen)?.is_some(), MonthDayHyphen);
+        let next = cursor.next_or(ParseError::AbruptEnd {
+            location: "MonthDay",
+        })?;
+        assert_syntax!(is_hyphen(next), MonthDayHyphen);
     }
 
     let month = parse_date_month(cursor)?;

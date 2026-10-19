@@ -41,30 +41,9 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         self.pos
     }
 
-    /// Returns current position in source as `char`.
-    pub(crate) fn current(&self) -> ParserResult<Option<u8>> {
-        T::get_ascii(self.source, self.pos)
-    }
-
-    /// Runs the provided check on the current position.
-    pub(crate) fn check<F>(&self, f: F) -> ParserResult<Option<bool>>
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        Ok(self.current()?.map(f))
-    }
-
-    /// Runs the provided check on current position returns the default value if None.
-    pub(crate) fn check_or<F>(&self, default: bool, f: F) -> ParserResult<bool>
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        Ok(self.current()?.map_or(default, f))
-    }
-
     /// Returns `Cursor`'s current char and advances to the next position.
     pub(crate) fn next(&mut self) -> ParserResult<Option<u8>> {
-        let result = self.current();
+        let result = T::get_ascii(self.source, self.pos);
         self.pos += 1;
         result
     }

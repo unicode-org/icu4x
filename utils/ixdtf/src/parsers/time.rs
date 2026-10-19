@@ -11,14 +11,14 @@ use crate::{
     encoding::EncodingType,
     parsers::{
         datetime::{parse_month_day, parse_year_month},
-        grammar::{is_decimal_separator, is_time_designator, is_time_separator, is_utc_designator},
+        grammar::{is_decimal_separator, is_time_designator, is_time_separator},
         Cursor,
     },
     records::{Annotation, Fraction, IxdtfParseRecord, TimeRecord},
     ParseError, ParserResult,
 };
 
-use super::{annotations, grammar::is_ascii_sign, timezone};
+use super::{annotations, timezone};
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
@@ -34,11 +34,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     // If Time was successfully parsed, assume from this point that this IS a
     // valid AnnotatedTimeRecord.
 
-    let offset = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch))? {
-        Some(timezone::parse_date_time_utc_offset(cursor)?)
-    } else {
-        None
-    };
+    let offset = timezone::parse_date_time_utc_offset(cursor)?;
 
     let annotations = annotations::parse_annotation_set(cursor, handler)?;
 
@@ -80,32 +76,37 @@ pub(crate) fn parse_time_record<T: EncodingType>(
 ) -> ParserResult<TimeRecord> {
     let hour = parse_hour(cursor)?;
 
-    if !cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
+    let separator_present = cursor.next_if(is_time_separator)?.is_some();
+
+    let Some(minute) = parse_minute_second(cursor, false, separator_present)? else {
         return Ok(TimeRecord {
             hour,
             minute: 0,
             second: 0,
             fraction: None,
         });
-    }
+    };
 
-    let separator_present = cursor.next_if(is_time_separator)?.is_some();
-
-    let minute = parse_minute_second(cursor, false)?;
-
-    if !cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
+    let second_separator = cursor.next_if(is_time_separator)?.is_some();
+    let second = match (separator_present, second_separator) {
+        (true, true) | (false, false) => parse_minute_second(cursor, true, second_separator)?,
+        (false, true) => return Err(ParseError::TimeSeparator),
+        (true, false) => {
+            assert_syntax!(
+                cursor.next_if(|ch| ch.is_ascii_digit())?.is_none(),
+                TimeSeparator
+            );
+            None
+        }
+    };
+    let Some(second) = second else {
         return Ok(TimeRecord {
             hour,
             minute,
             second: 0,
             fraction: None,
         });
-    }
-
-    let second_separator = cursor.next_if(is_time_separator)?.is_some();
-    assert_syntax!(separator_present == second_separator, TimeSeparator);
-
-    let second = parse_minute_second(cursor, true)?;
+    };
 
     let fraction = parse_fraction(cursor)?;
 
@@ -133,18 +134,25 @@ pub(crate) fn parse_hour<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResul
 pub(crate) fn parse_minute_second<T: EncodingType>(
     cursor: &mut Cursor<T>,
     is_leap_second_valid: bool,
-) -> ParserResult<u8> {
+    separator_present: bool,
+) -> ParserResult<Option<u8>> {
     let (valid_range, err) = if is_leap_second_valid {
         (0..=60, ParseError::TimeSecond)
     } else {
         (0..=59, ParseError::TimeMinuteSecond)
     };
-    let first = cursor.next_digit()?.ok_or(err)?;
+    let first = if separator_present {
+        cursor.next_digit()?.ok_or(err)?
+    } else if let Some(ch) = cursor.next_if(|ch| ch.is_ascii_digit())? {
+        ch - b'0'
+    } else {
+        return Ok(None);
+    };
     let min_sec_value = first * 10 + cursor.next_digit()?.ok_or(err)?;
     if !valid_range.contains(&min_sec_value) {
         return Err(err);
     }
-    Ok(min_sec_value)
+    Ok(Some(min_sec_value))
 }
 
 /// Parse a `Fraction` value
