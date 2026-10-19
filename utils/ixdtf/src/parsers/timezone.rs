@@ -37,30 +37,24 @@ use crate::{
 pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<Option<TimeZoneAnnotation<'a, T>>> {
+    let mut peek = *cursor;
     // Peek position + 1 to check for critical flag.
-    let mut current_peek = 1;
-    let critical =
-        cursor
-            .peek_n(current_peek)?
-            .map(is_critical_flag)
-            .ok_or(ParseError::AbruptEnd {
-                location: "AmbiguousAnnotation",
-            })?;
+    let _ = peek.next()?;
+    let critical = peek.check(is_critical_flag)?.ok_or(ParseError::AbruptEnd {
+        location: "AmbiguousAnnotation",
+    })?;
 
     // Advance cursor if critical flag present.
-    if critical {
-        current_peek += 1;
-    }
+    peek.advance_if(critical);
 
-    let leading_char = cursor.peek_n(current_peek)?.ok_or(ParseError::AbruptEnd {
+    let leading_char = peek.next_or(ParseError::AbruptEnd {
         location: "AmbiguousAnnotation",
     })?;
 
     // Ambigious start values when lowercase alpha that is shared between `TzLeadingChar` and `KeyLeadingChar`.
     if is_a_key_leading_char(leading_char) {
-        let mut peek_pos = current_peek + 1;
         // Go through looking for `=`
-        while let Some(ch) = cursor.peek_n(peek_pos)? {
+        while let Some(ch) = peek.next()? {
             if is_annotation_key_value_separator(ch) {
                 // We have an `=` sign, this is a non-tz annotation
                 return Ok(None);
@@ -69,8 +63,6 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
                 let tz = parse_tz_annotation(cursor)?;
                 return Ok(Some(tz));
             }
-
-            peek_pos += 1;
         }
         Err(ParseError::AbruptEnd {
             location: "AmbiguousAnnotation",

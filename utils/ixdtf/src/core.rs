@@ -16,6 +16,14 @@ pub(crate) struct Cursor<'a, T: EncodingType> {
     source: &'a [T::CodeUnit],
 }
 
+impl<T: EncodingType> Copy for Cursor<'_, T> {}
+
+impl<T: EncodingType> Clone for Cursor<'_, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
 impl<'a, T: EncodingType> Cursor<'a, T> {
     /// Create a new cursor from a source UTF8 string.
     #[must_use]
@@ -33,19 +41,9 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         self.pos
     }
 
-    /// Get current position
-    pub(crate) fn set_position(&mut self, pos: usize) {
-        self.pos = pos;
-    }
-
     /// Returns current position in source as `char`.
     pub(crate) fn current(&self) -> ParserResult<Option<u8>> {
-        self.peek_n(0)
-    }
-
-    /// Peeks the value at `n` as a `char`.
-    pub(crate) fn peek_n(&self, n: usize) -> ParserResult<Option<u8>> {
-        T::get_ascii(self.source, self.pos + n)
+        T::get_ascii(self.source, self.pos)
     }
 
     /// Runs the provided check on the current position.
@@ -71,15 +69,24 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         result
     }
 
+    /// Runs `f` on a speculative copy of the cursor, committing the cursor's
+    /// advancement only if `f` returns `Ok(Some(_))`.
+    pub(crate) fn speculative_parse<R>(
+        &mut self,
+        f: impl FnOnce(&mut Self) -> ParserResult<Option<R>>,
+    ) -> ParserResult<Option<R>> {
+        let mut next = *self;
+        if let Some(result) = f(&mut next)? {
+            *self = next;
+            Ok(Some(result))
+        } else {
+            Ok(None)
+        }
+    }
+
     /// Advances the cursor and returns the current char if it satisfies `f`.
     pub(crate) fn next_if(&mut self, f: impl FnOnce(u8) -> bool) -> ParserResult<Option<u8>> {
-        if let Some(ch) = self.current()? {
-            if f(ch) {
-                self.advance();
-                return Ok(Some(ch));
-            }
-        }
-        Ok(None)
+        self.speculative_parse(|cursor| Ok(cursor.next()?.filter(|&ch| f(ch))))
     }
 
     /// Returns the next value as a digit

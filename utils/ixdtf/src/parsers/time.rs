@@ -29,7 +29,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
-    let start = cursor.pos();
+    let mut start = *cursor;
     let designator = cursor.check_or(false, is_time_designator)?;
     cursor.advance_if(designator);
 
@@ -47,7 +47,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     // Check if annotations exist.
     if !cursor.check_or(false, is_annotation_open)? {
         cursor.close()?;
-        check_time_ambiguity(cursor, start)?;
+        check_time_ambiguity(&mut start)?;
 
         return Ok(IxdtfParseRecord {
             date: None,
@@ -58,7 +58,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
         });
     }
 
-    check_time_ambiguity(cursor, start)?;
+    check_time_ambiguity(&mut start)?;
     let annotations = annotations::parse_annotation_set(cursor, handler)?;
 
     cursor.close()?;
@@ -72,20 +72,23 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     })
 }
 
+/// Checks that an unprefixed time record is not ambiguous with a `MonthDay` or `YearMonth` date spec.
 #[inline]
-fn check_time_ambiguity<T: EncodingType>(cursor: &mut Cursor<T>, start: usize) -> ParserResult<()> {
-    let current_loc = cursor.pos();
+fn check_time_ambiguity<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<()> {
     // It is a Syntax Error if ParseText(Time DateTimeUTCOffset[~Z], DateSpecMonthDay) is a Parse Node.
-    cursor.set_position(start);
-    if parse_month_day(cursor).is_ok() {
+    if cursor
+        .speculative_parse(|c| Ok(parse_month_day(c).ok()))?
+        .is_some()
+    {
         return Err(ParseError::AmbiguousTimeMonthDay);
     }
     // It is a Syntax Error if ParseText(Time DateTimeUTCOffset[~Z], DateSpecYearMonth) is a Parse Node.
-    cursor.set_position(start);
-    if parse_year_month(cursor).is_ok() {
+    if cursor
+        .speculative_parse(|c| Ok(parse_year_month(c).ok()))?
+        .is_some()
+    {
         return Err(ParseError::AmbiguousTimeYearMonth);
     }
-    cursor.set_position(current_loc);
     Ok(())
 }
 
