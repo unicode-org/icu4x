@@ -93,7 +93,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParseError::AnnotationClose),
+        Err(ParseError::IanaChar),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -1527,4 +1527,33 @@ fn utf16_basic_test() {
         _ => unreachable!(),
     };
     assert_eq!(String::from_utf16_lossy(id), "America/Chicago");
+}
+
+#[test]
+fn invalid_iana_name_last_char() {
+    use super::TimeZoneParser;
+
+    let invalid_names = ["America/New_York!", "UTC ", "Europe/London~"];
+    for name in invalid_names {
+        let err = TimeZoneParser::from_str(name)
+            .parse_iana_identifier()
+            .unwrap_err();
+        assert_eq!(err, ParseError::IanaChar, "{name}");
+    }
+
+    let invalid_annotations = [
+        "2020-01-01[America/New_York!]",
+        "2020-01-01T00:00Z[UTC ]",
+        "2020-01-01[!Europe/London~]",
+    ];
+    for test in invalid_annotations {
+        let err = IxdtfParser::from_str(test).parse().unwrap_err();
+        assert_eq!(err, ParseError::IanaChar, "{test}");
+    }
+
+    let valid = ["A", "UTC", "America/New_York", "Etc/GMT+1"];
+    for name in valid {
+        let result = TimeZoneParser::from_str(name).parse_iana_identifier();
+        assert_eq!(result, Ok(name.as_bytes()), "{name}");
+    }
 }

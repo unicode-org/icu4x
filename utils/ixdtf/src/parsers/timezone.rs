@@ -132,11 +132,12 @@ pub(crate) fn parse_tz_iana_name<'a, T: EncodingType>(
 ) -> ParserResult<&'a [T::CodeUnit]> {
     assert_syntax!(cursor.check_or(false, is_tz_leading_char)?, TzLeadingChar);
     let tz_name_start = cursor.pos();
-    while let Some(potential_value_char) = cursor.next()? {
-        if cursor.check_or(true, is_annotation_close)? {
+    while let Some(potential_value_char) = cursor.current()? {
+        if is_annotation_close(potential_value_char) {
             // Return the valid TimeZoneIANAName
             break;
         }
+        cursor.advance();
 
         if is_tz_name_separator(potential_value_char) {
             assert_syntax!(cursor.check_or(false, is_tz_char)?, IanaCharPostSeparator,);
