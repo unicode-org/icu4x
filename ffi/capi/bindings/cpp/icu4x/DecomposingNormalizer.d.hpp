@@ -74,6 +74,18 @@ public:
   inline void normalize_write(std::string_view s, W& writeable_output) const;
 
   /**
+   * Normalize a string
+   *
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
+   *
+   * See the [Rust documentation for `normalize_utf16`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf16) for more information.
+   */
+  inline std::u16string normalize16(std::u16string_view s) const;
+  template<typename W>
+  inline void normalize16_write(std::u16string_view s, W& writeable_output) const;
+
+  /**
    * Check if a string is normalized
    *
    * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

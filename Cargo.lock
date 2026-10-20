@@ -531,7 +531,7 @@ version = "3.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -732,7 +732,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.16.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0664ec0b6da77707571da646868137606091ee02#0664ec0b6da77707571da646868137606091ee02"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cf0728f6e8237669304750d9d86abe6bba8fdb3f#cf0728f6e8237669304750d9d86abe6bba8fdb3f"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -763,8 +763,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae517853d9f82b2d144393b1c32c34c46c2e361de2b6c44a8fdfce23beb211cd"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cf0728f6e8237669304750d9d86abe6bba8fdb3f#cf0728f6e8237669304750d9d86abe6bba8fdb3f"
 dependencies = [
  "log",
 ]
@@ -772,7 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.16.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0664ec0b6da77707571da646868137606091ee02#0664ec0b6da77707571da646868137606091ee02"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cf0728f6e8237669304750d9d86abe6bba8fdb3f#cf0728f6e8237669304750d9d86abe6bba8fdb3f"
 dependencies = [
  "askama",
  "clap",
@@ -791,7 +790,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.16.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0664ec0b6da77707571da646868137606091ee02#0664ec0b6da77707571da646868137606091ee02"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cf0728f6e8237669304750d9d86abe6bba8fdb3f#cf0728f6e8237669304750d9d86abe6bba8fdb3f"
 dependencies = [
  "annotate-snippets",
  "either",
@@ -822,7 +821,7 @@ checksum = "ad5208a115eaba24916f7456929832e310a81518c641f93fee4f89aa93aa3675"
 dependencies = [
  "cfg-if",
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -915,7 +914,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1123,7 +1122,7 @@ dependencies = [
  "gobject-sys",
  "libc",
  "system-deps",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1439,6 +1438,7 @@ dependencies = [
  "simple_logger",
  "tinystr",
  "unicode-bidi",
+ "write16",
  "writeable",
  "zerovec",
 ]
@@ -2081,7 +2081,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4b0f83760fb341a774ed326568e19f5a863af4a952def8c39f9ab92fd95b88e5"
 dependencies = [
  "equivalent",
- "hashbrown 0.16.1",
+ "hashbrown 0.15.5",
  "serde",
  "serde_core",
 ]
@@ -2107,7 +2107,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
 dependencies = [
  "hermit-abi",
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2160,7 +2160,7 @@ dependencies = [
  "portable-atomic",
  "portable-atomic-util",
  "serde_core",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3022,7 +3022,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3412,7 +3412,7 @@ dependencies = [
  "getrandom 0.3.4",
  "once_cell",
  "rustix",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3910,7 +3910,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

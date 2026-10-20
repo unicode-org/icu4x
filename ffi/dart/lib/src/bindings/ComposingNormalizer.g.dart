@@ -75,12 +75,12 @@ final class ComposingNormalizer implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+  /// See the [Rust documentation for `normalize_utf16`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf16) for more information.
   String normalize(String s) {
     final temp = _FinalizedArena();
     final write = _Write();
-    _icu4x_ComposingNormalizer_normalize_mv1(_ffi, s._utf8AllocIn(temp.arena), write._ffi);
-    return write.finalize();
+    _icu4x_ComposingNormalizer_normalize_utf16_mv1(_ffi, s._utf16AllocIn(temp.arena), write._ffi);
+    return write.finalize16();
   }
 
   /// Check if a string is normalized
@@ -138,9 +138,9 @@ external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfkc_with_provider
 
 // ignore: experimental_member_use
 @meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_utf16_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_ComposingNormalizer_normalize_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_ComposingNormalizer_normalize_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s, ffi.Pointer<ffi.Opaque> write);
 
 // ignore: experimental_member_use
 @meta.RecordUse()
