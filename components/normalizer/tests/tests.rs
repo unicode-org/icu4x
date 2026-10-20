@@ -2377,10 +2377,7 @@ fn test_reject_invalid_replacement_character_trie_value() {
     }
 
     impl DataProvider<NormalizerNfdTablesV1> for BogusProvider {
-        fn load(
-            &self,
-            req: DataRequest,
-        ) -> Result<DataResponse<NormalizerNfdTablesV1>, DataError> {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfdTablesV1>, DataError> {
             icu_normalizer::provider::Baked.load(req)
         }
     }
