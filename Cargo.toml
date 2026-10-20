@@ -275,8 +275,8 @@ stable_deref_trait = { version = "1.2.0", default-features = false }
 twox-hash = { version = "2.0.0", default-features = false, features = ["xxhash64"] }
 time = { version = "0.3", default-features = false }
 unicode-bidi = { version = "0.3.11", default-features = false }
-utf16_iter = { version = "1.0.2", default-features = false }
-utf8_iter = { version = "1.0.2", default-features = false }
+utf16_iter = { version = "1.0.4", default-features = false }
+utf8_iter = { version = "1.0.4", default-features = false }
 write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.

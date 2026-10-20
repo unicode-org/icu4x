@@ -2259,6 +2259,13 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
         }
+        // SAFETY invariant: U+FFFD must have `NON_ROUND_TRIP_MARKER` set in the trie so that
+        // UTF-8 decoding errors (which yield U+FFFD) never pass the fast-path passthrough checks
+        // in `normalize_utf8_to` before `str::from_utf8_unchecked`.
+        if (decompositions.get().trie.get(char::REPLACEMENT_CHARACTER) & NON_ROUND_TRIP_MARKER) == 0
+        {
+            return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
+        }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -2326,6 +2333,13 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerNfkdDataV1::INFO));
         }
+        // SAFETY invariant: U+FFFD must have `NON_ROUND_TRIP_MARKER` set in the trie so that
+        // UTF-8 decoding errors (which yield U+FFFD) never pass the fast-path passthrough checks
+        // in `normalize_utf8_to` before `str::from_utf8_unchecked`.
+        if (decompositions.get().trie.get(char::REPLACEMENT_CHARACTER) & NON_ROUND_TRIP_MARKER) == 0
+        {
+            return Err(DataError::custom("invalid").with_marker(NormalizerNfkdDataV1::INFO));
+        }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -2388,6 +2402,13 @@ impl DecomposingNormalizer {
 
         let cap = decompositions.get().passthrough_cap;
         if cap > 0x0300 {
+            return Err(DataError::custom("invalid").with_marker(NormalizerUts46DataV1::INFO));
+        }
+        // SAFETY invariant: U+FFFD must have `NON_ROUND_TRIP_MARKER` set in the trie so that
+        // UTF-8 decoding errors (which yield U+FFFD) never pass the fast-path passthrough checks
+        // in `normalize_utf8_to` before `str::from_utf8_unchecked`.
+        if (decompositions.get().trie.get(char::REPLACEMENT_CHARACTER) & NON_ROUND_TRIP_MARKER) == 0
+        {
             return Err(DataError::custom("invalid").with_marker(NormalizerUts46DataV1::INFO));
         }
         let decomposition_capped = cap.min(0xC0);
@@ -2992,8 +3013,8 @@ impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut iter = self.expect.chars();
-        if iter.next() == Some(c) {
+        let mut iter = utf16_iter::ErrorReportingUtf16Chars::new(self.expect);
+        if iter.next() == Some(Ok(c)) {
             self.expect = iter.as_slice();
             Ok(())
         } else {
@@ -3034,8 +3055,8 @@ impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut iter = self.expect.chars();
-        if iter.next() == Some(c) {
+        let mut iter = utf8_iter::ErrorReportingUtf8Chars::new(self.expect);
+        if iter.next() == Some(Ok(c)) {
             self.expect = iter.as_slice();
             Ok(())
         } else {
