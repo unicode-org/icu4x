@@ -19,7 +19,7 @@ internal interface TimeLib: Library {
 /**
  * An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
  *
- * See the [Rust documentation for `Time`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html) for more information.
+ * See the [Rust documentation for `Time`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html) for more information.
  */
 class Time internal constructor (
     internal val handle: Pointer,
@@ -52,7 +52,7 @@ class Time internal constructor (
         /**
          * Creates a new [Time] given field values
          *
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#method.try_new) for more information.
          */
         fun create(hour: UByte, minute: UByte, second: UByte, subsecond: UInt): Result<Time> {
             
@@ -72,7 +72,7 @@ class Time internal constructor (
         /**
          * Creates a new [Time] from an IXDTF string.
          *
-         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#method.try_from_str) for more information.
+         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#method.try_from_str) for more information.
          */
         fun fromString(v: String): Result<Time> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -97,7 +97,7 @@ class Time internal constructor (
         /**
          * Creates a new [Time] representing the start of the day (00:00:00.000).
          *
-         * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#method.start_of_day) for more information.
+         * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#method.start_of_day) for more information.
          */
         fun startOfDay(): Result<Time> {
             
@@ -117,7 +117,7 @@ class Time internal constructor (
         /**
          * Creates a new [Time] representing noon (12:00:00.000).
          *
-         * See the [Rust documentation for `noon`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#method.noon) for more information.
+         * See the [Rust documentation for `noon`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#method.noon) for more information.
          */
         fun noon(): Result<Time> {
             
@@ -137,7 +137,7 @@ class Time internal constructor (
     /**
      * Returns the hour in this time
      *
-     * See the [Rust documentation for `hour`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#structfield.hour) for more information.
+     * See the [Rust documentation for `hour`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#structfield.hour) for more information.
      */
     fun hour(): UByte {
         
@@ -148,7 +148,7 @@ class Time internal constructor (
     /**
      * Returns the minute in this time
      *
-     * See the [Rust documentation for `minute`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#structfield.minute) for more information.
+     * See the [Rust documentation for `minute`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#structfield.minute) for more information.
      */
     fun minute(): UByte {
         
@@ -159,7 +159,7 @@ class Time internal constructor (
     /**
      * Returns the second in this time
      *
-     * See the [Rust documentation for `second`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#structfield.second) for more information.
+     * See the [Rust documentation for `second`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#structfield.second) for more information.
      */
     fun second(): UByte {
         
@@ -170,7 +170,7 @@ class Time internal constructor (
     /**
      * Returns the subsecond in this time as nanoseconds
      *
-     * See the [Rust documentation for `subsecond`](https://docs.rs/icu/2.3.1/icu/time/struct.Time.html#structfield.subsecond) for more information.
+     * See the [Rust documentation for `subsecond`](https://docs.rs/icu/2.4.0/icu/time/struct.Time.html#structfield.subsecond) for more information.
      */
     fun subsecond(): UInt {
         

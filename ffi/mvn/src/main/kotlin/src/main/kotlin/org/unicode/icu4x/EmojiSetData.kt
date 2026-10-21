@@ -17,13 +17,13 @@ internal interface EmojiSetDataLib: Library {
 /**
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
  *
- * See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.4.0/icu/properties/index.html) for more information.
  *
- * See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetData.html) for more information.
+ * See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/2.4.0/icu/properties/struct.EmojiSetData.html) for more information.
  *
- * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetData.html#method.new) for more information.
+ * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/properties/struct.EmojiSetData.html#method.new) for more information.
  *
- * See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
+ * See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/2.4.0/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
  */
 class EmojiSetData internal constructor (
     internal val handle: Pointer,
@@ -56,7 +56,7 @@ class EmojiSetData internal constructor (
         /**
          * Create a map for the `Basic_Emoji` property, using compiled data.
          *
-         * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BasicEmoji.html) for more information.
+         * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.BasicEmoji.html) for more information.
          */
         fun createBasic(): EmojiSetData {
             
@@ -71,7 +71,7 @@ class EmojiSetData internal constructor (
         /**
          * Create a map for the `Basic_Emoji` property, using a particular data source.
          *
-         * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BasicEmoji.html) for more information.
+         * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.BasicEmoji.html) for more information.
          */
         fun createBasicWithProvider(provider: DataProvider): Result<EmojiSetData> {
             
@@ -91,7 +91,7 @@ class EmojiSetData internal constructor (
         /**
          * Get the `Basic_Emoji` value for a given character, using compiled data
          *
-         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.4.0/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
          */
         fun basicEmojiForChar(ch: Int): Boolean {
             
@@ -103,7 +103,7 @@ class EmojiSetData internal constructor (
         /**
          * Get the `Basic_Emoji` value for a given character, using compiled data
          *
-         * See the [Rust documentation for `for_str`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+         * See the [Rust documentation for `for_str`](https://docs.rs/icu/2.4.0/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
          */
         fun basicEmojiForStr(s: String): Boolean {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
@@ -120,7 +120,7 @@ class EmojiSetData internal constructor (
     /**
      * Checks whether the string is in the set.
      *
-     * See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
+     * See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.4.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
      */
     fun contains(s: String): Boolean {
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
@@ -136,7 +136,7 @@ class EmojiSetData internal constructor (
     /**
      * Checks whether the code point is in the set.
      *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.3.1/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.4.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
      */
     fun contains(cp: Int): Boolean {
         
