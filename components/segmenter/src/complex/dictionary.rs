@@ -63,45 +63,59 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     (cursor.take_value().is_some(), cursor.is_empty())
                 }
             };
-            let (is_match, is_empty) = step_result;
-            let end = next.0 + Y::char_len(next.1);
+            match step_result {
+                // Dictionary has to match with grapheme cluster segment.
+                // If not, we treat it like the end of the trie.
+                (true, true)
+                    if self.grapheme_boundary_at_or_after(
+                        &mut last_grapheme_offset,
+                        next.0 + Y::char_len(next.1),
+                    ) == next.0 + Y::char_len(next.1) =>
+                {
+                    return Some(next.0 + Y::char_len(next.1));
+                }
+                (true, false) => {
+                    // Dictionary has to match with grapheme cluster segment.
+                    // If not, we ignore it.
+                    while last_grapheme_offset < next.0 + Y::char_len(next.1) {
+                        if let Some(offset) = self.grapheme_iter.next() {
+                            last_grapheme_offset = offset;
+                            continue;
+                        }
+                        last_grapheme_offset = self.len;
+                        break;
+                    }
+                    if last_grapheme_offset != next.0 + Y::char_len(next.1) {
+                        continue;
+                    }
 
-            // Dictionary has to match with grapheme cluster segment.
-            // If not, we ignore it.
-            if is_match && self.grapheme_boundary_at_or_after(&mut last_grapheme_offset, end) == end
-            {
-                if is_empty {
-                    // No longer match is possible
+                    intermediate_length = next.0 + Y::char_len(next.1);
+                    previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
+                }
+                (_, true) => {
+                    if intermediate_length > 0 {
+                        if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
+                            // Rewind previous match point
+                            self.iter = prev_iter;
+                            self.grapheme_iter = prev_grapheme_iter;
+                        }
+                        return Some(intermediate_length);
+                    }
+                    // Not found. Extend to the end of the grapheme cluster.
+                    let end = self.grapheme_boundary_at_or_after(
+                        &mut last_grapheme_offset,
+                        next.0 + Y::char_len(next.1),
+                    );
+                    while self.iter.clone().next().is_some_and(|(i, _)| i < end) {
+                        self.iter.next();
+                    }
                     return Some(end);
                 }
-                intermediate_length = end;
-                previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
-            }
-
-            if is_empty {
-                if intermediate_length > 0 {
-                    if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
-                        // Rewind previous match point
-                        self.iter = prev_iter;
-                        self.grapheme_iter = prev_grapheme_iter;
-                    }
-                    return Some(intermediate_length);
+                (false, false) => {
+                    // Prefix string is matched
+                    not_match = true;
                 }
-                // Not found. Extend the unmatched segment to the end of the
-                // grapheme cluster, so that we don't break inside of it.
-                let boundary = self.grapheme_boundary_at_or_after(&mut last_grapheme_offset, end);
-                loop {
-                    let mut peek = self.iter.clone();
-                    match peek.next() {
-                        Some((i, _)) if i < boundary => self.iter = peek,
-                        _ => break,
-                    }
-                }
-                return Some(boundary);
             }
-
-            // Prefix string is matched
-            not_match = true;
         }
 
         if intermediate_length > 0 {
@@ -131,12 +145,10 @@ impl<Y: RuleBreakType> DictionaryBreakIterator<'_, '_, Y> {
         pos: usize,
     ) -> usize {
         while *last_grapheme_offset < pos {
-            if let Some(offset) = self.grapheme_iter.next() {
-                *last_grapheme_offset = offset;
-                continue;
+            *last_grapheme_offset = self.grapheme_iter.next().unwrap_or(self.len);
+            if *last_grapheme_offset == self.len {
+                break;
             }
-            *last_grapheme_offset = self.len;
-            break;
         }
         *last_grapheme_offset
     }
