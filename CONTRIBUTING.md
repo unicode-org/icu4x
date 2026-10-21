@@ -103,6 +103,14 @@ When adding non-experimental code to main, also update the "unreleased" section 
 
 Note that the actual Cargo.toml version bumps will be done at release time, and crates under `utils/` may follow a different release cadence than those under other directory trees.
 
+### Prior Art
+
+When designing new features, algorithms, or data structures in ICU4X, it is useful to consult existing internationalization implementations and specifications for prior art and inspiration:
+
+- **[ICU4C and ICU4J](https://icu.unicode.org/)**: The reference C++ and Java implementations of Unicode and CLDR internationalization APIs, algorithms, and data structures.
+- **[ECMA-402 (`Intl`)](https://tc39.es/ecma402/)**: The JavaScript internationalization specification, which informs much of ICU4X's high-level API scope and semantics.
+- **[Go `golang.org/x/text`](https://cs.opensource.google/go/x/text)**: An independent from-scratch implementation of many Unicode and CLDR algorithms in Go (rather than a direct port of ICU). It includes interesting design choices that can serve as inspiration for ICU4X, such as static data generation (similar to `databake`), its `display` (display names) package, and localized formatting models.
+
 ### Checklist
 
 Each commit and pull request should follow the [style guide][style_guide] and be properly formatted with `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage is above `90%`.
