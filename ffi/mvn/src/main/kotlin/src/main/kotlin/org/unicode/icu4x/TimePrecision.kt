@@ -10,9 +10,9 @@ internal interface TimePrecisionLib: Library {
     fun icu4x_TimePrecision_from_subsecond_digits_mv1(digits: FFIUint8): OptionInt
 }
 /**
- * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.TimePrecision.html) for more information.
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/2.4.0/icu/datetime/options/enum.TimePrecision.html) for more information.
  *
- * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.SubsecondDigits.html) for more information.
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/2.4.0/icu/datetime/options/enum.SubsecondDigits.html) for more information.
 */
 enum class TimePrecision {
     Hour,
@@ -47,7 +47,7 @@ enum class TimePrecision {
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.3.1/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+         * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.4.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
          */
         fun fromSubsecondDigits(digits: UByte): TimePrecision? {
             

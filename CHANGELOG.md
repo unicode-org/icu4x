@@ -34,11 +34,13 @@
       - New associated constants in `icu_datetime::options`: `Length::VALUES`, `Alignment::VALUES`, `YearStyle::VALUES`, `TimePrecision::VALUES`, `SubsecondDigits::VALUES`
       - New associated constants in `icu_datetime::fieldbag::field` (unstable): `Era::VALUES`, `Year::VALUES`, `Month::VALUES`, `Day::VALUES`, `Weekday::VALUES`, `DayPeriod::VALUES`, `HourKind::VALUES`, `Hour::VALUES`, `Minute::VALUES`, `Second::VALUES`, `FractionalSecondDigits::VALUES`, `TimeZoneName::VALUES`
     - Implement fallback to single-value formatting when there is no diff during range formatting (unicode-org#8480)
-  - `icu_experimental`
+  - `icu_experimental`: `0.6.0 -> 0.7.0`
     - Renamed data marker `UnitIdsV1` to `UnitsIdV1`. (unicode-org#8473)
     - Added `CurrencyDecimalSymbolsV1` data marker for per-currency decimal symbol overrides. (unicode-org#8463)
     - Currency formatting uses the no-currency pattern when CLDR defines no symbol for a currency in a locale (e.g. `PTE` in `pt-PT`) (unicode-org#8485)
     - `RuleCollection::register_source` now takes the source by reference (unicode-org#8597)
+  - `icu_pattern`: `0.5.0 -> 0.5.1`
+    - No code changes, re-released to pick up the latest ICU4X dependency versions
   - `icu_properties`
     - Add `Block` enumerated property (unicode-org#8409)
     - Fix UnicodeSet parser to support surrogate code points in escape sequences (unicode-org#8507)
@@ -69,15 +71,22 @@
 - Utils
   - `bies`
     - Retired (unicode-org#8457)
-  - `tinystr`
+  - `fixed_decimal`: `0.7.2 -> 0.7.3`
+    - Fix integer overflow in `UnsignedDecimal` exponent parsing (unicode-org#8289)
+    - Safety improvements (unicode-org#8002)
+  - `ixdtf`: `0.6.6 -> 0.6.7`
+    - Fix validation of annotation and timezone segments (unicode-org#8623)
+  - `tinystr`: `0.8.4 -> 0.8.5`
     - Add `impl Default for TinyAsciiStr<N>` (unicode-org#8524)
-  - `yoke`
+  - `yoke`: `0.8.3 -> 0.8.4`
     - Implement `AsRef<T>` for `Yoke<impl AsRef<T>, _>` (unicode-org#8542)
-  - `zerovec`
+  - `yoke_derive`: `0.8.3 -> 0.8.4`
+    - Fix MSRV (unicode-org#8528)
+  - `zerovec`: `0.11.8 -> 0.11.9`
     - Improve soundness of `cast_box` so that it extracts DST metadata in a more stable (though not 100% stable) way. Full soundness will have to wait for stable ptr metadata APIs. (unicode-org#8413)
     - make tests pass on s390x (unicode-org#8420)
     - Make `VarZeroVecOwned` mutation operations panic-safe (unicode-org#8535)
-  - `zerovec_derive`
+  - `zerovec_derive`: `0.11.6 -> 0.11.7`
     - Minor soundness improvement around slice layout assumptions (unicode-org#8451)
 
 ## icu4x 2.3.x

@@ -449,11 +449,13 @@ internal object PrimitiveArrayTools {
     }
 
     fun borrowUtf16(str: String): GCSlice {
-        return borrow(str.map {it.code.toShort()}.toShortArray())
+        val shortArray = ShortArray(str.length) { str[it].code.toShort() }
+        return borrow(shortArray)
     }
 
     fun moveUtf16(str: String): OwnedSlice {
-        return move(str.map {it.code.toShort()}.toShortArray())
+        val shortArray = ShortArray(str.length) { str[it].code.toShort() }
+        return move(shortArray)
     }
 
     fun getUtf8(slice: Slice): String {
@@ -464,9 +466,9 @@ internal object PrimitiveArrayTools {
 
     fun getUtf16(slice: Slice): String {
         val shortArray = slice.data.getShortArray(0, slice.len.toInt())
-        val charArray = shortArray.map { it.toInt().toChar() }.joinToString(  "")
+        val charArray = CharArray(shortArray.size) { shortArray[it].toInt().toChar() }
 
-        return charArray
+        return String(charArray)
     }
 
     fun borrowUtf8s(array: Array<String>): GCSlices {

@@ -17,7 +17,7 @@ const DateTimeRangeFormatter_box_destroy_registry = new FinalizationRegistry((pt
 });
 
 /**
- * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
+ * See the [Rust documentation for `DateRangeFormatter`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html) for more information.
  *
  * @experimental
  */
@@ -51,11 +51,11 @@ export class DateTimeRangeFormatter {
 
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
+     * See the [Rust documentation for `DT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.for_length)
      *
      * @experimental
      */
@@ -84,11 +84,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
+     * See the [Rust documentation for `DT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.for_length)
      *
      * @experimental
      */
@@ -117,11 +117,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
+     * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
      *
      * @experimental
      */
@@ -150,11 +150,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
+     * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
      *
      * @experimental
      */
@@ -183,11 +183,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+     * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
      *
      * @experimental
      */
@@ -216,11 +216,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+     * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
      *
      * @experimental
      */
@@ -249,11 +249,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
+     * See the [Rust documentation for `DET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.for_length)
      *
      * @experimental
      */
@@ -282,11 +282,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
+     * See the [Rust documentation for `DET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.for_length)
      *
      * @experimental
      */
@@ -315,11 +315,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
+     * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
      *
      * @experimental
      */
@@ -348,11 +348,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
+     * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
      *
      * @experimental
      */
@@ -381,11 +381,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+     * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
      *
      * @experimental
      */
@@ -414,11 +414,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+     * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
      *
      * @experimental
      */
@@ -447,11 +447,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
+     * See the [Rust documentation for `ET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.for_length)
      *
      * @experimental
      */
@@ -480,11 +480,11 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
+     * See the [Rust documentation for `ET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.for_length)
      *
      * @experimental
      */
@@ -513,7 +513,7 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
      *
      * @experimental
      */
@@ -533,7 +533,7 @@ export class DateTimeRangeFormatter {
     }
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.DateRangeFormatter.html#method.format) for more information.
      *
      * @experimental
      */

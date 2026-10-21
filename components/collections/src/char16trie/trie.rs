@@ -104,7 +104,7 @@ impl<'data> Char16Trie<'data> {
     }
 
     /// Returns a new [`Char16TrieIterator`] backed by borrowed data from the `trie` data
-    #[deprecated(since = "2.3.0", note = "use `Char16Trie::cursor`")]
+    #[deprecated(since = "2.4.0", note = "use `Char16Trie::cursor`")]
     #[allow(deprecated)]
     #[inline]
     pub fn iter(&self) -> Char16TrieIterator<'_> {
@@ -195,12 +195,12 @@ pub struct Char16TrieCursor<'a> {
 }
 
 /// This struct represents an iterator over a [`Char16Trie`].
-#[deprecated(since = "2.3.0", note = "use `Char16TrieCursor`")]
+#[deprecated(since = "2.4.0", note = "use `Char16TrieCursor`")]
 #[derive(Clone, Debug)]
 pub struct Char16TrieIterator<'a>(Char16TrieCursor<'a>);
 
 /// An enum representing the return value from a lookup in [`Char16Trie`].
-#[deprecated(since = "2.3.0", note = "use `Char16TrieCursor`")]
+#[deprecated(since = "2.4.0", note = "use `Char16TrieCursor`")]
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_enums)]
 pub enum TrieResult {

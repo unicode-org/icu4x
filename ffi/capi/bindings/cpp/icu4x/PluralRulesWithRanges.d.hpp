@@ -34,7 +34,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+ * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
  *
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
@@ -44,7 +44,7 @@ public:
   /**
    * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using compiled data.
    *
-   * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+   * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -53,7 +53,7 @@ public:
   /**
    * construct a {@link PluralRulesWithRanges} for the given locale, for cardinal numbers, using a particular data source.
    *
-   * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+   * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -62,7 +62,7 @@ public:
   /**
    * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using compiled data.
    *
-   * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+   * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -71,7 +71,7 @@ public:
   /**
    * Construct a {@link PluralRulesWithRanges} for the given locale, for ordinal numbers, using a particular data source.
    *
-   * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+   * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -80,7 +80,7 @@ public:
   /**
    * Get the category for a given number represented as operands
    *
-   * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+   * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -89,7 +89,7 @@ public:
   /**
    * Get the category for a given number represented as operands
    *
-   * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
+   * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -98,7 +98,7 @@ public:
   /**
    * Get all of the categories needed in the current locale
    *
-   * See the [Rust documentation for `categories`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+   * See the [Rust documentation for `categories`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRules.html#method.categories) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -107,7 +107,7 @@ public:
   /**
    * Resolves the plural category for a given range of categories.
    *
-   * See the [Rust documentation for `resolve_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
+   * See the [Rust documentation for `resolve_range`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */

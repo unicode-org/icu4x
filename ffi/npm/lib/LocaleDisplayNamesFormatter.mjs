@@ -11,7 +11,7 @@ const LocaleDisplayNamesFormatter_box_destroy_registry = new FinalizationRegistr
 });
 
 /**
- * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
+ * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
  *
  * @experimental
  */
@@ -47,7 +47,7 @@ export class LocaleDisplayNamesFormatter {
     /**
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
      *
      * @experimental
      */
@@ -78,7 +78,7 @@ export class LocaleDisplayNamesFormatter {
     /**
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
      *
      * @experimental
      */
@@ -109,7 +109,7 @@ export class LocaleDisplayNamesFormatter {
     /**
      * Returns the locale-specific display name of a locale.
      *
-     * See the [Rust documentation for `of`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+     * See the [Rust documentation for `of`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
      *
      * @experimental
      */
@@ -131,7 +131,7 @@ export class LocaleDisplayNamesFormatter {
     /**
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
      *
      * @experimental
      */

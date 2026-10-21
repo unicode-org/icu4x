@@ -25,7 +25,7 @@ internal interface CodePointSetBuilderLib: Library {
     fun icu4x_CodePointSetBuilder_complement_set_mv1(handle: Pointer, data: Pointer): Unit
 }
 /**
- * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
+ * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
  */
 class CodePointSetBuilder internal constructor (
     internal val handle: Pointer,
@@ -58,7 +58,7 @@ class CodePointSetBuilder internal constructor (
         /**
          * Make a new set builder containing nothing
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
          */
         fun create(): CodePointSetBuilder {
             
@@ -75,7 +75,7 @@ class CodePointSetBuilder internal constructor (
      *
      * This object is repopulated with an empty builder
      *
-     * See the [Rust documentation for `build`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.build) for more information.
+     * See the [Rust documentation for `build`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.build) for more information.
      */
     fun build(): CodePointSetData {
         
@@ -91,7 +91,7 @@ class CodePointSetBuilder internal constructor (
      *
      * (Elements in this set are removed and vice versa)
      *
-     * See the [Rust documentation for `complement`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement) for more information.
+     * See the [Rust documentation for `complement`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement) for more information.
      */
     fun complement(): Unit {
         
@@ -102,7 +102,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Returns whether this set is empty
      *
-     * See the [Rust documentation for `is_empty`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
+     * See the [Rust documentation for `is_empty`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
      */
     fun isEmpty(): Boolean {
         
@@ -113,7 +113,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Add a single character to the set
      *
-     * See the [Rust documentation for `add_char`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_char) for more information.
+     * See the [Rust documentation for `add_char`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_char) for more information.
      */
     fun addChar(ch: Int): Unit {
         
@@ -124,7 +124,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Add an inclusive range of characters to the set
      *
-     * See the [Rust documentation for `add_range`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
+     * See the [Rust documentation for `add_range`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
      */
     fun addInclusiveRange(start: Int, end: Int): Unit {
         
@@ -135,7 +135,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Add all elements that belong to the provided set to the set
      *
-     * See the [Rust documentation for `add_set`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
+     * See the [Rust documentation for `add_set`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
      */
     fun addSet(data: CodePointSetData): Unit {
         
@@ -146,7 +146,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Remove a single character to the set
      *
-     * See the [Rust documentation for `remove_char`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_char) for more information.
+     * See the [Rust documentation for `remove_char`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_char) for more information.
      */
     fun removeChar(ch: Int): Unit {
         
@@ -157,7 +157,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Remove an inclusive range of characters from the set
      *
-     * See the [Rust documentation for `remove_range`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_range) for more information.
+     * See the [Rust documentation for `remove_range`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_range) for more information.
      */
     fun removeInclusiveRange(start: Int, end: Int): Unit {
         
@@ -168,7 +168,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Remove all elements that belong to the provided set from the set
      *
-     * See the [Rust documentation for `remove_set`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
+     * See the [Rust documentation for `remove_set`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
      */
     fun removeSet(data: CodePointSetData): Unit {
         
@@ -179,7 +179,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Removes all elements from the set except a single character
      *
-     * See the [Rust documentation for `retain_char`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_char) for more information.
+     * See the [Rust documentation for `retain_char`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_char) for more information.
      */
     fun retainChar(ch: Int): Unit {
         
@@ -190,7 +190,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Removes all elements from the set except an inclusive range of characters f
      *
-     * See the [Rust documentation for `retain_range`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_range) for more information.
+     * See the [Rust documentation for `retain_range`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_range) for more information.
      */
     fun retainInclusiveRange(start: Int, end: Int): Unit {
         
@@ -201,7 +201,7 @@ class CodePointSetBuilder internal constructor (
     /**
      * Removes all elements from the set except all elements in the provided set
      *
-     * See the [Rust documentation for `retain_set`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
+     * See the [Rust documentation for `retain_set`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
      */
     fun retainSet(data: CodePointSetData): Unit {
         
@@ -214,7 +214,7 @@ class CodePointSetBuilder internal constructor (
      *
      * (Characters which are in this set are removed and vice versa)
      *
-     * See the [Rust documentation for `complement_char`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_char) for more information.
+     * See the [Rust documentation for `complement_char`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_char) for more information.
      */
     fun complementChar(ch: Int): Unit {
         
@@ -227,7 +227,7 @@ class CodePointSetBuilder internal constructor (
      *
      * (Characters which are in this set are removed and vice versa)
      *
-     * See the [Rust documentation for `complement_range`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_range) for more information.
+     * See the [Rust documentation for `complement_range`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_range) for more information.
      */
     fun complementInclusiveRange(start: Int, end: Int): Unit {
         
@@ -240,7 +240,7 @@ class CodePointSetBuilder internal constructor (
      *
      * (Characters which are in this set are removed and vice versa)
      *
-     * See the [Rust documentation for `complement_set`](https://docs.rs/icu/2.3.1/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_set) for more information.
+     * See the [Rust documentation for `complement_set`](https://docs.rs/icu/2.4.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_set) for more information.
      */
     fun complementSet(data: CodePointSetData): Unit {
         
