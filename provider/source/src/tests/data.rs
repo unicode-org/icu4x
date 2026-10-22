@@ -683,13 +683,6 @@ pub fn icuexport_data() -> AbstractFs {
         "collation/implicithan/zh_zhuyin_data.toml",
         "collation/implicithan/zh_zhuyin_meta.toml",
         "collation/implicithan/zh_zhuyin_reord.toml",
-        "norm/fast/nfd.toml",
-        "norm/fast/nfkd.toml",
-        "norm/small/compositions.toml",
-        "norm/small/decompositionex.toml",
-        "norm/small/nfdex.toml",
-        "norm/small/nfkdex.toml",
-        "norm/small/uts46d.toml",
         "segmenter/dictionary/thaidict.toml"
     )
 }
@@ -708,6 +701,7 @@ pub fn rscd_data() -> AbstractFs {
     include_files!(
         "../../tests/data/rscd/";
         "emoji/emoji-sequences.txt",
+        "idna/IdnaMappingTable.txt",
         "security/IdentifierStatus.txt",
         "ucd/BidiBrackets.txt",
         "ucd/BidiMirroring.txt",
