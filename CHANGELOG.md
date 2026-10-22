@@ -39,6 +39,8 @@
     - Added `CurrencyDecimalSymbolsV1` data marker for per-currency decimal symbol overrides. (unicode-org#8463)
     - Currency formatting uses the no-currency pattern when CLDR defines no symbol for a currency in a locale (e.g. `PTE` in `pt-PT`) (unicode-org#8485)
     - `RuleCollection::register_source` now takes the source by reference (unicode-org#8597)
+  - `icu_normalizer`
+    - Fix soundness bug around `split_normalized_utf8`, `normalize_utf8`. (unicode-org#8628)
   - `icu_pattern`: `0.5.0 -> 0.5.1`
     - No code changes, re-released to pick up the latest ICU4X dependency versions
   - `icu_properties`
@@ -48,7 +50,7 @@
       - Surrogates in string contexts (e.g., `{\uD800}`) are still rejected
   - `icu_segmenter`
     - Performance improvements for V1/V3 complex word and line segmenters. (unicode-org#8144)
-    - Fix dropped breakpoints at the end of the text in the dictionary segmenter (unicode-org#8523)
+    - Fix multiple bugs in the dictionary segmenter (unicode-org#8523, unicode-org#8611)
     - Fix line breaks at the end of Southeast Asian (SA) runs in the V1/V3 line segmenters (unicode-org#8574)
       - Breaks at the end of Thai, Lao, Khmer and Myanmar runs now follow the UAX #14 rules, so lines no longer break before closing punctuation, spaces, or a word joiner.
       - Thai directly followed by Latin letters or digits no longer breaks, matching V2.
@@ -66,8 +68,9 @@
   - `icu_capi`
     - Expose `category_for`, `categories`, and `resolve_range` on `PluralRulesWithRanges` (unicode-org#8583)
     - Expose `PluralOperands::from_significand_and_exponent` and `Decimal::equals` (unicode-org#8565)
-    - Dart
-      - Cache downloaded pre-built binaries across build hook invocations in `outputDirectoryShared`. (unicode-org#8426)
+    - Add utf-16 writing APIs for Normalizer (unicode-org#8595)
+  - Dart
+    - Cache downloaded pre-built binaries across build hook invocations in `outputDirectoryShared`. (unicode-org#8426)
 - Utils
   - `bies`
     - Retired (unicode-org#8457)
