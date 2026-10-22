@@ -430,7 +430,7 @@ jobs:
         gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
-      uses: rhysd/github-action-benchmark@c3efd4d54319dbc90622069cc273cba59b46abbf # v1.15.0
+      uses: sffc-bot/github-action-benchmark@3886ebdfab795a7954d8e47822f4a2de6bb12f1e
       with:
         name: Rust Benchmark
         tool: 'cargo'
@@ -519,7 +519,7 @@ jobs:
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
       # If the PR gets merged, this can be switched back to the main project.
       # https://github.com/rhysd/github-action-benchmark/pull/54
-      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      uses: sffc-bot/github-action-benchmark@3886ebdfab795a7954d8e47822f4a2de6bb12f1e
       with:
         name: Heap – ${{ matrix.os }}
         # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
@@ -607,7 +607,7 @@ jobs:
  
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
-      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      uses: sffc-bot/github-action-benchmark@3886ebdfab795a7954d8e47822f4a2de6bb12f1e
       with:
         tool: 'ndjson'
         output-file-path: benchmarks/binsize/wasm/output.txt
@@ -623,7 +623,7 @@ jobs:
     - name: Store benchmark result & create dashboard (gz)
       if: success() || failure()
       # Use gregtatum special feature to process ndjson-formatted benchmark data
-      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      uses: sffc-bot/github-action-benchmark@3886ebdfab795a7954d8e47822f4a2de6bb12f1e
       with:
         tool: 'ndjson'
         output-file-path: benchmarks/binsize/gz/output.txt
