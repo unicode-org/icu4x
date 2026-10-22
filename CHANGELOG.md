@@ -24,15 +24,11 @@
     - Reduce ambiguity in Medium and Long formats for `fieldsets::MD` and `fieldsets::MDE` (unicode-org#8447)
     - implement source parts for `DateRangeFormatter` (unicode-org#8448)
       - New items: `parts::RANGE_START` and `parts::RANGE_END`
-    - New module `fieldbag` for expressing field-by-field models for datetime formats. (unicode-org#8503)
-    - Added `DateTimeFieldBagParseError::SyntaxError` (unstable, part of #8503) (unicode-org#8511)
-    - new fns `DateTimeFieldBag::to_composite_field_set` and `DateTimeFieldBag::to_field_set_builder` and `DateTimeFieldBag::from_field_set_builder` (unicode-org#8517)
-    - Complete UTS 35 skeleton parsing and serialization for `DateTimeFieldBag` (unstable) (unicode-org#8527)
-      - New enum variants on `fieldbag::DateTimeFieldBagParseError`: `InvalidFieldLength`, `NonCanonicalField`, `UnknownField`
-      - New trait implementations on `fieldbag::DateTimeFieldBagParseError`: `Display`, `Error`
-    - Add `VALUES` associated constants to `options` and `fieldbag::field` enums, and complete `FieldSetBuilder` <-> `DateTimeFieldBag` conversions (unicode-org#8532)
+    - (unstable) New module `fieldbag`, struct `DateTimeFieldBag`, and related enums for expressing field-by-field models for datetime formats. (unicode-org#8503)
+      - Conversion to and from field sets (unicode-org#8517)
+      - Round-trip to UTS 35 skeleton strings (unicode-org#8527)
+    - Add `VALUES` associated constants to `options` enums (unicode-org#8532)
       - New associated constants in `icu_datetime::options`: `Length::VALUES`, `Alignment::VALUES`, `YearStyle::VALUES`, `TimePrecision::VALUES`, `SubsecondDigits::VALUES`
-      - New associated constants in `icu_datetime::fieldbag::field` (unstable): `Era::VALUES`, `Year::VALUES`, `Month::VALUES`, `Day::VALUES`, `Weekday::VALUES`, `DayPeriod::VALUES`, `HourKind::VALUES`, `Hour::VALUES`, `Minute::VALUES`, `Second::VALUES`, `FractionalSecondDigits::VALUES`, `TimeZoneName::VALUES`
     - Implement fallback to single-value formatting when there is no diff during range formatting (unicode-org#8480)
   - `icu_experimental`: `0.6.0 -> 0.7.0`
     - Renamed data marker `UnitIdsV1` to `UnitsIdV1`. (unicode-org#8473)
