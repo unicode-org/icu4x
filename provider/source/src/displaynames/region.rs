@@ -3,17 +3,71 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::coverage_experimental::CoverageLevelForXPath;
+use crate::AltVariantKind;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
 use crate::cldr_serde::alt::{Alt, WithAlt};
-use crate::displaynames::extract_names_for_zeromap_struct;
+use crate::displaynames::{
+    extract_names_for_zeromap_struct, extract_names_for_zeromap_struct_with_overrides,
+};
 use icu::experimental::displaynames::provider::*;
 use icu::locale::provider::names::*;
-use icu::locale::subtags::Region;
+use icu::locale::subtags::{Region, region};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::VarZeroCow;
+
+impl SourceDataProvider {
+    fn region_default_alt(&self, region: Region) -> Option<Alt> {
+        if (region == region!("HK") || region == region!("MO"))
+            && self
+                .alt_variants
+                .contains(&AltVariantKind::ChinaShortNameAsDefault)
+        {
+            return Some(Alt::Short);
+        }
+        if region == region!("PS")
+            && self
+                .alt_variants
+                .contains(&AltVariantKind::PalestineShortNameAsDefault)
+        {
+            return Some(Alt::Short);
+        }
+        if region == region!("FK")
+            && self
+                .alt_variants
+                .contains(&AltVariantKind::FalklandVariantNameAsDefault)
+        {
+            return Some(Alt::Variant);
+        }
+        None
+    }
+
+    fn region_display_names_from_cldr(
+        &self,
+        other: &cldr_serde::displaynames::region::Resource,
+    ) -> RegionDisplayNames<'static> {
+        let extracted = extract_names_for_zeromap_struct_with_overrides(
+            &other.main.value.localedisplaynames.regions,
+            &[Alt::Variant, Alt::Chagos, Alt::Biot],
+            "region",
+            |region| Some(region.to_tinystr()),
+            |&region| self.region_default_alt(region),
+        );
+
+        let to_zero_map = |map: BTreeMap<tinystr::TinyAsciiStr<3>, &str>| {
+            map.into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect()
+        };
+
+        RegionDisplayNames {
+            names: to_zero_map(extracted.names),
+            short_names: to_zero_map(extracted.short_names),
+        }
+    }
+}
 
 impl DataProvider<LocaleNamesRegionV0> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleNamesRegionV0>, DataError> {
@@ -26,7 +80,7 @@ impl DataProvider<LocaleNamesRegionV0> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(RegionDisplayNames::from(data)),
+            payload: DataPayload::from_owned(self.region_display_names_from_cldr(data)),
         })
     }
 }
@@ -42,6 +96,7 @@ crate::displaynames::impl_displaynames_v1!(
     None,
     territory,
     CoverageLevelForXPath::Basic | CoverageLevelForXPath::Core,
+    Self::region_default_alt,
 );
 crate::displaynames::impl_displaynames_v1!(
     LocaleNamesRegionMediumLightV1,
@@ -52,6 +107,7 @@ crate::displaynames::impl_displaynames_v1!(
     None,
     territory,
     CoverageLevelForXPath::Moderate,
+    Self::region_default_alt,
 );
 
 crate::displaynames::impl_displaynames_v1!(
@@ -214,6 +270,110 @@ mod tests {
             .payload;
 
         assert_eq!(&**data.get(), "UK");
+    }
+
+    #[test]
+    fn test_region_alt_variants() {
+        let default_provider = SourceDataProvider::new_testing();
+        let alt_provider = SourceDataProvider::new_testing().with_alt_variants([
+            AltVariantKind::ChinaShortNameAsDefault,
+            AltVariantKind::FalklandVariantNameAsDefault,
+            AltVariantKind::PalestineShortNameAsDefault,
+        ]);
+
+        let load_tiny = |provider: &SourceDataProvider, code: &str| -> String {
+            let payload: DataPayload<LocaleNamesRegionMediumTinyV1> = provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::try_from_str(code).unwrap(),
+                        &data_locale!("en"),
+                    ),
+                    ..Default::default()
+                })
+                .unwrap()
+                .payload;
+            payload.get().to_string()
+        };
+        let load_light = |provider: &SourceDataProvider, code: &str| -> String {
+            let payload: DataPayload<LocaleNamesRegionMediumLightV1> = provider
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::try_from_str(code).unwrap(),
+                        &data_locale!("en"),
+                    ),
+                    ..Default::default()
+                })
+                .unwrap()
+                .payload;
+            payload.get().to_string()
+        };
+
+        assert_eq!(load_tiny(&default_provider, "HK"), "Hong Kong SAR China");
+        assert_eq!(load_tiny(&default_provider, "MO"), "Macao SAR China");
+        assert_eq!(
+            load_light(&default_provider, "PS"),
+            "Palestinian Territories"
+        );
+        assert_eq!(load_tiny(&default_provider, "FK"), "Falkland Islands");
+
+        assert_eq!(load_tiny(&alt_provider, "HK"), "Hong Kong");
+        assert_eq!(load_tiny(&alt_provider, "MO"), "Macao");
+        assert_eq!(load_light(&alt_provider, "PS"), "Palestine");
+        assert_eq!(
+            load_tiny(&alt_provider, "FK"),
+            "Falkland Islands (Islas Malvinas)"
+        );
+
+        let v0_default: DataPayload<LocaleNamesRegionV0> = default_provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let v0_alt: DataPayload<LocaleNamesRegionV0> = alt_provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            v0_default
+                .get()
+                .names
+                .get(&region!("HK").to_tinystr().to_unvalidated()),
+            Some("Hong Kong SAR China")
+        );
+        assert_eq!(
+            v0_alt
+                .get()
+                .names
+                .get(&region!("HK").to_tinystr().to_unvalidated()),
+            Some("Hong Kong")
+        );
+        assert_eq!(
+            v0_alt
+                .get()
+                .names
+                .get(&region!("MO").to_tinystr().to_unvalidated()),
+            Some("Macao")
+        );
+        assert_eq!(
+            v0_alt
+                .get()
+                .names
+                .get(&region!("PS").to_tinystr().to_unvalidated()),
+            Some("Palestine")
+        );
+        assert_eq!(
+            v0_alt
+                .get()
+                .names
+                .get(&region!("FK").to_tinystr().to_unvalidated()),
+            Some("Falkland Islands (Islas Malvinas)")
+        );
     }
 
     /// The cartesian product of Region x (Short | Medium) x (Minimal | Core | Extended)

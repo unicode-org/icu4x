@@ -45,17 +45,15 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .get(currency.iso_code().as_str())
             .unwrap();
 
+        let short_symbol = currency_pattern.short_symbol(currency.iso_code().as_str(), self);
+
         // UTS #35 lateral inheritance: a missing narrow symbol falls back to the
         // standard symbol. Resolving this here means consumers need a single request.
         let symbol = match width {
-            CurrencySymbolWidth::Narrow => currency_pattern
-                .narrow
-                .as_ref()
-                .or(currency_pattern.short.as_ref()),
-            _ => currency_pattern.short.as_ref(),
+            CurrencySymbolWidth::Narrow => currency_pattern.narrow.as_deref().or(short_symbol),
+            _ => short_symbol,
         }
-        .unwrap()
-        .as_str();
+        .unwrap();
 
         // CLDR uses U+200B ZERO WIDTH SPACE as the symbol when a locale explicitly has no
         // currency symbol, e.g. `PTE` in `pt-PT`, where the cifrão ('$') is the decimal
@@ -127,11 +125,12 @@ impl IterableDataProviderCached<CurrencySymbolsV1> for SourceDataProvider {
                     );
                     continue;
                 };
+                let short_symbol = patterns.short_symbol(currency, self);
                 for (width, symbol) in [
-                    (CurrencySymbolsV1::SHORT, patterns.short.as_ref()),
+                    (CurrencySymbolsV1::SHORT, short_symbol),
                     (
                         CurrencySymbolsV1::NARROW,
-                        patterns.narrow.as_ref().or(patterns.short.as_ref()),
+                        patterns.narrow.as_deref().or(short_symbol),
                     ),
                 ] {
                     if symbol.is_some_and(|s| s != currency) {
@@ -242,4 +241,52 @@ fn test_symbols() {
         load(PT_PT, PTE, CurrencySymbolsV1::NARROW).unwrap().get(),
         &CurrencySymbol::new("", false, false)
     );
+
+    const UAH: CurrencyType = currency!("UAH");
+    const RU: DataLocale = data_locale!("ru");
+    assert_eq!(
+        load(RU, UAH, CurrencySymbolsV1::SHORT).unwrap().get(),
+        &CurrencySymbol::new("₴", false, false)
+    );
+    assert_eq!(
+        load(RU, UAH, CurrencySymbolsV1::NARROW).unwrap().get(),
+        &CurrencySymbol::new("₴", false, false)
+    );
+
+    let uah_alt_provider = SourceDataProvider::new_testing()
+        .with_alt_variants([crate::AltVariantKind::UahVariantSymbolAsDefault]);
+    let uah_short = DataProvider::<CurrencySymbolsV1>::load(
+        &uah_alt_provider,
+        DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                CurrencySymbolsV1::make_attributes(
+                    UAH,
+                    CurrencySymbolsV1::SHORT,
+                    &mut Default::default(),
+                ),
+                &RU,
+            ),
+            ..Default::default()
+        },
+    )
+    .unwrap()
+    .payload;
+    let uah_narrow = DataProvider::<CurrencySymbolsV1>::load(
+        &uah_alt_provider,
+        DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                CurrencySymbolsV1::make_attributes(
+                    UAH,
+                    CurrencySymbolsV1::NARROW,
+                    &mut Default::default(),
+                ),
+                &RU,
+            ),
+            ..Default::default()
+        },
+    )
+    .unwrap()
+    .payload;
+    assert_eq!(uah_short.get(), &CurrencySymbol::new("грн.", true, false));
+    assert_eq!(uah_narrow.get(), &CurrencySymbol::new("₴", false, false));
 }

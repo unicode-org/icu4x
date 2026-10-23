@@ -18,6 +18,9 @@ pub(crate) struct CurrencyPatterns {
     #[serde(rename = "symbol-alt-narrow")]
     pub(crate) narrow: Option<String>,
 
+    #[serde(rename = "symbol-alt-variant")]
+    pub(crate) variant: Option<String>,
+
     #[serde(rename = "displayName")]
     pub(crate) display_name: Option<String>,
 
@@ -50,6 +53,24 @@ pub(crate) struct CurrencyPatterns {
 
     /// Grouping separator override for this currency (UTS 35 `<currency><group>`).
     pub(crate) group: Option<String>,
+}
+
+impl CurrencyPatterns {
+    pub(crate) fn short_symbol<'a>(
+        &'a self,
+        iso: &str,
+        provider: &crate::SourceDataProvider,
+    ) -> Option<&'a str> {
+        if iso == "UAH"
+            && provider
+                .alt_variants
+                .contains(&crate::AltVariantKind::UahVariantSymbolAsDefault)
+            && let Some(ref variant) = self.variant
+        {
+            return Some(variant.as_str());
+        }
+        self.short.as_deref()
+    }
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

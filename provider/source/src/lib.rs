@@ -482,6 +482,7 @@ impl SourceDataProvider {
     pub fn with_alt_variants(self, variants: impl IntoIterator<Item = AltVariantKind>) -> Self {
         Self {
             alt_variants: variants.into_iter().collect(),
+            requests_cache: Default::default(),
             ..self
         }
     }
@@ -679,6 +680,18 @@ pub enum AltVariantKind {
     ///
     /// Intended for compatibility with older websites.
     DatetimeAscii,
+    /// Prefer `alt="short"` region display names as the default (medium) display name for
+    /// Hong Kong (`HK`) and Macau (`MO`).
+    ChinaShortNameAsDefault,
+    /// Prefer `alt="variant"` region display names as the default (medium) display name for
+    /// the Falkland Islands (`FK`).
+    FalklandVariantNameAsDefault,
+    /// Prefer `alt="short"` region display names as the default (medium) display name for
+    /// Palestine (`PS`).
+    PalestineShortNameAsDefault,
+    /// Prefer `alt="variant"` currency symbols as the default (short) symbol for the
+    /// Ukrainian hryvnia (`UAH`).
+    UahVariantSymbolAsDefault,
 }
 
 /// A language's CLDR coverage level.
