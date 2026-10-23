@@ -352,6 +352,9 @@ enum CollationRootHan {
 // Mirrors icu_provider_source::AltVariantKind
 enum AltVariantKind {
     DatetimeAscii,
+    DisplaynamesChinaShortNameAsDefault,
+    DisplaynamesFalklandVariantNameAsDefault,
+    DisplaynamesPalestineShortNameAsDefault,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -514,6 +517,15 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
             p = p.with_alt_variants(cli.alt_variants.iter().copied().map(|v| match v {
                 AltVariantKind::DatetimeAscii => icu_provider_source::AltVariantKind::DatetimeAscii,
+                AltVariantKind::DisplaynamesChinaShortNameAsDefault => {
+                    icu_provider_source::AltVariantKind::DisplaynamesChinaShortNameAsDefault
+                }
+                AltVariantKind::DisplaynamesFalklandVariantNameAsDefault => {
+                    icu_provider_source::AltVariantKind::DisplaynamesFalklandVariantNameAsDefault
+                }
+                AltVariantKind::DisplaynamesPalestineShortNameAsDefault => {
+                    icu_provider_source::AltVariantKind::DisplaynamesPalestineShortNameAsDefault
+                }
             }));
 
             if cli.trie_type == TrieType::Fast {
@@ -939,6 +951,15 @@ mod test_consistency {
         let upstream = Upstream::DatetimeAscii;
         let _ = match upstream {
             Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
+            Upstream::DisplaynamesChinaShortNameAsDefault => {
+                AltVariantKind::DisplaynamesChinaShortNameAsDefault
+            }
+            Upstream::DisplaynamesFalklandVariantNameAsDefault => {
+                AltVariantKind::DisplaynamesFalklandVariantNameAsDefault
+            }
+            Upstream::DisplaynamesPalestineShortNameAsDefault => {
+                AltVariantKind::DisplaynamesPalestineShortNameAsDefault
+            }
             _ => unreachable!(),
         };
     }
