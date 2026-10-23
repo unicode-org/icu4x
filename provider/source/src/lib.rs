@@ -682,16 +682,13 @@ pub enum AltVariantKind {
     DatetimeAscii,
     /// Prefer `alt="short"` region display names as the default (medium) display name for
     /// Hong Kong (`HK`) and Macau (`MO`).
-    ChinaShortNameAsDefault,
+    DisplaynamesChinaShortNameAsDefault,
     /// Prefer `alt="variant"` region display names as the default (medium) display name for
     /// the Falkland Islands (`FK`).
-    FalklandVariantNameAsDefault,
+    DisplaynamesFalklandVariantNameAsDefault,
     /// Prefer `alt="short"` region display names as the default (medium) display name for
     /// Palestine (`PS`).
-    PalestineShortNameAsDefault,
-    /// Prefer `alt="variant"` currency symbols as the default (short) symbol for the
-    /// Ukrainian hryvnia (`UAH`).
-    UahVariantSymbolAsDefault,
+    DisplaynamesPalestineShortNameAsDefault,
 }
 
 /// A language's CLDR coverage level.

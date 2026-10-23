@@ -23,21 +23,21 @@ impl SourceDataProvider {
         if (region == region!("HK") || region == region!("MO"))
             && self
                 .alt_variants
-                .contains(&AltVariantKind::ChinaShortNameAsDefault)
+                .contains(&AltVariantKind::DisplaynamesChinaShortNameAsDefault)
         {
             return Some(Alt::Short);
         }
         if region == region!("PS")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::PalestineShortNameAsDefault)
+                .contains(&AltVariantKind::DisplaynamesPalestineShortNameAsDefault)
         {
             return Some(Alt::Short);
         }
         if region == region!("FK")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::FalklandVariantNameAsDefault)
+                .contains(&AltVariantKind::DisplaynamesFalklandVariantNameAsDefault)
         {
             return Some(Alt::Variant);
         }
@@ -276,9 +276,9 @@ mod tests {
     fn test_region_alt_variants() {
         let default_provider = SourceDataProvider::new_testing();
         let alt_provider = SourceDataProvider::new_testing().with_alt_variants([
-            AltVariantKind::ChinaShortNameAsDefault,
-            AltVariantKind::FalklandVariantNameAsDefault,
-            AltVariantKind::PalestineShortNameAsDefault,
+            AltVariantKind::DisplaynamesChinaShortNameAsDefault,
+            AltVariantKind::DisplaynamesFalklandVariantNameAsDefault,
+            AltVariantKind::DisplaynamesPalestineShortNameAsDefault,
         ]);
 
         let load_tiny = |provider: &SourceDataProvider, code: &str| -> String {
