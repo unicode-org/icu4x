@@ -679,7 +679,13 @@ fn explicit_hybrid_mixed_families() {
 fn explicit_runtime_und() {
     let exported = export_to_map(
         ExportDriver::new(
-            [DataLocaleFamily::with_descendants(Default::default())],
+            [
+                DataLocaleFamily::with_descendants(Default::default()),
+                "und".parse().unwrap(),
+                "^und".parse().unwrap(),
+                "%und".parse().unwrap(),
+                "@und".parse().unwrap(),
+            ],
             DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
