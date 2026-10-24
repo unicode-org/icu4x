@@ -50,7 +50,7 @@ pub mod preferences {
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::Decimal;
+/// use icu::experimental::relativetime::input::Decimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -76,7 +76,7 @@ pub mod preferences {
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::Decimal;
+/// use icu::experimental::relativetime::input::Decimal;
 /// use icu::experimental::relativetime::options::Numeric;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
@@ -110,7 +110,7 @@ pub mod preferences {
 ///
 /// # Example
 /// ```
-/// use fixed_decimal::Decimal;
+/// use icu::experimental::relativetime::input::Decimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
