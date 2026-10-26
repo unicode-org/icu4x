@@ -93,7 +93,7 @@ pub struct CurrencyFormatter<V: AbstractFormatter> {
     fraction_info: FractionInfo,
 }
 
-impl<V: AbstractFormatter> CurrencyFormatter<V> {
+impl<V: AbstractFormatter + 'static> CurrencyFormatter<V> {
     #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_essential(
         value_formatter: V,
@@ -101,7 +101,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyType,
         width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
-        empty_symbol_as_no_currency: bool,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -141,7 +140,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             // and when the currency symbol is empty they fall back to the ISO code
             // (`"1,3\u{a0}mil\u{a0}PTE"`) rather than the no-currency pattern
             // (`"1,3\u{a0}mil"`) so the currency is not omitted.
-            Some(_) if empty_symbol_as_no_currency => {
+            Some(_)
+                if core::any::TypeId::of::<V>() == core::any::TypeId::of::<DecimalFormatter>() =>
+            {
                 let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(
                     &crate::provider::Baked,
                     ids,
@@ -170,7 +171,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyType,
         width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
-        empty_symbol_as_no_currency: bool,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -215,7 +215,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             // and when the currency symbol is empty they fall back to the ISO code
             // (`"1,3\u{a0}mil\u{a0}PTE"`) rather than the no-currency pattern
             // (`"1,3\u{a0}mil"`) so the currency is not omitted.
-            Some(_) if empty_symbol_as_no_currency => {
+            Some(_)
+                if core::any::TypeId::of::<V>() == core::any::TypeId::of::<DecimalFormatter>() =>
+            {
                 let patterns =
                     load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
                 CurrencyFormatterData::NoCurrency { patterns }
@@ -529,7 +531,6 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
-            true,
         )
     }
 
@@ -558,7 +559,6 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
-            true,
         )
     }
 
@@ -590,7 +590,6 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
-            true,
         )
     }
 
@@ -622,7 +621,6 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
-            true,
         )
     }
 
@@ -1062,7 +1060,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
-            false,
         )
     }
 
@@ -1083,7 +1080,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
-            false,
         )
     }
 
@@ -1140,7 +1136,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
-            false,
         )
     }
 
@@ -1161,7 +1156,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
-            false,
         )
     }
 
@@ -1230,7 +1224,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
-            false,
         )
     }
 
@@ -1263,7 +1256,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
-            false,
         )
     }
 
@@ -1324,7 +1316,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
-            false,
         )
     }
 
@@ -1357,7 +1348,6 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
-            false,
         )
     }
 
