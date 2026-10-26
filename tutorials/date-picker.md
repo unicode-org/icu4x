@@ -30,7 +30,7 @@ cargo add icu
 We recommend using [`CodePen`](https://codepen.io/pen/?editors=1011) to follow along. To load ICU4X into `CodePen`, you can use this snippet in the JavaScript editor:
 
 ```javascript
-import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://cdn.jsdelivr.net/npm/icu@2.4.0/lib/index.mjs";
+import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://unpkg.com/icu@2.4.0";
 ```
 
 This loads the full ICU4X WebAssembly file. Since it may take a few seconds to load on slow connections, we'll create a loading div. Add this to your HTML:

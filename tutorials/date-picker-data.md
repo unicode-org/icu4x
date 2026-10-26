@@ -86,7 +86,7 @@ Update the formatting logic to load data from the blob if the locale is Chakma. 
 
 ```javascript
 // Add DataProvider to your import at the top of the file:
-import { Locale, DateFormatter, IsoDate, DateTimeLength, DataProvider } from "https://cdn.jsdelivr.net/npm/icu@2.4.0/lib/index.mjs";
+import { Locale, DateFormatter, IsoDate, DateTimeLength, DataProvider } from "https://unpkg.com/icu@2.4.0";
 
 function load_blob(url, callback) {
     const req = new XMLHttpRequest();
