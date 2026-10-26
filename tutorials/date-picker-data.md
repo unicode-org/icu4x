@@ -122,7 +122,7 @@ Try using `ccp` now!
 
 ## 4. Slimming the data pack
 
-Note: the following steps are currently only possible in Rust. 🤷
+💡 Note: the following steps are currently only possible in Rust. 🤷
 
 When we ran `icu4x-datagen`, we passed `--markers all`, which make it generate *all* data for the Chakma locale, even though we only need date formatting. We can make `icu4x-datagen` analyze our binary to figure out which markers are needed:
 
@@ -131,7 +131,7 @@ cargo build --release
 icu4x-datagen --markers-for-bin target/release/tutorial --locales ccp --format blob --out ccp_smaller.blob
 ```
 
-Note: you usually want to build with the `--release` flag, and analyze that binary.
+💡 Note: you usually want to build with the `--release` flag, and analyze that binary.
 
 This should generate a lot fewer markers!
 
@@ -159,7 +159,7 @@ Replace the `DateTimeFormatter::try_new` calls with `FixedCalendarDateTimeFormat
 
 The generic type of `FixedCalendarDateTimeFormatter` will be inferred from the input, which now has type `&Date<Gregorian>`. Unlike `DateTimeFormatter`, `FixedCalendarDateTimeFormatter` never resolves a calendar from the locale or applies calendar conversions on its input, so it will always format in the `Gregorian` calendar as a `FixedCalendarDateTimeFormatter<Gregorian, ...>`.
 
-Note: In JavaScript, replace `DateFormatter` with [`DateFormatterGregorian`](https://icu4x.unicode.org/2_4/tsdoc/classes/DateFormatterGregorian.html) (the JavaScript counterpart to `FixedCalendarDateTimeFormatter<Gregorian, ...>`) in your `import` and `createYmd`.
+💡 Note: In JavaScript, replace `DateFormatter` with [`DateFormatterGregorian`](https://icu4x.unicode.org/2_4/tsdoc/classes/DateFormatterGregorian.html) (the JavaScript counterpart to `FixedCalendarDateTimeFormatter<Gregorian, ...>`) in your `import` and `createYmd`.
 
 Now we can run datagen with `--markers-for-bin` again:
 
