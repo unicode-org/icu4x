@@ -31,7 +31,7 @@ icu4x-datagen --markers all --locales ccp --format blob --out ccp.blob
 
 This will generate a `ccp.blob` file containing data for Chakma.
 
-💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp.blob) (generated with icu4x 2.1).
+💡 Note: if you're having technical difficulties, this file is available [here](https://icu4x.unicode.org/files/tutorials-2026-10-21/ccp.blob) (generated with icu4x 2.3).
 
 
 ## 3. Using the data pack
@@ -99,7 +99,7 @@ function load_blob(url, callback) {
 }
 
 if (localeStr == "ccp") {
-    load_blob("https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp.blob", (blob) => {
+    load_blob("https://icu4x.unicode.org/files/tutorials-2026-10-21/ccp.blob", (blob) => {
         let dateTimeFormatter = DateTimeFormatter.createYmdtWithProvider(
             DataProvider.fromByteSlice(blob),
             locale,
@@ -137,13 +137,13 @@ Let's look at the sizes:
 
 ```console
 wc -c *.blob
-# 5448603 ccp.blob
-#   13711 ccp_smaller.blob
+# 5438165 ccp.blob
+#   12444 ccp_smaller.blob
 ```
 
 This is much better! Rerun your app with `ccp_smaller.blob` to make sure it still works!
 
-💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp_smaller.blob) (generated with icu4x 2.1).
+💡 Note: if you're having technical difficulties, this file is available [here](https://icu4x.unicode.org/files/tutorials-2026-10-21/ccp_smaller.blob) (generated with icu4x 2.3).
 
 ## 5. Slimming the data pack ... again
 
@@ -178,13 +178,13 @@ And the blob will also be much smaller at the sizes:
 
 ```console
 wc -c *.blob
-# 5448603 ccp.blob
-#   13711 ccp_smaller.blob
-#    4711 ccp_smallest.blob
+# 5438165 ccp.blob
+#   12444 ccp_smaller.blob
+#    4591 ccp_smallest.blob
 ```
 
 Rerun your app with `ccp_smallest.blob` to make sure it still works!
 
-💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp_smallest.blob) (generated with icu4x 2.1).
+💡 Note: if you're having technical difficulties, this file is available [here](https://icu4x.unicode.org/files/tutorials-2026-10-21/ccp_smallest.blob) (generated with icu4x 2.3).
 
 Does the locale `en-u-ca-hebrew` still use the Hebrew calendar? Why is that?

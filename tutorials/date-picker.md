@@ -30,7 +30,7 @@ cargo add icu
 We recommend using [`CodePen`](https://codepen.io/pen/?editors=1011) to follow along. To load ICU4X into `CodePen`, you can use this snippet in the JavaScript editor:
 
 ```javascript
-import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://unpkg.com/icu@2.0.0";
+import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://cdn.jsdelivr.net/npm/icu@2.4.0/lib/index.mjs";
 ```
 
 This loads the full ICU4X WebAssembly file. Since it may take a few seconds to load on slow connections, we'll create a loading div. Add this to your HTML:
@@ -196,8 +196,8 @@ document.getElementById("dateinput").addEventListener("input", update, false);
 // Put the following in the update() function, inside the try block:
 let dateStr = document.getElementById("dateinput").value;
 
-let dateObj = dateStr ? new Date(dateStr) : new Date();
-let isoDate = new IsoDate(dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate());
+let dateObj = dateStr ? Temporal.PlainDate.from(dateStr) : Temporal.Now.plainDateISO();
+let isoDate = new IsoDate(dateObj.year, dateObj.month, dateObj.day);
 let dateFormatter = DateFormatter.createYmd(locale, DateTimeLength.Long);
 let output = dateFormatter.formatIso(isoDate);
 
@@ -216,7 +216,7 @@ Use the API documentation for [`icu::time::DateTime`](https://docs.rs/icu/latest
 
 ### JavaScript Part 4
 
-Use the API documentation for [`Time`](https://icu4x.unicode.org/2_0/tsdoc/classes/Time.html) and [`DateTimeFormatter`](https://icu4x.unicode.org/2_0/tsdoc/classes/DateTimeFormatter.html) to expand your app to format both a date and a time.
+Use the API documentation for [`Time`](https://icu4x.unicode.org/2_4/tsdoc/classes/Time.html) and [`DateTimeFormatter`](https://icu4x.unicode.org/2_4/tsdoc/classes/DateTimeFormatter.html) to expand your app to format both a date and a time.
 
 Hint: You can create an HTML time picker with
 
@@ -224,10 +224,8 @@ Hint: You can create an HTML time picker with
 <p><label>Time: <input type="time" id="timeinput" value="10:10"/></label></p>
 ```
 
-Hint: You can create a `Date` from `dateStr` and `timeStr` with
+Hint: You can create a `Temporal.PlainTime` from `timeStr` with
 
 ```javascript
-let dateObj = dateStr && timeStr ? new Date(dateStr + " " + timeStr) : new Date();
+let timeObj = timeStr ? Temporal.PlainTime.from(timeStr) : Temporal.Now.plainTimeISO();
 ```
-
-Note that Dates constructed this way will be in UTC.
