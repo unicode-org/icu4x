@@ -157,7 +157,6 @@ impl<'zf> zerofrom::ZeroFrom<'zf, VarTupleULE<u8, str>> for CurrencySymbol<'zf> 
     }
 }
 
-#[cfg(feature = "datagen")]
 #[test]
 fn test_currency_attributes_roundtrip() {
     use icu_locale::preferences::extensions::unicode::keywords::currency;
