@@ -361,10 +361,11 @@ mod tests {
         // ZERO WIDTH SPACE, stored as the empty string by datagen) because the
         // cifrão ('$') serves as the decimal separator override (`12,345$67`).
         //
-        // TODO(#8454): Because compact currency formatters do not apply per-currency
-        // decimal separator overrides (CLDR-19798), an empty symbol falls back to the
-        // ISO code (`PTE`) rather than the no-currency pattern so the currency is not
-        // omitted entirely.
+        // TODO(#8454): Until CLDR-19798 is addressed, compact currency formatters
+        // use the locale's default decimal separator (',') instead of the currency's
+        // decimal separator override ('$'), and when the currency symbol is empty
+        // they fall back to the ISO code (`PTE`) rather than the no-currency pattern
+        // so the currency is not omitted.
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
                 .unwrap();

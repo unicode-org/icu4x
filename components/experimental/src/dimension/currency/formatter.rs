@@ -135,11 +135,12 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             // currency, so format the amount with the no-currency pattern. This is
             // different from a missing entry (`None`), which falls back to the ISO code.
             //
-            // TODO(#8454): For compact currency formatting, per-currency decimal
-            // separator overrides are not applied (CLDR-19798), so using the
-            // no-currency pattern would omit the currency indicator entirely
-            // (producing e.g. `"1,3\u{a0}mil"` for `PTE` in `pt-PT`). Fall back to
-            // the ISO code until CLDR-19798 is addressed.
+            // TODO(#8454): Until CLDR-19798 is addressed, compact currency formatters
+            // use the locale's default decimal separator (e.g. ',') instead of the
+            // currency's decimal separator override (e.g. '$' for `PTE` in `pt-PT`),
+            // and when the currency symbol is empty they fall back to the ISO code
+            // (`"1,3\u{a0}mil\u{a0}PTE"`) rather than the no-currency pattern
+            // (`"1,3\u{a0}mil"`) so the currency is not omitted.
             Some(_) if empty_symbol_as_no_currency => {
                 let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(
                     &crate::provider::Baked,
@@ -208,11 +209,12 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             // currency, so format the amount with the no-currency pattern. This is
             // different from a missing entry (`None`), which falls back to the ISO code.
             //
-            // TODO(#8454): For compact currency formatting, per-currency decimal
-            // separator overrides are not applied (CLDR-19798), so using the
-            // no-currency pattern would omit the currency indicator entirely
-            // (producing e.g. `"1,3\u{a0}mil"` for `PTE` in `pt-PT`). Fall back to
-            // the ISO code until CLDR-19798 is addressed.
+            // TODO(#8454): Until CLDR-19798 is addressed, compact currency formatters
+            // use the locale's default decimal separator (e.g. ',') instead of the
+            // currency's decimal separator override (e.g. '$' for `PTE` in `pt-PT`),
+            // and when the currency symbol is empty they fall back to the ISO code
+            // (`"1,3\u{a0}mil\u{a0}PTE"`) rather than the no-currency pattern
+            // (`"1,3\u{a0}mil"`) so the currency is not omitted.
             Some(_) if empty_symbol_as_no_currency => {
                 let patterns =
                     load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
