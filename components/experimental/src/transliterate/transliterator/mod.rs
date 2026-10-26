@@ -125,7 +125,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// let mut collection = RuleCollection::default();
 /// collection.register_source(
 ///     &"und-t-und-x0-custom".parse().unwrap(),
-///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing_Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
+///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing_Mark:] Remove; ::AsciiUpper; ::NFC;",
 ///     [],
 ///     false,
 ///     true,
@@ -138,7 +138,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 ///       [ä {a \u0308}] → ae;
 ///       [ö {o \u0308}] → oe;
 ///       [ü {u \u0308}] → ue;
-///     "#.to_string(),
+///     "#,
 ///     ["Any-FlattenLowerUmlaut"],
 ///     false,
 ///     true,
@@ -1654,7 +1654,7 @@ mod tests {
         let mut collection = RuleCollection::default();
         collection.register_source(
             &"und-x-test".parse().unwrap(),
-            include_str!("../../../tests/transliterate/data/transforms/EmptyMatches.txt").into(),
+            include_str!("../../../tests/transliterate/data/transforms/EmptyMatches.txt"),
             [],
             false,
             true,
@@ -1678,14 +1678,14 @@ mod tests {
         let mut collection = RuleCollection::default();
         collection.register_source(
             &"und-x-root".parse().unwrap(),
-            include_str!("../../../tests/transliterate/data/transforms/RecursiveRoot.txt").into(),
+            include_str!("../../../tests/transliterate/data/transforms/RecursiveRoot.txt"),
             [],
             false,
             true,
         );
         collection.register_source(
             &"und-x-rec".parse().unwrap(),
-            include_str!("../../../tests/transliterate/data/transforms/RecursiveA.txt").into(),
+            include_str!("../../../tests/transliterate/data/transforms/RecursiveA.txt"),
             ["Test-Test/RecursiveSuiteA"],
             false,
             true,
@@ -1709,7 +1709,7 @@ mod tests {
         let mut collection = RuleCollection::default();
         collection.register_source(
             &"und-x-test".parse().unwrap(),
-            include_str!("../../../tests/transliterate/data/transforms/CursorFilters.txt").into(),
+            include_str!("../../../tests/transliterate/data/transforms/CursorFilters.txt"),
             [],
             false,
             true,
@@ -1732,7 +1732,7 @@ mod tests {
         let mut collection = RuleCollection::default();
         collection.register_source(
             &"und-x-test".parse().unwrap(),
-            include_str!("../../../tests/transliterate/data/transforms/Functionality.txt").into(),
+            include_str!("../../../tests/transliterate/data/transforms/Functionality.txt"),
             [],
             false,
             true,
@@ -1798,7 +1798,7 @@ mod tests {
         let mut collection = RuleCollection::default();
         collection.register_source(
             &"und-x-test".parse().unwrap(),
-            "::Hex/Rust;".into(),
+            "::Hex/Rust;",
             [],
             false,
             true,
@@ -1820,7 +1820,7 @@ mod tests {
         let mut collection = RuleCollection::default();
         collection.register_source(
             &"und-x-test".parse().unwrap(),
-            "::Hex/Unicode;".into(),
+            "::Hex/Unicode;",
             [],
             false,
             true,

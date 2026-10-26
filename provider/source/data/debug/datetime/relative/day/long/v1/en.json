@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "yesterday",
-    "0": "today",
-    "1": "tomorrow"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "yesterday",
+    "today",
+    "tomorrow"
+  ],
   "past": {
     "one": [
       0,

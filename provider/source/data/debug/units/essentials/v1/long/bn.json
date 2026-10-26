@@ -214,15 +214,6 @@
       {
         "Power": {
           "power": "Three",
-          "count": "One"
-        }
-      },
-      "ঘন {0}"
-    ],
-    [
-      {
-        "Power": {
-          "power": "Three",
           "count": "Other"
         }
       },

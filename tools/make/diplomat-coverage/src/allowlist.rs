@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This file contains the allowlist for the ffi_coverage test
+//! This file contains the allowlist for the `ffi_coverage` test
 //!
-//! Most new entries will go into IGNORED_PATHS
+//! Most new entries will go into [`IGNORED_PATHS`]
 
 use std::collections::{HashMap, HashSet};
 
@@ -219,12 +219,6 @@ lazy_static::lazy_static! {
         "icu::normalizer::uts46::Uts46Mapper",
         "icu::normalizer::uts46::Uts46MapperBorrowed",
 
-        // Not planned for 2.0: we need DiplomatWriteable16
-        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16",
-        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to",
-        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16",
-        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16_to",
-
         // Not planned for 2.0
         // Can't be exposed till diplomat has input iterators, as well as
         // safety for borrowing input iterators into return types
@@ -300,6 +294,8 @@ lazy_static::lazy_static! {
         //
         // We should occasionally review these
         // =========================
+
+        "icu::datetime::fieldbag",
 
         "icu::decimal::CompactDecimalFormatter",
         "icu::decimal::error::CompactExponentError",

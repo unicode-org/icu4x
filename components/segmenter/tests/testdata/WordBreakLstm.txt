@@ -1,0 +1,102 @@
+# Word breaking tests, using the auto model for complex
+# scripts (LSTM for Thai, Lao, Khmer, Myanmar; dictionary for Chinese and Japanese).
+#
+# Format: input is the concatenation of the segments, which are separated by '|'.
+# Everything after a '#' and blank lines are ignored.
+# Characters can be escaped as \u{XXXX}.
+
+# Thai
+กระเพรา
+ภาษา|ไทย|ภาษา|ไทย
+รถ|ไฟ|ฟ้า
+โรง|พยาบาล
+น้ำตาล|ทราย
+น้ำ
+กำลัง
+เก้า
+ดำเนิน|การ
+ซอฟต์|แวร์
+บ|ล็อก|เชน
+กรุงเทพ|ฯ
+กรุงเทพมหาน|คร
+ประเทศ|ไทย
+ฯล|ฯ
+ทดสอบ|คำ|ซ้ำ| |ๆ| |และ|เครื่องหมาย| |ฯล|ฯ
+นี่|คือ| |ICU4X| |สำหรับ|ภาษา|ไทย
+เปิด|ใช้| |ICU4X| |เวอร์|ชัน| |2
+ราคา| |1,250| |บาท| |รวม| |VAT| |แล้ว
+๑๐๐| |บาท
+เด็ก| |ๆ| |วิ่ง|เล่น
+สวัส|ดี|ครับ| |ผม|ชื่อสมชาย
+เขา|ไป|ตลาด|เมื่อ|วาน|นี้
+การ|พัฒนา|ซอฟต์|แวร์
+มหาวิทยาลัย|เชียง|ใหม่
+จัง|หวัด|นครราชสี|มา
+ระบบ|ขน|ส่ง|มวล|ชน
+บริการ|ทาง|การ|เงิน
+ปัญญา|ประดิษฐ์
+ข้อมูล|ส่วน|บุคคล
+https|:|/|/|example.com|/|ภาษา|ไทย
+อีเมล| |test|@|example.com
+Hello| |สวัสดี| |World
+iPad| |รุ่น|ใหม่
+COVID|-|19| |ระบาด
+น้ำ|แข็ง|ไส
+ลูก|ชิ้น|ปลา
+ผัด|ไทย|กุ้ง|สด
+ต้ม|ยำ|กุ้ง
+ส้ม|ตำไทย
+ข้าวเหนียว|มะม่วง
+ประสิทธิภาพ
+วิทยาศาสตร์|และ|เทคโนโลยี
+เศรษฐกิจ|พอ|เพียง
+ประชาธิปไตย
+สุขภาพ|จิต
+ภาษา|ไทย| |ไม่|มี|การ|เว้นวรรคทุก|คำ
+กรุงเทพ|ฯ| |เป็น|เมืองหลวง|ของ|ประเทศ|ไทย
+a|ภาษา|ไทย|ภาษา|ไทย|b
+
+# Myanmar
+မြန်မာစာ|မြန်မာစာ|မြန်မာ|စာ
+
+# Chinese and Japanese
+うなぎ|うなじ
+Welcome|龟山岛|龟山岛|Welcome
+龟山岛|龟山岛
+エディター|エディ
+
+# Mixed scripts
+ภาษา|ไทย|龟山岛
+こんにちは|世界|ภาษา|ไทย
+# From the Thai Wikipedia article on red pandas
+แพน|ด้า|แดง| |(|อัง|กฤษ|:| |Red| |panda|,| |Shining| |cat|;| |จีน|:| |小熊|貓|;| |พิน|อิน|:| |Xiǎo| |xióngmāo|)| |สัตว์|เลี้ยง|ลูก|ด้วย|นม|ชนิด|หนึ่ง| |มี|ชื่อ|วิทยาศาสตร์|ว่า| |Ailurus| |fulgens
+
+# Rule-based tests
+# https://github.com/unicode-org/icu4x/issues/4417
+A.\u{AD}B # ÷ ALetter × MidNumLet × Format × ALetter ÷
+A.\u{308}B # ÷ ALetter × MidNumLet × Extend × ALetter ÷
+A.\u{200D}B # ÷ ALetter × MidNumLet × ZWJ × ALetter ÷
+A.\u{AD}א # ÷ ALetter × MidNumLet × Format × Hebrew_Letter ÷
+A.\u{308}א # ÷ ALetter × MidNumLet × Extend × Hebrew_Letter ÷
+A.\u{200D}א # ÷ ALetter × MidNumLet × ZWJ × Hebrew_Letter ÷
+A'\u{AD}B # ÷ ALetter × Single_Quote × Format × ALetter ÷
+A'\u{308}B # ÷ ALetter × Single_Quote × Extend × ALetter ÷
+A'\u{200D}B # ÷ ALetter × Single_Quote × ZWJ × ALetter ÷
+A'\u{AD}א # ÷ ALetter × Single_Quote × Format × Hebrew_Letter ÷
+A'\u{308}א # ÷ ALetter × Single_Quote × Extend × Hebrew_Letter ÷
+A'\u{200D}א # ÷ ALetter × Single_Quote × ZWJ × Hebrew_Letter ÷
+א.\u{AD}א # ÷ Hebrew_Letter × MidNumLet × Format × Hebrew_Letter ÷
+א.\u{308}א # ÷ Hebrew_Letter × MidNumLet × Extend × Hebrew_Letter ÷
+א.\u{200D}א # ÷ Hebrew_Letter × MidNumLet × ZWJ × Hebrew_Letter ÷
+א.\u{AD}A # ÷ Hebrew_Letter × MidNumLet × Format × ALetter ÷
+א.\u{308}A # ÷ Hebrew_Letter × MidNumLet × Extend × ALetter ÷
+א.\u{200D}A # ÷ Hebrew_Letter × MidNumLet × ZWJ × ALetter ÷
+א'\u{AD}A # ÷ Hebrew_Letter × Single_Quote × Format × ALetter ÷
+א'\u{308}A # ÷ Hebrew_Letter × Single_Quote × Extend × ALetter ÷
+א'\u{200D}A # ÷ Hebrew_Letter × Single_Quote × ZWJ × ALetter ÷
+א'\u{AD}א # ÷ Hebrew_Letter × Single_Quote × Format × Hebrew_Letter ÷
+א'\u{308}א # ÷ Hebrew_Letter × Single_Quote × Extend × Hebrew_Letter ÷
+א'\u{200D}א # ÷ Hebrew_Letter × Single_Quote × ZWJ × Hebrew_Letter ÷
+א"\u{AD}א # ÷ Hebrew_Letter × Double_Quote × Format × Hebrew_Letter ÷
+א"\u{308}א # ÷ Hebrew_Letter × Double_Quote × Extend × Hebrew_Letter ÷
+א"\u{200D}א # ÷ Hebrew_Letter × Double_Quote × ZWJ × Hebrew_Letter ÷

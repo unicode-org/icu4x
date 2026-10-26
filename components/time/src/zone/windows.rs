@@ -130,7 +130,7 @@ impl WindowsParserBorrowed<'_> {
     ///
     /// let bcp47_id =
     ///     win_tz_mapper.parse("Central Standard Time", Some(region!("CA")));
-    /// assert_eq!(bcp47_id, Some(TimeZone(subtag!("cawnp"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(subtag!("cayek"))));
     /// ```
     pub fn parse(self, windows_tz: &str, region: Option<Region>) -> Option<TimeZone> {
         self.parse_from_utf8(windows_tz.as_bytes(), region)

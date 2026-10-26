@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `Style`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.Style.html) for more information.
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/enum.Style.html) for more information.
  *
  * @experimental
  */

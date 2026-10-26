@@ -17,7 +17,8 @@
             "displayName": "dirham UAE",
             "displayName-count-one": "dirham UAE",
             "displayName-count-few": "dirhama UAE",
-            "displayName-count-other": "dirhama UAE"
+            "displayName-count-other": "dirhama UAE",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "Avganistanski avgani (1927–2002)",
@@ -1051,7 +1052,8 @@
             "displayName": "maldivska rufija",
             "displayName-count-one": "maldivska rufija",
             "displayName-count-few": "maldivske rufije",
-            "displayName-count-other": "maldivskih rufija"
+            "displayName-count-other": "maldivskih rufija",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "malavijska kvača",
@@ -1163,7 +1165,8 @@
             "displayName": "omanski rijal",
             "displayName-count-one": "omanski rijal",
             "displayName-count-few": "omanska rijala",
-            "displayName-count-other": "omanskih rijala"
+            "displayName-count-other": "omanskih rijala",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "panamska balboa",

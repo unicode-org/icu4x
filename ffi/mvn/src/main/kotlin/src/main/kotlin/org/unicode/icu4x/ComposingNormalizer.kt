@@ -11,12 +11,12 @@ internal interface ComposingNormalizerLib: Library {
     fun icu4x_ComposingNormalizer_create_nfc_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_ComposingNormalizer_create_nfkc_mv1(): Pointer
     fun icu4x_ComposingNormalizer_create_nfkc_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_ComposingNormalizer_normalize_mv1(handle: Pointer, s: Slice, write: Pointer): Unit
+    fun icu4x_ComposingNormalizer_normalize_utf16_mv1(handle: Pointer, s: Slice, write: Pointer): Unit
     fun icu4x_ComposingNormalizer_is_normalized_utf16_mv1(handle: Pointer, s: Slice): Byte
     fun icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(handle: Pointer, s: Slice): FFISizet
 }
 /**
- * See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizer.html) for more information.
+ * See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizer.html) for more information.
  */
 class ComposingNormalizer internal constructor (
     internal val handle: Pointer,
@@ -49,7 +49,7 @@ class ComposingNormalizer internal constructor (
         /**
          * Construct a new `ComposingNormalizer` instance for NFC using compiled data.
          *
-         * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
+         * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
          */
         fun createNfc(): ComposingNormalizer {
             
@@ -64,7 +64,7 @@ class ComposingNormalizer internal constructor (
         /**
          * Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
          *
-         * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
+         * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
          */
         fun createNfcWithProvider(provider: DataProvider): Result<ComposingNormalizer> {
             
@@ -84,7 +84,7 @@ class ComposingNormalizer internal constructor (
         /**
          * Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
          *
-         * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
+         * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
          */
         fun createNfkc(): ComposingNormalizer {
             
@@ -99,7 +99,7 @@ class ComposingNormalizer internal constructor (
         /**
          * Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
          *
-         * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
+         * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
          */
         fun createNfkcWithProvider(provider: DataProvider): Result<ComposingNormalizer> {
             
@@ -122,15 +122,15 @@ class ComposingNormalizer internal constructor (
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+     * See the [Rust documentation for `normalize_utf16`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf16) for more information.
      */
     fun normalize(s: String): String {
-        val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)
+        val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
         val write = DW.lib.diplomat_buffer_write_create(0)
-        val returnVal = lib.icu4x_ComposingNormalizer_normalize_mv1(handle, sSliceMemory.slice, write);
+        val returnVal = lib.icu4x_ComposingNormalizer_normalize_utf16_mv1(handle, sSliceMemory.slice, write);
         try {
             
-            val returnString = DW.writeToString(write)
+            val returnString = DW.writeToString16(write)
             return returnString
         } finally {
             sSliceMemory.close()
@@ -143,7 +143,7 @@ class ComposingNormalizer internal constructor (
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
+     * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
      */
     fun is_normalized(s: String): Boolean {
         val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)
@@ -159,7 +159,7 @@ class ComposingNormalizer internal constructor (
     /**
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
-     * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/2.3.1/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
+     * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/2.4.0/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
      */
     fun is_normalized_up_to(s: String): ULong {
         val sSliceMemory = PrimitiveArrayTools.borrowUtf16(s)

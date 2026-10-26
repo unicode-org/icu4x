@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::source::source_issue;
 use core::fmt::{self, Display};
 use core::marker::PhantomData;
 use core::str::FromStr;
@@ -28,6 +29,7 @@ pub(crate) enum Alt {
     Menu,
 }
 
+#[cfg(feature = "unstable")]
 impl Alt {
     /// Returns the string representation of the `Alt` variant, or `None` if `Unknown`.
     pub fn as_str(self) -> Option<&'static str> {
@@ -71,6 +73,7 @@ pub(crate) enum Menu {
     Extension,
 }
 
+#[cfg(feature = "unstable")]
 impl Menu {
     /// Returns the string representation of the `Menu` variant, or `None` if `Unknown`.
     pub fn as_str(self) -> Option<&'static str> {
@@ -141,7 +144,7 @@ where
                     let menu = match Menu::from_str(menu_str) {
                         Ok(m) => m,
                         Err(_) => {
-                            log::warn!("Unknown menu variant: {}", menu_str);
+                            source_issue!(Default::default(), "Unknown menu variant: {}", menu_str);
                             Menu::Unknown
                         }
                     };
@@ -155,7 +158,7 @@ where
                     let alt = match Alt::from_str(alt_str) {
                         Ok(a) => a,
                         Err(_) => {
-                            log::warn!("Unknown alt variant: {}", alt_str);
+                            source_issue!(Default::default(), "Unknown alt variant: {}", alt_str);
                             Alt::Unknown
                         }
                     };

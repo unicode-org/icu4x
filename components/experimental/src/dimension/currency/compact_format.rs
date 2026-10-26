@@ -357,16 +357,17 @@ mod tests {
         let prefs = locale!("pt-PT").into();
         let value = "1299".parse().unwrap();
 
-        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
-        // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
-        // the decimal separator (e.g. "12,345$67").
+        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and has
+        // no currency symbol (marked with U+200B ZERO WIDTH SPACE, which datagen stores
+        // as the empty string so symbol formatters select the no-currency pattern;
+        // see CLDR-19771).
         //
         // Compact currency formatters respect `CurrencyDecimalSymbolsV1`, using '$'
         // instead of the locale's default DecimalSymbolsV1 (',').
         let fmt =
             CurrencyFormatter::try_new_compact_symbol(prefs, currency!("PTE"), Default::default())
                 .unwrap();
-        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1$3 mil \u{200b}");
+        assert_writeable_eq!(fmt.format_fixed_decimal(&value), "1$3 mil");
 
         let fmt_narrow = CurrencyFormatter::try_new_compact_symbol_narrow(
             prefs,
@@ -374,7 +375,7 @@ mod tests {
             Default::default(),
         )
         .unwrap();
-        assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&value), "1$3 mil PTE");
+        assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&value), "1$3 mil");
 
         let fmt_code =
             CurrencyFormatter::try_new_compact_code(prefs, currency!("PTE"), Default::default())
@@ -387,7 +388,7 @@ mod tests {
             Default::default(),
         )
         .unwrap();
-        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1$3 mil \u{200b}");
+        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "1$3 mil");
 
         let fmt_long_narrow = CurrencyFormatter::try_new_compact_long_symbol_narrow(
             prefs,
@@ -395,7 +396,7 @@ mod tests {
             Default::default(),
         )
         .unwrap();
-        assert_writeable_eq!(fmt_long_narrow.format_fixed_decimal(&value), "1$3 mil PTE");
+        assert_writeable_eq!(fmt_long_narrow.format_fixed_decimal(&value), "1$3 mil");
 
         let fmt_long_code = CurrencyFormatter::try_new_compact_long_code(
             prefs,

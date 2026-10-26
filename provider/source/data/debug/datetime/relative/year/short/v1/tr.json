@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "geçen yıl",
-    "0": "bu yıl",
-    "1": "gelecek yıl"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "geçen yıl",
+    "bu yıl",
+    "gelecek yıl"
+  ],
   "past": {
     "other": [
       0,

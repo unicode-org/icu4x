@@ -42,7 +42,9 @@ where
         // SAFETY:
         // `validate_fields` upholds the invariants for the fields that
         // fast-path access without bound checks relies on.
-        let error_value = match CodePointTrie::validate_fields(&de.header, &de.index, &de.data) {
+        let (error_value, null_value) = match CodePointTrie::validate_fields(
+            &de.header, &de.index, &de.data,
+        ) {
             Ok(v) => v,
             Err(e) => {
                 match e {
@@ -66,6 +68,9 @@ where
                             "CodePointTrie must be constructed from data vector long enough to accommodate fast-path access",
                         ));
                     }
+                    super::CodePointTrieError::InvalidNullValue => {
+                        return Err(D::Error::custom("CodePointTrie has invalid null value"));
+                    }
                 }
             }
         };
@@ -75,6 +80,7 @@ where
             index: de.index,
             data: de.data,
             error_value,
+            null_value,
         })
     }
 }

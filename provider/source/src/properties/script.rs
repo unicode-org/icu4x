@@ -26,106 +26,98 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
             str::from_utf8(Script::SHORT_NAME).unwrap(),
         )?;
 
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_provider_source must be built with use_icu4c or use_wasm to build properties data",
-        )
-        .with_req(PropertyScriptWithExtensionsV1::INFO, req));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        let data = if let Some(t) = self
+            .rscd()?
+            .cpt_cache
+            .get(str::from_utf8(Script::SHORT_NAME).unwrap())
+            .and_then(|t| t.downcast_ref::<ScriptWithExtensionsProperty>().cloned())
         {
-            let data = if let Some(t) = self
-                .rscd()?
-                .cpt_cache
-                .get(str::from_utf8(Script::SHORT_NAME).unwrap())
-                .and_then(|t| t.downcast_ref::<ScriptWithExtensionsProperty>().cloned())
-            {
-                t
-            } else {
-                let script_parser = PropertyParser::<Script>::try_new_unstable(&self)?;
-                let script = CodePointMapData::try_new_unstable(self)?;
+            t
+        } else {
+            let script_parser = PropertyParser::<Script>::try_new_unstable(&self)?;
+            let script = CodePointMapData::try_new_unstable(self)?;
 
-                let mut script_sets = vec![];
-                let mut script_sets_lookup = HashMap::new();
+            let mut script_sets = vec![];
+            let mut script_sets_lookup = HashMap::new();
 
-                let mut char_with_extensions = HashMap::new();
+            let mut char_with_extensions = HashMap::new();
 
-                for line in self.rscd()?.parse_ucd_lines("ucd/ScriptExtensions.txt")? {
-                    let Some(line) = line.skip_missing_rule() else {
-                        continue;
-                    };
-                    let mut fields = line.fields();
-                    let cp_range = fields.next().unwrap();
-                    let values = fields.next().unwrap();
-                    let mut value = values
-                        .split_ascii_whitespace()
-                        .filter_map(|s| script_parser.as_borrowed().get_strict(s))
-                        .collect::<Vec<_>>();
-                    // Sort in stable order
-                    value.sort_by_key(|s| s.to_u32());
+            for line in self.rscd()?.parse_ucd_lines("ucd/ScriptExtensions.txt")? {
+                let Some(line) = line.skip_missing_rule() else {
+                    continue;
+                };
+                let mut fields = line.fields();
+                let cp_range = fields.next().unwrap();
+                let values = fields.next().unwrap();
+                let mut value = values
+                    .split_ascii_whitespace()
+                    .filter_map(|s| script_parser.as_borrowed().get_strict(s))
+                    .collect::<Vec<_>>();
+                // Sort in stable order
+                value.sort_by_key(|s| s.to_u32());
 
-                    let cp_range = super::ucd_helpers::parse_range(cp_range);
+                let cp_range = super::ucd_helpers::parse_range(cp_range);
 
-                    for cp in cp_range {
-                        let mut value = value.clone();
+                for cp in cp_range {
+                    let mut value = value.clone();
 
-                        let script = script.as_borrowed().get32(cp);
-                        if !matches!(script, Script::Inherited | Script::Common) {
-                            value.insert(0, script);
-                        }
-
-                        if !script_sets_lookup.contains_key(&value) {
-                            script_sets_lookup.insert(value.clone(), script_sets.len());
-                            script_sets.push(value.clone());
-                        }
-
-                        char_with_extensions.insert(
-                            cp,
-                            ScriptWithExt::new(script, script_sets_lookup[&value] as u16),
-                        );
+                    let script = script.as_borrowed().get32(cp);
+                    if !matches!(script, Script::Inherited | Script::Common) {
+                        value.insert(0, script);
                     }
-                }
 
-                let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
-                    ScriptWithExt::single(Script::Unknown),
-                    ScriptWithExt::single(Script::Unknown),
-                    icu::collections::codepointtrie::TrieType::Small,
-                );
+                    if !script_sets_lookup.contains_key(&value) {
+                        script_sets_lookup.insert(value.clone(), script_sets.len());
+                        script_sets.push(value.clone());
+                    }
 
-                for cp in 0..(char::MAX as u32) {
-                    builder.set_value(
+                    char_with_extensions.insert(
                         cp,
-                        char_with_extensions.get(&cp).copied().unwrap_or_else(|| {
-                            ScriptWithExt::single(script.as_borrowed().get32(cp))
-                        }),
+                        ScriptWithExt::new(script, script_sets_lookup[&value] as u16),
                     );
                 }
+            }
 
-                let extensions: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::from(
-                    script_sets
-                        .into_iter()
-                        .map(|v| v.into_iter().collect::<ZeroVec<_>>())
-                        .collect::<Vec<ZeroVec<_>>>()
-                        .as_slice(),
+            let mut builder = icu::collections::codepointtrie::CodePointTrieBuilder::new(
+                ScriptWithExt::single(Script::Unknown),
+                ScriptWithExt::single(Script::Unknown),
+                icu::collections::codepointtrie::TrieType::Small,
+            );
+
+            for cp in 0..(char::MAX as u32) {
+                builder.set_value(
+                    cp,
+                    char_with_extensions
+                        .get(&cp)
+                        .copied()
+                        .unwrap_or_else(|| ScriptWithExt::single(script.as_borrowed().get32(cp))),
                 );
+            }
 
-                let trie = builder.build();
+            let extensions: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::from(
+                script_sets
+                    .into_iter()
+                    .map(|v| v.into_iter().collect::<ZeroVec<_>>())
+                    .collect::<Vec<ZeroVec<_>>>()
+                    .as_slice(),
+            );
 
-                let data = ScriptWithExtensionsProperty { trie, extensions };
+            let trie = builder.build();
 
-                self.rscd()?.cpt_cache.insert(
-                    str::from_utf8(Script::SHORT_NAME).unwrap(),
-                    Box::new(data.clone()),
-                );
+            let data = ScriptWithExtensionsProperty { trie, extensions };
 
-                data
-            };
+            self.rscd()?.cpt_cache.insert(
+                str::from_utf8(Script::SHORT_NAME).unwrap(),
+                Box::new(data.clone()),
+            );
 
-            Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(data),
-            })
-        }
+            data
+        };
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data),
+        })
     }
 }
 

@@ -29,6 +29,9 @@ pub enum Error {
         "CodePointTrie must be constructed from data vector long enough to accommodate fast-path access"
     )]
     DataTooShortForFastAccess,
+    /// The null value is not a valid `T`
+    #[displaydoc("The null value is not a valid `T`")]
+    InvalidNullValue,
 }
 
 impl core::error::Error for Error {}

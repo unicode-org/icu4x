@@ -66,19 +66,20 @@ fn download_repo_sources() {
     let crate_root = Path::new(std::env!("CARGO_MANIFEST_DIR"));
     let out_root = crate_root.join("tests/data");
 
-    fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> BTreeSet<String> {
+    fn expand_paths(in_paths: &[&str]) -> BTreeSet<String> {
         let mut paths = BTreeSet::new();
         for pattern in in_paths {
-            if pattern.contains("$LOCALES") {
+            if pattern.contains("$LOCALES_UNDERSCORE") {
                 for locale in LOCALES.iter() {
-                    let mut string = locale.to_string();
-                    if replace_hyphen_by_underscore {
-                        string = string.replace('-', "_");
-                    }
-                    paths.insert(pattern.replace("$LOCALES", &string));
+                    paths.insert(pattern.replace(
+                        "$LOCALES_UNDERSCORE",
+                        &locale.to_string().replace('-', "_").replace("und", "root"),
+                    ));
                 }
-                // Also add "root" for older CLDRs
-                paths.insert(pattern.replace("$LOCALES", "root"));
+            } else if pattern.contains("$LOCALES") {
+                for locale in LOCALES.iter() {
+                    paths.insert(pattern.replace("$LOCALES", &locale.to_string()));
+                }
             } else {
                 // No variable in pattern
                 paths.insert(pattern.to_string());
@@ -94,7 +95,7 @@ fn download_repo_sources() {
         .unwrap()
         .serde_cache
         .root
-        .dump(&out_root.join("cldr"), expand_paths(CLDR_JSON_GLOB, false))
+        .dump(&out_root.join("cldr"), expand_paths(CLDR_JSON_GLOB))
         .unwrap();
 
     let icuexport_files = provider
@@ -103,7 +104,7 @@ fn download_repo_sources() {
         .root
         .dump(
             &out_root.join("icuexport"),
-            expand_paths(ICUEXPORTDATA_GLOB, true),
+            expand_paths(ICUEXPORTDATA_GLOB),
         )
         .unwrap();
 

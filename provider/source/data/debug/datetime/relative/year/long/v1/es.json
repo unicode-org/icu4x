@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "el año pasado",
-    "0": "este año",
-    "1": "el próximo año"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "el año pasado",
+    "este año",
+    "el próximo año"
+  ],
   "past": {
     "one": [
       0,

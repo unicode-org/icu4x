@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "هذه الدقيقة"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "هذه الدقيقة"
+  ],
   "past": {
     "one": [
       0,

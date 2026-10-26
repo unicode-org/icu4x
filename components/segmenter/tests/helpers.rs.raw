@@ -4,6 +4,27 @@
 
 use itertools::Itertools;
 
+/// Parses a segmentation test data file into expected segments.
+/// The input is the concatenation of the segments. Characters can be escaped as `\u{XXXX}`.
+#[allow(unused)]
+fn parse_test_file(file: &'static str) -> impl Iterator<Item = Vec<String>> {
+    fn unescape(mut s: &str) -> String {
+        let mut out = String::new();
+        while let Some(i) = s.find("\\u{") {
+            out.push_str(&s[..i]);
+            let (hex, rest) = s[i + 3..].split_once('}').expect("unterminated escape");
+            out.push(char::from_u32(u32::from_str_radix(hex, 16).unwrap()).unwrap());
+            s = rest;
+        }
+        out.push_str(s);
+        out
+    }
+    file.lines().filter_map(|line| {
+        let line = line.split('#').next().unwrap().trim();
+        (!line.is_empty()).then(|| line.split('|').map(unescape).collect())
+    })
+}
+
 #[track_caller]
 #[allow(unused)]
 fn check_word(s: &str, expected: &[&str], segmenter: WordSegmenterBorrowed<'_>) {

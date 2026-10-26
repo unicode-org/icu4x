@@ -6,14 +6,13 @@ use crate::grapheme::*;
 use crate::indices::*;
 use crate::provider::*;
 use crate::scaffold::{PotentiallyIllFormedUtf8, RuleBreakType, Utf8, Utf16};
-use icu_collections::char16trie::{Char16Trie, TrieResult};
 
 /// Lifetimes:
 /// - `'data` = lifetime of the data
 /// - `'s` = lifetime of the string being segmented
 #[derive(Debug)]
 pub(super) struct DictionaryBreakIterator<'data, 's, R: RuleBreakType> {
-    trie: Char16Trie<'data>,
+    trie: &'data DictionaryBreakData<'data>,
     iter: R::IterAttr<'s>,
     len: usize,
     grapheme_iter: GraphemeClusterBreakIterator<'data, 's, R>,
@@ -28,56 +27,90 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut trie_iter = self.trie.iter();
-        let mut intermediate_length = 0;
+        enum Cursor<'a> {
+            Char16(icu_collections::char16trie::Char16TrieCursor<'a>),
+            Zero {
+                alphabet: &'a icu_collections::codepointinvlist::CodePointInversionList<'a>,
+                cursor: zerotrie::cursor::ZeroTrieSimpleAsciiCursor<'a>,
+            },
+        }
+
+        let mut trie_iter = match self.trie {
+            DictionaryBreakData::Char16Trie(trie) => Cursor::Char16(trie.cursor()),
+            DictionaryBreakData::ZeroTrie { alphabet, trie } => Cursor::Zero {
+                alphabet,
+                cursor: trie.cursor(),
+            },
+        };
         let mut not_match = false;
         let mut previous_match = None;
-        let mut last_grapheme_offset = 0;
+        // The grapheme iterator is always at the start of the remaining input
+        let mut last_grapheme_offset = self.iter.clone().next().map_or(self.len, |(i, _)| i);
 
         while let Some(next) = self.iter.next() {
-            match trie_iter.next32(next.1.into()) {
-                TrieResult::FinalValue(_) => {
-                    return Some(next.0 + Y::char_len(next.1));
+            let step_result = match &mut trie_iter {
+                Cursor::Char16(cursor) => {
+                    cursor.step32(next.1.into());
+                    (cursor.value().is_some(), cursor.is_empty())
                 }
-                TrieResult::Intermediate(_) => {
-                    // Dictionary has to match with grapheme cluster segment.
-                    // If not, we ignore it.
-                    while last_grapheme_offset < next.0 + Y::char_len(next.1) {
-                        if let Some(offset) = self.grapheme_iter.next() {
-                            last_grapheme_offset = offset;
-                            continue;
-                        }
-                        last_grapheme_offset = self.len;
-                        break;
-                    }
-                    if last_grapheme_offset != next.0 + Y::char_len(next.1) {
-                        continue;
-                    }
+                Cursor::Zero { alphabet, cursor } => {
+                    cursor.step(
+                        alphabet
+                            .position32(next.1.into())
+                            .map(|i| i as u8)
+                            .unwrap_or(0xFF),
+                    );
+                    (cursor.take_value().is_some(), cursor.is_empty())
+                }
+            };
+            let end = next.0 + Y::char_len(next.1);
 
-                    intermediate_length = next.0 + Y::char_len(next.1);
-                    previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
+            // Dictionary matches have to end at a grapheme cluster boundary. As a grapheme
+            // cluster contains at least one character, we need to advance at most once.
+            if last_grapheme_offset < end {
+                last_grapheme_offset = self.grapheme_iter.next().unwrap_or(self.len);
+            }
+            let at_grapheme_boundary = last_grapheme_offset == end;
+
+            match step_result {
+                (true, true) if at_grapheme_boundary => {
+                    return Some(end);
                 }
-                TrieResult::NoMatch => {
-                    if intermediate_length > 0 {
-                        if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
-                            // Rewind previous match point
-                            self.iter = prev_iter;
-                            self.grapheme_iter = prev_grapheme_iter;
-                        }
-                        return Some(intermediate_length);
-                    }
-                    // Not found
-                    return Some(next.0 + Y::char_len(next.1));
+                (true, false) if at_grapheme_boundary => {
+                    previous_match =
+                        Some((end, self.iter.clone(), self.grapheme_iter.clone_internal()));
                 }
-                TrieResult::NoValue => {
+                (_, false) => {
                     // Prefix string is matched
                     not_match = true;
+                }
+                (_, true) => {
+                    if let Some((end, prev_iter, prev_grapheme_iter)) = previous_match {
+                        // Rewind previous match point
+                        self.iter = prev_iter;
+                        self.grapheme_iter = prev_grapheme_iter;
+                        return Some(end);
+                    }
+                    // Not found. Extend to the end of the grapheme cluster.
+                    while self
+                        .iter
+                        .clone()
+                        .next()
+                        .is_some_and(|(i, _)| i < last_grapheme_offset)
+                    {
+                        self.iter.next();
+                    }
+                    return Some(last_grapheme_offset);
                 }
             }
         }
 
-        if intermediate_length > 0 {
-            Some(intermediate_length)
+        if let Some((end, prev_iter, prev_grapheme_iter)) = previous_match {
+            // Rewind the previous match point so that the trailing text is
+            // processed by the next call to `next`.
+            self.iter = prev_iter;
+            self.grapheme_iter = prev_grapheme_iter;
+            Some(end)
         } else if not_match {
             // no match by scanning text
             Some(self.len)
@@ -89,13 +122,13 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
 
 #[derive(Copy, Clone)]
 pub(super) struct DictionarySegmenter<'data> {
-    dict: &'data UCharDictionaryBreakData<'data>,
+    dict: &'data DictionaryBreakData<'data>,
     grapheme: GraphemeClusterSegmenterBorrowed<'data>,
 }
 
 impl<'data> DictionarySegmenter<'data> {
     pub(super) fn new(
-        dict: &'data UCharDictionaryBreakData<'data>,
+        dict: &'data DictionaryBreakData<'data>,
         grapheme: GraphemeClusterSegmenterBorrowed<'data>,
     ) -> Self {
         // TODO: no way to verify trie data
@@ -107,9 +140,11 @@ impl<'data> DictionarySegmenter<'data> {
         self,
         input: &'s str,
     ) -> DictionaryBreakIterator<'data, 's, Utf8> {
-        let grapheme_iter = self.grapheme.segment_str(input);
+        let mut grapheme_iter = self.grapheme.segment_str(input);
+        // Skip the break at the start of the input
+        grapheme_iter.next();
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.dict.trie_data.clone()),
+            trie: self.dict,
             iter: input.char_indices(),
             len: input.len(),
             grapheme_iter,
@@ -121,9 +156,11 @@ impl<'data> DictionarySegmenter<'data> {
         self,
         input: &'s [u8],
     ) -> DictionaryBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        let grapheme_iter = self.grapheme.segment_utf8(input);
+        let mut grapheme_iter = self.grapheme.segment_utf8(input);
+        // Skip the break at the start of the input
+        grapheme_iter.next();
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.dict.trie_data.clone()),
+            trie: self.dict,
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             grapheme_iter,
@@ -135,9 +172,11 @@ impl<'data> DictionarySegmenter<'data> {
         self,
         input: &'s [u16],
     ) -> DictionaryBreakIterator<'data, 's, Utf16> {
-        let grapheme_iter = self.grapheme.segment_utf16(input);
+        let mut grapheme_iter = self.grapheme.segment_utf16(input);
+        // Skip the break at the start of the input
+        grapheme_iter.next();
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.dict.trie_data.clone()),
+            trie: self.dict,
             iter: Utf16Indices::new(input),
             len: input.len(),
             grapheme_iter,
@@ -209,7 +248,7 @@ mod tests {
 
     #[test]
     fn test_dictionary_grapheme_rewind() {
-        let response: DataResponse<SegmenterDictionaryAutoV1> = Baked
+        let response: DataResponse<SegmenterDictionaryAutoV2> = Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("cjdict"),
@@ -235,5 +274,37 @@ mod tests {
         let s = "エディターエディター";
         let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
         assert_eq!(result, vec![15, 30]);
+    }
+
+    #[test]
+    fn dictionary_terminal_break() {
+        let mut payloads = ComplexPayloadsBorrowed::new();
+        payloads.with_southeast_asian_dictionaries();
+        payloads.with_japanese_dictionary();
+
+        // Some prefixes end inside a dictionary word; the break at the end of
+        // the text must still be emitted.
+        for (script, text) in [
+            (
+                ComplexScript::Thai,
+                "ผู้ใช้สามารถติดตั้งโปรแกรมคอมพิวเตอร์ได้ด้วยตนเอง",
+            ),
+            (ComplexScript::Lao, "ປະເທດລາວມີພົນລະເມືອງປະມານເຈັດລ້ານຄົນ"),
+            (ComplexScript::Khmer, "ព្រះរាជាណាចក្រកម្ពុជាជាប្រទេសមួយនៅអាស៊ីអាគ្នេយ៍"),
+            (ComplexScript::Myanmar, "မြန်မာနိုင်ငံသည်အရှေ့တောင်အာရှတွင်တည်ရှိသည်"),
+            (
+                ComplexScript::ChineseOrJapanese,
+                "コンピューターソフトウェアエンジニアリング",
+            ),
+        ] {
+            let segmenter = payloads.select(script).unwrap();
+            for (i, c) in text.char_indices() {
+                let prefix = &text[..i + c.len_utf8()];
+                let last = segmenter
+                    .segment_str(prefix, GraphemeClusterSegmenter::new(), 0)
+                    .last();
+                assert_eq!(last, Some(prefix.len()), "{prefix}");
+            }
+        }
     }
 }

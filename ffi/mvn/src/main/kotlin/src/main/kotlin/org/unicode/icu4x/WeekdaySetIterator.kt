@@ -13,7 +13,7 @@ typealias WeekdaySetIteratorIteratorItem = Weekday
 /**
  * Documents which days of the week are considered to be a part of the weekend
  *
- * See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
+ * See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
  */
 class WeekdaySetIterator internal constructor (
     internal val handle: Pointer,
@@ -44,7 +44,7 @@ class WeekdaySetIterator internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
      */
     internal fun nextInternal(): Weekday? {
         

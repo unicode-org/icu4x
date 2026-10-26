@@ -12,9 +12,12 @@ internal interface PluralRulesWithRangesLib: Library {
     fun icu4x_PluralRulesWithRanges_create_ordinal_mv1(locale: Pointer): ResultPointerInt
     fun icu4x_PluralRulesWithRanges_create_ordinal_with_provider_mv1(provider: Pointer, locale: Pointer): ResultPointerInt
     fun icu4x_PluralRulesWithRanges_category_for_range_mv1(handle: Pointer, start: Pointer, end: Pointer): Int
+    fun icu4x_PluralRulesWithRanges_category_for_mv1(handle: Pointer, op: Pointer): Int
+    fun icu4x_PluralRulesWithRanges_categories_mv1(handle: Pointer): PluralCategoriesNative
+    fun icu4x_PluralRulesWithRanges_resolve_range_mv1(handle: Pointer, start: Int, end: Int): Int
 }
 /**
- * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
+ * See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
  *
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
@@ -49,7 +52,7 @@ class PluralRulesWithRanges internal constructor (
         /**
          * construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using compiled data.
          *
-         * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+         * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -71,7 +74,7 @@ class PluralRulesWithRanges internal constructor (
         /**
          * construct a [PluralRulesWithRanges] for the given locale, for cardinal numbers, using a particular data source.
          *
-         * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
+         * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -93,7 +96,7 @@ class PluralRulesWithRanges internal constructor (
         /**
          * Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using compiled data.
          *
-         * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+         * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -115,7 +118,7 @@ class PluralRulesWithRanges internal constructor (
         /**
          * Construct a [PluralRulesWithRanges] for the given locale, for ordinal numbers, using a particular data source.
          *
-         * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
+         * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -137,13 +140,53 @@ class PluralRulesWithRanges internal constructor (
     /**
      * Get the category for a given number represented as operands
      *
-     * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
+     * See the [Rust documentation for `category_for_range`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
      *
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */
     fun categoryForRange(start: PluralOperands, end: PluralOperands): PluralCategory {
         
         val returnVal = lib.icu4x_PluralRulesWithRanges_category_for_range_mv1(handle, start.handle, end.handle);
+        return (PluralCategory.fromNative(returnVal))
+    }
+    
+    /**
+     * Get the category for a given number represented as operands
+     *
+     * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     */
+    fun categoryFor(op: PluralOperands): PluralCategory {
+        
+        val returnVal = lib.icu4x_PluralRulesWithRanges_category_for_mv1(handle, op.handle);
+        return (PluralCategory.fromNative(returnVal))
+    }
+    
+    /**
+     * Get all of the categories needed in the current locale
+     *
+     * See the [Rust documentation for `categories`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     */
+    fun categories(): PluralCategories {
+        
+        val returnVal = lib.icu4x_PluralRulesWithRanges_categories_mv1(handle);
+        val returnStruct = PluralCategories.fromNative(returnVal)
+        return returnStruct
+    }
+    
+    /**
+     * Resolves the plural category for a given range of categories.
+     *
+     * See the [Rust documentation for `resolve_range`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     */
+    fun resolveRange(start: PluralCategory, end: PluralCategory): PluralCategory {
+        
+        val returnVal = lib.icu4x_PluralRulesWithRanges_resolve_range_mv1(handle, start.toNative(), end.toNative());
         return (PluralCategory.fromNative(returnVal))
     }
 
