@@ -10,101 +10,184 @@ use icu_locale_core::{langid, locale};
 use writeable::{Part, assert_try_writeable_parts_eq};
 
 #[test]
-fn test_language_identifier_display_name_styles_and_lengths_en() {
+fn test_language_identifier_display_name_en_dialect_medium() {
     let prefs_en = DisplayNamesPreferences::from(locale!("en"));
-
     let mut dialect_options = LanguageIdentifierDisplayNameOptions::default();
     dialect_options.language_display = Some(LanguageDisplay::Dialect);
 
-    let mut standard_options = LanguageIdentifierDisplayNameOptions::default();
-    standard_options.language_display = Some(LanguageDisplay::Standard);
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_en, langid!("en-GB"), dialect_options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "British English", Ok(()), []);
 
-    let menu_options = LanguageIdentifierDisplayNameOptions::default();
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_en, langid!("az"), dialect_options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Azerbaijani", Ok(()), []);
 
-    macro_rules! check_row {
-        ($constructor:ident, $options:expr, [$en_gb:literal, $az:literal, $zh_hans:literal]) => {{
-            for (id, expected) in [
-                (langid!("en-GB"), $en_gb),
-                (langid!("az"), $az),
-                (langid!("zh-Hans"), $zh_hans),
-            ] {
-                let display_name =
-                    LanguageIdentifierDisplayName::$constructor(prefs_en, id, $options).unwrap();
-                assert_try_writeable_parts_eq!(display_name.as_borrowed(), expected, Ok(()), []);
-            }
-        }};
-    }
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_en, langid!("zh-Hans"), dialect_options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Simplified Chinese", Ok(()), []);
+}
 
-    // Dialect + Medium (default)
-    check_row!(
-        try_new_heavy,
+#[test]
+fn test_language_identifier_display_name_en_dialect_short() {
+    let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+    let mut dialect_options = LanguageIdentifierDisplayNameOptions::default();
+    dialect_options.language_display = Some(LanguageDisplay::Dialect);
+
+    let display_name = LanguageIdentifierDisplayName::try_new_short_heavy(
+        prefs_en,
+        langid!("en-GB"),
         dialect_options,
-        ["British English", "Azerbaijani", "Simplified Chinese"]
-    );
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "UK English", Ok(()), []);
 
-    // Dialect + Short
-    check_row!(
-        try_new_short_heavy,
+    let display_name = LanguageIdentifierDisplayName::try_new_short_heavy(
+        prefs_en,
+        langid!("az"),
         dialect_options,
-        ["UK English", "Azeri", "Simplified Chinese"]
-    );
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Azeri", Ok(()), []);
 
-    // Dialect + Long
-    check_row!(
-        try_new_long_heavy,
+    let display_name = LanguageIdentifierDisplayName::try_new_short_heavy(
+        prefs_en,
+        langid!("zh-Hans"),
         dialect_options,
-        [
-            "British English",
-            "Azerbaijani",
-            "Simplified Mandarin Chinese"
-        ]
-    );
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Simplified Chinese", Ok(()), []);
+}
 
-    // Standard + Medium
-    check_row!(
-        try_new_heavy,
-        standard_options,
-        [
-            "English (United Kingdom)",
-            "Azerbaijani",
-            "Chinese (Simplified)"
-        ]
-    );
+#[test]
+fn test_language_identifier_display_name_en_dialect_long() {
+    let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+    let mut dialect_options = LanguageIdentifierDisplayNameOptions::default();
+    dialect_options.language_display = Some(LanguageDisplay::Dialect);
 
-    // Menu + Short
-    check_row!(
-        try_new_short_menu_heavy,
-        menu_options,
-        ["English (UK)", "Azeri", "Chinese, Mandarin (Simplified)"]
+    let display_name = LanguageIdentifierDisplayName::try_new_long_heavy(
+        prefs_en,
+        langid!("en-GB"),
+        dialect_options,
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "British English", Ok(()), []);
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_long_heavy(prefs_en, langid!("az"), dialect_options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Azerbaijani", Ok(()), []);
+
+    let display_name = LanguageIdentifierDisplayName::try_new_long_heavy(
+        prefs_en,
+        langid!("zh-Hans"),
+        dialect_options,
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
+        "Simplified Mandarin Chinese",
+        Ok(()),
+        []
     );
 }
 
 #[test]
-fn test_language_identifier_display_name_tiers_fr() {
+fn test_language_identifier_display_name_en_standard_medium() {
+    let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+    let mut standard_options = LanguageIdentifierDisplayNameOptions::default();
+    standard_options.language_display = Some(LanguageDisplay::Standard);
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_en, langid!("en-GB"), standard_options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
+        "English (United Kingdom)",
+        Ok(()),
+        []
+    );
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_en, langid!("az"), standard_options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Azerbaijani", Ok(()), []);
+
+    let display_name = LanguageIdentifierDisplayName::try_new_heavy(
+        prefs_en,
+        langid!("zh-Hans"),
+        standard_options,
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
+        "Chinese (Simplified)",
+        Ok(()),
+        []
+    );
+}
+
+#[test]
+fn test_language_identifier_display_name_en_menu_short() {
+    let prefs_en = DisplayNamesPreferences::from(locale!("en"));
+    let menu_options = LanguageIdentifierDisplayNameOptions::default();
+
+    let display_name = LanguageIdentifierDisplayName::try_new_short_menu_heavy(
+        prefs_en,
+        langid!("en-GB"),
+        menu_options,
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "English (UK)", Ok(()), []);
+
+    let display_name = LanguageIdentifierDisplayName::try_new_short_menu_heavy(
+        prefs_en,
+        langid!("az"),
+        menu_options,
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "Azeri", Ok(()), []);
+
+    let display_name = LanguageIdentifierDisplayName::try_new_short_menu_heavy(
+        prefs_en,
+        langid!("zh-Hans"),
+        menu_options,
+    )
+    .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
+        "Chinese, Mandarin (Simplified)",
+        Ok(()),
+        []
+    );
+}
+
+#[test]
+fn test_language_identifier_display_name_tiers_fr_tiny() {
     let prefs_fr = DisplayNamesPreferences::from(locale!("fr"));
     let options = LanguageIdentifierDisplayNameOptions::default();
 
-    macro_rules! check_tier {
-        ($constructor:ident, $langid:literal, $expected:literal, $res:expr, $parts:expr) => {{
-            let display_name =
-                LanguageIdentifierDisplayName::$constructor(prefs_fr, langid!($langid), options)
-                    .unwrap();
-            assert_try_writeable_parts_eq!(display_name.as_borrowed(), $expected, $res, $parts);
-        }};
-    }
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_tiny(prefs_fr, langid!("fr-CA"), options).unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "français (Canada)", Ok(()), []);
 
-    // Tiny tier:
-    check_tier!(try_new_tiny, "fr-CA", "français (Canada)", Ok(()), []);
-    check_tier!(
-        try_new_tiny,
-        "zh-Hans",
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_tiny(prefs_fr, langid!("zh-Hans"), options).unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
         "zh (Hans)",
         Err(LanguageIdentifierNameFallbackError),
         [(0, 2, Part::ERROR), (4, 8, Part::ERROR)]
     );
-    check_tier!(
-        try_new_tiny,
-        "hi-Deva-IN",
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_tiny(prefs_fr, langid!("hi-Deva-IN"), options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
         "hi (Deva, IN)",
         Err(LanguageIdentifierNameFallbackError),
         [
@@ -113,24 +196,52 @@ fn test_language_identifier_display_name_tiers_fr() {
             (10, 12, Part::ERROR)
         ]
     );
+}
 
-    // Light tier:
-    check_tier!(try_new_light, "fr-CA", "français canadien", Ok(()), []);
-    check_tier!(try_new_light, "zh-Hans", "chinois simplifié", Ok(()), []);
-    check_tier!(
-        try_new_light,
-        "hi-Deva-IN",
+#[test]
+fn test_language_identifier_display_name_tiers_fr_light() {
+    let prefs_fr = DisplayNamesPreferences::from(locale!("fr"));
+    let options = LanguageIdentifierDisplayNameOptions::default();
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_light(prefs_fr, langid!("fr-CA"), options).unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "français canadien", Ok(()), []);
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_light(prefs_fr, langid!("zh-Hans"), options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "chinois simplifié", Ok(()), []);
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_light(prefs_fr, langid!("hi-Deva-IN"), options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
         "hindi (Deva, Inde)",
         Err(LanguageIdentifierNameFallbackError),
         [(7, 11, Part::ERROR)]
     );
+}
 
-    // Heavy tier:
-    check_tier!(try_new_heavy, "fr-CA", "français canadien", Ok(()), []);
-    check_tier!(try_new_heavy, "zh-Hans", "chinois simplifié", Ok(()), []);
-    check_tier!(
-        try_new_heavy,
-        "hi-Deva-IN",
+#[test]
+fn test_language_identifier_display_name_tiers_fr_heavy() {
+    let prefs_fr = DisplayNamesPreferences::from(locale!("fr"));
+    let options = LanguageIdentifierDisplayNameOptions::default();
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_fr, langid!("fr-CA"), options).unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "français canadien", Ok(()), []);
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_fr, langid!("zh-Hans"), options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(display_name.as_borrowed(), "chinois simplifié", Ok(()), []);
+
+    let display_name =
+        LanguageIdentifierDisplayName::try_new_heavy(prefs_fr, langid!("hi-Deva-IN"), options)
+            .unwrap();
+    assert_try_writeable_parts_eq!(
+        display_name.as_borrowed(),
         "hindi (dévanagari, Inde)",
         Ok(()),
         []
