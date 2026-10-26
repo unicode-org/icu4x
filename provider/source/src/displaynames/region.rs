@@ -20,24 +20,31 @@ use zerovec::VarZeroCow;
 
 impl SourceDataProvider {
     fn region_default_alt(&self, region: Region) -> Option<Alt> {
-        if (region == region!("HK") || region == region!("MO"))
+        if region == region!("HK")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::DisplaynamesChinaShortNameAsDefault)
+                .contains(&AltVariantKind::LocaleNamesHkShort)
+        {
+            return Some(Alt::Short);
+        }
+        if region == region!("MO")
+            && self
+                .alt_variants
+                .contains(&AltVariantKind::LocaleNamesMoShort)
         {
             return Some(Alt::Short);
         }
         if region == region!("PS")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::DisplaynamesPalestineShortNameAsDefault)
+                .contains(&AltVariantKind::LocaleNamesPsShort)
         {
             return Some(Alt::Short);
         }
         if region == region!("FK")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::DisplaynamesFalklandVariantNameAsDefault)
+                .contains(&AltVariantKind::LocaleNamesFkVariant)
         {
             return Some(Alt::Variant);
         }
@@ -276,9 +283,10 @@ mod tests {
     fn test_region_alt_variants() {
         let default_provider = SourceDataProvider::new_testing();
         let alt_provider = SourceDataProvider::new_testing().with_alt_variants([
-            AltVariantKind::DisplaynamesChinaShortNameAsDefault,
-            AltVariantKind::DisplaynamesFalklandVariantNameAsDefault,
-            AltVariantKind::DisplaynamesPalestineShortNameAsDefault,
+            AltVariantKind::LocaleNamesHkShort,
+            AltVariantKind::LocaleNamesMoShort,
+            AltVariantKind::LocaleNamesFkVariant,
+            AltVariantKind::LocaleNamesPsShort,
         ]);
 
         let load_tiny = |provider: &SourceDataProvider, code: &str| -> String {

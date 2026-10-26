@@ -680,15 +680,14 @@ pub enum AltVariantKind {
     ///
     /// Intended for compatibility with older websites.
     DatetimeAscii,
-    /// Prefer `alt="short"` region display names as the default (medium) display name for
-    /// Hong Kong (`HK`) and Macau (`MO`).
-    DisplaynamesChinaShortNameAsDefault,
-    /// Prefer `alt="variant"` region display names as the default (medium) display name for
-    /// the Falkland Islands (`FK`).
-    DisplaynamesFalklandVariantNameAsDefault,
-    /// Prefer `alt="short"` region display names as the default (medium) display name for
-    /// Palestine (`PS`).
-    DisplaynamesPalestineShortNameAsDefault,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="HK"]`.
+    LocaleNamesHkShort,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="MO"]`.
+    LocaleNamesMoShort,
+    /// Use `alt="variant"` for `//ldml/localeDisplayNames/territories/territory[@type="FK"]`.
+    LocaleNamesFkVariant,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="PS"]`.
+    LocaleNamesPsShort,
 }
 
 /// A language's CLDR coverage level.

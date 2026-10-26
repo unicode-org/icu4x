@@ -352,9 +352,10 @@ enum CollationRootHan {
 // Mirrors icu_provider_source::AltVariantKind
 enum AltVariantKind {
     DatetimeAscii,
-    DisplaynamesChinaShortNameAsDefault,
-    DisplaynamesFalklandVariantNameAsDefault,
-    DisplaynamesPalestineShortNameAsDefault,
+    LocaleNamesHkShort,
+    LocaleNamesMoShort,
+    LocaleNamesFkVariant,
+    LocaleNamesPsShort,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -517,14 +518,17 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
             p = p.with_alt_variants(cli.alt_variants.iter().copied().map(|v| match v {
                 AltVariantKind::DatetimeAscii => icu_provider_source::AltVariantKind::DatetimeAscii,
-                AltVariantKind::DisplaynamesChinaShortNameAsDefault => {
-                    icu_provider_source::AltVariantKind::DisplaynamesChinaShortNameAsDefault
+                AltVariantKind::LocaleNamesHkShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesHkShort
                 }
-                AltVariantKind::DisplaynamesFalklandVariantNameAsDefault => {
-                    icu_provider_source::AltVariantKind::DisplaynamesFalklandVariantNameAsDefault
+                AltVariantKind::LocaleNamesMoShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesMoShort
                 }
-                AltVariantKind::DisplaynamesPalestineShortNameAsDefault => {
-                    icu_provider_source::AltVariantKind::DisplaynamesPalestineShortNameAsDefault
+                AltVariantKind::LocaleNamesFkVariant => {
+                    icu_provider_source::AltVariantKind::LocaleNamesFkVariant
+                }
+                AltVariantKind::LocaleNamesPsShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesPsShort
                 }
             }));
 
@@ -951,15 +955,10 @@ mod test_consistency {
         let upstream = Upstream::DatetimeAscii;
         let _ = match upstream {
             Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
-            Upstream::DisplaynamesChinaShortNameAsDefault => {
-                AltVariantKind::DisplaynamesChinaShortNameAsDefault
-            }
-            Upstream::DisplaynamesFalklandVariantNameAsDefault => {
-                AltVariantKind::DisplaynamesFalklandVariantNameAsDefault
-            }
-            Upstream::DisplaynamesPalestineShortNameAsDefault => {
-                AltVariantKind::DisplaynamesPalestineShortNameAsDefault
-            }
+            Upstream::LocaleNamesHkShort => AltVariantKind::LocaleNamesHkShort,
+            Upstream::LocaleNamesMoShort => AltVariantKind::LocaleNamesMoShort,
+            Upstream::LocaleNamesFkVariant => AltVariantKind::LocaleNamesFkVariant,
+            Upstream::LocaleNamesPsShort => AltVariantKind::LocaleNamesPsShort,
             _ => unreachable!(),
         };
     }
