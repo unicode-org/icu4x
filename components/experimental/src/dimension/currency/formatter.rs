@@ -78,6 +78,20 @@ pub(crate) enum CurrencyFormatterData {
     },
 }
 
+/// Determines the behavior when the locale's symbol is intentionally empty (U+200B as a
+/// CLDR hack, stored as `""` by datagen). See CLDR-19771 and CLDR-19798.
+///
+/// Right now, decimal currency formatting uses [`Self::NoCurrency`] (`12,345$67`).
+/// TODO(#8454): Compact currency formatting uses [`Self::IsoCode`]
+/// (`"1,3\u{a0}mil\u{a0}PTE"`) until CLDR-19798 is fixed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum EmptySymbolFallback {
+    /// Use the no-currency pattern.
+    NoCurrency,
+    /// Use the ISO code, so that the currency is not omitted.
+    IsoCode,
+}
+
 /// A formatter for monetary values.
 ///
 /// [`CurrencyFormatter`] supports:
@@ -93,7 +107,7 @@ pub struct CurrencyFormatter<V: AbstractFormatter> {
     fraction_info: FractionInfo,
 }
 
-impl<V: AbstractFormatter + 'static> CurrencyFormatter<V> {
+impl<V: AbstractFormatter> CurrencyFormatter<V> {
     #[cfg(feature = "compiled_data")]
     pub(crate) fn try_new_essential(
         value_formatter: V,
@@ -101,6 +115,7 @@ impl<V: AbstractFormatter + 'static> CurrencyFormatter<V> {
         currency: CurrencyType,
         width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
+        empty_symbol_fallback: EmptySymbolFallback,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
@@ -130,19 +145,10 @@ impl<V: AbstractFormatter + 'static> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            // An empty symbol means the locale explicitly has no symbol for this
-            // currency, so format the amount with the no-currency pattern. This is
-            // different from a missing entry (`None`), which falls back to the ISO code.
-            //
-            // TODO(#8454): Until CLDR-19798 is addressed, compact currency formatters
-            // use the locale's default decimal separator (e.g. ',') instead of the
-            // currency's decimal separator override (e.g. '$' for `PTE` in `pt-PT`),
-            // and when the currency symbol is empty they fall back to the ISO code
-            // (`"1,3\u{a0}mil\u{a0}PTE"`) rather than the no-currency pattern
-            // (`"1,3\u{a0}mil"`) so the currency is not omitted.
-            Some(_)
-                if core::any::TypeId::of::<V>() == core::any::TypeId::of::<DecimalFormatter>() =>
-            {
+            // An empty symbol (CLDR's U+200B ZERO WIDTH SPACE, stored as `""` by datagen)
+            // means the locale has no symbol for this currency, so use the constructor's
+            // `empty_symbol_fallback`. A missing entry (`None`) always uses the ISO code.
+            Some(_) if empty_symbol_fallback == EmptySymbolFallback::NoCurrency => {
                 let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(
                     &crate::provider::Baked,
                     ids,
@@ -171,6 +177,7 @@ impl<V: AbstractFormatter + 'static> CurrencyFormatter<V> {
         currency: CurrencyType,
         width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
+        empty_symbol_fallback: EmptySymbolFallback,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -205,19 +212,10 @@ impl<V: AbstractFormatter + 'static> CurrencyFormatter<V> {
                 essential,
                 symbol: res.payload,
             },
-            // An empty symbol means the locale explicitly has no symbol for this
-            // currency, so format the amount with the no-currency pattern. This is
-            // different from a missing entry (`None`), which falls back to the ISO code.
-            //
-            // TODO(#8454): Until CLDR-19798 is addressed, compact currency formatters
-            // use the locale's default decimal separator (e.g. ',') instead of the
-            // currency's decimal separator override (e.g. '$' for `PTE` in `pt-PT`),
-            // and when the currency symbol is empty they fall back to the ISO code
-            // (`"1,3\u{a0}mil\u{a0}PTE"`) rather than the no-currency pattern
-            // (`"1,3\u{a0}mil"`) so the currency is not omitted.
-            Some(_)
-                if core::any::TypeId::of::<V>() == core::any::TypeId::of::<DecimalFormatter>() =>
-            {
+            // An empty symbol (CLDR's U+200B ZERO WIDTH SPACE, stored as `""` by datagen)
+            // means the locale has no symbol for this currency, so use the constructor's
+            // `empty_symbol_fallback`. A missing entry (`None`) always uses the ISO code.
+            Some(_) if empty_symbol_fallback == EmptySymbolFallback::NoCurrency => {
                 let patterns =
                     load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
                 CurrencyFormatterData::NoCurrency { patterns }
@@ -531,6 +529,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -559,6 +558,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -590,6 +590,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -621,6 +622,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -1060,6 +1062,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1080,6 +1083,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1136,6 +1140,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1156,6 +1161,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1224,6 +1230,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1256,6 +1263,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1316,6 +1324,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1348,6 +1357,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
