@@ -20,15 +20,15 @@ use spin::Mutex;
 /// even if they contain no differing identifiers, but drops singleton markers
 /// that don't differ (as a singleton marker cannot be exported without data).
 #[derive(Debug)]
-pub struct DifferenceProvider<P0, P1> {
+pub struct DifferenceDataProvider<P0, P1> {
     target: P0,
     base: P1,
     /// The differing identifiers per marker, computed on first iteration.
     diff_ids: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<DataIdentifierCow<'static>>>>,
 }
 
-impl<P0, P1> DifferenceProvider<P0, P1> {
-    /// Creates a new [`DifferenceProvider`] yielding the data in `target` that
+impl<P0, P1> DifferenceDataProvider<P0, P1> {
+    /// Creates a new [`DifferenceDataProvider`] yielding the data in `target` that
     /// differs from or is absent in `base`.
     pub fn new(target: P0, base: P1) -> Self {
         Self {
@@ -84,7 +84,7 @@ where
     })
 }
 
-impl<M, P0, P1> DynamicDataProvider<M> for DifferenceProvider<P0, P1>
+impl<M, P0, P1> DynamicDataProvider<M> for DifferenceDataProvider<P0, P1>
 where
     M: DynamicDataMarker,
     P0: DynamicDataProvider<M>,
@@ -98,7 +98,7 @@ where
     }
 }
 
-impl<M, P0, P1> DataProvider<M> for DifferenceProvider<P0, P1>
+impl<M, P0, P1> DataProvider<M> for DifferenceDataProvider<P0, P1>
 where
     M: DataMarker,
     P0: DataProvider<M>,
@@ -108,7 +108,7 @@ where
     }
 }
 
-impl<M, P0, P1> IterableDynamicDataProvider<M> for DifferenceProvider<P0, P1>
+impl<M, P0, P1> IterableDynamicDataProvider<M> for DifferenceDataProvider<P0, P1>
 where
     M: DynamicDataMarker,
     for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
@@ -132,7 +132,7 @@ where
     }
 }
 
-impl<M, P0, P1> IterableDataProvider<M> for DifferenceProvider<P0, P1>
+impl<M, P0, P1> IterableDataProvider<M> for DifferenceDataProvider<P0, P1>
 where
     M: DataMarker,
     for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
@@ -152,7 +152,7 @@ where
 }
 
 #[cfg(feature = "export")]
-impl<P0, P1> ExportableProvider for DifferenceProvider<P0, P1>
+impl<P0, P1> ExportableProvider for DifferenceDataProvider<P0, P1>
 where
     P0: ExportableProvider,
     P1: DynamicDataProvider<ExportMarker> + Sync,

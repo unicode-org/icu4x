@@ -4,7 +4,7 @@
 
 use icu::datetime::{NoCalendarFormatter, fieldsets};
 use icu_provider::prelude::AsDeserializingBufferProvider;
-use icu_provider_adapters::difference::DifferenceProvider;
+use icu_provider_adapters::difference::DifferenceDataProvider;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_adapters::fork::ForkByErrorProvider;
 use icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate;
@@ -28,7 +28,7 @@ fn main() {
             LocaleFallbacker::try_new_unstable(&source).unwrap(),
         )
         .export(
-            &DifferenceProvider::new(
+            &DifferenceDataProvider::new(
                 source
                     .clone()
                     .with_alt_variants([AltVariantKind::DatetimeAscii]),
