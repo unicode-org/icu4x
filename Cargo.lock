@@ -1850,6 +1850,7 @@ dependencies = [
  "icu_locale",
  "icu_locale_fallback",
  "icu_provider",
+ "spin",
  "writeable",
 ]
 
@@ -1946,6 +1947,7 @@ dependencies = [
  "icu_pattern",
  "icu_provider",
  "icu_provider_adapters",
+ "icu_provider_blob",
  "icu_provider_export",
  "icu_provider_registry",
  "icu_segmenter",
