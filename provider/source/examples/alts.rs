@@ -21,7 +21,10 @@ fn main() {
         let mut blob = Vec::new();
         ExportDriver::new(
             [DataLocaleFamily::FULL],
-            DeduplicationStrategy::Maximal.into(),
+            // `source` contains all locales explicitly, so the overlay must not rely
+            // on fallback either, otherwise a deduplicated locale would be served
+            // from `source` instead of falling back within the overlay.
+            DeduplicationStrategy::None.into(),
             LocaleFallbacker::try_new_unstable(&source).unwrap(),
         )
         .export(
@@ -37,7 +40,7 @@ fn main() {
         blob
     };
 
-    assert!(alt_overlay_blob.len() < 10000, "{}", alt_overlay_blob.len());
+    assert!(alt_overlay_blob.len() < 15000, "{}", alt_overlay_blob.len());
 
     let alt_overlay =
         BlobDataProvider::try_new_from_blob(alt_overlay_blob.into_boxed_slice()).unwrap();
