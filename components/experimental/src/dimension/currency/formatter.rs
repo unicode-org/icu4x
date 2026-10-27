@@ -78,6 +78,20 @@ pub(crate) enum CurrencyFormatterData {
     },
 }
 
+/// Determines the behavior when the locale's symbol is intentionally empty (U+200B as a
+/// CLDR hack, stored as `""` by datagen). See CLDR-19771 and CLDR-19798.
+///
+/// Right now, decimal currency formatting uses [`Self::NoCurrency`] (`12,345$67`).
+/// TODO(#8454): Compact currency formatting uses [`Self::IsoCode`]
+/// (`"1,3\u{a0}mil\u{a0}PTE"`) until CLDR-19798 is fixed.
+#[derive(Debug, Clone, Copy)]
+pub(crate) enum EmptySymbolFallback {
+    /// Use the no-currency pattern.
+    NoCurrency,
+    /// Use the ISO code, so that the currency is not omitted.
+    IsoCode,
+}
+
 /// A formatter for monetary values.
 ///
 /// [`CurrencyFormatter`] supports:
@@ -101,58 +115,17 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyType,
         width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
+        empty_symbol_fallback: EmptySymbolFallback,
     ) -> Result<Self, DataError> {
-        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let decimal_prefs = DecimalFormatterPreferences::from(&prefs);
-
-        let req_id = decimal_prefs.nu_id(&locale);
-        let default_id = DataIdentifierBorrowed::for_locale(&locale);
-        let ids = req_id.into_iter().chain(core::iter::once(default_id));
-        let essential =
-            load_with_fallback::<CurrencyEssentialsV1>(&crate::provider::Baked, ids.clone())?
-                .payload;
-        let fractions: DataPayload<CurrencyFractionsV1> =
-            crate::provider::Baked.load(Default::default())?.payload;
-        let fraction_info = fractions.get().resolve(currency);
-        let currency_data = match DataProvider::<CurrencySymbolsV1>::load(
+        Self::try_new_essential_unstable(
             &crate::provider::Baked,
-            DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencySymbolsV1::make_attributes(currency, width, &mut Default::default()),
-                    &locale,
-                ),
-                ..Default::default()
-            },
-        )
-        .allow_identifier_not_found()?
-        {
-            // An empty symbol means the locale explicitly has no symbol for this
-            // currency, so format the amount with the no-currency pattern. This is
-            // different from a missing entry (`None`), which falls back to the ISO code.
-            Some(res) if res.payload.get().as_str().is_empty() => {
-                let patterns = load_with_fallback::<CurrencyPatternsNoCurrencyV1>(
-                    &crate::provider::Baked,
-                    ids,
-                )?
-                .payload;
-                CurrencyFormatterData::NoCurrency { patterns }
-            }
-            Some(res) => CurrencyFormatterData::Symbol {
-                essential,
-                symbol: res.payload,
-            },
-            None => CurrencyFormatterData::IsoCodeSymbol {
-                essential,
-                iso_code: currency.iso_code(),
-            },
-        };
-
-        Ok(Self {
             value_formatter,
-            currency_data,
-            usage: options.usage,
-            fraction_info,
-        })
+            prefs,
+            currency,
+            width,
+            options,
+            empty_symbol_fallback,
+        )
     }
 
     pub(crate) fn try_new_essential_unstable<D>(
@@ -162,6 +135,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         currency: CurrencyType,
         width: CurrencySymbolWidth,
         options: CurrencyFormatterOptions,
+        empty_symbol_fallback: EmptySymbolFallback,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
@@ -192,14 +166,21 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         )
         .allow_identifier_not_found()?
         {
-            // An empty symbol means the locale explicitly has no symbol for this
-            // currency, so format the amount with the no-currency pattern. This is
-            // different from a missing entry (`None`), which falls back to the ISO code.
-            Some(res) if res.payload.get().as_str().is_empty() => {
-                let patterns =
-                    load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
-                CurrencyFormatterData::NoCurrency { patterns }
-            }
+            // An empty symbol (CLDR's U+200B ZERO WIDTH SPACE, stored as `""` by datagen)
+            // means the locale intentionally has no symbol for this currency; see
+            // `EmptySymbolFallback`. This is different from a missing entry (`None`),
+            // which falls back to the ISO code.
+            Some(res) if res.payload.get().as_str().is_empty() => match empty_symbol_fallback {
+                EmptySymbolFallback::NoCurrency => {
+                    let patterns =
+                        load_with_fallback::<CurrencyPatternsNoCurrencyV1>(provider, ids)?.payload;
+                    CurrencyFormatterData::NoCurrency { patterns }
+                }
+                EmptySymbolFallback::IsoCode => CurrencyFormatterData::IsoCodeSymbol {
+                    essential,
+                    iso_code: currency.iso_code(),
+                },
+            },
             Some(res) => CurrencyFormatterData::Symbol {
                 essential,
                 symbol: res.payload,
@@ -513,6 +494,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -541,6 +523,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -572,6 +555,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -603,6 +587,7 @@ impl CurrencyFormatter<DecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::NoCurrency,
         )
     }
 
@@ -1042,6 +1027,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1062,6 +1048,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1118,6 +1105,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1138,6 +1126,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1206,6 +1195,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1238,6 +1228,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1298,6 +1289,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::SHORT,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
@@ -1330,6 +1322,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
             currency_code,
             CurrencySymbolsV1::NARROW,
             options,
+            EmptySymbolFallback::IsoCode,
         )
     }
 
