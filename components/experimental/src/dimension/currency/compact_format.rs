@@ -7,7 +7,6 @@ mod tests {
     use icu::locale::locale;
     use icu::locale::preferences::extensions::unicode::keywords::currency;
     use icu_decimal::CompactDecimalFormatter;
-    use icu_provider::DataError;
     use writeable::assert_writeable_eq;
 
     use crate::dimension::currency::{
@@ -17,11 +16,7 @@ mod tests {
 
     /// Formats `value` with `formatter` and checks the result.
     #[track_caller]
-    fn check(
-        formatter: &CurrencyFormatter<icu_decimal::CompactDecimalFormatter>,
-        value: &str,
-        expected: &str,
-    ) {
+    fn check(formatter: &CurrencyFormatter<CompactDecimalFormatter>, value: &str, expected: &str) {
         let decimal = value.parse().unwrap();
         assert_writeable_eq!(formatter.format_fixed_decimal(&decimal), expected);
     }
@@ -211,55 +206,32 @@ mod tests {
 
     #[test]
     pub fn test_pt_pt_escudo_compact() {
-        #[track_caller]
-        fn check(
-            formatter: Result<CurrencyFormatter<CompactDecimalFormatter>, DataError>,
-            expected: &str,
-        ) {
-            let value = "1299".parse().unwrap();
-            let formatter = formatter.unwrap();
-            assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
-        }
-
         let prefs = locale!("pt-PT").into();
         let pte = currency!("PTE");
         let options = Default::default();
 
         // `PTE` has an empty symbol in `pt-PT` (U+200B in CLDR), so the compact symbol
         // formatters show the ISO code (see `EmptySymbolFallback`, TODO(#8454)).
-        check(
-            CurrencyFormatter::try_new_compact_symbol(prefs, pte, options),
-            "1,3 mil PTE",
-        );
-        check(
-            CurrencyFormatter::try_new_compact_symbol_narrow(prefs, pte, options),
-            "1,3 mil PTE",
-        );
-        check(
-            CurrencyFormatter::try_new_compact_long_symbol(prefs, pte, options),
-            "1,3 mil PTE",
-        );
-        check(
-            CurrencyFormatter::try_new_compact_long_symbol_narrow(prefs, pte, options),
-            "1,3 mil PTE",
-        );
+        let fmt = CurrencyFormatter::try_new_compact_symbol(prefs, pte, options).unwrap();
+        let fmt_narrow =
+            CurrencyFormatter::try_new_compact_symbol_narrow(prefs, pte, options).unwrap();
+        let fmt_long = CurrencyFormatter::try_new_compact_long_symbol(prefs, pte, options).unwrap();
+        let fmt_long_narrow =
+            CurrencyFormatter::try_new_compact_long_symbol_narrow(prefs, pte, options).unwrap();
+        check(&fmt, "1299", "1,3 mil PTE");
+        check(&fmt_narrow, "1299", "1,3 mil PTE");
+        check(&fmt_long, "1299", "1,3 mil PTE");
+        check(&fmt_long_narrow, "1299", "1,3 mil PTE");
 
         // The code and name formatters don't use the symbol, so they are not affected.
-        check(
-            CurrencyFormatter::try_new_compact_code(prefs, pte, options),
-            "1,3 mil PTE",
-        );
-        check(
-            CurrencyFormatter::try_new_compact_long_code(prefs, pte, options),
-            "1,3 mil PTE",
-        );
-        check(
-            CurrencyFormatter::try_new_compact_name(prefs, pte),
-            "1,3 mil escudos portugueses",
-        );
-        check(
-            CurrencyFormatter::try_new_compact_long_name(prefs, pte),
-            "1,3 mil escudos portugueses",
-        );
+        let fmt_code = CurrencyFormatter::try_new_compact_code(prefs, pte, options).unwrap();
+        let fmt_long_code =
+            CurrencyFormatter::try_new_compact_long_code(prefs, pte, options).unwrap();
+        let fmt_name = CurrencyFormatter::try_new_compact_name(prefs, pte).unwrap();
+        let fmt_long_name = CurrencyFormatter::try_new_compact_long_name(prefs, pte).unwrap();
+        check(&fmt_code, "1299", "1,3 mil PTE");
+        check(&fmt_long_code, "1299", "1,3 mil PTE");
+        check(&fmt_name, "1299", "1,3 mil escudos portugueses");
+        check(&fmt_long_name, "1299", "1,3 mil escudos portugueses");
     }
 }
