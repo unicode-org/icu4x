@@ -4,17 +4,18 @@
 
 //! Helpers for computing the difference between multiple providers.
 
-use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::collections::BTreeSet;
 #[cfg(feature = "export")]
 use icu_provider::export::{ExportMarker, ExportableProvider};
 use icu_provider::prelude::yoke::Yokeable;
 use icu_provider::prelude::*;
-use spin::Mutex;
 
-/// A data provider that only yields data identifiers from `target` (`P0`)
-/// whose payloads differ from or are absent in `base` (`P1`).
+/// A data provider that only yields data from `target` (`P0`) whose payloads
+/// differ from or are absent in `base` (`P1`).
 ///
-/// Loading data is forwarded to `target`; only iteration is filtered.
+/// Loading data loads from both providers, and returns
+/// [`DataErrorKind::IdentifierNotFound`] if the payloads are equal. Iteration
+/// only yields the identifiers that differ.
 ///
 /// [`ExportableProvider::supported_markers`] retains all non-singleton markers,
 /// even if they contain no differing identifiers, but drops singleton markers
@@ -23,88 +24,87 @@ use spin::Mutex;
 pub struct DifferenceDataProvider<P0, P1> {
     target: P0,
     base: P1,
-    /// The differing identifiers per marker, computed on first iteration.
-    diff_ids: Mutex<BTreeMap<DataMarkerInfo, BTreeSet<DataIdentifierCow<'static>>>>,
 }
 
 impl<P0, P1> DifferenceDataProvider<P0, P1> {
     /// Creates a new [`DifferenceDataProvider`] yielding the data in `target` that
     /// differs from or is absent in `base`.
     pub fn new(target: P0, base: P1) -> Self {
-        Self {
-            target,
-            base,
-            diff_ids: Mutex::new(BTreeMap::new()),
-        }
+        Self { target, base }
     }
+}
 
-    /// Returns the (cached) identifiers of `marker` for which `differs` returns `true`.
-    fn diff_ids<'a>(
-        &self,
-        marker: DataMarkerInfo,
-        target_ids: impl FnOnce() -> Result<BTreeSet<DataIdentifierCow<'a>>, DataError>,
-        differs: impl Fn(DataIdentifierBorrowed) -> Result<bool, DataError>,
-    ) -> Result<BTreeSet<DataIdentifierCow<'static>>, DataError> {
-        if let Some(ids) = self.diff_ids.lock().get(&marker) {
-            return Ok(ids.clone());
-        }
-        // Computed without holding the lock; concurrent calls for the same marker
-        // may duplicate work but produce the same result.
-        let mut ids = BTreeSet::new();
-        for id in target_ids()? {
-            if differs(id.as_borrowed())? {
-                ids.insert(id.as_borrowed().into_owned());
+/// Returns the identifiers in `ids` for which `differs` returns `true`.
+fn filter_ids<'a, M: DynamicDataMarker>(
+    ids: BTreeSet<DataIdentifierCow<'a>>,
+    differs: impl Fn(DataRequest) -> Result<DataResponse<M>, DataError>,
+) -> Result<BTreeSet<DataIdentifierCow<'a>>, DataError> {
+    let mut result = BTreeSet::new();
+    for id in ids {
+        let req = {
+            let mut metadata = DataRequestMetadata::default();
+            metadata.silent = true;
+            DataRequest {
+                id: id.as_borrowed(),
+                metadata,
             }
+        };
+        if differs(req).allow_identifier_not_found()?.is_some() {
+            result.insert(id);
         }
-        self.diff_ids.lock().insert(marker, ids.clone());
-        Ok(ids)
     }
+    Ok(result)
 }
 
-fn silent_request(id: DataIdentifierBorrowed) -> DataRequest {
-    let mut metadata = DataRequestMetadata::default();
-    metadata.silent = true;
-    DataRequest { id, metadata }
-}
-
-fn payload_differs<M>(
-    target: Result<DataResponse<M>, DataError>,
-    base: impl FnOnce() -> Result<DataResponse<M>, DataError>,
-) -> Result<bool, DataError>
+/// Returns `target`, or [`DataErrorKind::IdentifierNotFound`] if `base` has an equal payload.
+fn diff_response<M>(
+    marker: DataMarkerInfo,
+    req: DataRequest,
+    target: DataResponse<M>,
+    base: Result<DataResponse<M>, DataError>,
+) -> Result<DataResponse<M>, DataError>
 where
     M: DynamicDataMarker,
     for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
 {
-    let Some(target) = target.allow_identifier_not_found()? else {
-        return Ok(false);
-    };
-    Ok(match base().allow_identifier_not_found()? {
-        Some(base) => target.payload != base.payload,
-        None => true,
-    })
+    match base.allow_identifier_not_found()? {
+        Some(base) if base.payload == target.payload => {
+            Err(DataErrorKind::IdentifierNotFound.with_req(marker, req))
+        }
+        _ => Ok(target),
+    }
 }
 
 impl<M, P0, P1> DynamicDataProvider<M> for DifferenceDataProvider<P0, P1>
 where
     M: DynamicDataMarker,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
     P0: DynamicDataProvider<M>,
+    P1: DynamicDataProvider<M>,
 {
     fn load_data(
         &self,
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
-        self.target.load_data(marker, req)
+        diff_response(
+            marker,
+            req,
+            self.target.load_data(marker, req)?,
+            self.base.load_data(marker, req),
+        )
     }
 }
 
 impl<M, P0, P1> DataProvider<M> for DifferenceDataProvider<P0, P1>
 where
     M: DataMarker,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
     P0: DataProvider<M>,
+    P1: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.target.load(req)
+        diff_response(M::INFO, req, self.target.load(req)?, self.base.load(req))
     }
 }
 
@@ -119,16 +119,9 @@ where
         &self,
         marker: DataMarkerInfo,
     ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
-        self.diff_ids(
-            marker,
-            || self.target.iter_ids_for_marker(marker),
-            |id| {
-                let req = silent_request(id);
-                payload_differs(self.target.load_data(marker, req), || {
-                    self.base.load_data(marker, req)
-                })
-            },
-        )
+        filter_ids(self.target.iter_ids_for_marker(marker)?, |id| {
+            self.load_data(marker, id)
+        })
     }
 }
 
@@ -140,14 +133,7 @@ where
     P1: DataProvider<M>,
 {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
-        self.diff_ids(
-            M::INFO,
-            || self.target.iter_ids(),
-            |id| {
-                let req = silent_request(id);
-                payload_differs(self.target.load(req), || self.base.load(req))
-            },
-        )
+        filter_ids(self.target.iter_ids()?, |req| self.load(req))
     }
 }
 

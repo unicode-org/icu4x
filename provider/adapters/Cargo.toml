@@ -20,7 +20,6 @@ version.workspace = true
 [dependencies]
 icu_locale_fallback = { workspace = true }
 icu_provider = { workspace = true, features = ["alloc"] }
-spin = { workspace = true, features = ["spin_mutex"] }
 
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }

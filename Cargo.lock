@@ -1850,7 +1850,6 @@ dependencies = [
  "icu_locale",
  "icu_locale_fallback",
  "icu_provider",
- "spin",
  "writeable",
 ]
 
