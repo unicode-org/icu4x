@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: add more tests for this module to cover more locales & currencies.
 #[cfg(test)]
 mod tests {
     use icu::locale::locale;
@@ -135,13 +134,11 @@ mod tests {
 
         // Short / Symbol
         let fmt_symbol = CurrencyFormatter::try_new_symbol(prefs, egp, Default::default()).unwrap();
-        // TODO(#6064)
         check(
             &fmt_symbol,
             "12345.67",
             "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}",
         );
-        // TODO(#6064)
         check(
             &fmt_symbol,
             "-12345.67",
@@ -151,9 +148,7 @@ mod tests {
         // Narrow / Symbol Narrow
         let fmt_symbol_narrow =
             CurrencyFormatter::try_new_symbol_narrow(prefs, egp, Default::default()).unwrap();
-        // TODO(#6064)
         check(&fmt_symbol_narrow, "12345.67", "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}E£");
-        // TODO(#6064)
         check(
             &fmt_symbol_narrow,
             "-12345.67",
