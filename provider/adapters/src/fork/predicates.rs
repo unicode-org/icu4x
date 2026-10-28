@@ -59,6 +59,9 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 /// A predicate that allows forking providers to search for a provider that supports a
 /// particular locale, based on whether it returns [`DataErrorKind::IdentifierNotFound`].
 ///
+/// For singleton markers, [`DataErrorKind::MarkerNotFound`] is also accepted, as a
+/// singleton marker's only identifier is missing if the marker is missing.
+///
 /// # Examples
 ///
 /// ```
@@ -127,7 +130,10 @@ impl ForkByErrorPredicate for IdentifierNotFoundPredicate {
     const UNIT_ERROR: DataErrorKind = DataErrorKind::IdentifierNotFound;
 
     #[inline]
-    fn test(&self, _: DataMarkerInfo, _: Option<DataRequest>, err: DataError) -> bool {
-        Err::<(), _>(err).allow_identifier_not_found().is_ok()
+    fn test(&self, marker: DataMarkerInfo, _: Option<DataRequest>, err: DataError) -> bool {
+        // A singleton marker only has a single identifier, so a missing marker
+        // is equivalent to a missing identifier.
+        (marker.is_singleton && err.kind == DataErrorKind::MarkerNotFound)
+            || Err::<(), _>(err).allow_identifier_not_found().is_ok()
     }
 }
