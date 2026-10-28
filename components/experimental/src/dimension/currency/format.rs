@@ -214,52 +214,27 @@ mod tests {
 
     #[test]
     pub fn test_numbering_system_override() {
-        let prefs_arab = locale!("ar-EG").into();
-        let prefs_latn = locale!("ar-EG-u-nu-latn").into();
+        // `test_ar_eg` covers the default `arab` digits, so this test covers only `-u-nu-latn`.
+        let prefs = locale!("ar-EG-u-nu-latn").into();
         let egp = currency!("EGP");
 
-        // 1. Default numbering system (arab) - Symbol
-        let fmt_arab_symbol =
-            CurrencyFormatter::try_new_symbol(prefs_arab, egp, Default::default()).unwrap();
-        check(
-            &fmt_arab_symbol,
-            "12345.67",
-            "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}",
-        );
-
-        // 2. Locale extension override (latn) - Symbol
         let fmt_latn_symbol =
-            CurrencyFormatter::try_new_symbol(prefs_latn, egp, Default::default()).unwrap();
+            CurrencyFormatter::try_new_symbol(prefs, egp, Default::default()).unwrap();
         check(
             &fmt_latn_symbol,
             "12345.67",
             "\u{200f}12,345.67\u{a0}ج.م.\u{200f}",
         );
 
-        // 3. Default numbering system (arab) - Symbol Narrow
-        let fmt_arab_symbol_narrow =
-            CurrencyFormatter::try_new_symbol_narrow(prefs_arab, egp, Default::default()).unwrap();
-        check(
-            &fmt_arab_symbol_narrow,
-            "12345.67",
-            "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}E£",
-        );
-
-        // 4. Locale extension override (latn) - Symbol Narrow
         let fmt_latn_symbol_narrow =
-            CurrencyFormatter::try_new_symbol_narrow(prefs_latn, egp, Default::default()).unwrap();
+            CurrencyFormatter::try_new_symbol_narrow(prefs, egp, Default::default()).unwrap();
         check(
             &fmt_latn_symbol_narrow,
             "12345.67",
             "\u{200f}12,345.67\u{a0}E£",
         );
 
-        // 5. Default numbering system (arab) - Name
-        let fmt_arab_name = CurrencyFormatter::try_new_name(prefs_arab, egp).unwrap();
-        check(&fmt_arab_name, "12345.67", "١٢٬٣٤٥٫٦٧ جنيه مصري");
-
-        // 6. Locale extension override (latn) - Name
-        let fmt_latn_name = CurrencyFormatter::try_new_name(prefs_latn, egp).unwrap();
+        let fmt_latn_name = CurrencyFormatter::try_new_name(prefs, egp).unwrap();
         check(&fmt_latn_name, "12345.67", "12,345.67 جنيه مصري");
     }
 
