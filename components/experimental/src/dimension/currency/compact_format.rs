@@ -85,9 +85,7 @@ mod tests {
             Default::default(),
         )
         .unwrap();
-        // TODO(#6064)
         check(&fmt, "12345.67", "\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"); // "١٢ ألف ج.م."
-        // TODO(#6064)
         check(
             &fmt,
             "-12345.67",
