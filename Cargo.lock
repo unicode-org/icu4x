@@ -1600,6 +1600,7 @@ dependencies = [
  "serde",
  "smallvec",
  "tinystr",
+ "utf8_iter",
  "writeable",
  "zerotrie",
  "zerovec",
