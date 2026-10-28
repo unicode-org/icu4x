@@ -192,7 +192,11 @@ mod tests {
         // Expected output:
         // - Escaped: "\u{200f}\u{200e}-12,345.67\u{a0}\u{62c}.\u{645}.\u{200f}"
         // - Literal: "‏\u{200e}-12,345.67 ج.م.‏"
-        check(&fmt_symbol, "-12345.67", "‏\u{200e}-12,345.67 ج.م.‏");
+        check(
+            &fmt_symbol,
+            "-12345.67",
+            "\u{200f}\u{200e}-12,345.67 ج.م.\u{200f}",
+        );
 
         // `de-CH` places the minus sign between the currency symbol and the number:
         // - Escaped: "\u{a4}\u{a0}#,##0.00;\u{a4}-#,##0.00"
