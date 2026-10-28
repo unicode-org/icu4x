@@ -69,17 +69,9 @@ mod tests {
         let prefs = locale!("pt-PT").into();
         let pte = currency!("PTE");
 
-        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
-        // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
-        // the decimal separator (e.g. "12,345$67"). Datagen stores that symbol as the
-        // empty string.
-        //
-        // Because the locale's standard currency pattern ("#,##0.00 ¤") contains a
-        // non-breaking space (U+00A0) before the symbol placeholder ('¤'), formatting
-        // with the raw symbol would produce a trailing space (tracked in CLDR-19771).
-        // To resolve this, when the currency symbol is empty, `CurrencyFormatter` uses
-        // `noCurrency` formatting so that the amount formats cleanly without any
-        // placeholder or trailing space ("12,345$67").
+        // `PTE` has an empty symbol in `pt-PT` (U+200B in CLDR), so the symbol formatters
+        // use the no-currency pattern, and the `$` decimal separator shows the currency
+        // (see `EmptySymbolFallback`).
         let escudo = CurrencyFormatter::try_new_symbol(prefs, pte, Default::default()).unwrap();
         check(&escudo, "12345.67", "12,345$67");
 
