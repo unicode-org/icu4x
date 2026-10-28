@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.3.1/icu/locale/names/enum.LanguageDisplay.html) for more information.
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.4.0/icu/locale/names/enum.LanguageDisplay.html) for more information.
  *
  * @experimental
  */

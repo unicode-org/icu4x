@@ -32081,7 +32081,7 @@ currency/displayname/v1, zu/ZMK, 54B, 31B, abe05b241d692995
 currency/displayname/v1, zu/ZMW, 40B, 17B, 15b95ba727a96fd5
 currency/displayname/v1, zu/ZWG, 44B, 21B, 7b25ba72a9eeed98
 currency/essentials/v1, <lookup>, 1329B, 271 identifiers
-currency/essentials/v1, <total>, 1967B, 970B, 34 unique payloads
+currency/essentials/v1, <total>, 1958B, 960B, 34 unique payloads
 currency/essentials/v1, af, 64B, 35B, 49ad131a5154a2f1
 currency/essentials/v1, ak, -> af
 currency/essentials/v1, am, -> af
@@ -32276,7 +32276,7 @@ currency/essentials/v1, my/latn, -> my
 currency/essentials/v1, nds, -> ast
 currency/essentials/v1, ne/latn, -> bgc/latn
 currency/essentials/v1, nl, -> en-NL
-currency/essentials/v1, no, 69B, 41B, f5e94677db39680
+currency/essentials/v1, no, 60B, 31B, 31aaf6987c3441bb
 currency/essentials/v1, nqo/latn, -> bgc/latn
 currency/essentials/v1, nso, 50B, 19B, 608be281c919ff50
 currency/essentials/v1, oc, 58B, 28B, ba07f47f687dd430

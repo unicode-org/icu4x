@@ -224,23 +224,19 @@ impl DataLocaleFamily {
         if code_units == b"full" {
             return Ok(Self::FULL);
         }
-        let (annotation, mut locale) = code_units
+        let (annotation, locale) = code_units
             .split_first()
             .ok_or(DataLocaleFamilyParseError::InvalidFamily)?;
-        let annotations = match annotation {
-            b'^' => DataLocaleFamilyAnnotations::without_descendants(),
-            b'%' => DataLocaleFamilyAnnotations::without_ancestors(),
-            b'@' => DataLocaleFamilyAnnotations::single(),
-            _ => {
-                locale = code_units;
-                DataLocaleFamilyAnnotations::with_descendants()
-            }
-        };
-
-        Ok(Self {
-            locale: Some(DataLocale::try_from_utf8(locale)?),
-            annotations,
-        })
+        match annotation {
+            b'^' => Ok(Self::without_descendants(DataLocale::try_from_utf8(
+                locale,
+            )?)),
+            b'%' => Ok(Self::without_ancestors(DataLocale::try_from_utf8(locale)?)),
+            b'@' => Ok(Self::single(DataLocale::try_from_utf8(locale)?)),
+            _ => Ok(Self::with_descendants(DataLocale::try_from_utf8(
+                code_units,
+            )?)),
+        }
     }
 
     #[inline]
@@ -260,7 +256,7 @@ impl FromStr for DataLocaleFamily {
 
 #[test]
 fn test_locale_family_parsing() {
-    let valid_families = ["und", "de-CH", "^es", "@pt-BR", "%en-001", "full"];
+    let valid_families = ["@und", "de-CH", "^es", "@pt-BR", "%en-001", "full"];
     let invalid_families = ["invalid", "@invalid", "-foo", "@full", "full-001"];
     for family_str in valid_families {
         let family = family_str.parse::<DataLocaleFamily>().unwrap();
@@ -269,5 +265,12 @@ fn test_locale_family_parsing() {
     }
     for family_str in invalid_families {
         assert!(family_str.parse::<DataLocaleFamily>().is_err());
+    }
+
+    // All `und` family strings normalize to `DataLocaleFamily::single("und")` ("@und")
+    for und_family_str in ["und", "^und", "%und", "@und"] {
+        let family = und_family_str.parse::<DataLocaleFamily>().unwrap();
+        assert_eq!(family, DataLocaleFamily::single(DataLocale::default()));
+        assert_eq!(family.to_string(), "@und");
     }
 }

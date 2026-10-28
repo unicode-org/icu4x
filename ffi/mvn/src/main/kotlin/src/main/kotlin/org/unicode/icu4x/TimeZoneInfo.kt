@@ -20,7 +20,7 @@ internal interface TimeZoneInfoLib: Library {
     fun icu4x_TimeZoneInfo_variant_mv1(handle: Pointer): OptionInt
 }
 /**
- * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html) for more information.
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html) for more information.
  */
 class TimeZoneInfo internal constructor (
     internal val handle: Pointer,
@@ -53,7 +53,7 @@ class TimeZoneInfo internal constructor (
         /**
          * Creates a time zone for UTC (Coordinated Universal Time).
          *
-         * See the [Rust documentation for `utc`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
+         * See the [Rust documentation for `utc`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
          */
         fun utc(): TimeZoneInfo {
             
@@ -81,7 +81,7 @@ class TimeZoneInfo internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `id`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
      */
     fun id(): TimeZone {
         
@@ -103,9 +103,9 @@ class TimeZoneInfo internal constructor (
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      * - Set to year 1000 or 9999 for a reference far in the past or future.
      *
-     * See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
+     * See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.ZoneNameTimestamp.html)
      */
     fun atDateTimeIso(date: IsoDate, time: Time): TimeZoneInfo {
         
@@ -127,9 +127,9 @@ class TimeZoneInfo internal constructor (
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      * - Set to year 1000 or 9999 for a reference far in the past or future.
      *
-     * See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
+     * See the [Rust documentation for `at_date_time`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.ZoneNameTimestamp.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.ZoneNameTimestamp.html)
      */
     fun atDateTime(date: Date, time: Time): TimeZoneInfo {
         
@@ -149,9 +149,9 @@ class TimeZoneInfo internal constructor (
      * - If not set, the formatting datetime is used if possible.
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      *
-     * See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
+     * See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_epoch_seconds)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_epoch_seconds)
      */
     fun atTimestamp(timestamp: Long): TimeZoneInfo {
         
@@ -165,7 +165,7 @@ class TimeZoneInfo internal constructor (
     /**
      * Returns the `DateTime` for the UTC zone name reference time
      *
-     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
+     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
     fun zoneNameDateTime(): IsoDateTime? {
         
@@ -178,7 +178,7 @@ class TimeZoneInfo internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+     * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      */
     fun withVariant(timeVariant: TimeZoneVariant): TimeZoneInfo {
         
@@ -190,7 +190,7 @@ class TimeZoneInfo internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
      */
     fun offset(): UtcOffset? {
         
@@ -202,9 +202,9 @@ class TimeZoneInfo internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
+     * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/enum.TimeZoneVariant.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/enum.TimeZoneVariant.html)
      */
     fun inferVariant(offsetCalculator: VariantOffsetsCalculator): Unit? {
         
@@ -213,7 +213,7 @@ class TimeZoneInfo internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `variant`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+     * See the [Rust documentation for `variant`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
      */
     fun variant(): TimeZoneVariant? {
         

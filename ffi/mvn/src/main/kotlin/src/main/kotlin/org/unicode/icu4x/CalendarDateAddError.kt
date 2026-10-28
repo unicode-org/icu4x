@@ -9,7 +9,7 @@ import com.sun.jna.Structure
 internal interface CalendarDateAddErrorLib: Library {
 }
 /**
- * Additional information: [1](https://docs.rs/icu/2.3.1/icu/calendar/error/enum.DateAddError.html)
+ * Additional information: [1](https://docs.rs/icu/2.4.0/icu/calendar/error/enum.DateAddError.html)
 */
 enum class CalendarDateAddError {
     Unknown,

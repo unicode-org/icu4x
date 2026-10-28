@@ -9,7 +9,7 @@ import com.sun.jna.Structure
 internal interface DecimalGroupingStrategyLib: Library {
 }
 /**
- * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.3.1/icu/decimal/options/enum.GroupingStrategy.html) for more information.
+ * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.4.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
 */
 enum class DecimalGroupingStrategy {
     Auto,

@@ -12,7 +12,7 @@ internal interface TimeRangeFormatterLib: Library {
     fun icu4x_TimeRangeFormatter_format_mv1(handle: Pointer, startTime: Pointer, endTime: Pointer, write: Pointer): Unit
 }
 /**
- * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
+ * See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
  *
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
@@ -45,11 +45,11 @@ class TimeRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
+         * See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -69,11 +69,11 @@ class TimeRangeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
+         * See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -93,7 +93,7 @@ class TimeRangeFormatter internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
      *
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */

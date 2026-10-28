@@ -18,7 +18,7 @@ internal interface IanaParserLib: Library {
  * This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
  * It also supports normalizing and canonicalizing the IANA strings.
  *
- * See the [Rust documentation for `IanaParser`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParser.html) for more information.
+ * See the [Rust documentation for `IanaParser`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParser.html) for more information.
  */
 class IanaParser internal constructor (
     internal val handle: Pointer,
@@ -51,7 +51,7 @@ class IanaParser internal constructor (
         /**
          * Create a new [IanaParser] using compiled data
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
          */
         fun create(): IanaParser {
             
@@ -66,7 +66,7 @@ class IanaParser internal constructor (
         /**
          * Create a new [IanaParser] using a particular data source
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
          */
         fun createWithProvider(provider: DataProvider): Result<IanaParser> {
             
@@ -84,7 +84,7 @@ class IanaParser internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
      */
     fun parse(value: String): TimeZone {
         val valueSliceMemory = PrimitiveArrayTools.borrowUtf8(value)
@@ -101,7 +101,7 @@ class IanaParser internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `iter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
+     * See the [Rust documentation for `iter`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
      */
     fun iter(): TimeZoneIterator {
         // This lifetime edge depends on lifetimes: 'a

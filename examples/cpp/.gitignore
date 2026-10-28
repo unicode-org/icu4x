@@ -4,6 +4,7 @@ collator
 datetime
 decimal
 locale
+normalizer
 pluralrules
 properties
 segmenter

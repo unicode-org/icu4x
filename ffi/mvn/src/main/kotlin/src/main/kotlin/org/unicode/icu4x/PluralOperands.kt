@@ -13,7 +13,7 @@ internal interface PluralOperandsLib: Library {
     fun icu4x_PluralOperands_from_significand_and_exponent_mv1(significand: Pointer, exponent: FFIUint8): Pointer
 }
 /**
- * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html) for more information.
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralOperands.html) for more information.
  */
 class PluralOperands internal constructor (
     internal val handle: Pointer,
@@ -46,7 +46,7 @@ class PluralOperands internal constructor (
         /**
          * Construct for a given string representing a number
          *
-         * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.3.1/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+         * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.4.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
          */
         fun fromString(s: String): Result<PluralOperands> {
             val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)

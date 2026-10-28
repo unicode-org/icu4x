@@ -690,7 +690,7 @@ pub fn icuexport_data() -> AbstractFs {
         "norm/small/nfdex.toml",
         "norm/small/nfkdex.toml",
         "norm/small/uts46d.toml",
-        "segmenter/dictionary/thaidict.toml"
+        "segmenter/dictionary/thaidict.txt"
     )
 }
 

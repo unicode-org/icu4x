@@ -16,7 +16,7 @@ internal interface WeekInformationLib: Library {
 /**
  * A Week calculator, useful to be passed in to `week_of_year()` on Date and `DateTime` types
  *
- * See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekInformation.html) for more information.
+ * See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekInformation.html) for more information.
  */
 class WeekInformation internal constructor (
     internal val handle: Pointer,
@@ -49,7 +49,7 @@ class WeekInformation internal constructor (
         /**
          * Creates a new [WeekInformation] from locale data using compiled data.
          *
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
          */
         fun create(locale: Locale): Result<WeekInformation> {
             
@@ -69,7 +69,7 @@ class WeekInformation internal constructor (
         /**
          * Creates a new [WeekInformation] from locale data using a particular data source.
          *
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
          */
         fun createWithProvider(provider: DataProvider, locale: Locale): Result<WeekInformation> {
             
@@ -89,7 +89,7 @@ class WeekInformation internal constructor (
     /**
      * Returns the weekday that starts the week for this object's locale
      *
-     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
+     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
      */
     fun firstWeekday(): Weekday {
         
@@ -98,9 +98,9 @@ class WeekInformation internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
+     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
      *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.3.1/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.4.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
      */
     fun isWeekend(day: Weekday): Boolean {
         
@@ -109,7 +109,7 @@ class WeekInformation internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.3.1/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
+     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.4.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
      */
     fun weekend(): WeekdaySetIterator {
         

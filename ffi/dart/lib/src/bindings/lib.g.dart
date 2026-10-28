@@ -1152,6 +1152,22 @@ final class _Write {
       _diplomat_buffer_write_destroy(_ffi);
     }
   }
+
+  String finalize16() {
+    try {
+      final buf = _diplomat_buffer_write_get_bytes(_ffi);
+      if (buf == ffi.Pointer.fromAddress(0)) {
+        throw const core.OutOfMemoryError();
+      }
+      final len = _diplomat_buffer_write_len(_ffi) ~/ 2;
+      if (len == 0) {
+        return '';
+      }
+      return String.fromCharCodes(buf.cast<ffi.Uint16>().asTypedList(len));
+    } finally {
+      _diplomat_buffer_write_destroy(_ffi);
+    }
+  }
 }
 
 // ignore: experimental_member_use
