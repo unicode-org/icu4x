@@ -3757,6 +3757,24 @@ let termini = Object.assign({
         ]
     },
 
+    "PartKind.category": {
+        func: (self) => new icu.PartKind(self).category,
+        // For avoiding webpacking minifying issues:
+        funcName: "PartKind.category",
+        expr: (self) => "new icu.PartKind(self).category".replace(/([\( ])self([,\) \n])/, '$1' + self + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "self",
+                type: "PartKind",
+                typeUse: "enumerator",
+                values: ["Unknown", "Error", "ListElement", "ListLiteral", "DecimalPlusSign", "DecimalMinusSign", "DecimalInteger", "DecimalFraction", "DecimalGroup", "DecimalDecimal", "DateTimeEra", "DateTimeYear", "DateTimeRelatedYear", "DateTimeYearName", "DateTimeMonth", "DateTimeDay", "DateTimeExtendedYear", "DateTimeJulianDay", "DateTimeWeekday", "DateTimeDayPeriod", "DateTimeHour", "DateTimeMinute", "DateTimeSecond", "DateTimeTimeZoneName", "DateTimeStartRange", "DateTimeEndRange", "RelativeTimeLiteral", "DurationLiteral", "UnitYear", "UnitMonth", "UnitWeek", "UnitDay", "UnitHour", "UnitMinute", "UnitSecond", "UnitMillisecond", "UnitMicrosecond", "UnitNanosecond"]
+            }
+            
+        ]
+    },
+
     "PluralCategory.getForCldrString": {
         func: (s) => icu.PluralCategory.getForCldrString(s),
         // For avoiding webpacking minifying issues:
