@@ -3,6 +3,7 @@ casemapping
 collator
 datetime
 decimal
+list
 locale
 normalizer
 pluralrules
