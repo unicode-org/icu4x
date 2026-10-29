@@ -482,6 +482,7 @@ impl SourceDataProvider {
     pub fn with_alt_variants(self, variants: impl IntoIterator<Item = AltVariantKind>) -> Self {
         Self {
             alt_variants: variants.into_iter().collect(),
+            requests_cache: Default::default(),
             ..self
         }
     }
@@ -679,6 +680,14 @@ pub enum AltVariantKind {
     ///
     /// Intended for compatibility with older websites.
     DatetimeAscii,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="HK"]`.
+    LocaleNamesHkShort,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="MO"]`.
+    LocaleNamesMoShort,
+    /// Use `alt="variant"` for `//ldml/localeDisplayNames/territories/territory[@type="FK"]`.
+    LocaleNamesFkVariant,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="PS"]`.
+    LocaleNamesPsShort,
 }
 
 /// A language's CLDR coverage level.
