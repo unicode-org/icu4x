@@ -30,6 +30,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackConfig, LocaleFallbackConfig_obj } from "./LocaleFallbackConfig"
 
+export { PartSpan, PartSpan_obj } from "./PartSpan"
+
 export { BidiMirroringGlyph, BidiMirroringGlyph_obj } from "./BidiMirroringGlyph"
 
 export { GeneralCategoryGroup, GeneralCategoryGroup_obj } from "./GeneralCategoryGroup"
@@ -149,6 +151,8 @@ export { CanonicalCombiningClassMap } from "./CanonicalCombiningClassMap"
 export { CanonicalComposition } from "./CanonicalComposition"
 
 export { CanonicalDecomposition } from "./CanonicalDecomposition"
+
+export { Parts } from "./Parts"
 
 export { PluralOperands } from "./PluralOperands"
 
@@ -323,6 +327,8 @@ export { TransformResult } from "./TransformResult"
 export { LocaleDirection } from "./LocaleDirection"
 
 export { LanguageDisplayUnstable } from "./LanguageDisplayUnstable"
+
+export { PartKind } from "./PartKind"
 
 export { PluralCategory } from "./PluralCategory"
 
