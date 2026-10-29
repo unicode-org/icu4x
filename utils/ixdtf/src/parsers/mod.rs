@@ -6,7 +6,7 @@
 
 use crate::core::Cursor;
 use crate::encoding::{EncodingType, Utf16, Utf8};
-use crate::ParserResult;
+use crate::{ParseError, ParserResult};
 
 #[cfg(feature = "duration")]
 use crate::records::DurationParseRecord;
@@ -389,7 +389,8 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// ```
     #[inline]
     pub fn parse_offset(&mut self) -> ParserResult<UtcOffsetRecord> {
-        let result = timezone::parse_utc_offset(&mut self.cursor)?;
+        let result =
+            timezone::parse_utc_offset(&mut self.cursor)?.ok_or(ParseError::OffsetNeedsSign)?;
         self.cursor.close()?;
         Ok(result)
     }

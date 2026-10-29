@@ -31,23 +31,12 @@ pub(crate) fn parse_annotation_set<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<AnnotationSet<'a, T>> {
     // Parse an optional TimeZoneAnnotation
-    let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
+    let tz = timezone::parse_ambiguous_tz_annotation(cursor)?;
 
     // Parse any `Annotations`
-    let annotations = cursor.check_or(false, is_annotation_open)?;
+    let calendar = parse_annotations(cursor, handler)?;
 
-    if annotations {
-        let calendar = parse_annotations(cursor, handler)?;
-        return Ok(AnnotationSet {
-            tz: tz_annotation,
-            calendar,
-        });
-    }
-
-    Ok(AnnotationSet {
-        tz: tz_annotation,
-        calendar: None,
-    })
+    Ok(AnnotationSet { tz, calendar })
 }
 
 /// Parse any number of `KeyValueAnnotation`s
@@ -57,8 +46,8 @@ pub(crate) fn parse_annotations<'a, T: EncodingType>(
 ) -> ParserResult<Option<&'a [T::CodeUnit]>> {
     let mut calendar: Option<Annotation<'a, T>> = None;
 
-    while cursor.check_or(false, is_annotation_open)? {
-        let annotation = handler(parse_kv_annotation(cursor)?);
+    while let Some(kv) = cursor.speculative_parse(parse_kv_annotation)? {
+        let annotation = handler(kv);
 
         match annotation {
             // Check if the key is the registered key "u-ca".
@@ -92,34 +81,32 @@ pub(crate) fn parse_annotations<'a, T: EncodingType>(
 /// Parse an annotation with an `AnnotationKey`=`AnnotationValue` pair.
 fn parse_kv_annotation<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
-) -> ParserResult<Annotation<'a, T>> {
-    assert_syntax!(
-        is_annotation_open(cursor.next_or(ParseError::AnnotationOpen)?),
-        AnnotationOpen
-    );
+) -> ParserResult<Option<Annotation<'a, T>>> {
+    if cursor.next_if(is_annotation_open)?.is_none() {
+        return Ok(None);
+    }
 
-    let critical = cursor.check_or(false, is_critical_flag)?;
-    cursor.advance_if(critical);
+    let critical = cursor.next_if(is_critical_flag)?.is_some();
 
     // Parse AnnotationKey.
     let annotation_key = parse_annotation_key(cursor)?;
     assert_syntax!(
-        is_annotation_key_value_separator(cursor.next_or(ParseError::AnnotationKeyValueSeparator)?),
+        cursor.next_if(is_annotation_key_value_separator)?.is_some(),
         AnnotationKeyValueSeparator,
     );
 
     // Parse AnnotationValue.
     let annotation_value = parse_annotation_value(cursor)?;
     assert_syntax!(
-        is_annotation_close(cursor.next_or(ParseError::AnnotationClose)?),
+        cursor.next_if(is_annotation_close)?.is_some(),
         AnnotationClose
     );
 
-    Ok(Annotation {
+    Ok(Some(Annotation {
         critical,
         key: annotation_key,
         value: annotation_value,
-    })
+    }))
 }
 
 /// Parse an `AnnotationKey`.
