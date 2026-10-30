@@ -33,23 +33,31 @@ The architecture is built around 4 data representations that represent different
 1.  **`DateTimeFieldBag`** (Raw Request): Captures the fine-grained field presence and width choices from the developer (i.e., "field-related options").
     *   *Example:* A request for "wide month and two-digit year", represented as `{ year: TwoDigit, month: Long }`.
 2.  **UTS 35 Skeleton String** (Interchange Format): The precise, lossless wire format for the raw request (e.g., `"yyMMMM"`).
-3.  **`FieldSetBuilder`** (The Bridge): A helper that takes a detailed `DateTimeFieldBag` (or its skeleton) and maps it to the closest matching ICU4X formatting category, collapsing widths if necessary.
+3.  **`FieldSetBuilder`** (The Bridge): A helper that sits between a field bag and a field set.
     *   *Example:* Maps the `"yyMMMM"` request to a `DateFieldSet::YM` fieldset.
 4.  **`CompositeFieldSet`** (Resolved Category): The concrete, optimized runtime enum that wraps the resolved category (e.g., wrapping a `DateFieldSet::YM`). This is a downstream choice, not the core representation of the request.
 
 `DateTimeFieldBag` is a flat struct of optional fields, where each field represents a requested datetime component and its desired width. It acts as a clean, intermediate representation of a user's formatting request.
+
+There will be two additional structs: `DateTimeFieldPreferences` will be a non-exhaustive struct containing an `hour_cycle` field, and `DateTimeFieldBagWithPreferences` will combine a `DateTimeFieldBag` and a `DateTimeFieldPreferences` in public fields (`bag` and `preferences`). We need this extra layer since UTS 35 skeletons are able to represent an hour cycle preference.
 
 ### Suggested API Surface
 
 We recommend explicit, named methods for conversion and standard traits for serialization, making the lossy nature of the conversions clear:
 
 *   `impl DateTimeFieldBag`
-    *   `pub fn to_string(&self) -> String` (canonical skeleton serialization)
-    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (explicit, self-documenting named constructor that delegates to `FromStr`)
+    *   `pub fn to_string(&self) -> String` (lossless conversion)
+    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (errors for syntax or an hour cycle in the skeleton)
     *   `pub fn to_field_set_builder(&self) -> FieldSetBuilder` (lossy conversion)
     *   `pub fn from_field_set_builder(builder: &FieldSetBuilder) -> Self` (best-effort reconstruction)
 *   `impl writeable::Writeable for DateTimeFieldBag` (lower-level version of `to_string()`)
 *   `impl std::str::FromStr for DateTimeFieldBag` (convenience wrapper over `try_from_skeleton(&str)`)
+*   `impl DateTimeFieldBagWithPreferences`
+    *   `pub fn to_string(&self) -> String` (lossless conversion)
+    *   `pub fn try_from_skeleton(s: &str) -> Result<Self, DateTimeFieldBagParseError>` (errors for syntax only)
+*   `impl writeable::Writeable for DateTimeFieldBagWithPreferences` (lower-level version of `to_string()`)
+*   `impl std::str::FromStr for DateTimeFieldBagWithPreferences` (convenience wrapper over `try_from_skeleton(&str)`)
+*   `impl From<DateTimeFieldPreferences> for DateTimePreferences`
 
 ### Module Shape
 
@@ -83,7 +91,7 @@ UTS 35 skeleton syntax:
 
 The bag does not carry:
 
-- hour cycle preference, including the current `components::Bag::hour_cycle` field
+- hour cycle preference, including the current `components::Bag::hour_cycle` field; this is in `DateTimeFieldPreferences`
 - numbering system preference
 - year style preference
 - other formatter-level knobs that belong to `FieldSetBuilder`
