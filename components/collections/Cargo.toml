@@ -29,6 +29,8 @@ yoke = { workspace = true, features = ["derive"] }
 zerofrom = { workspace = true, features = ["derive"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 potential_utf = { workspace = true, features = ["zerovec"] }
+utf_types = { workspace = true }
+utf16_iter = { workspace = true }
 utf8_iter = { workspace = true }
 
 serde = { workspace = true, features = ["derive"], optional = true }
