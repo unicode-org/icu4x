@@ -37,6 +37,17 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
             .and_then(|patterns| symbol_for_width(patterns, width))
             .ok_or_else(not_found)?;
 
+        // When a locale's symbol equals the currency's ISO code (e.g. `USD` in `en-AU`),
+        // we still emit an entry so locale fallback does not pick up a parent locale's
+        // symbol (`US$` from `en-001`), but store a shared marker payload instead of
+        // repeating each 3-letter code string in the data.
+        if symbol == currency.iso_code().as_str() {
+            return Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(CurrencySymbol::use_iso_code()),
+            });
+        }
+
         let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(self)?;
         let gc = gc.as_borrowed();
 
@@ -162,13 +173,12 @@ fn test_symbols() {
     const SHORT: CurrencySymbolWidth = CurrencySymbolsV1::SHORT;
     const NARROW: CurrencySymbolWidth = CurrencySymbolsV1::NARROW;
 
-    /// Checks the symbol and its starts/ends-with-letter flags, or that there is no entry.
     #[track_caller]
-    fn check(
+    fn check_payload(
         locale: &str,
         currency: &str,
         width: CurrencySymbolWidth,
-        expected: Option<(&str, bool, bool)>,
+        expected: Option<CurrencySymbol<'static>>,
     ) {
         let locale = DataLocale::from(Locale::try_from_str(locale).unwrap());
         let currency = CurrencyType::try_from_str(currency).unwrap();
@@ -187,9 +197,34 @@ fn test_symbols() {
         .map(|response| response.payload);
         assert_eq!(
             payload.as_ref().map(|payload| payload.get()),
-            expected
-                .map(|(symbol, starts, ends)| CurrencySymbol::new(symbol, starts, ends))
-                .as_ref()
+            expected.as_ref()
+        );
+    }
+
+    /// Checks the symbol and its starts/ends-with-letter flags, or that there is no entry.
+    #[track_caller]
+    fn check(
+        locale: &str,
+        currency: &str,
+        width: CurrencySymbolWidth,
+        expected: Option<(&'static str, bool, bool)>,
+    ) {
+        check_payload(
+            locale,
+            currency,
+            width,
+            expected.map(|(symbol, starts, ends)| CurrencySymbol::new(symbol, starts, ends)),
+        );
+    }
+
+    /// Checks that the symbol is stored as the shared ISO-code marker payload.
+    #[track_caller]
+    fn check_iso_code(locale: &str, currency: &str, width: CurrencySymbolWidth) {
+        check_payload(
+            locale,
+            currency,
+            width,
+            Some(CurrencySymbol::use_iso_code()),
         );
     }
 
@@ -200,13 +235,13 @@ fn test_symbols() {
     check("ar-EG", "USD", SHORT, Some(("US$", true, false)));
     check("ar-EG", "USD", NARROW, Some(("US$", true, false)));
 
-    // A symbol equal to the ISO code is stored like any other symbol. Without its own
-    // entry, the runtime would fall back to an ancestor's symbol: `es` uses `€` for EUR,
-    // and root uses `JP¥` for JPY.
-    check("en", "EGP", SHORT, Some(("EGP", true, true)));
+    // A symbol equal to the ISO code is stored as the shared ISO-code marker payload.
+    // Without its own entry, the runtime would fall back to an ancestor's symbol: `es`
+    // uses `€` for EUR, and root uses `JP¥` for JPY.
+    check_iso_code("en", "EGP", SHORT);
     check("en", "EGP", NARROW, Some(("E£", true, false)));
-    check("es-AR", "EUR", SHORT, Some(("EUR", true, true)));
-    check("fr", "JPY", SHORT, Some(("JPY", true, true)));
+    check_iso_code("es-AR", "EUR", SHORT);
+    check_iso_code("fr", "JPY", SHORT);
 
     // `fr` defines a standard symbol for FRF but no narrow symbol: the narrow entry
     // carries the standard symbol (UTS #35 lateral inheritance, resolved at datagen).
