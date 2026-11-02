@@ -58,7 +58,26 @@
         "types": {
           "calendar": {
             "buddhist": "Buddhist Calendar",
-            "core": "Minguo",
+            "_core": {
+              "buddhist": "Buddhist",
+              "chinese": "Chinese",
+              "coptic": "Coptic",
+              "dangi": "Dangi",
+              "ethiopic": "Ethiopic",
+              "ethiopic-amete-alem": "Ethiopic Amete Alem",
+              "gregorian": "Gregorian",
+              "hebrew": "Hebrew",
+              "indian": "Indian National",
+              "islamic": "Hijri",
+              "islamic-civil": "Hijri (tabular, civil epoch)",
+              "islamic-rgsa": "Hijri, Saudi Arabia Sighting",
+              "islamic-tbla": "Hijri (tabular, astronomical epoch)",
+              "islamic-umalqura": "Hijri (Umm al-Qura)",
+              "iso8601": "Gregorian",
+              "japanese": "Japanese",
+              "persian": "Persian",
+              "roc": "Minguo"
+            },
             "chinese": "Chinese Calendar",
             "coptic": "Coptic Calendar",
             "dangi": "Dangi Calendar",
@@ -80,7 +99,10 @@
           },
           "cf": {
             "account": "Accounting Currency Format",
-            "core": "Standard",
+            "_core": {
+              "account": "Accounting",
+              "standard": "Standard"
+            },
             "standard": "Standard Currency Format"
           },
           "colAlternate": {
@@ -93,7 +115,11 @@
           },
           "colCaseFirst": {
             "lower": "Sort Lowercase First",
-            "core": "Uppercase",
+            "_core": {
+              "lower": "Lowercase",
+              "no": "Lowercase",
+              "upper": "Uppercase"
+            },
             "no": "Sort Normal Case Order",
             "upper": "Sort Uppercase First"
           },
@@ -103,7 +129,23 @@
           },
           "collation": {
             "compat": "Previous Sort Order, for compatibility",
-            "core": "Zhuyin",
+            "_core": {
+              "compat": "Compatibility",
+              "dictionary": "Dictionary",
+              "ducet": "Default Unicode",
+              "emoji": "Emoji",
+              "eor": "European Rules",
+              "phonebook": "Phonebook",
+              "phonetic": "Phonetic",
+              "pinyin": "Pinyin",
+              "search": "Search",
+              "searchjl": "Korean Initial Consonant",
+              "standard": "Standard",
+              "stroke": "Stroke",
+              "traditional": "Traditional",
+              "unihan": "Radical-Stroke",
+              "zhuyin": "Zhuyin"
+            },
             "dictionary": "Dictionary Sort Order",
             "ducet": "Default Unicode Sort Order",
             "emoji": "Emoji Sort Order",
@@ -129,7 +171,13 @@
           },
           "colReorder": {
             "currency": "Currency",
-            "core": "Symbol",
+            "_core": {
+              "currency": "Currency",
+              "digit": "Digits",
+              "punct": "Punctuation",
+              "space": "Whitespace",
+              "symbol": "Symbol"
+            },
             "digit": "Digits",
             "punct": "Punctuation",
             "space": "Whitespace",
@@ -137,7 +185,13 @@
           },
           "colStrength": {
             "identical": "Sort All",
-            "core": "Base, Accents, Case, Variants",
+            "_core": {
+              "identical": "All",
+              "primary": "Base Letters Only",
+              "quaternary": "Base, Accents, Case, Variants, Kana",
+              "secondary": "Base, Accents",
+              "tertiary": "Base, Accents, Case, Variants"
+            },
             "primary": "Sort Base Letters Only",
             "quaternary": "Sort Accents/Case/Width/Kana",
             "secondary": "Sort Accents",
@@ -170,7 +224,11 @@
           },
           "em": {
             "default": "Default Presentation For Emoji",
-            "core": "Text",
+            "_core": {
+              "default": "Default",
+              "emoji": "Emoji",
+              "text": "Text"
+            },
             "emoji": "Emoji Presentation For Emoji",
             "text": "Text Presentation For Emoji"
           },
@@ -188,7 +246,14 @@
           },
           "hc": {
             "c12": "12-Hour System",
-            "core": "24 (1–24)",
+            "_core": {
+              "c12": "12",
+              "c24": "24",
+              "h11": "12 (0–11)",
+              "h12": "12 (1–12)",
+              "h23": "24 (0–23)",
+              "h24": "24 (1–24)"
+            },
             "c24": "24-Hour System",
             "h11": "12-Hour System (0–11)",
             "h12": "12-Hour System (1–12)",
@@ -234,20 +299,34 @@
           },
           "kv": {
             "currency": "Ignore Symbols affects spaces, punctuation, all symbols",
-            "core": "Shift Spaces, Punctuation, Non-currency Symbols",
+            "_core": {
+              "currency": "Shift Spaces, Punctuation, All Symbols",
+              "punct": "Shift Spaces, Punctuation",
+              "space": "Shift Spaces, Punctuation",
+              "symbol": "Shift Spaces, Punctuation, Non-currency Symbols"
+            },
             "punct": "Ignore Symbols affects spaces and punctuation only",
             "space": "Ignore Symbols affects spaces only",
             "symbol": "Ignore Symbols affects spaces, punctuation, non-currency symbols"
           },
           "lb": {
             "loose": "Loose Line Break Style",
-            "core": "Strict",
+            "_core": {
+              "loose": "Loose",
+              "normal": "Normal",
+              "strict": "Strict"
+            },
             "normal": "Normal Line Break Style",
             "strict": "Strict Line Break Style"
           },
           "lw": {
             "breakall": "Allow Line Breaks In All Words",
-            "core": "Keep in phrases",
+            "_core": {
+              "breakall": "Break all",
+              "keepall": "Keep all",
+              "normal": "Normal",
+              "phrase": "Keep in phrases"
+            },
             "keepall": "Prevent Line Breaks In All Words",
             "normal": "Normal Line Breaks For Words",
             "phrase": "Prevent Line Breaks In Phrases"
@@ -288,7 +367,11 @@
           },
           "ms": {
             "metric": "Metric System",
-            "core": "US",
+            "_core": {
+              "metric": "Metric",
+              "uksystem": "UK",
+              "ussystem": "US"
+            },
             "uksystem": "Imperial Measurement System",
             "ussystem": "US Measurement System"
           },
@@ -303,7 +386,36 @@
             "arab": "Arabic-Indic Digits",
             "arabext": "Extended Arabic-Indic Digits",
             "arabext-alt-short": "X Arabic-Indic Digits",
-            "core": "Traditional Numerals",
+            "_core": {
+              "arabext": "Extended Arabic-Indic",
+              "armnlow": "Armenian Lowercase",
+              "finance": "Financial",
+              "fullwide": "Full-Width",
+              "greklow": "Greek Lowercase",
+              "hanidays": "Han-Character Day-of-Month Numbering for Traditional Calendars",
+              "hanidec": "Positional decimal system using Chinese number ideographs as digits",
+              "hansfin": "Simplified Chinese Financial",
+              "hantfin": "Traditional Chinese Financial",
+              "jpanfin": "Japanese Financial",
+              "jpanyear": "Japanese First-Year Gannen Numbering",
+              "lanatham": "Tai Tham Tham (Ecclesiastical)",
+              "mathbold": "Mathematical Bold",
+              "mathdbl": "Mathematical Double-Struck",
+              "mathmono": "Mathematical Monospace",
+              "mathsanb": "Mathematical Sans-Serif Bold",
+              "mathsans": "Mathematical Sans Serif",
+              "mymrepka": "Myanmar Eastern Pwo Karen",
+              "mymrpao": "Myanmar Pa’O",
+              "mymrshan": "Myanmar Shan",
+              "mymrtlng": "Myanmar Tai Laing",
+              "native": "Native Digits",
+              "outlined": "Outlined",
+              "roman": "Roman Uppercase",
+              "romanlow": "Roman Lowercase",
+              "segment": "Segmented",
+              "tamldec": "Modern Tamil",
+              "traditional": "Traditional Numerals"
+            },
             "armn": "Armenian Numerals",
             "armnlow": "Armenian Lowercase Numerals",
             "bali": "Balinese Digits",
@@ -413,7 +525,10 @@
           },
           "ss": {
             "none": "Sentence Breaks Without Abbreviation Handling",
-            "core": "On",
+            "_core": {
+              "none": "Off",
+              "standard": "On"
+            },
             "standard": "Suppress Sentence Breaks After Standard Abbreviations"
           },
           "t0": {
@@ -421,12 +536,10 @@
           },
           "va": {
             "posix": "POSIX Compliant Locale",
-            "core": "POSIX Variant"
+            "_core": {
+              "posix": "POSIX Variant"
+            }
           }
-        },
-        "typeValues": {
-          "no": "Off",
-          "yes": "On"
         },
         "codePatterns": {
           "language": "Language: {0}",

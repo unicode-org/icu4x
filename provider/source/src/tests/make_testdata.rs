@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::experimental::dimension::provider::currency::symbols::{
+    CurrencyDecimalSymbolsV1, CurrencySymbolsV1,
+};
 use icu::locale::{DataLocale, data_locale};
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -11,7 +14,6 @@ use icu_provider_export::prelude::*;
 include!("../../tests/locales.rs.data");
 
 #[test]
-#[cfg(feature = "use_wasm")]
 fn make_testdata() {
     // Only produce output if the variable is set. Test is hermetic otherwise.
     if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
@@ -54,8 +56,16 @@ fn make_testdata() {
         )
     })
     .with_marker_attributes_filter("currency", |attrs| {
+        // The "currency" attributes domain is shared by several markers; try each format,
+        // and fail loudly on an unknown one instead of silently dropping its data.
+        let currency = CurrencySymbolsV1::parse_attributes(attrs)
+            .map(|(currency, _)| currency)
+            .or_else(|| {
+                CurrencyDecimalSymbolsV1::parse_attributes(attrs).map(|(_, currency)| currency)
+            })
+            .unwrap_or_else(|| panic!("unrecognized currency attributes: {attrs:?}"));
         matches!(
-            attrs.as_str().split('/').next_back().unwrap(),
+            currency.iso_code().as_str(),
             "CAD" | "EGP" | "EUR" | "GBP" | "USD"
         )
     })
@@ -111,19 +121,16 @@ fn make_testdata() {
     .export(&provider, BorrowedExporter(&exporter))
     .unwrap();
 
-    // Locales that only exist in the test data for a single marker: exporting them for
-    // every marker would multiply the generated test data for no added coverage.
+    // Export `pt-PT` only for `DecimalSymbolsV1` and `CurrencyDecimalSymbolsV1` (to cover
+    // the PTE separator override) without adding `pt-PT` to every marker in the test data.
     ExportDriver::new(
-        EXTRA_NUMBERS_LOCALES
-            .iter()
-            .copied()
-            .map(DataLocaleFamily::single),
+        [DataLocaleFamily::single(data_locale!("pt-PT"))],
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
     .with_markers([
         icu::decimal::provider::DecimalSymbolsV1::INFO,
-        icu::experimental::dimension::provider::currency::symbols::CurrencyDecimalSymbolsV1::INFO,
+        CurrencyDecimalSymbolsV1::INFO,
     ])
     .export(&provider, BorrowedExporter(&exporter))
     .unwrap();

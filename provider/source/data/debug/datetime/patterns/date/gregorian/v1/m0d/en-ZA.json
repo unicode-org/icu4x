@@ -10,7 +10,7 @@
     0
   ],
   "elements": [
-    "dd MMMM",
+    "d MMMM",
     "dd MMM",
     "dd/MM"
   ]

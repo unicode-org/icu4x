@@ -9,7 +9,7 @@ navigation.  The Summary of each page is its first paragraph.
 
 List of tutorials on how to use ICU4X.
 
-User-facing tutorials are listed in [index.md](tutorials/index.md). The following list are additional contributor-focused tutorials.
+User-facing tutorials are listed in [tutorials/README.md](../tutorials/README.md). The following list are additional contributor-focused tutorials.
 
 Document | Summary
 ---------|---------

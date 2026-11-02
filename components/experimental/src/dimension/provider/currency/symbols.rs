@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_locale_core::subtags::Subtag;
 use icu_provider::prelude::*;
 use tinystr::{TinyAsciiStr, tinystr};
 use zerovec::VarZeroCow;
@@ -29,6 +30,38 @@ icu_provider::data_marker!(
     #[cfg(feature = "datagen")]
     attributes_domain = "currency",
 );
+
+impl CurrencyDecimalSymbolsV1 {
+    /// Creates attributes for this marker from parts.
+    pub fn make_attributes(
+        nu: Option<Subtag>,
+        currency: CurrencyType,
+        x: &mut TinyAsciiStr<12>,
+    ) -> &DataMarkerAttributes {
+        *x = if let Some(nu) = nu {
+            nu.to_tinystr()
+                .concat::<1, 9>(tinystr::tinystr!(1, "/"))
+                .concat::<3, 12>(currency.iso_code())
+        } else {
+            currency.iso_code().resize()
+        };
+        DataMarkerAttributes::from_str_or_panic(x.as_str())
+    }
+
+    /// Parses attributes for this marker into parts.
+    #[cfg(feature = "datagen")]
+    pub fn parse_attributes(
+        attrs: &DataMarkerAttributes,
+    ) -> Option<(Option<Subtag>, CurrencyType)> {
+        let (nu, currency) = match attrs.as_str().split_once('/') {
+            Some((nu, curr)) => (Some(Subtag::try_from_str(nu).ok()?), curr),
+            None => (None, attrs.as_str()),
+        };
+        let currency = CurrencyType::try_from_str(currency).ok()?;
+
+        Some((nu, currency))
+    }
+}
 
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -64,20 +97,50 @@ impl CurrencySymbol<'_> {
     }
 }
 
+/// The width of a currency symbol.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum CurrencySymbolWidth {
+    /// Standard or short currency symbol (e.g. `"$"` or `"CA$"`).
+    Short,
+    /// Narrow currency symbol (e.g. `"$"`).
+    ///
+    /// Data for this width falls back to the standard symbol at datagen time: if CLDR
+    /// defines no narrow symbol for a currency, the narrow entry carries the standard
+    /// symbol instead (UTS #35 lateral inheritance). Consumers therefore never need to
+    /// issue a second request for the standard symbol.
+    Narrow,
+}
+
 impl CurrencySymbolsV1 {
-    pub const SHORT: TinyAsciiStr<1> = tinystr!(1, "s");
-    pub const NARROW: TinyAsciiStr<1> = tinystr!(1, "n");
+    pub const SHORT: CurrencySymbolWidth = CurrencySymbolWidth::Short;
+    pub const NARROW: CurrencySymbolWidth = CurrencySymbolWidth::Narrow;
 
     pub fn make_attributes(
         currency: CurrencyType,
-        width: TinyAsciiStr<1>,
-        buffer: &mut TinyAsciiStr<5>,
+        width: CurrencySymbolWidth,
+        buffer: &mut TinyAsciiStr<4>,
     ) -> &DataMarkerAttributes {
-        *buffer = width
-            .concat::<1, 2>(tinystr!(1, "/"))
-            .concat::<3, 5>(currency.iso_code());
+        *buffer = match width {
+            CurrencySymbolWidth::Short => currency.iso_code().resize(),
+            CurrencySymbolWidth::Narrow => currency.iso_code().concat(tinystr!(1, "n")),
+        };
         // All valid
         DataMarkerAttributes::try_from_str(buffer).unwrap()
+    }
+
+    /// Parses attributes for this marker into parts.
+    #[cfg(feature = "datagen")]
+    pub fn parse_attributes(
+        attrs: &DataMarkerAttributes,
+    ) -> Option<(CurrencyType, CurrencySymbolWidth)> {
+        let attrs = attrs.as_str();
+        if let Ok(currency) = CurrencyType::try_from_str(attrs) {
+            return Some((currency, CurrencySymbolWidth::Short));
+        }
+        let currency = CurrencyType::try_from_str(attrs.strip_suffix('n')?).ok()?;
+
+        Some((currency, CurrencySymbolWidth::Narrow))
     }
 }
 
@@ -91,5 +154,52 @@ icu_provider::data_struct!(
 impl<'zf> zerofrom::ZeroFrom<'zf, VarTupleULE<u8, str>> for CurrencySymbol<'zf> {
     fn zero_from(source: &'zf VarTupleULE<u8, str>) -> Self {
         Self(VarZeroCow::zero_from(source))
+    }
+}
+
+#[test]
+fn test_currency_attributes_roundtrip() {
+    use icu_locale::preferences::extensions::unicode::keywords::currency;
+    use icu_locale::subtags::subtag;
+
+    let currency = currency!("PTE");
+    let arab = subtag!("Arab");
+
+    assert_eq!(
+        CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
+            Some(arab),
+            currency,
+            &mut Default::default()
+        ))
+        .unwrap(),
+        (Some(arab), currency)
+    );
+
+    assert_eq!(
+        CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
+            None,
+            currency,
+            &mut Default::default()
+        ))
+        .unwrap(),
+        (None, currency)
+    );
+
+    let mut buf = TinyAsciiStr::EMPTY;
+    for width in [CurrencySymbolsV1::SHORT, CurrencySymbolsV1::NARROW] {
+        assert_eq!(
+            CurrencySymbolsV1::parse_attributes(CurrencySymbolsV1::make_attributes(
+                currency, width, &mut buf
+            ))
+            .unwrap(),
+            (currency, width)
+        );
+    }
+
+    for invalid in ["EU", "EURx", "EURnn", "latn/EUR"] {
+        assert_eq!(
+            CurrencySymbolsV1::parse_attributes(DataMarkerAttributes::from_str_or_panic(invalid)),
+            None
+        );
     }
 }

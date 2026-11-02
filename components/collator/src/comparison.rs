@@ -2206,7 +2206,13 @@ impl<'a> CollatorBorrowed<'a> {
             ($key:ident, $flag:ident) => {
                 if levels & $flag != 0 {
                     sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
-                    sink.write(state, &$key.buf)?;
+                    // Skip trailing NO_CE as ICU4C does.
+                    if let Some((last, head)) = $key.buf.split_last() {
+                        debug_assert_eq!(*last, LEVEL_SEPARATOR_BYTE);
+                        sink.write(state, head)?;
+                    } else {
+                        debug_assert!(false);
+                    }
                 }
             };
         }
@@ -2697,7 +2703,7 @@ mod test {
     fn sort_key_to_slice_identical_too_long() {
         // This runs out of space while appending UTF-8 in the SinkAdapter.
         let collator = collator_en(Strength::Identical);
-        let mut k = [0u8; 22];
+        let mut k = [0u8; 20];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
         assert!(matches!(res, Err(TooSmall { .. })));
     }

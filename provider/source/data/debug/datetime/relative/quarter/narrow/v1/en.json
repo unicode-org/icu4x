@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "last qtr.",
-    "0": "this qtr.",
-    "1": "next qtr."
-  },
+  "zero_index": 1,
+  "relatives": [
+    "last qtr.",
+    "this qtr.",
+    "next qtr."
+  ],
   "past": {
     "other": [
       0,

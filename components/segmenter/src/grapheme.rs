@@ -347,6 +347,16 @@ mod test {
     include!("../tests/helpers.rs.raw");
 
     #[test]
+    fn data() {
+        for expected in parse_test_file(include_str!("../tests/testdata/GraphemeBreak.txt")) {
+            let expected = expected.iter().map(String::as_str).collect::<Vec<_>>();
+            let s = expected.concat();
+            check_grapheme(&s, &expected, GraphemeClusterSegmenter::new());
+            check_grapheme(&s, &expected, GraphemeClusterSegmenter::new_neo());
+        }
+    }
+
+    #[test]
     fn empty_string() {
         let segmenter = GraphemeClusterSegmenter::new();
         let breaks: Vec<usize> = segmenter.segment_str("").collect();

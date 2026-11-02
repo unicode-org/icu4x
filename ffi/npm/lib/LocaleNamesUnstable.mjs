@@ -14,13 +14,13 @@ const LocaleNamesUnstable_box_destroy_registry = new FinalizationRegistry((ptr) 
  * This struct holds free functions for loading display names for languages, scripts,
  * regions, and language identifiers.
  *
- * See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html) for more information.
+ * See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
  *
- * See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html) for more information.
+ * See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
  *
- * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html) for more information.
+ * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
  *
- * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
+ * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
  *
  * @experimental
  */
@@ -54,7 +54,7 @@ export class LocaleNamesUnstable {
 
 
     /**
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
      *
      * @experimental
      */
@@ -79,7 +79,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
      *
      * @experimental
      */
@@ -112,7 +112,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
      *
      * @experimental
      */
@@ -137,7 +137,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
      *
      * @experimental
      */
@@ -170,7 +170,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
      *
      * @experimental
      */
@@ -195,7 +195,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
      *
      * @experimental
      */
@@ -228,7 +228,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
      *
      * @experimental
      */
@@ -253,7 +253,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
      *
      * @experimental
      */
@@ -286,7 +286,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
      *
      * @experimental
      */
@@ -311,7 +311,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+     * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
      *
      * @experimental
      */
@@ -344,7 +344,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
      *
      * @experimental
      */
@@ -369,7 +369,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+     * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
      *
      * @experimental
      */
@@ -402,7 +402,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
      *
      * @experimental
      */
@@ -427,7 +427,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
      *
      * @experimental
      */
@@ -460,7 +460,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
      *
      * @experimental
      */
@@ -485,7 +485,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
      *
      * @experimental
      */
@@ -518,7 +518,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
      *
      * @experimental
      */
@@ -543,7 +543,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+     * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
      *
      * @experimental
      */
@@ -576,7 +576,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      *
      * @experimental
      */
@@ -604,7 +604,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+     * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
      *
      * @experimental
      */
@@ -632,7 +632,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      *
      * @experimental
      */
@@ -660,7 +660,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+     * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
      *
      * @experimental
      */
@@ -688,7 +688,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      *
      * @experimental
      */
@@ -716,7 +716,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+     * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
      *
      * @experimental
      */
@@ -744,7 +744,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      *
      * @experimental
      */
@@ -772,7 +772,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+     * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
      *
      * @experimental
      */
@@ -800,7 +800,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      *
      * @experimental
      */
@@ -828,7 +828,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+     * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
      *
      * @experimental
      */
@@ -856,7 +856,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      *
      * @experimental
      */
@@ -884,7 +884,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+     * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
      *
      * @experimental
      */
@@ -912,7 +912,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      *
      * @experimental
      */
@@ -940,7 +940,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+     * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
      *
      * @experimental
      */
@@ -968,7 +968,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      *
      * @experimental
      */
@@ -996,7 +996,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
      *
      * @experimental
      */
@@ -1024,7 +1024,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      *
      * @experimental
      */
@@ -1052,7 +1052,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+     * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
      *
      * @experimental
      */
@@ -1080,7 +1080,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      *
      * @experimental
      */
@@ -1108,7 +1108,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
      *
      * @experimental
      */
@@ -1136,7 +1136,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      *
      * @experimental
      */
@@ -1164,7 +1164,7 @@ export class LocaleNamesUnstable {
     }
 
     /**
-     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+     * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
      *
      * @experimental
      */

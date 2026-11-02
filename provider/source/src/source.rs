@@ -8,9 +8,7 @@ use std::any::Any;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
-#[cfg(feature = "networking")]
 use std::fs::File;
-#[cfg(feature = "networking")]
 use std::io::BufWriter;
 use std::io::Cursor;
 use std::io::Read;
@@ -45,20 +43,17 @@ impl SerdeCache {
         }
     }
 
-    fn read_and_parse<S>(
+    pub fn read_and_parse<S: Send + Sync + 'static>(
         &self,
         path: &str,
-        parser: fn(&[u8]) -> Result<S, DataError>,
-    ) -> Result<&S, DataError>
-    where
-        for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
-    {
+        parser: fn(Box<[u8]>) -> Result<S, DataError>,
+    ) -> Result<&S, DataError> {
         match self.cache.get(path) {
             Some(x) => x,
             None => self.cache.insert(
                 path.to_string(),
                 Box::new(
-                    parser(&self.root.read_to_buf(path)?)
+                    parser(self.root.read_to_buf(path)?.into_boxed_slice())
                         .map_err(|e| e.with_path_context(Path::new(path)))?,
                 ),
             ),
@@ -72,7 +67,7 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes)
+            serde_json::from_slice(&bytes)
                 .map_err(|e| DataError::custom("JSON deserialize").with_display_context(&e))
         })
     }
@@ -83,7 +78,7 @@ impl SerdeCache {
     {
         self.read_and_parse(path, |bytes| {
             toml::from_str(
-                std::str::from_utf8(bytes)
+                std::str::from_utf8(&bytes)
                     .map_err(|e| DataError::custom("TOML UTF8").with_display_context(&e))?,
             )
             .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
@@ -109,7 +104,10 @@ impl ZipData {
         let archive = ZipArchive::new(Cursor::new(bytes))
             .map_err(|e| DataError::custom("Invalid ZIP file").with_display_context(&e))?;
 
-        let file_list = archive.file_names().map(String::from).collect();
+        let file_list = archive
+            .file_names()
+            .filter_map(|f| Some(f.ok()?.to_string()))
+            .collect();
         Ok(Self { archive, file_list })
     }
 }
@@ -142,6 +140,7 @@ pub(crate) enum AbstractFs {
     #[cfg(feature = "networking")]
     Http(String),
     Memory(BTreeMap<&'static str, &'static [u8]>),
+    #[cfg_attr(not(feature = "unstable"), allow(dead_code))]
     Overlay {
         overlay: Box<AbstractFs>,
         base: Box<AbstractFs>,
@@ -454,14 +453,16 @@ impl TzdbCache {
     pub(crate) fn parsed(&self) -> Result<&Tzdb, DataError> {
         self.transitions
             .get_or_init(|| {
-                fn parse(lines: Vec<String>) -> parse_zoneinfo::table::Table {
+                fn parse<S: AsRef<str>, I: Iterator<Item = S>>(
+                    lines: I,
+                ) -> parse_zoneinfo::table::Table {
                     use parse_zoneinfo::line::Line;
                     use parse_zoneinfo::table::TableBuilder;
 
                     let mut table = TableBuilder::new();
 
                     for line in lines {
-                        match Line::new(&line).unwrap() {
+                        match Line::new(line.as_ref()).unwrap() {
                             Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
                             Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
                             Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
@@ -473,53 +474,56 @@ impl TzdbCache {
                     table.build()
                 }
 
+                fn try_ziguard(
+                    dataform: &str,
+                    script: &Path,
+                    lines: &Path,
+                ) -> Option<parse_zoneinfo::table::Table> {
+                    let output = std::process::Command::new("awk")
+                        .args(["-v", dataform, "-f"])
+                        .arg(script)
+                        .arg(lines)
+                        .stderr(std::process::Stdio::inherit())
+                        .output()
+                        .ok()?;
+                    if !output.status.success() {
+                        return None;
+                    }
+                    Some(parse(str::from_utf8(&output.stdout).ok()?.lines()))
+                }
+
+                let ziguard_path = std::env::temp_dir().join("ziguard.awk");
+                let lines_path = std::env::temp_dir().join("lines");
+                let mut lines_file = BufWriter::new(File::create(&lines_path)?);
+
+                let lines = [
+                    "africa",
+                    "antarctica",
+                    "asia",
+                    "australasia",
+                    "europe",
+                    "northamerica",
+                    "southamerica",
+                    "etcetera",
+                    "factory",
+                    "backward",
+                ]
+                .into_iter()
+                .try_fold(Vec::new(), |mut lines, file| {
+                    let file = self.root.read_to_string(file)?;
+                    use std::io::Write;
+                    writeln!(lines_file, "{file}")?;
+                    lines.extend(file.lines().map(ToOwned::to_owned));
+                    Ok::<_, DataError>(lines)
+                })?;
+
+                std::fs::write(&ziguard_path, self.root.read_to_buf("ziguard.awk")?)?;
+                drop(lines_file);
+
                 Ok(Tzdb {
-                    main: parse(
-                        [
-                            "africa",
-                            "antarctica",
-                            "asia",
-                            "australasia",
-                            "europe",
-                            "northamerica",
-                            "southamerica",
-                            "etcetera",
-                            "factory",
-                            "backward",
-                        ]
-                        .into_iter()
-                        .try_fold(Vec::new(), |mut lines, file| {
-                            lines.extend(
-                                self.root
-                                    .read_to_string(file)?
-                                    .lines()
-                                    .map(ToOwned::to_owned),
-                            );
-                            Ok::<_, DataError>(lines)
-                        })?,
-                    ),
-
-                    rearguard: self.root.file_exists("rearguard.zi")?.then(|| {
-                        parse(
-                            self.root
-                                .read_to_string("rearguard.zi")
-                                .unwrap()
-                                .lines()
-                                .map(ToOwned::to_owned)
-                                .collect(),
-                        )
-                    }),
-
-                    vanguard: self.root.file_exists("vanguard.zi")?.then(|| {
-                        parse(
-                            self.root
-                                .read_to_string("vanguard.zi")
-                                .unwrap()
-                                .lines()
-                                .map(ToOwned::to_owned)
-                                .collect(),
-                        )
-                    }),
+                    main: parse(lines.iter()),
+                    rearguard: try_ziguard("DATAFORM=rearguard", &ziguard_path, &lines_path),
+                    vanguard: try_ziguard("DATAFORM=vanguard", &ziguard_path, &lines_path),
                 })
             })
             .as_ref()
@@ -693,3 +697,23 @@ macro_rules! include_files {
     };
 }
 pub(crate) use include_files;
+
+macro_rules! source_issue {
+    ($locale:expr, $($arg:tt)*) => {{
+        let module = module_path!().strip_prefix("icu_provider_source::").unwrap();
+        let locale: icu::locale::DataLocale = $locale;
+        let msg = format!($($arg)*);
+
+        match module {
+            "properties::enum_codepointtrie" if msg == r#"UCD does not contain Line_Break "HH""# => {
+                // Expected for RSCD 15.1
+            }
+            "datetime::range_patterns" | "datetime::semantic_skeletons" if msg.contains("conflicting field") => {
+                // https://unicode-org.atlassian.net/browse/CLDR-18540
+            }
+            _ if locale.is_unknown() => log::warn!("{msg}"),
+            _ => log::warn!("{locale}: {msg}"),
+        }
+    }};
+}
+pub(crate) use source_issue;

@@ -17,6 +17,7 @@
 mod generic;
 mod parser;
 pub(crate) mod pattern;
+pub(crate) mod tokenizer;
 
 pub use generic::GenericPattern;
 pub(crate) use parser::Parser;

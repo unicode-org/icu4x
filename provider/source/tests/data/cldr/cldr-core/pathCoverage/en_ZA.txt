@@ -1,0 +1,39 @@
+# Tech Preview data for locale coverage levels. For the file format, see the README.md in this directory.
+
+import=en
+
+# Variables
+
+%dateFormatItem40=E,Ed,Gy,GyM,GyMEd,GyMMM,GyMMMEEEEd,GyMMMEd,GyMMMEddd,GyMMMd,GyMMMddd,GyMd,M,MEd,MMM,MMMEEEEd,MMMEd,MMMEddd,MMMMEEEEd,MMMMd,MMMMddd,MMMd,MMMddd,Md,d,y,yyyy,yyyyM,yyyyMEd,yyyyMMM,yyyyMMMEEEEd,yyyyMMMEd,yyyyMMMEddd,yyyyMMMM,yyyyMMMMEEEEd,yyyyMMMd,yyyyMMMddd,yyyyMd,yyyyQQQ,yyyyQQQQ
+%dateFormatItem54=E,EHm,EHms,Ed,Eh,Ehm,Ehms,Gy,GyM,GyMEd,GyMMM,GyMMMEEEEd,GyMMMEd,GyMMMEddd,GyMMMd,GyMMMddd,GyMd,H,Hm,Hms,Hv,M,MEd,MMM,MMMEEEEd,MMMEd,MMMEddd,MMMMEEEEd,MMMMd,MMMMddd,MMMd,MMMddd,Md,d,h,hm,hms,hv,ms,y,yyyy,yyyyM,yyyyMEd,yyyyMMM,yyyyMMMEEEEd,yyyyMMMEd,yyyyMMMEddd,yyyyMMMM,yyyyMMMMEEEEd,yyyyMMMd,yyyyMMMddd,yyyyMd,yyyyQQQ,yyyyQQQQ
+%dateFormatItem70=Bh,Bhm,Bhms,E,EBh,EBhm,EBhms,EHm,EHms,Ed,Eh,Ehm,Ehms,Gy,GyM,GyMEd,GyMMM,GyMMMEEEEd,GyMMMEd,GyMMMEddd,GyMMMM,GyMMMMEd,GyMMMMEddd,GyMMMMd,GyMMMMddd,GyMMMd,GyMMMddd,GyMd,H,Hmv,Hv,M,MEd,MMM,MMMEEEEd,MMMEd,MMMEddd,MMMMEEEEd,MMMMEd,MMMMEddd,MMMMd,MMMMddd,MMMd,MMMddd,MMdd,Md,d,h,hmv,hv,ms,y,yM,yMEd,yMMM,yMMMEEEEd,yMMMEd,yMMMEddd,yMMMM,yMMMMEEEEd,yMMMMEd,yMMMMEddd,yMMMMd,yMMMMddd,yMMMddd,yQQQ,yQQQQ,yy,yyMMM,yyMMMd
+%dateFormatItem43a=E,EEEEd,Ed,Gy,GyM,GyMEd,GyMMM,GyMMMEEEEd,GyMMMEd,GyMMMEddd,GyMMMd,GyMMMddd,GyMd,M,MEEEEd,MEd,MMM,MMMEEEEd,MMMEd,MMMEddd,MMMMEEEEd,MMMMd,MMMMddd,MMMd,MMMddd,Md,d,y,yyyy,yyyyM,yyyyMEEEEd,yyyyMEd,yyyyMMM,yyyyMMMEEEEd,yyyyMMMEd,yyyyMMMEddd,yyyyMMMM,yyyyMMMMEEEEd,yyyyMMMd,yyyyMMMddd,yyyyMd,yyyyQQQ,yyyyQQQQ
+
+# Rules
+
+path=//ldml/dates/calendars/calendar[@type]/dateTimeFormats/availableFormats/dateFormatItem[@id]
+ attr0=gregorian
+ attr1=Hm,Hms,Hmsv,hm,hms,hmsv,yMMMd,yMd
+  level=basic
+ attr0=gregorian
+ attr1=%dateFormatItem70
+  level=moderate
+ attr0=generic
+ attr1=%dateFormatItem54
+  level=moderate
+ attr0=generic
+ attr1=Bh,Bhm,Bhms,EBh,EBhm,EBhms
+  level=modern
+ attr0=japanese
+ attr1=%dateFormatItem43a
+  level=modern
+ attr0=islamic
+ attr1=%dateFormatItem40
+  level=modern
+  elseLevel=comprehensive
+
+path=//ldml/numbers/symbols[@numberSystem]/decimal[@alt]
+  elseLevel=comprehensive
+
+path=//ldml/numbers/symbols[@numberSystem]/group[@alt]
+  elseLevel=comprehensive

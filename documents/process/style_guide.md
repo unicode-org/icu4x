@@ -668,9 +668,9 @@ Examples of types that can be used in zero-copy data structs:
 - Vectors of fixed-width types: `ZeroVec<'data, T>`
     - Examples: `ZeroVec<'data, u32>`, `ZeroVec<'data, TinyStr8>`
 - Vectors of variable-width types: `VarZeroVec<'data, T>`
-    - Example: `VarZeroVec<'data, String>`
+    - Example: `VarZeroVec<'data, str>`
 - Maps: `ZeroMap<'data, K, V>`
-    - Example: `ZeroMap<'data, TinyStr4, String>`
+    - Example: `ZeroMap<'data, TinyStr4, str>`
 
 In addition to supporting zero-copy deserialization, data structs should also support being fully owned (`'static`). For example, `&str` or `&T` require that the data be borrowed from somewhere, and so cannot be used in a data struct. `Cow` and all the other types listed above support the optional ownership model.
 
@@ -747,17 +747,11 @@ Most core rust APIs (traits) have two ways to access data, a version that can "p
 
 Note that in cases where the Rust compiler can statically determine that a check is sufficient to avoid panic, it will remove the internal check and panic related code, leaving just a provably safe data access.
 
-### Where Result is needed, use IcuResult<T> :: required
+### Where Result is needed, use a specific error type :: required
 
-While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X consensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
+Each crate defines its own error types for its own failure cases. Examples: `DataError` in `icu_provider`, `ParseError` in `icu_locale_core`, and `DateTimeFormatterLoadError` in `icu_datetime`.
 
-```rust
-// Nesting semantically interesting error information inside the generic error type.
-enum IcuError {
-    Parser(parser::ParseError),
-    Runtime(...)
-}
-```
+See also [Implement Copy on Error types and log details](#implement-copy-on-error-types-and-log-details--suggested).
 
 A couple of crates by `@dtolnay` and `@yaahc` that are considered "new wave of good error APIs" and are complementary to each other:
 
@@ -849,7 +843,7 @@ However, you should **never add a check purely in order to call a method which c
 ### Use Result over Option for errors :: suggested
 
 When creating functions which can fail to return a value:
-* Use **IcuResult** for all errors, or any cases where a user facing message is needed.
+* Use **Result** for all errors, or any cases where a user facing message is needed.
 * Use **Option** for data accessors where "no data available" is a valid response (i.e. it's not an error per se).
   * Especially in cases where we expect the caller to have a reasonable response to getting [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None).
 * Use a different enum for non-error cases with multiple return types (which can't use `Option`).
@@ -1029,7 +1023,8 @@ By implementing the generic [`TryFrom<&str>`](https://doc.rust-lang.org/std/conv
 
 ```rust
 impl TryFrom<&str> for LocaleId {
-  fn try_from(s: &str) -> IcuResult<LocaleId> {
+  type Error = ParseError;
+  fn try_from(s: &str) -> Result<LocaleId, ParseError> {
     ...
   }
 }

@@ -25,7 +25,7 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version = "2.3.1"
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -38,7 +38,6 @@ icu = { workspace = true, features = ["datagen"] }
 icu_time = { workspace = true, features = ["ixdtf"] }
 
 # ICU infrastructure
-icu_codepointtrie_builder = { workspace = true }
 icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_registry = { workspace = true }
@@ -71,7 +70,7 @@ ureq = { workspace = true, optional = true}
 num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_provider_adapters = { workspace = true }
+icu_provider_adapters = { workspace = true, features = ["export"] }
 icu_provider_export = { workspace = true, features = ["fs_exporter", "rayon", "blob_exporter"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
@@ -79,16 +78,10 @@ icu = { path = "../../components/icu", default-features = false, features = ["un
 num-bigint = { workspace = true }
 num-rational = { workspace = true }
 crlify = { workspace = true }
+icu_provider_blob = { workspace = true, features = ["alloc"] }
 
 [features]
-default = ["use_wasm", "networking"]
-# Use wasm for building codepointtries
-use_wasm = ["icu_codepointtrie_builder/wasm"]
-# Use local ICU4C libraries for building codepointtries
-# (will do nothing if used with `use_wasm`)
-# If neither `use_wasm` nor `use_icu4c` are enabled,
-# rule based segmenter data will not be generated.
-use_icu4c = ["icu_codepointtrie_builder/icu4c"]
+default = ["networking"]
 networking = ["dep:ureq"]
 unstable = [
     "icu/unstable",
@@ -98,13 +91,19 @@ unstable = [
 # added by accident
 icu_experimental = []
 
+# Deprecated
+use_wasm = []
+use_icu4c = []
+
 [package.metadata.cargo-all-features]
-# We don't need working CPT builders for check
-skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 max_combination_size = 3
 
 [lib]
 bench = false  # This option is required for Benchmark CI
+
+[[example]]
+name = "alts"
+required-features = ["networking"]
 
 # Standalone benchmark binary for display names data export performance.
 # We set `harness = false` so that it runs as a standalone binary with main() when

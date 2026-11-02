@@ -112,6 +112,54 @@ mod tests {
     }
 
     #[test]
+    pub fn test_pt_pt_escudo() {
+        let prefs = locale!("pt-PT").into();
+        let value = "12345.67".parse().unwrap();
+
+        // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
+        // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
+        // the decimal separator (e.g. "12,345$67"). Datagen stores that symbol as the
+        // empty string.
+        //
+        // Because the locale's standard currency pattern ("#,##0.00 ¤") contains a
+        // non-breaking space (U+00A0) before the symbol placeholder ('¤'), formatting
+        // with the raw symbol would produce a trailing space (tracked in CLDR-19771).
+        // To resolve this, when the currency symbol is empty, `CurrencyFormatter` uses
+        // `noCurrency` formatting so that the amount formats cleanly without any
+        // placeholder or trailing space ("12,345$67").
+        let escudo =
+            CurrencyFormatter::try_new_symbol(prefs, currency!("PTE"), Default::default()).unwrap();
+        assert_writeable_eq!(escudo.format_fixed_decimal(&value), "12,345$67");
+
+        let escudo_narrow =
+            CurrencyFormatter::try_new_symbol_narrow(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so the narrow data entry
+        // carries the standard symbol (#8486), matching `try_new_symbol` above.
+        assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67");
+
+        let escudo_code =
+            CurrencyFormatter::try_new_code(prefs, currency!("PTE"), Default::default()).unwrap();
+        assert_writeable_eq!(escudo_code.format_fixed_decimal(&value), "12,345$67 PTE");
+
+        let escudo_name = CurrencyFormatter::try_new_name(prefs, currency!("PTE")).unwrap();
+        assert_writeable_eq!(
+            escudo_name.format_fixed_decimal(&value),
+            "12,345$67 escudos portugueses"
+        );
+
+        let escudo_no_currency =
+            CurrencyFormatter::try_new_no_currency(prefs, currency!("PTE"), Default::default())
+                .unwrap();
+        assert_writeable_eq!(escudo_no_currency.format_fixed_decimal(&value), "12,345$67");
+
+        // Currencies the locale does not single out keep its standard separators.
+        let euro =
+            CurrencyFormatter::try_new_symbol(prefs, currency!("EUR"), Default::default()).unwrap();
+        assert_writeable_eq!(euro.format_fixed_decimal(&value), "12 345,67 €");
+    }
+
+    #[test]
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
         let currency_code = currency!("EUR");
@@ -412,6 +460,30 @@ mod tests {
             fmt_symbol_narrow.format_fixed_decimal(&value),
             "XYZ\u{a0}12,345.67"
         );
+    }
+
+    #[test]
+    pub fn test_narrow_symbol_fallback_to_standard_symbol() {
+        // Test currency where standard symbol is defined, but narrow symbol is not in CLDR.
+        // Per UTS #35 lateral inheritance, narrow symbols fall back to standard symbols before
+        // the ISO code. The fallback is resolved at datagen time, so the narrow data entry
+        // already carries the standard symbol.
+        let prefs_fr: CurrencyFormatterPreferences = locale!("fr-FR").into();
+        let currency_frf = currency!("FRF");
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_symbol =
+            CurrencyFormatter::try_new_symbol(prefs_fr, currency_frf, Default::default()).unwrap();
+        let fmt_narrow =
+            CurrencyFormatter::try_new_symbol_narrow(prefs_fr, currency_frf, Default::default())
+                .unwrap();
+
+        let formatted_symbol = fmt_symbol.format_fixed_decimal(&value);
+        let formatted_narrow = fmt_narrow.format_fixed_decimal(&value);
+
+        // Both use "F" (standard symbol) instead of falling back to ISO code "FRF"
+        assert_writeable_eq!(formatted_symbol, "12\u{202f}345,67\u{a0}F");
+        assert_writeable_eq!(formatted_narrow, "12\u{202f}345,67\u{a0}F");
     }
 
     #[test]

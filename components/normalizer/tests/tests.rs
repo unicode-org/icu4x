@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::borrow::Cow;
+
 use icu_normalizer::ComposingNormalizer;
 use icu_normalizer::ComposingNormalizerBorrowed;
 use icu_normalizer::DecomposingNormalizer;
@@ -643,6 +645,41 @@ fn test_nfd_utf8_to_errors() {
 }
 
 #[test]
+fn test_utf8_errors_not_borrowed() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+
+    for (input, expected, prefix) in [
+        (&b"\xFF\xFE\xC3"[..], "\u{FFFD}\u{FFFD}\u{FFFD}", ""),
+        (b"a\xFFb", "a\u{FFFD}b", "a"),
+        (b"\xEF\xBF\xBD\xFF", "\u{FFFD}\u{FFFD}", "\u{FFFD}"),
+        (b"a\xE2\x98", "a\u{FFFD}", "a"),
+    ] {
+        let normalized_nfc = nfc.normalize_utf8(input);
+        let normalized_nfd = nfd.normalize_utf8(input);
+        assert!(matches!(normalized_nfc, Cow::Owned(_)));
+        assert!(matches!(normalized_nfd, Cow::Owned(_)));
+        assert_eq!(normalized_nfc, expected);
+        assert_eq!(normalized_nfd, expected);
+        let suffix = input.strip_prefix(prefix.as_bytes()).unwrap();
+        assert_eq!(nfc.split_normalized_utf8(input), (prefix, suffix));
+        assert_eq!(nfd.split_normalized_utf8(input), (prefix, suffix));
+        assert!(!nfc.is_normalized_utf8(input));
+        assert!(!nfd.is_normalized_utf8(input));
+    }
+
+    // Literal U+FFFD is well-formed and may stay borrowed.
+    assert!(matches!(
+        nfc.normalize_utf8("a\u{FFFD}b".as_bytes()),
+        Cow::Borrowed("a\u{FFFD}b")
+    ));
+    assert_eq!(
+        nfc.split_normalized_utf8(b"a\xEF\xBF\xBD\xFFb"),
+        ("a\u{FFFD}", &b"\xFFb"[..])
+    );
+}
+
+#[test]
 fn test_nfc_utf16_to_errors() {
     let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
@@ -893,6 +930,57 @@ fn test_nfd_utf16_to_errors() {
     assert_eq!(
         &buf,
         [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+}
+
+#[test]
+fn test_utf16_errors_not_borrowed() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+
+    for (input, expected, prefix) in [
+        (
+            &[0xD800u16, 0xDC00u16, 0xD800u16][..],
+            &[0xD800u16, 0xDC00u16, 0xFFFDu16][..],
+            &[0xD800u16, 0xDC00u16][..],
+        ),
+        (
+            &[0xDC00u16, 0xD800u16][..],
+            &[0xFFFDu16, 0xFFFDu16][..],
+            &[][..],
+        ),
+        (
+            &[0x0061u16, 0xD800u16, 0x0062u16][..],
+            &[0x0061u16, 0xFFFDu16, 0x0062u16][..],
+            &[0x0061u16][..],
+        ),
+        (
+            &[0xFFFDu16, 0xD800u16][..],
+            &[0xFFFDu16, 0xFFFDu16][..],
+            &[0xFFFDu16][..],
+        ),
+    ] {
+        let normalized_nfc = nfc.normalize_utf16(input);
+        let normalized_nfd = nfd.normalize_utf16(input);
+        assert!(matches!(normalized_nfc, Cow::Owned(_)));
+        assert!(matches!(normalized_nfd, Cow::Owned(_)));
+        assert_eq!(&*normalized_nfc, expected);
+        assert_eq!(&*normalized_nfd, expected);
+        let suffix = input.strip_prefix(prefix).unwrap();
+        assert_eq!(nfc.split_normalized_utf16(input), (prefix, suffix));
+        assert_eq!(nfd.split_normalized_utf16(input), (prefix, suffix));
+        assert!(!nfc.is_normalized_utf16(input));
+        assert!(!nfd.is_normalized_utf16(input));
+    }
+
+    // Literal U+FFFD is well-formed and may stay borrowed.
+    assert!(matches!(
+        nfc.normalize_utf16(&[0x0061, 0xFFFD, 0x0062]),
+        Cow::Borrowed(&[0x0061, 0xFFFD, 0x0062])
+    ));
+    assert_eq!(
+        nfc.split_normalized_utf16(&[0x0061, 0xFFFD, 0xD800, 0x0062]),
+        (&[0x0061u16, 0xFFFDu16][..], &[0xD800u16, 0x0062u16][..])
     );
 }
 
@@ -1869,16 +1957,16 @@ fn test_is_normalized() {
     assert!(nfkc.is_normalized_utf16(aaa16));
 
     let affa = b"a\xFFa";
-    assert!(nfd.is_normalized_utf8(affa));
-    assert!(nfkd.is_normalized_utf8(affa));
-    assert!(nfc.is_normalized_utf8(affa));
-    assert!(nfkc.is_normalized_utf8(affa));
+    assert!(!nfd.is_normalized_utf8(affa));
+    assert!(!nfkd.is_normalized_utf8(affa));
+    assert!(!nfc.is_normalized_utf8(affa));
+    assert!(!nfkc.is_normalized_utf8(affa));
 
     let a_surrogate_a = [0x0061u16, 0xD800u16, 0x0061u16].as_slice();
-    assert!(nfd.is_normalized_utf16(a_surrogate_a));
-    assert!(nfkd.is_normalized_utf16(a_surrogate_a));
-    assert!(nfc.is_normalized_utf16(a_surrogate_a));
-    assert!(nfkc.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfd.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfkd.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfc.is_normalized_utf16(a_surrogate_a));
+    assert!(!nfkc.is_normalized_utf16(a_surrogate_a));
 
     let note = "a𝅗\u{1D165}a";
     assert!(nfd.is_normalized(note));
@@ -2223,4 +2311,95 @@ fn test_is_normalized_up_to() {
             .len(),
         0
     );
+}
+
+#[test]
+fn test_reject_invalid_replacement_character_trie_value() {
+    use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType};
+    use icu_normalizer::provider::{
+        DecompositionData, NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdTablesV1,
+        NormalizerNfkdDataV1, NormalizerNfkdTablesV1, NormalizerUts46DataV1,
+    };
+    use icu_provider::prelude::*;
+    use zerovec::ZeroVec;
+
+    struct BogusProvider;
+
+    fn bogus_decomposition_data() -> DecompositionData<'static> {
+        // A valid Fast trie mapping all code points (including U+FFFD) to 0,
+        // violating the invariant that U+FFFD must have NON_ROUND_TRIP_MARKER set.
+        let header = CodePointTrieHeader {
+            high_start: 0,
+            shifted12_high_start: 0,
+            index3_null_offset: 0,
+            data_null_offset: 0,
+            null_value: 0,
+            trie_type: TrieType::Fast,
+        };
+        let index = ZeroVec::alloc_from_slice(&[0u16; 1024]);
+        let data = ZeroVec::alloc_from_slice(&[0u32; 64]);
+        let trie = CodePointTrie::try_new(header, index, data).unwrap();
+        assert_eq!(trie.get(char::REPLACEMENT_CHARACTER), 0);
+        DecompositionData {
+            trie,
+            passthrough_cap: 0xC0,
+        }
+    }
+
+    impl DataProvider<NormalizerNfdDataV1> for BogusProvider {
+        fn load(&self, _req: DataRequest) -> Result<DataResponse<NormalizerNfdDataV1>, DataError> {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(bogus_decomposition_data()),
+            })
+        }
+    }
+
+    impl DataProvider<NormalizerNfkdDataV1> for BogusProvider {
+        fn load(&self, _req: DataRequest) -> Result<DataResponse<NormalizerNfkdDataV1>, DataError> {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(bogus_decomposition_data()),
+            })
+        }
+    }
+
+    impl DataProvider<NormalizerUts46DataV1> for BogusProvider {
+        fn load(
+            &self,
+            _req: DataRequest,
+        ) -> Result<DataResponse<NormalizerUts46DataV1>, DataError> {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(bogus_decomposition_data()),
+            })
+        }
+    }
+
+    impl DataProvider<NormalizerNfdTablesV1> for BogusProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfdTablesV1>, DataError> {
+            icu_normalizer::provider::Baked.load(req)
+        }
+    }
+
+    impl DataProvider<NormalizerNfkdTablesV1> for BogusProvider {
+        fn load(
+            &self,
+            req: DataRequest,
+        ) -> Result<DataResponse<NormalizerNfkdTablesV1>, DataError> {
+            icu_normalizer::provider::Baked.load(req)
+        }
+    }
+
+    impl DataProvider<NormalizerNfcV1> for BogusProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV1>, DataError> {
+            icu_normalizer::provider::Baked.load(req)
+        }
+    }
+
+    assert!(DecomposingNormalizer::try_new_nfd_unstable(&BogusProvider).is_err());
+    assert!(DecomposingNormalizer::try_new_nfkd_unstable(&BogusProvider).is_err());
+    assert!(ComposingNormalizer::try_new_nfc_unstable(&BogusProvider).is_err());
+    assert!(ComposingNormalizer::try_new_nfkc_unstable(&BogusProvider).is_err());
+    assert!(Uts46Mapper::try_new(&BogusProvider).is_err());
 }

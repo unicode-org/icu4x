@@ -280,7 +280,7 @@ macro_rules! try_load_dialect_name {
                 Some(None) => continue,
                 None => None,
             };
-            let mut buffer = TinyAsciiStr::EMPTY;
+            let mut buffer = TinyAsciiStr::default();
             let attrs = make_attributes_for_langid(
                 language,
                 script_val,

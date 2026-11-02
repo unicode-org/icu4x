@@ -449,6 +449,26 @@ impl SentenceSegmenterBorrowed<'static> {
     }
 }
 
+#[cfg(test)]
+use crate::{GraphemeClusterSegmenterBorrowed, LineSegmenterBorrowed, WordSegmenterBorrowed};
+
+#[cfg(test)]
+include!("../tests/helpers.rs.raw");
+
+#[test]
+fn data() {
+    for expected in parse_test_file(include_str!("../tests/testdata/SentenceBreak.txt")) {
+        let expected = expected.iter().map(String::as_str).collect::<Vec<_>>();
+        let s = expected.concat();
+        check_sentence(&s, &expected, SentenceSegmenter::new(Default::default()));
+        check_sentence(
+            &s,
+            &expected,
+            SentenceSegmenter::new_neo(Default::default()),
+        );
+    }
+}
+
 #[test]
 fn empty_string() {
     let segmenter = SentenceSegmenter::new(Default::default());

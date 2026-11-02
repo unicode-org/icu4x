@@ -1,5 +1,5 @@
-decimal/compact/long/v1, <lookup>, 1344B, 217 identifiers
-decimal/compact/long/v1, <total>, 19943B, 16675B, 144 unique payloads
+decimal/compact/long/v1, <lookup>, 1349B, 218 identifiers
+decimal/compact/long/v1, <total>, 20109B, 16819B, 145 unique payloads
 decimal/compact/long/v1, af, 76B, 53B, 27934e5fadbac225
 decimal/compact/long/v1, ak, 89B, 66B, e7df9e1c1ef2e4f1
 decimal/compact/long/v1, am, 90B, 67B, 7ffba1229f34a4b7
@@ -52,7 +52,7 @@ decimal/compact/long/v1, ckb/latn, -> bgc/latn
 decimal/compact/long/v1, cop, 78B, 55B, 5b9a57253df17440
 decimal/compact/long/v1, cs, 320B, 298B, ad6d57ceae2d1a08
 decimal/compact/long/v1, cv, 76B, 53B, 57404c5b25aa22e5
-decimal/compact/long/v1, cy, 135B, 112B, 54d3bf207235aef3
+decimal/compact/long/v1, cy, 218B, 196B, 3e197943dc33ce3e
 decimal/compact/long/v1, da, 168B, 146B, 35cea24e13947c47
 decimal/compact/long/v1, de, 170B, 148B, f80dcb07d07bd63d
 decimal/compact/long/v1, doi/deva, -> bgc/latn
@@ -60,6 +60,7 @@ decimal/compact/long/v1, dsb, 234B, 212B, f1721d2168966b06
 decimal/compact/long/v1, ee, 88B, 65B, f078eedc70c8e6d0
 decimal/compact/long/v1, el, 382B, 360B, d405972439dcc044
 decimal/compact/long/v1, en, -> cop
+decimal/compact/long/v1, en-IN, 83B, 60B, 8e9401fb1d01ef18
 decimal/compact/long/v1, eo, 148B, 125B, 699b6e8e2f882e0e
 decimal/compact/long/v1, es, 133B, 110B, 2f40135deb143cf7
 decimal/compact/long/v1, et, 161B, 139B, 84f36fb6b8a706ef

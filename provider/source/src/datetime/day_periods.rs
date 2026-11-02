@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::source::source_issue;
 use icu::datetime::provider::day_periods::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -23,7 +24,8 @@ pub(crate) fn compute_day_periods<'a>(
         if let Some(min_str) = parts.next() {
             let min: u32 = min_str.parse().unwrap();
             if min != 0 {
-                log::warn!(
+                source_issue!(
+                    Default::default(),
                     "Non-zero minute found in day period time: {}, precision will be lost",
                     s
                 );
@@ -35,24 +37,20 @@ pub(crate) fn compute_day_periods<'a>(
     let mut entries = std::collections::BTreeMap::new();
 
     for (period, rule) in rules {
-        if rule.at.is_some() {
-            assert!(
-                period == "noon" || period == "midnight",
-                "Found 'at' rule for non-noon/midnight period: {} in locale {}",
-                period,
-                locale
-            );
+        if matches!(period.as_str(), "am" | "pm" | "noon" | "midnight") {
+            // Non-flexible day period
+            continue;
         }
         if let Some(name) = names.get(period) {
-            if let (Some(from), Some(before)) = (&rule.from, &rule.before) {
+            if let (Some(from), Some(before), None) = (&rule.from, &rule.before, &rule.at) {
                 let start = parse_hour(from);
                 let end = parse_hour(before);
                 entries.insert((start, end), &**name);
             } else {
-                log::warn!("Did not have from/before values for rule {period} in locale {locale}")
+                source_issue!(locale, "Did not have from/before values for rule {period}")
             }
-        } else if period != "morning" && period != "afternoon" {
-            log::warn!("missing name for range {period} in locale {locale}");
+        } else {
+            source_issue!(locale, "missing name for range {period}");
         }
     }
 

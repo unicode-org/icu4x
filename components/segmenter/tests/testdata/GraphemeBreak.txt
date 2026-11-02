@@ -1,0 +1,14 @@
+# Grapheme cluster breaking tests
+#
+# Format: input is the concatenation of the segments, which are separated by '|'.
+# Everything after a '#' and blank lines are ignored.
+# Characters can be escaped as \u{XXXX}.
+
+क\u{94D}|ᄀ # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) ÷ HANGUL CHOSEONG KIYEOK (L) ÷
+क\u{94D}|\u{600} # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) ÷ ARABIC NUMBER SIGN (Prepend) ÷
+क\u{94D}|🇦 # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) ÷ REGIONAL INDICATOR SYMBOL LETTER A (RI) ÷
+क\u{94D}|👶 # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) ÷ BABY (ExtPict) ÷
+क\u{94D}\u{308}|ᄀ # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) × COMBINING DIAERESIS (Extend_ExtCccZwj) ÷ HANGUL CHOSEONG KIYEOK (L) ÷
+क\u{94D}\u{308}|\u{600} # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) × COMBINING DIAERESIS (Extend_ExtCccZwj) ÷ ARABIC NUMBER SIGN (Prepend) ÷
+क\u{94D}\u{308}|🇦 # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) × COMBINING DIAERESIS (Extend_ExtCccZwj) ÷ REGIONAL INDICATOR SYMBOL LETTER A (RI) ÷
+क\u{94D}\u{308}|👶 # ÷ DEVANAGARI LETTER KA (ConjunctLinkingScripts_LinkingConsonant) × DEVANAGARI SIGN VIRAMA (Extend_ConjunctLinkingScripts_ConjunctLinker_ExtCccZwj) × COMBINING DIAERESIS (Extend_ExtCccZwj) ÷ BABY (ExtPict) ÷

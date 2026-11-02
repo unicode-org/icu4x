@@ -300,6 +300,22 @@ pub fn cldr_data() -> AbstractFs {
         "cldr-cal-roc-full/main/tr/ca-roc.json",
         "cldr-cal-roc-full/main/und/ca-roc.json",
         "cldr-core/coverageLevels.json",
+        "cldr-core/pathCoverage/ar.txt",
+        "cldr-core/pathCoverage/bn.txt",
+        "cldr-core/pathCoverage/ccp.txt",
+        "cldr-core/pathCoverage/en.txt",
+        "cldr-core/pathCoverage/en_001.txt",
+        "cldr-core/pathCoverage/en_ZA.txt",
+        "cldr-core/pathCoverage/es.txt",
+        "cldr-core/pathCoverage/es_AR.txt",
+        "cldr-core/pathCoverage/fil.txt",
+        "cldr-core/pathCoverage/fr.txt",
+        "cldr-core/pathCoverage/ja.txt",
+        "cldr-core/pathCoverage/root.txt",
+        "cldr-core/pathCoverage/ru.txt",
+        "cldr-core/pathCoverage/sr.txt",
+        "cldr-core/pathCoverage/th.txt",
+        "cldr-core/pathCoverage/tr.txt",
         "cldr-core/scriptMetadata.json",
         "cldr-core/supplemental/aliases.json",
         "cldr-core/supplemental/calendarData.json",
@@ -674,7 +690,7 @@ pub fn icuexport_data() -> AbstractFs {
         "norm/small/nfdex.toml",
         "norm/small/nfkdex.toml",
         "norm/small/uts46d.toml",
-        "segmenter/dictionary/thaidict.toml"
+        "segmenter/dictionary/thaidict.txt"
     )
 }
 
@@ -739,8 +755,7 @@ pub fn tzdb_data() -> AbstractFs {
         "europe",
         "factory",
         "northamerica",
-        "rearguard.zi",
         "southamerica",
-        "vanguard.zi"
+        "ziguard.awk"
     )
 }

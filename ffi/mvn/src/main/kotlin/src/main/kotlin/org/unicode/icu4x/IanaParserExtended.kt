@@ -19,7 +19,7 @@ internal interface IanaParserExtendedLib: Library {
  * This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
  * It also supports normalizing and canonicalizing the IANA strings.
  *
- * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
+ * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
  */
 class IanaParserExtended internal constructor (
     internal val handle: Pointer,
@@ -52,7 +52,7 @@ class IanaParserExtended internal constructor (
         /**
          * Create a new [IanaParserExtended] using compiled data
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
          */
         fun create(): IanaParserExtended {
             
@@ -67,7 +67,7 @@ class IanaParserExtended internal constructor (
         /**
          * Create a new [IanaParserExtended] using a particular data source
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
          */
         fun createWithProvider(provider: DataProvider): Result<IanaParserExtended> {
             
@@ -85,7 +85,7 @@ class IanaParserExtended internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
      */
     fun parse(value: String): TimeZoneAndCanonicalAndNormalized {
         // This lifetime edge depends on lifetimes: 'a
@@ -102,7 +102,7 @@ class IanaParserExtended internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `iter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
+     * See the [Rust documentation for `iter`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
      */
     fun iter(): TimeZoneAndCanonicalIterator {
         // This lifetime edge depends on lifetimes: 'a
@@ -116,7 +116,7 @@ class IanaParserExtended internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
+     * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
      */
     fun iterAll(): TimeZoneAndCanonicalAndNormalizedIterator {
         // This lifetime edge depends on lifetimes: 'a

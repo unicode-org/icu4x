@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 impl DecimalFormat {
     pub fn as_compact_patterns(
         &self,
-        locale: DataLocale,
+        _locale: DataLocale,
     ) -> Result<CompactPatterns<'static, SinglePlaceholder>, DataError> {
         let mut patterns: BTreeMap<u8, (u8, PluralElements<Box<SinglePlaceholderPattern>>)> =
             BTreeMap::new();
@@ -25,7 +25,7 @@ impl DecimalFormat {
         for (&log10_type, pattern) in self.standard.iter() {
             let p = pattern.as_ref().try_map(|pattern| {
                 if pattern.negative.is_some() {
-                    log::warn!("Unexpected negative pattern for {locale}: {}", pattern);
+                    // TODO: support negative patterns
                 }
 
                 let number_of_0s = Some(

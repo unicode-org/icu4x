@@ -12,7 +12,8 @@
           },
           "AED": {
             "displayName": "𑄎𑄧𑄙 𑄃𑄢𑄧𑄝𑄴 𑄃𑄟𑄨𑄢𑄖𑄴 𑄘𑄨𑄢𑄴𑄦𑄟𑄴",
-            "displayName-count-other": "𑄎𑄧𑄙 𑄃𑄢𑄧𑄝𑄴 𑄃𑄟𑄨𑄢𑄖𑄴 𑄘𑄨𑄢𑄴𑄦𑄟𑄴"
+            "displayName-count-other": "𑄎𑄧𑄙 𑄃𑄢𑄧𑄝𑄴 𑄃𑄟𑄨𑄢𑄖𑄴 𑄘𑄨𑄢𑄴𑄦𑄟𑄴",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "𑄃𑄛𑄴𑄉𑄚𑄨 (𑄷𑄿𑄸𑄽-𑄸𑄶𑄶𑄸)",
@@ -705,7 +706,8 @@
           },
           "MVR": {
             "displayName": "𑄟𑄣𑄴𑄘𑄨𑄞𑄨𑄠𑄚𑄴 𑄢𑄪𑄜𑄨𑄠",
-            "displayName-count-other": "𑄟𑄣𑄴𑄘𑄨𑄞𑄨𑄠𑄚𑄴 𑄢𑄪𑄜𑄨𑄠"
+            "displayName-count-other": "𑄟𑄣𑄴𑄘𑄨𑄞𑄨𑄠𑄚𑄴 𑄢𑄪𑄜𑄨𑄠",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "𑄟𑄣𑄃𑄪𑄃𑄨𑄠𑄚𑄴 𑄇𑄧𑄤𑄌𑄴",
@@ -783,7 +785,8 @@
           },
           "OMR": {
             "displayName": "𑄃𑄮𑄟𑄚𑄨 𑄢𑄨𑄠𑄣𑄴",
-            "displayName-count-other": "𑄃𑄮𑄟𑄚𑄨 𑄢𑄨𑄠𑄣𑄴"
+            "displayName-count-other": "𑄃𑄮𑄟𑄚𑄨 𑄢𑄨𑄠𑄣𑄴",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "𑄛𑄚𑄟 𑄝𑄬𑄣𑄴𑄝𑄮𑄠",

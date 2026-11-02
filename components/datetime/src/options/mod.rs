@@ -81,6 +81,11 @@ pub enum Length {
     Short,
 }
 
+impl Length {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Long, Self::Medium, Self::Short];
+}
+
 impl IntoOption<Length> for Length {
     #[inline]
     fn into_option(self) -> Option<Self> {
@@ -158,6 +163,11 @@ pub enum Alignment {
     /// This option causes numeric fields to be padded when necessary. It does
     /// not impact whether a numeric or spelled-out field is chosen.
     Column,
+}
+
+impl Alignment {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Auto, Self::Column];
 }
 
 impl IntoOption<Alignment> for Alignment {
@@ -331,6 +341,11 @@ pub enum YearStyle {
     NoEra,
 }
 
+impl YearStyle {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[Self::Auto, Self::Full, Self::WithEra, Self::NoEra];
+}
+
 impl IntoOption<YearStyle> for YearStyle {
     #[inline]
     fn into_option(self) -> Option<Self> {
@@ -474,6 +489,54 @@ impl IntoOption<TimePrecision> for TimePrecision {
     }
 }
 
+impl TimePrecision {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::Hour,
+        Self::Minute,
+        Self::Second,
+        Self::Subsecond(SubsecondDigits::S1),
+        Self::Subsecond(SubsecondDigits::S2),
+        Self::Subsecond(SubsecondDigits::S3),
+        Self::Subsecond(SubsecondDigits::S4),
+        Self::Subsecond(SubsecondDigits::S5),
+        Self::Subsecond(SubsecondDigits::S6),
+        Self::Subsecond(SubsecondDigits::S7),
+        Self::Subsecond(SubsecondDigits::S8),
+        Self::Subsecond(SubsecondDigits::S9),
+        Self::MinuteOptional,
+    ];
+
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_hour(self) -> bool {
+        true
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_minute(self) -> bool {
+        use TimePrecision::*;
+        match self {
+            Minute | MinuteOptional | Second | Subsecond(_) => true,
+            Hour => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_second(self) -> bool {
+        use TimePrecision::*;
+        match self {
+            Second | Subsecond(_) => true,
+            Hour | Minute | MinuteOptional => false,
+        }
+    }
+    #[cfg(feature = "unstable")]
+    pub(crate) fn has_subsecond(self) -> Option<SubsecondDigits> {
+        use TimePrecision::*;
+        match self {
+            Subsecond(ssd) => Some(ssd),
+            Hour | Minute | MinuteOptional | Second => None,
+        }
+    }
+}
+
 #[cfg(all(feature = "serde", feature = "unstable"))]
 #[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -592,6 +655,19 @@ pub enum SubsecondDigits {
 }
 
 impl SubsecondDigits {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::S1,
+        Self::S2,
+        Self::S3,
+        Self::S4,
+        Self::S5,
+        Self::S6,
+        Self::S7,
+        Self::S8,
+        Self::S9,
+    ];
+
     /// Constructs a [`SubsecondDigits`] from an integer number of digits.
     pub fn try_from_int(value: u8) -> Option<Self> {
         use SubsecondDigits::*;

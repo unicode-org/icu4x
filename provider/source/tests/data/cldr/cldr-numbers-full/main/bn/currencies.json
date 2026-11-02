@@ -12,7 +12,8 @@
           },
           "AED": {
             "displayName": "সংযুক্ত আরব আমিরাত দিরহাম",
-            "displayName-count-other": "সংযুক্ত আরব আমিরাত দিরহাম"
+            "displayName-count-other": "সংযুক্ত আরব আমিরাত দিরহাম",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "আফগানি (১৯২৭–২০০২)",
@@ -733,7 +734,8 @@
           },
           "MVR": {
             "displayName": "মালদিভিয়ান রুফিয়া",
-            "displayName-count-other": "মালদিভিয়ান রুফিয়া"
+            "displayName-count-other": "মালদিভিয়ান রুফিয়া",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "মালাউইয়ান কোয়াচা",
@@ -812,7 +814,8 @@
           },
           "OMR": {
             "displayName": "ওমানি রিয়াল",
-            "displayName-count-other": "ওমানি রিয়াল"
+            "displayName-count-other": "ওমানি রিয়াল",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "পানামানিয়ান বালবোয়া",

@@ -16,7 +16,8 @@
             "displayName": "дирхам УАЕ",
             "displayName-count-one": "дирхам УАЕ",
             "displayName-count-few": "дирхама УАЕ",
-            "displayName-count-other": "дирхама УАЕ"
+            "displayName-count-other": "дирхама УАЕ",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "Авганистански авгани (1927–2002)",
@@ -1050,7 +1051,8 @@
             "displayName": "малдивска руфија",
             "displayName-count-one": "малдивскa руфија",
             "displayName-count-few": "малдивскe руфијe",
-            "displayName-count-other": "малдивских руфија"
+            "displayName-count-other": "малдивских руфија",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "малавијска квача",
@@ -1162,7 +1164,8 @@
             "displayName": "омански ријал",
             "displayName-count-one": "омански ријал",
             "displayName-count-few": "оманскa ријала",
-            "displayName-count-other": "оманских ријала"
+            "displayName-count-other": "оманских ријала",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "панамска балбоа",

@@ -5,6 +5,7 @@
 use crate::CoverageLevel;
 use crate::SourceDataProvider;
 use crate::cldr_serde;
+use crate::source::source_issue;
 use icu::locale::LanguageIdentifier;
 use icu::locale::fallback::provider::*;
 use icu::locale::provider::*;
@@ -348,7 +349,8 @@ pub(crate) fn transform<'x>(
 
     let ls = region.remove(&und_r);
     if ls != Some((und_l, und_s)) {
-        log::warn!(
+        source_issue!(
+            Default::default(),
             "cannot store in und: und-{und_s}-{und_r} -> {und_l}-{und_s}-{und_r}, but {}",
             if let Some((l, s)) = ls {
                 format!("und-{und_r} -> {l}-{s}-{und_r}")
@@ -360,7 +362,8 @@ pub(crate) fn transform<'x>(
 
     let lr = script.remove(&und_s);
     if lr != Some((und_l, und_r)) {
-        log::warn!(
+        source_issue!(
+            Default::default(),
             "cannot store in und: und-{und_s}-{und_r} -> {und_l}-{und_s}-{und_r}, but {}",
             if let Some((l, r)) = lr {
                 format!("und-{und_s} -> {l}-{und_s}-{r}")

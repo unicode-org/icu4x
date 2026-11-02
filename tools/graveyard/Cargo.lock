@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "icu_segmenter_lstm"
-version = "1.0.0"
+name = "bies"
+version = "0.4.0"

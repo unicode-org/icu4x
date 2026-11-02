@@ -30,7 +30,7 @@ args = [
     "test",
     "-p=icu_provider_source",
     "--no-default-features",
-    "--features=use_wasm,unstable",
+    "--features=unstable",
     "--",
     "--nocapture",
     "make_testdata",
@@ -106,7 +106,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1
+output = exec git status provider/data --porcelain=v1
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""

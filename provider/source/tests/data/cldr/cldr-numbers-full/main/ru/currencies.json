@@ -18,7 +18,8 @@
             "displayName-count-one": "дирхам ОАЭ",
             "displayName-count-few": "дирхама ОАЭ",
             "displayName-count-many": "дирхамов ОАЭ",
-            "displayName-count-other": "дирхама ОАЭ"
+            "displayName-count-other": "дирхама ОАЭ",
+            "symbol-alt-variant": "⃃"
           },
           "AFA": {
             "displayName": "Афгани (1927–2002)",
@@ -1010,7 +1011,8 @@
             "displayName-count-one": "мальдивская руфия",
             "displayName-count-few": "мальдивские руфии",
             "displayName-count-many": "мальдивских руфий",
-            "displayName-count-other": "мальдивской руфии"
+            "displayName-count-other": "мальдивской руфии",
+            "symbol-alt-variant": "⃂"
           },
           "MWK": {
             "displayName": "малавийская квача",
@@ -1121,7 +1123,8 @@
             "displayName-count-one": "оманский риал",
             "displayName-count-few": "оманских риала",
             "displayName-count-many": "оманских риалов",
-            "displayName-count-other": "оманского риала"
+            "displayName-count-other": "оманского риала",
+            "symbol-alt-variant": "⃄"
           },
           "PAB": {
             "displayName": "панамский бальбоа",

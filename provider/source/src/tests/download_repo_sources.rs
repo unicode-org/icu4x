@@ -10,7 +10,6 @@ use std::collections::BTreeSet;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
-use std::process::Command;
 
 include!("../../tests/globs.rs.data");
 include!("../../tests/locales.rs.data");
@@ -67,27 +66,20 @@ fn download_repo_sources() {
     let crate_root = Path::new(std::env!("CARGO_MANIFEST_DIR"));
     let out_root = crate_root.join("tests/data");
 
-    fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> BTreeSet<String> {
+    fn expand_paths(in_paths: &[&str]) -> BTreeSet<String> {
         let mut paths = BTreeSet::new();
         for pattern in in_paths {
-            if pattern.contains("$EXTRA_NUMBERS_LOCALES") {
-                for locale in EXTRA_NUMBERS_LOCALES.iter() {
-                    let mut string = locale.to_string();
-                    if replace_hyphen_by_underscore {
-                        string = string.replace('-', "_");
-                    }
-                    paths.insert(pattern.replace("$EXTRA_NUMBERS_LOCALES", &string));
+            if pattern.contains("$LOCALES_UNDERSCORE") {
+                for locale in LOCALES.iter() {
+                    paths.insert(pattern.replace(
+                        "$LOCALES_UNDERSCORE",
+                        &locale.to_string().replace('-', "_").replace("und", "root"),
+                    ));
                 }
             } else if pattern.contains("$LOCALES") {
                 for locale in LOCALES.iter() {
-                    let mut string = locale.to_string();
-                    if replace_hyphen_by_underscore {
-                        string = string.replace('-', "_");
-                    }
-                    paths.insert(pattern.replace("$LOCALES", &string));
+                    paths.insert(pattern.replace("$LOCALES", &locale.to_string()));
                 }
-                // Also add "root" for older CLDRs
-                paths.insert(pattern.replace("$LOCALES", "root"));
             } else {
                 // No variable in pattern
                 paths.insert(pattern.to_string());
@@ -103,7 +95,7 @@ fn download_repo_sources() {
         .unwrap()
         .serde_cache
         .root
-        .dump(&out_root.join("cldr"), expand_paths(CLDR_JSON_GLOB, false))
+        .dump(&out_root.join("cldr"), expand_paths(CLDR_JSON_GLOB))
         .unwrap();
 
     let icuexport_files = provider
@@ -112,7 +104,7 @@ fn download_repo_sources() {
         .root
         .dump(
             &out_root.join("icuexport"),
-            expand_paths(ICUEXPORTDATA_GLOB, true),
+            expand_paths(ICUEXPORTDATA_GLOB),
         )
         .unwrap();
 
@@ -147,7 +139,7 @@ fn download_repo_sources() {
     )
     .unwrap();
 
-    let mut tzdb_files = provider
+    let tzdb_files = provider
         .tzdb()
         .unwrap()
         .root
@@ -156,36 +148,6 @@ fn download_repo_sources() {
             TZDB_GLOB.iter().copied().map(String::from).collect(),
         )
         .unwrap();
-    let gen_files = ["rearguard.zi".into(), "vanguard.zi".into()];
-    Command::new("make")
-        .arg("-C")
-        .arg(out_root.join("tzdb"))
-        .args(&gen_files)
-        .status()
-        .unwrap();
-    tzdb_files.extend(gen_files);
-    std::io::copy(
-        &mut std::fs::read_to_string(out_root.join("tzdb/rearguard.zi"))
-            .unwrap()
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(out_root.join("tzdb/rearguard.zi")).unwrap(),
-        ),
-    )
-    .unwrap();
-    std::io::copy(
-        &mut std::fs::read_to_string(out_root.join("tzdb/vanguard.zi"))
-            .unwrap()
-            .as_bytes(),
-        &mut crlify::BufWriterWithLineEndingFix::new(
-            File::create(out_root.join("tzdb/vanguard.zi")).unwrap(),
-        ),
-    )
-    .unwrap();
-    std::fs::remove_file(out_root.join("tzdb/Makefile")).unwrap();
-    std::fs::remove_file(out_root.join("tzdb/ziguard.awk")).unwrap();
-    tzdb_files.remove("Makefile");
-    tzdb_files.remove("ziguard.awk");
 
     let [
         cldr_files,
@@ -271,6 +233,10 @@ pub fn tzdb_data() -> AbstractFs {{
             "components/normalizer/tests/data/NormalizationTest.txt",
         ),
         (
+            "ucd/PropertyValueAliases.txt",
+            "components/properties/data/PropertyValueAliases.txt",
+        ),
+        (
             "ucd/auxiliary/GraphemeBreakTest.txt",
             "components/segmenter/tests/testdata/GraphemeBreakTest.txt",
         ),
@@ -347,7 +313,7 @@ pub fn tzdb_data() -> AbstractFs {{
         ),
         (
             "icu4c/source/data/unidata/prop_numbers.txt",
-            "components/properties/tests/data/prop_numbers.txt",
+            "components/properties/data/prop_numbers.txt",
         ),
         (
             "icu4c/source/test/testdata/CollationTest_SHIFTED_SHORT.txt",
