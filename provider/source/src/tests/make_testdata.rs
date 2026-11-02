@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::decimal::provider::DecimalSymbolsV1;
 use icu::experimental::dimension::provider::currency::symbols::{
     CurrencyDecimalSymbolsV1, CurrencySymbolsV1,
 };
 use icu::locale::{DataLocale, data_locale};
-use icu_provider::export::*;
 use icu_provider::prelude::*;
 use icu_provider_export::prelude::*;
 
@@ -26,7 +26,7 @@ fn make_testdata() {
         .init()
         .unwrap();
 
-    let mut exporter = icu_provider_export::fs_exporter::FilesystemExporter::try_new(
+    let exporter = icu_provider_export::fs_exporter::FilesystemExporter::try_new(
         Box::new(icu_provider_export::fs_exporter::serializers::Json::pretty()),
         {
             let mut options = icu_provider_export::fs_exporter::Options::default();
@@ -38,6 +38,30 @@ fn make_testdata() {
     .unwrap();
 
     let provider = SourceDataProvider::new_testing();
+
+    // `pt-PT` isn't in `LOCALES`: the test data only has its numbers and currencies files,
+    // for the escudo (PTE), which overrides the locale's decimal symbols. So write only
+    // these two payloads for it.
+    let pt_pt = data_locale!("pt-PT");
+    for (marker, attributes) in [
+        (DecimalSymbolsV1::INFO, ""),
+        (CurrencyDecimalSymbolsV1::INFO, "PTE"),
+    ] {
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::from_str_or_panic(attributes),
+            &pt_pt,
+        );
+        let response = provider
+            .load_data(
+                marker,
+                DataRequest {
+                    id,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        exporter.put_payload(marker, id, &response.payload).unwrap();
+    }
 
     ExportDriver::new(
         LOCALES.iter().copied().map(DataLocaleFamily::single),
@@ -118,53 +142,6 @@ fn make_testdata() {
                 | "und-x-interind-arabic"
         )
     })
-    .export(&provider, BorrowedExporter(&exporter))
+    .export(&provider, exporter)
     .unwrap();
-
-    // Export `pt-PT` only for `DecimalSymbolsV1` and `CurrencyDecimalSymbolsV1` (to cover
-    // the PTE separator override) without adding `pt-PT` to every marker in the test data.
-    ExportDriver::new(
-        [DataLocaleFamily::single(data_locale!("pt-PT"))],
-        DeduplicationStrategy::Maximal.into(),
-        LocaleFallbacker::try_new_unstable(&provider).unwrap(),
-    )
-    .with_markers([
-        icu::decimal::provider::DecimalSymbolsV1::INFO,
-        CurrencyDecimalSymbolsV1::INFO,
-    ])
-    .export(&provider, BorrowedExporter(&exporter))
-    .unwrap();
-
-    let _ = std::fs::remove_file("data/debug/currency/decimal/symbols/v1/.empty");
-
-    exporter.close().unwrap();
-}
-
-/// Allows several [`ExportDriver`]s to write into the same exporter, which would
-/// otherwise be consumed by the first export. Closing is left to the caller, once all
-/// drivers have run.
-struct BorrowedExporter<'a>(&'a dyn DataExporter);
-
-impl DataExporter for BorrowedExporter<'_> {
-    fn put_payload(
-        &self,
-        marker: DataMarkerInfo,
-        id: DataIdentifierBorrowed,
-        payload: &DataPayload<ExportMarker>,
-    ) -> Result<(), DataError> {
-        self.0.put_payload(marker, id, payload)
-    }
-
-    fn flush_singleton(
-        &self,
-        marker: DataMarkerInfo,
-        payload: &DataPayload<ExportMarker>,
-        metadata: FlushMetadata,
-    ) -> Result<(), DataError> {
-        self.0.flush_singleton(marker, payload, metadata)
-    }
-
-    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
-        self.0.flush(marker, metadata)
-    }
 }
