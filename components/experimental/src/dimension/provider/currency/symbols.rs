@@ -107,6 +107,10 @@ impl CurrencySymbol<'_> {
     }
 
     /// Returns the symbol as a string slice.
+    ///
+    /// Returns `""` for the ISO-code marker (see [`Self::use_iso_code`]), so check
+    /// [`Self::is_iso_code`] first: otherwise, an empty symbol means the locale has no
+    /// symbol for the currency (e.g. `PTE` in `pt-PT`).
     pub fn as_str(&self) -> &str {
         &self.0.variable
     }
