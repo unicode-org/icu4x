@@ -210,3 +210,60 @@ where
     type Z = Z::Z;
     type GluePatternV1 = datetime_marker_helper!(@glue, yes);
 }
+
+#[cfg(test)]
+mod tests {
+    use icu_calendar::Iso;
+    use icu_locale_core::locale;
+    use icu_time::{
+        zone::{IanaParser, UtcOffset, UtcOffsetCalculator},
+        DateTime, ZonedDateTime,
+    };
+    use writeable::assert_writeable_eq;
+
+    use crate::{
+        fieldsets::{zone::SpecificLong, YMDT},
+        DateTimeFormatter,
+    };
+
+    #[test]
+    fn mismatched_zone_at_time() {
+        let mapper = IanaParser::new();
+        let calculator = UtcOffsetCalculator::new();
+        let formatter =
+            DateTimeFormatter::try_new(locale!("en").into(), YMDT::medium().zone(SpecificLong))
+                .unwrap();
+
+        let good_zdt = ZonedDateTime::try_from_str(
+            "2020-01-01T12:00:00-0100[America/Scoresbysund]",
+            Iso,
+            mapper,
+            &calculator,
+        )
+        .unwrap();
+
+        let dt_2020 = DateTime::try_from_str("2020-01-01T12:00", Iso).unwrap();
+        let dt_2025 = DateTime::try_from_str("2025-01-01T12:00", Iso).unwrap();
+
+        let time_zone = IanaParser::new()
+            .parse("America/Scoresbysund")
+            .with_offset(Some(UtcOffset::try_from_str("-0100").unwrap()))
+            .at_time((dt_2025.date, dt_2025.time))
+            .infer_zone_variant(&calculator);
+
+        let bad_zdt = ZonedDateTime {
+            date: dt_2020.date,
+            time: dt_2020.time,
+            zone: time_zone,
+        };
+
+        assert_writeable_eq!(
+            formatter.format(&good_zdt),
+            "Jan 1, 2020, 12:00:00 PM East Greenland Standard Time"
+        );
+        assert_writeable_eq!(
+            formatter.format(&bad_zdt),
+            "Jan 1, 2020, 12:00:00 PM Greenland Summer Time"
+        );
+    }
+}
