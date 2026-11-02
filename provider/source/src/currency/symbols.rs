@@ -57,6 +57,17 @@ impl DataProvider<CurrencySymbolsV1> for SourceDataProvider {
         .unwrap()
         .as_str();
 
+        // When a locale's symbol equals the currency's ISO code (e.g. `USD` in `en-AU`),
+        // we still emit an entry so locale fallback does not pick up a parent locale's
+        // symbol (`US$` from `en-001`), but store a shared marker payload instead of
+        // repeating each 3-letter code string in the data.
+        if symbol == currency.iso_code().as_str() {
+            return Ok(DataResponse {
+                metadata: Default::default(),
+                payload: DataPayload::from_owned(CurrencySymbol::use_iso_code()),
+            });
+        }
+
         // CLDR uses U+200B ZERO WIDTH SPACE as the symbol when a locale explicitly has no
         // currency symbol, e.g. `PTE` in `pt-PT`, where the cifrão ('$') is the decimal
         // separator instead (CLDR-19771). CLDR needs a non-empty value there to block
@@ -195,10 +206,10 @@ fn test_symbols() {
         &CurrencySymbol::new("$", false, false)
     );
 
-    // `en` uses the ISO code as its EGP symbol. It is stored like any other symbol.
+    // `en` uses the ISO code as its EGP symbol, stored as a shared marker payload.
     assert_eq!(
         load(EN, EGP, CurrencySymbolsV1::SHORT).unwrap().get(),
-        &CurrencySymbol::new("EGP", true, true)
+        &CurrencySymbol::use_iso_code()
     );
     assert_eq!(
         load(EN, EGP, CurrencySymbolsV1::NARROW).unwrap().get(),
@@ -246,11 +257,11 @@ fn test_symbols() {
         load(data_locale!("es-AR"), EUR, CurrencySymbolsV1::SHORT)
             .unwrap()
             .get(),
-        &CurrencySymbol::new("EUR", true, true)
+        &CurrencySymbol::use_iso_code()
     );
     assert_eq!(
         load(FR, JPY, CurrencySymbolsV1::SHORT).unwrap().get(),
-        &CurrencySymbol::new("JPY", true, true)
+        &CurrencySymbol::use_iso_code()
     );
 
     // `pt-PT` has no symbol for `PTE`: CLDR marks this with U+200B, which datagen
