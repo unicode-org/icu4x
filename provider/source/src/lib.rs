@@ -681,13 +681,13 @@ pub enum AltVariantKind {
     /// Intended for compatibility with older websites.
     DatetimeAscii,
     /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="HK"]`.
-    LocaleNamesHkShort,
+    LocaleNamesRegionHkShort,
     /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="MO"]`.
-    LocaleNamesMoShort,
+    LocaleNamesRegionMoShort,
     /// Use `alt="variant"` for `//ldml/localeDisplayNames/territories/territory[@type="FK"]`.
-    LocaleNamesFkVariant,
+    LocaleNamesRegionFkVariant,
     /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="PS"]`.
-    LocaleNamesPsShort,
+    LocaleNamesRegionPsShort,
 }
 
 /// A language's CLDR coverage level.

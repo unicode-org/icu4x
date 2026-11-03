@@ -352,10 +352,10 @@ enum CollationRootHan {
 // Mirrors icu_provider_source::AltVariantKind
 enum AltVariantKind {
     DatetimeAscii,
-    LocaleNamesHkShort,
-    LocaleNamesMoShort,
-    LocaleNamesFkVariant,
-    LocaleNamesPsShort,
+    LocaleNamesRegionHkShort,
+    LocaleNamesRegionMoShort,
+    LocaleNamesRegionFkVariant,
+    LocaleNamesRegionPsShort,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -518,17 +518,17 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
             p = p.with_alt_variants(cli.alt_variants.iter().copied().map(|v| match v {
                 AltVariantKind::DatetimeAscii => icu_provider_source::AltVariantKind::DatetimeAscii,
-                AltVariantKind::LocaleNamesHkShort => {
-                    icu_provider_source::AltVariantKind::LocaleNamesHkShort
+                AltVariantKind::LocaleNamesRegionHkShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionHkShort
                 }
-                AltVariantKind::LocaleNamesMoShort => {
-                    icu_provider_source::AltVariantKind::LocaleNamesMoShort
+                AltVariantKind::LocaleNamesRegionMoShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionMoShort
                 }
-                AltVariantKind::LocaleNamesFkVariant => {
-                    icu_provider_source::AltVariantKind::LocaleNamesFkVariant
+                AltVariantKind::LocaleNamesRegionFkVariant => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionFkVariant
                 }
-                AltVariantKind::LocaleNamesPsShort => {
-                    icu_provider_source::AltVariantKind::LocaleNamesPsShort
+                AltVariantKind::LocaleNamesRegionPsShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionPsShort
                 }
             }));
 
@@ -955,10 +955,10 @@ mod test_consistency {
         let upstream = Upstream::DatetimeAscii;
         let _ = match upstream {
             Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
-            Upstream::LocaleNamesHkShort => AltVariantKind::LocaleNamesHkShort,
-            Upstream::LocaleNamesMoShort => AltVariantKind::LocaleNamesMoShort,
-            Upstream::LocaleNamesFkVariant => AltVariantKind::LocaleNamesFkVariant,
-            Upstream::LocaleNamesPsShort => AltVariantKind::LocaleNamesPsShort,
+            Upstream::LocaleNamesRegionHkShort => AltVariantKind::LocaleNamesRegionHkShort,
+            Upstream::LocaleNamesRegionMoShort => AltVariantKind::LocaleNamesRegionMoShort,
+            Upstream::LocaleNamesRegionFkVariant => AltVariantKind::LocaleNamesRegionFkVariant,
+            Upstream::LocaleNamesRegionPsShort => AltVariantKind::LocaleNamesRegionPsShort,
             _ => unreachable!(),
         };
     }

@@ -23,28 +23,28 @@ impl SourceDataProvider {
         if region == region!("HK")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::LocaleNamesHkShort)
+                .contains(&AltVariantKind::LocaleNamesRegionHkShort)
         {
             return Some(Alt::Short);
         }
         if region == region!("MO")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::LocaleNamesMoShort)
+                .contains(&AltVariantKind::LocaleNamesRegionMoShort)
         {
             return Some(Alt::Short);
         }
         if region == region!("PS")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::LocaleNamesPsShort)
+                .contains(&AltVariantKind::LocaleNamesRegionPsShort)
         {
             return Some(Alt::Short);
         }
         if region == region!("FK")
             && self
                 .alt_variants
-                .contains(&AltVariantKind::LocaleNamesFkVariant)
+                .contains(&AltVariantKind::LocaleNamesRegionFkVariant)
         {
             return Some(Alt::Variant);
         }
@@ -283,10 +283,10 @@ mod tests {
     fn test_region_alt_variants() {
         let default_provider = SourceDataProvider::new_testing();
         let alt_provider = SourceDataProvider::new_testing().with_alt_variants([
-            AltVariantKind::LocaleNamesHkShort,
-            AltVariantKind::LocaleNamesMoShort,
-            AltVariantKind::LocaleNamesFkVariant,
-            AltVariantKind::LocaleNamesPsShort,
+            AltVariantKind::LocaleNamesRegionHkShort,
+            AltVariantKind::LocaleNamesRegionMoShort,
+            AltVariantKind::LocaleNamesRegionFkVariant,
+            AltVariantKind::LocaleNamesRegionPsShort,
         ]);
 
         let load_tiny = |provider: &SourceDataProvider, code: &str| -> String {
