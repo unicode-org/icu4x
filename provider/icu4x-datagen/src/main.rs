@@ -17,12 +17,23 @@
 
 //! The command line interface for ICU4X datagen.
 //!
+//! Also see [`icu_provider_export`] for a Rust API.
+//!
+//! # Examples
+//!
+//! Generate a postcard data file for all data markers known to ICU4X for
+//! German and Australian English. Note: This will also include root data.
+//!
 //! ```bash
 //! $ cargo install icu4x-datagen
 //! $ icu4x-datagen --markers all --locales de en-AU --format blob --out data.postcard
 //! ```
 //!
-//! More details can be found by running `--help`, or by consulting the [`icu_provider_export`] documentation.
+//! # Full Help Text
+//!
+//! ```txt
+#![doc = include_str!("help.txt")]
+//! ```
 
 // If no exporter feature is enabled this all doesn't make sense
 #![cfg_attr(
@@ -111,7 +122,7 @@ impl FromStr for Filter {
 #[derive(Parser)]
 #[command(name = "icu4x-datagen")]
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
-#[command(about = format!("Learn more at: https://docs.rs/icu_provider_export/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
+#[command(about = format!("Generates custom locale data for ICU4X based on CLDR and other data sources.\n\nAlso see the Rust API: https://docs.rs/icu_provider_export/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 struct Cli {
     #[arg(short, long)]
     #[arg(help = "Requests verbose output")]
@@ -941,5 +952,37 @@ mod test_consistency {
             Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
             _ => unreachable!(),
         };
+    }
+}
+
+/// Gets the absolute path to `src/help.txt` relative to the project root.
+#[cfg(test)]
+fn get_help_file_path() -> std::io::Result<PathBuf> {
+    let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").map_err(|_| {
+        std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "Could not find CARGO_MANIFEST_DIR",
+        )
+    })?;
+
+    let mut path = PathBuf::from(manifest_dir);
+    path.push("src");
+    path.push("help.txt");
+
+    Ok(path)
+}
+
+#[cfg(test)]
+#[test]
+fn test_help_text() {
+    let help_file_path = get_help_file_path().unwrap();
+    let help_text_from_file = std::fs::read_to_string(&help_file_path).unwrap();
+    let help_text_from_clap = format!(
+        "{}",
+        <Cli as clap::CommandFactory>::command().render_long_help()
+    );
+    if help_text_from_file != help_text_from_clap {
+        std::fs::write(&help_file_path, help_text_from_clap).unwrap();
+        panic!("Help text changed; overwrote local file");
     }
 }
