@@ -78,6 +78,8 @@ pub mod unstable {
     pub mod locale_core;
     #[cfg(feature = "logging")]
     pub mod logging;
+    #[cfg(feature = "unstable")]
+    pub mod parts;
     #[macro_use]
     pub mod provider;
 
