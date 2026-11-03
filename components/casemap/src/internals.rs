@@ -15,6 +15,7 @@ use crate::provider::exception_helpers::ExceptionSlot;
 use crate::provider::{CaseMap, CaseMapUnfold};
 use crate::set::ClosureSink;
 use crate::titlecase::TrailingCase;
+use crate::{CaseMapEdit, CaseMapWriteable};
 use core::fmt;
 use icu_locale_core::LanguageIdentifier;
 use writeable::Writeable;
@@ -52,6 +53,23 @@ impl<Wr: Writeable> Writeable for StringAndWriteable<'_, Wr> {
     }
 }
 
+impl<Wr: CaseMapWriteable> CaseMapWriteable for StringAndWriteable<'_, Wr> {
+    fn write_to_with_edits<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+        mut record_edit: impl FnMut(CaseMapEdit),
+    ) -> fmt::Result {
+        sink.write_str(self.string)?;
+        let offset = self.string.len();
+        self.writeable.write_to_with_edits(sink, |edit| {
+            record_edit(CaseMapEdit {
+                source: edit.source.start + offset..edit.source.end + offset,
+                destination: edit.destination.start + offset..edit.destination.end + offset,
+            });
+        })
+    }
+}
+
 pub(crate) struct FullCaseWriteable<'a, 'data, const IS_TITLE_CONTEXT: bool> {
     data: &'data CaseMap<'data>,
     src: &'a str,
@@ -60,8 +78,12 @@ pub(crate) struct FullCaseWriteable<'a, 'data, const IS_TITLE_CONTEXT: bool> {
     titlecase_tail_casing: TrailingCase,
 }
 
-impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, '_, IS_TITLE_CONTEXT> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<const IS_TITLE_CONTEXT: bool> FullCaseWriteable<'_, '_, IS_TITLE_CONTEXT> {
+    fn write_mappings<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+        mut on_mapping: impl FnMut(usize, char, &FullMappingResult<'_>),
+    ) -> fmt::Result {
         let src = self.src;
         let mut mapping = self.mapping;
         let mut iter = src.char_indices();
@@ -78,8 +100,11 @@ impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, '_, I
         };
         for (i, c) in &mut iter {
             let context = ContextIterator::new(&src[..i], &src[i..]);
-            self.data
-                .full_helper::<IS_TITLE_CONTEXT, W>(c, context, self.locale, mapping, sink)?;
+            let result =
+                self.data
+                    .full_helper::<IS_TITLE_CONTEXT>(c, context, self.locale, mapping);
+            result.write_to(sink)?;
+            on_mapping(i, c, &result);
             if IS_TITLE_CONTEXT {
                 // Check if we're uppercasing a dutch IJ
                 if let Some(count) = dutch_titlecase_count {
@@ -110,6 +135,35 @@ impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, '_, I
         }
         Ok(())
     }
+}
+
+impl<const IS_TITLE_CONTEXT: bool> CaseMapWriteable
+    for FullCaseWriteable<'_, '_, IS_TITLE_CONTEXT>
+{
+    fn write_to_with_edits<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+        mut record_edit: impl FnMut(CaseMapEdit),
+    ) -> fmt::Result {
+        let mut destination_offset = 0;
+        self.write_mappings(sink, |source_offset, source, result| {
+            let destination_end = destination_offset + result.len_utf8();
+            if !result.is_unchanged(source) {
+                record_edit(CaseMapEdit {
+                    source: source_offset..source_offset + source.len_utf8(),
+                    destination: destination_offset..destination_end,
+                });
+            }
+            destination_offset = destination_end;
+        })
+    }
+}
+
+impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, '_, IS_TITLE_CONTEXT> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.write_mappings(sink, |_, _, _| {})
+    }
+
     fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::at_least(self.src.len())
     }
@@ -223,14 +277,13 @@ impl<'data> CaseMap<'data> {
     // IS_TITLE_CONTEXT must be true if kind is MappingKind::Title
     // The kind may be a different kind with IS_TITLE_CONTEXT still true because
     // titlecasing a segment involves switching to lowercase later
-    fn full_helper<const IS_TITLE_CONTEXT: bool, W: fmt::Write + ?Sized>(
+    fn full_helper<const IS_TITLE_CONTEXT: bool>(
         &self,
         c: char,
         context: ContextIterator,
         locale: CaseMapLocale,
         kind: MappingKind,
-        sink: &mut W,
-    ) -> fmt::Result {
+    ) -> FullMappingResult<'_> {
         // If using a title mapping IS_TITLE_CONTEXT must be true
         debug_assert!(kind != MappingKind::Title || IS_TITLE_CONTEXT);
         // In a title context, kind MUST be Title or Lower
@@ -251,7 +304,7 @@ impl<'data> CaseMap<'data> {
             if greek_to_me::is_greek_diacritic_except_ypogegrammeni(c)
                 && context.preceded_by_greek_letter()
             {
-                return Ok(());
+                return FullMappingResult::Remove;
             }
             let data = greek_to_me::get_data(c);
             // Check if the character is a Greek vowel
@@ -277,11 +330,12 @@ impl<'data> CaseMap<'data> {
                             precomposed_diacritics.dialytika = preceding_vowel.precomposed.accented;
                         }
                     }
-                    // Write the base of the uppercased combining character sequence.
+                    // Compute the base of the uppercased combining character sequence.
                     // In most branches this is [`upper_base`], i.e., the uppercase letter with all accents removed.
                     // In some branches the base has a precomposed diacritic.
                     // In the case of the Greek disjunctive "or", a combining tonos may also be written.
-                    match vowel {
+                    let mut tonos = None;
+                    let base = match vowel {
                         GreekVowel::Η => {
                             // The letter η (eta) is allowed to retain a tonos when it is form a single-letter word to distinguish
                             // the feminine definite article ἡ (monotonic η) from the disjunctive "or" ἤ (monotonic ή).
@@ -297,43 +351,46 @@ impl<'data> CaseMap<'data> {
                                 && !diacritics.ypogegrammeni
                             {
                                 if precomposed_diacritics.accented {
-                                    sink.write_char('Ή')?;
+                                    'Ή'
                                 } else {
-                                    sink.write_char('Η')?;
-                                    sink.write_char(greek_to_me::TONOS)?;
+                                    tonos = Some(greek_to_me::TONOS);
+                                    'Η'
                                 }
                             } else {
-                                sink.write_char('Η')?;
+                                'Η'
                             }
                         }
-                        GreekVowel::Ι => sink.write_char(if precomposed_diacritics.dialytika {
-                            diacritics.dialytika = false;
-                            'Ϊ'
-                        } else {
-                            vowel.into()
-                        })?,
-                        GreekVowel::Υ => sink.write_char(if precomposed_diacritics.dialytika {
-                            diacritics.dialytika = false;
-                            'Ϋ'
-                        } else {
-                            vowel.into()
-                        })?,
-                        _ => sink.write_char(vowel.into())?,
+                        GreekVowel::Ι => {
+                            if precomposed_diacritics.dialytika {
+                                diacritics.dialytika = false;
+                                'Ϊ'
+                            } else {
+                                vowel.into()
+                            }
+                        }
+                        GreekVowel::Υ => {
+                            if precomposed_diacritics.dialytika {
+                                diacritics.dialytika = false;
+                                'Ϋ'
+                            } else {
+                                vowel.into()
+                            }
+                        }
+                        _ => vowel.into(),
                     };
-                    if diacritics.dialytika {
-                        sink.write_char(greek_to_me::DIALYTIKA)?;
-                    }
-                    if precomposed_diacritics.ypogegrammeni {
-                        sink.write_char('Ι')?;
-                    }
-
-                    return Ok(());
+                    return FullMappingResult::CodePoints {
+                        first: base,
+                        rest: [
+                            tonos,
+                            diacritics.dialytika.then_some(greek_to_me::DIALYTIKA),
+                            precomposed_diacritics.ypogegrammeni.then_some('Ι'),
+                        ],
+                    };
                 }
                 // Rho might have breathing marks, we handle it specially
                 // to remove them
                 Some(GreekPrecomposedLetterData::Consonant(true)) => {
-                    sink.write_char(greek_to_me::CAPITAL_RHO)?;
-                    return Ok(());
+                    return FullMappingResult::CodePoint(greek_to_me::CAPITAL_RHO);
                 }
                 _ => (),
             }
@@ -345,9 +402,9 @@ impl<'data> CaseMap<'data> {
                 let mapped = c as i32 + data.delta() as i32;
                 // GIGO: delta should be valid
                 let mapped = char::from_u32(mapped as u32).unwrap_or(c);
-                sink.write_char(mapped)
+                FullMappingResult::CodePoint(mapped)
             } else {
-                sink.write_char(c)
+                FullMappingResult::CodePoint(c)
             }
         } else {
             let idx = data.exception_index();
@@ -362,28 +419,28 @@ impl<'data> CaseMap<'data> {
                         .full_upper_or_title_special_case::<IS_TITLE_CONTEXT>(c, context, locale),
                 }
             {
-                return special.write_to(sink);
+                return special;
             }
             if let Some(mapped_string) = exception.get_fullmappings_slot_for_kind(kind)
                 && !mapped_string.is_empty()
             {
-                return sink.write_str(mapped_string);
+                return FullMappingResult::String(mapped_string);
             }
 
             if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
-                return sink.write_char(c);
+                return FullMappingResult::CodePoint(c);
             }
 
             if data.is_relevant_to(kind)
                 && let Some(simple) = exception.get_simple_case_slot_for(c)
             {
-                return sink.write_char(simple);
+                return FullMappingResult::CodePoint(simple);
             }
 
             if let Some(slot_char) = exception.slot_char_for_kind(kind) {
-                sink.write_char(slot_char)
+                FullMappingResult::CodePoint(slot_char)
             } else {
-                sink.write_char(c)
+                FullMappingResult::CodePoint(c)
             }
         }
     }
@@ -696,15 +753,35 @@ pub enum FullMappingResult<'a> {
     Remove,
     CodePoint(char),
     String(&'a str),
+    CodePoints {
+        first: char,
+        rest: [Option<char>; 3],
+    },
 }
 
 impl FullMappingResult<'_> {
-    #[allow(dead_code)]
-    fn add_to_set<S: ClosureSink>(&self, set: &mut S) {
+    fn len_utf8(&self) -> usize {
         match *self {
-            FullMappingResult::CodePoint(c) => set.add_char(c),
-            FullMappingResult::String(s) => set.add_string(s),
-            FullMappingResult::Remove => {}
+            Self::Remove => 0,
+            Self::CodePoint(c) => c.len_utf8(),
+            Self::String(s) => s.len(),
+            Self::CodePoints { first, rest } => {
+                first.len_utf8()
+                    + rest
+                        .into_iter()
+                        .flatten()
+                        .map(char::len_utf8)
+                        .sum::<usize>()
+            }
+        }
+    }
+
+    fn is_unchanged(&self, source: char) -> bool {
+        match *self {
+            Self::Remove => false,
+            Self::CodePoint(c) => c == source,
+            Self::String(s) => s == source.encode_utf8(&mut [0; 4]),
+            Self::CodePoints { first, rest } => first == source && rest.iter().all(Option::is_none),
         }
     }
 }
@@ -715,7 +792,18 @@ impl Writeable for FullMappingResult<'_> {
             FullMappingResult::CodePoint(c) => sink.write_char(c),
             FullMappingResult::String(s) => sink.write_str(s),
             FullMappingResult::Remove => Ok(()),
+            FullMappingResult::CodePoints { first, rest } => {
+                sink.write_char(first)?;
+                for c in rest.into_iter().flatten() {
+                    sink.write_char(c)?;
+                }
+                Ok(())
+            }
         }
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.len_utf8())
     }
 }
 
