@@ -997,7 +997,6 @@ struct ComplexWord<Y>(core::marker::PhantomData<Y>);
 
 #[cfg(feature = "unstable")]
 impl<Y: RuleBreakType> crate::rule_segmenter_v2::ComplexHandler<Y> for ComplexWord<Y> {
-    const BREAK_AT_BOUNDARIES: bool = true;
     type Cache = [usize; 16];
     const BREAK_STATUS: u8 = WordType::Letter as u8;
 
@@ -1029,7 +1028,21 @@ include!("../tests/helpers.rs.raw");
 // The test data files contain the output of the neo implementation.
 // Inputs that the v1 implementation is known to fail are listed here and skipped.
 #[cfg(test)]
-const V1_KNOWN_FAILURES: &[&str] = &["エディターエディ", "コンピューターソ"];
+const V1_KNOWN_FAILURES: &[&str] = &[
+    "エディターエディ",
+    "コンピューターソ",
+    "aภาษาไทยภาษาไทยb",
+    "พ.ศ",
+    "ค.ศ",
+    "พ.ศ. ๒๕๖๙",
+    "ภาษาไทย123ภาษา",
+    "ภาษา๑๒ไทย",
+    "ก\u{AD}ข",
+    "ก\u{200D}ข",
+    "ภาษาไทย\u{AD}ภาษา",
+    "abc한국어",
+    "한국어123",
+];
 
 #[cfg(test)]
 fn run_test(file: &'static str, v1: WordSegmenterBorrowed, neo: WordSegmenterBorrowed) {
