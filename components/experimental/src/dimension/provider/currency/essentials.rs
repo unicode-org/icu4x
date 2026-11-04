@@ -11,6 +11,9 @@ use zerovec::VarZeroVec;
 
 use icu_pattern::{DoublePlaceholderKey, DoublePlaceholderPattern, PatternItem};
 
+use super::PatternPair;
+use crate::dimension::currency::options::CurrencyUsage;
+
 icu_provider::data_marker!(
     /// Provides standard and accounting currency patterns for currency formatting.
     ///
@@ -60,7 +63,7 @@ icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
 
 /// Which ends of a currency symbol are letters.
 ///
-/// The getters on [`CurrencyEssentials`] use this to choose the `alphaNextToNumber`
+/// [`CurrencyEssentials::patterns`] uses this to choose the `alphaNextToNumber`
 /// patterns, which add a space when a letter of the symbol would touch the number
 /// (`USD 12.00` instead of `USD12.00`).
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -86,152 +89,145 @@ impl SymbolLetters {
 }
 
 impl<'a> CurrencyEssentials<'a> {
-    pub fn get_positive(&'a self, letters: SymbolLetters) -> &'a DoublePlaceholderPattern {
-        let standard = self
-            .patterns
-            .get(self.indices.standard as usize)
-            .unwrap_or_else(|| {
-                debug_assert!(false, "Standard pattern index is out of bounds");
-                <&DoublePlaceholderPattern>::default()
-            });
+    /// Returns the patterns for `usage` and a symbol with the given `letters`.
+    pub fn patterns(&'a self, usage: CurrencyUsage, letters: SymbolLetters) -> PatternPair<'a> {
+        let i = self.indices;
+        let (normal, alpha_next_to_number) = match usage {
+            CurrencyUsage::Standard => (
+                self.pair(i.standard, i.standard_negative),
+                self.pair(
+                    i.standard_alpha_next_to_number,
+                    i.standard_alpha_next_to_number_negative,
+                ),
+            ),
+            CurrencyUsage::Accounting => (
+                self.pair(i.accounting_positive, i.accounting_negative),
+                self.pair(
+                    i.accounting_alpha_next_to_number_positive,
+                    i.accounting_alpha_next_to_number_negative,
+                ),
+            ),
+        };
 
-        if self.indices.standard_alpha_next_to_number != self.indices.standard
-            && is_alpha_next_to_number(standard, letters)
-        {
-            self.patterns
-                .get(self.indices.standard_alpha_next_to_number as usize)
-                .unwrap_or_else(|| {
-                    debug_assert!(false, "Standard alpha pattern index is out of bounds");
-                    standard
-                })
+        // CLDR's `alphaNextToNumber` patterns are for symbols that touch the number with a
+        // letter: `USD 12.00`, but `$12.00`. The positive pattern decides for both signs.
+        let letter_touches_number = match SymbolPlacement::of(normal.positive) {
+            SymbolPlacement::JustBefore => letters.last_is_letter(),
+            SymbolPlacement::JustAfter => letters.first_is_letter(),
+            SymbolPlacement::Apart => false,
+        };
+        if letter_touches_number {
+            alpha_next_to_number
         } else {
-            standard
+            normal
         }
     }
 
-    /// Returns the explicit standard negative pattern, if it exists.
-    ///
-    /// If the category has no explicit negative pattern, `None` is returned and the caller
-    /// falls back to the positive pattern of the same category, applying the sign
-    /// itself per UTS #35 (LDML Part 3: Numbers, Section 3.2.1).
-    pub fn get_negative(&'a self, letters: SymbolLetters) -> Option<&'a DoublePlaceholderPattern> {
-        let Some(standard) = self.patterns.get(self.indices.standard as usize) else {
-            debug_assert!(false, "Standard pattern index is out of bounds");
-            return None;
+    /// Looks up a positive pattern and an optional negative pattern by their indices.
+    fn pair(&'a self, positive: u8, negative: Option<u8>) -> PatternPair<'a> {
+        let get = |index: u8| {
+            let pattern = self.patterns.get(index as usize);
+            debug_assert!(pattern.is_some(), "Pattern index is out of bounds");
+            pattern
         };
-
-        let negative_idx = if self.indices.standard_alpha_next_to_number_negative
-            != self.indices.standard_negative
-            && is_alpha_next_to_number(standard, letters)
-        {
-            self.indices.standard_alpha_next_to_number_negative
-        } else {
-            self.indices.standard_negative
-        }?;
-
-        let Some(pattern) = self.patterns.get(negative_idx as usize) else {
-            debug_assert!(false, "Standard negative pattern index is out of bounds");
-            return None;
-        };
-        Some(pattern)
-    }
-
-    pub fn get_positive_accounting(
-        &'a self,
-        letters: SymbolLetters,
-    ) -> &'a DoublePlaceholderPattern {
-        let standard = self
-            .patterns
-            .get(self.indices.accounting_positive as usize)
-            .unwrap_or_else(|| {
-                debug_assert!(false, "Accounting standard pattern index is out of bounds");
-                <&DoublePlaceholderPattern>::default()
-            });
-
-        if self.indices.accounting_alpha_next_to_number_positive != self.indices.accounting_positive
-            && is_alpha_next_to_number(standard, letters)
-        {
-            self.patterns
-                .get(self.indices.accounting_alpha_next_to_number_positive as usize)
-                .unwrap_or_else(|| {
-                    debug_assert!(false, "Accounting alpha pattern index is out of bounds");
-                    standard
-                })
-        } else {
-            standard
+        PatternPair {
+            positive: get(positive).unwrap_or_else(|| <&DoublePlaceholderPattern>::default()),
+            negative: negative.and_then(get),
         }
-    }
-
-    /// Returns the explicit accounting negative pattern, if it exists.
-    ///
-    /// If the selected category has no explicit negative pattern, `None` is returned and the
-    /// caller falls back to the positive pattern of the same category, applying the
-    /// sign itself per UTS #35 (LDML Part 3: Numbers, Section 3.2.1).
-    pub fn get_negative_accounting(
-        &'a self,
-        letters: SymbolLetters,
-    ) -> Option<&'a DoublePlaceholderPattern> {
-        let Some(accounting) = self.patterns.get(self.indices.accounting_positive as usize) else {
-            debug_assert!(false, "Accounting pattern index is out of bounds");
-            return None;
-        };
-
-        let negative_idx = if self.indices.accounting_alpha_next_to_number_negative
-            != self.indices.accounting_negative
-            && is_alpha_next_to_number(accounting, letters)
-        {
-            self.indices.accounting_alpha_next_to_number_negative
-        } else {
-            self.indices.accounting_negative
-        }?;
-
-        let Some(pattern) = self.patterns.get(negative_idx as usize) else {
-            debug_assert!(false, "Accounting negative pattern index is out of bounds");
-            return None;
-        };
-        Some(pattern)
     }
 }
 
-fn is_alpha_next_to_number(pattern: &DoublePlaceholderPattern, letters: SymbolLetters) -> bool {
-    let position = |key| {
-        pattern
-            .iter()
-            .position(|x| x == PatternItem::Placeholder(key))
-    };
+/// Where the currency symbol is in a pattern, relative to the number.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+enum SymbolPlacement {
+    /// Just before the number, like `¤#,##0.00`: the symbol's last character touches it.
+    JustBefore,
+    /// Just after the number, like `#,##0.00¤`: the symbol's first character touches it.
+    JustAfter,
+    /// Not next to the number, like `¤ #,##0.00`, or the pattern lacks one of them.
+    Apart,
+}
 
-    match (
-        position(DoublePlaceholderKey::Place0),
-        position(DoublePlaceholderKey::Place1),
-    ) {
-        // The symbol comes right after the number: its first character is next to the number.
-        (Some(number), Some(currency)) if number + 1 == currency => letters.first_is_letter(),
-        // The symbol comes right before the number: its last character is next to the number.
-        (Some(number), Some(currency)) if currency + 1 == number => letters.last_is_letter(),
-        // They aren't next to each other, or the pattern lacks one of them.
-        _ => false,
+impl SymbolPlacement {
+    fn of(pattern: &DoublePlaceholderPattern) -> Self {
+        let position = |key| {
+            pattern
+                .iter()
+                .position(|x| x == PatternItem::Placeholder(key))
+        };
+        match (
+            position(DoublePlaceholderKey::Place0),
+            position(DoublePlaceholderKey::Place1),
+        ) {
+            (Some(number), Some(symbol)) if symbol + 1 == number => Self::JustBefore,
+            (Some(number), Some(symbol)) if number + 1 == symbol => Self::JustAfter,
+            _ => Self::Apart,
+        }
     }
 }
 
 #[test]
-fn test_is_alpha_next_to_number() {
+fn test_symbol_placement() {
     #[track_caller]
-    fn check(pattern: &str, letters: SymbolLetters, expected: bool) {
+    fn check(pattern: &str, expected: SymbolPlacement) {
         let pattern = DoublePlaceholderPattern::try_from_str(pattern, Default::default()).unwrap();
-        assert_eq!(is_alpha_next_to_number(&pattern, letters), expected);
+        assert_eq!(SymbolPlacement::of(&pattern), expected);
     }
 
-    // The symbol comes right after the number: its first character is next to the number.
-    check("{0}{1}", SymbolLetters::First, true);
-    check("{0}{1}", SymbolLetters::Last, false);
-    // The symbol comes right before the number: its last character is next to the number.
-    check("{1}{0}", SymbolLetters::Last, true);
-    check("{1}{0}", SymbolLetters::First, false);
-    // No letters at either end.
-    check("{1}{0}", SymbolLetters::Neither, false);
-    // A space separates them.
-    check("{1} {0}", SymbolLetters::Both, false);
+    check("{1}{0}", SymbolPlacement::JustBefore);
+    check("{0}{1}", SymbolPlacement::JustAfter);
+    check("{1} {0}", SymbolPlacement::Apart);
     // A pattern without one of the placeholders.
-    check("{1}", SymbolLetters::Both, false);
-    check("{0}", SymbolLetters::Both, false);
+    check("{1}", SymbolPlacement::Apart);
+    check("{0}", SymbolPlacement::Apart);
+}
+
+#[test]
+fn test_patterns() {
+    use CurrencyUsage::{Accounting, Standard};
+    use SymbolLetters::{Both, First, Last, Neither};
+
+    let patterns: Vec<_> = [
+        // Standard: the symbol is just before the number.
+        "{1}{0}",
+        "-{1}{0}",
+        "{1} {0}",
+        "-{1} {0}",
+        // Accounting: the symbol is just after the number.
+        "{0}{1}",
+        "({0}{1})",
+        "{0} {1}",
+        "({0} {1})",
+    ]
+    .into_iter()
+    .map(|p| DoublePlaceholderPattern::try_from_str(p, Default::default()).unwrap())
+    .collect();
+    let essentials = CurrencyEssentials {
+        patterns: VarZeroVec::from(&patterns),
+        indices: PatternIndices {
+            standard: 0,
+            standard_negative: Some(1),
+            standard_alpha_next_to_number: 2,
+            standard_alpha_next_to_number_negative: Some(3),
+            accounting_positive: 4,
+            accounting_negative: Some(5),
+            accounting_alpha_next_to_number_positive: 6,
+            accounting_alpha_next_to_number_negative: Some(7),
+        },
+    };
+    let pair = |positive: usize, negative: usize| PatternPair {
+        positive: &patterns[positive],
+        negative: Some(&*patterns[negative]),
+    };
+
+    // The symbol is just before the number, so its last character decides.
+    assert_eq!(essentials.patterns(Standard, Neither), pair(0, 1));
+    assert_eq!(essentials.patterns(Standard, First), pair(0, 1));
+    assert_eq!(essentials.patterns(Standard, Last), pair(2, 3));
+    assert_eq!(essentials.patterns(Standard, Both), pair(2, 3));
+    // The symbol is just after the number, so its first character decides.
+    assert_eq!(essentials.patterns(Accounting, Neither), pair(4, 5));
+    assert_eq!(essentials.patterns(Accounting, First), pair(6, 7));
+    assert_eq!(essentials.patterns(Accounting, Last), pair(4, 5));
+    assert_eq!(essentials.patterns(Accounting, Both), pair(6, 7));
 }
