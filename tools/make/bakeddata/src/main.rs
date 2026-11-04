@@ -95,7 +95,22 @@ fn main() {
             .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
-    );
+    )
+    // The recommended models, plus the experimental `AdaBoost` models
+    .with_segmenter_models([
+        "cjdict".into(),
+        "burmesedict".into(),
+        "khmerdict".into(),
+        "laodict".into(),
+        "thaidict".into(),
+        "Burmese_codepoints_exclusive_model4_heavy".into(),
+        "Khmer_codepoints_exclusive_model4_heavy".into(),
+        "Lao_codepoints_exclusive_model4_heavy".into(),
+        "Thai_codepoints_exclusive_model4_heavy".into(),
+        "Chinese_adaboost".into(),
+        "Japanese_adaboost".into(),
+        "Thai_adaboost".into(),
+    ]);
 
     let mut options = baked_exporter::Options::default();
     options.overwrite = true;
