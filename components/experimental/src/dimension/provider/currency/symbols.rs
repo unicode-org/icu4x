@@ -14,6 +14,8 @@ use zerovec::ule::vartuple::{VarTuple, VarTupleULE};
 
 use crate::dimension::currency::CurrencyType;
 
+use super::essentials::SymbolLetters;
+
 icu_provider::data_marker!(
     /// Currency symbol data needed for short and narrow currency formatting.
     CurrencySymbolsV1,
@@ -89,6 +91,14 @@ impl CurrencySymbol<'_> {
     /// Returns true if the symbol ends with a letter.
     pub fn ends_with_letter(&self) -> bool {
         self.0.sized & 0b01 != 0
+    }
+
+    /// Returns whether the first and the last character of the symbol are letters.
+    pub fn letters(&self) -> SymbolLetters {
+        SymbolLetters {
+            first: self.starts_with_letter(),
+            last: self.ends_with_letter(),
+        }
     }
 
     /// Returns the symbol as a string slice.
