@@ -18,7 +18,11 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl SourceDataProvider {
-    fn get_display_name_payload<M>(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>
+    fn get_display_name_payload<M>(
+        &self,
+        req: DataRequest,
+        category: &str,
+    ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
@@ -46,8 +50,8 @@ impl SourceDataProvider {
             }
         }
         .categories
-        .iter()
-        .find_map(|(_, units_map)| units_map.get(unit))
+        .get(category)
+        .and_then(|units_map| units_map.get(unit))
         .ok_or_else(|| {
             DataErrorKind::IdentifierNotFound
                 .with_req(M::INFO, req)
@@ -65,34 +69,28 @@ impl SourceDataProvider {
         unit_type: UnitType,
         category: &str,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        // Load and parse the unit preferences from the supplemental data file.
+        let preferences: &cldr_serde::units::preferences::Resource = self
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/unitPreferenceData.json")?;
+        let categorized_units_list = preferences.supplemental.categorized_units_list();
+
         let mut data_locales = HashSet::new();
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
         for locale in locales {
-            // Load and parse the unit constants from the supplemental data file.
-            let preferences: &cldr_serde::units::preferences::Resource = self
-                .cldr()?
-                .core()
-                .read_and_parse("supplemental/unitPreferenceData.json")?;
-
-            let categorized_units_list = preferences.supplemental.categorized_units_list();
+            let region = self.cldr()?.extract_or_infer_region(&locale)?.to_string();
 
             let units_format_data: &cldr_serde::units::data::Resource =
-                self.cldr()?.units().read_and_parse(&locale, "units.json")?;
+                units.read_and_parse(&locale, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
 
-            for length in &["long", "short", "narrow"] {
-                let length_patterns = match *length {
-                    "long" => &units_format_data.long,
-                    "short" => &units_format_data.short,
-                    "narrow" => &units_format_data.narrow,
-                    _ => {
-                        return Err(DataErrorKind::IdentifierNotFound
-                            .into_error()
-                            .with_debug_context(length));
-                    }
-                };
-
+            for (length, length_patterns) in [
+                ("long", &units_format_data.long),
+                ("short", &units_format_data.short),
+                ("narrow", &units_format_data.narrow),
+            ] {
                 let units_map = length_patterns.categories.get(category).ok_or_else(|| {
                     DataErrorKind::InvalidRequest
                         .into_error()
@@ -106,7 +104,7 @@ impl SourceDataProvider {
                     if cldr_serde::units::preferences::Supplemental::unit_type(
                         category,
                         unit,
-                        &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
+                        &region,
                         &categorized_units_list,
                     ) != unit_type
                     {
@@ -135,7 +133,7 @@ macro_rules! impl_units_display_names_provider {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
-                self.get_display_name_payload::<$marker>(req)
+                self.get_display_name_payload::<$marker>(req, $category)
             }
         }
 
