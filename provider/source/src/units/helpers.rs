@@ -510,9 +510,12 @@ impl Patterns {
 
 impl Supplemental {
     /// Helper function to check if a target unit matches any unit in the set,
-    /// including as a subunit in compound units (e.g., "foot" matches "foot-and-inch")
+    /// including as a subunit in mixed units (e.g., "foot" matches "foot-and-inch").
+    /// Units must match exactly: "ton" does not match "tonne", and "gallon" does not match "gallon-imperial".
     fn unit_matches_any(target_unit: &str, units: &HashSet<String>) -> bool {
-        units.iter().any(|u| u.contains(target_unit))
+        units
+            .iter()
+            .any(|u| u.split("-and-").any(|part| part == target_unit))
     }
 
     /// Returns a map from each category (e.g., "length", "mass", "duration") to a map from each region to a set of units.
@@ -549,13 +552,14 @@ impl Supplemental {
     }
 
     /// Determines the type of unit based on the region and category.
-    /// If the unit is present in the unit preferences and the region is present in the unit preferences, it is a core unit.
-    /// If the unit is present in the unit preferences but not in the region preferences, it is an extended unit.
+    /// If the unit is present in the unit preferences of the region or of the world default region "001", it is a core unit.
+    /// If the unit is present in the unit preferences of other regions only, it is an extended unit.
     /// If the unit is not present in the unit preferences, it is an outlier unit.
     ///
-    /// If the specific region is not found, falls back to region "001" (world/default region).
+    /// The "001" units are core in every region, because every locale falls back to `und`, whose region is "001".
+    /// Otherwise, `und`'s core data would be found before the locale's own extended data (#8125).
     ///
-    /// The matching includes subunit matching: a unit like "foot" will match compound units like "foot-and-inch".
+    /// The matching includes subunit matching: a unit like "foot" will match mixed units like "foot-and-inch".
     pub(crate) fn unit_type(
         category: &str,
         unit: &str,
@@ -567,10 +571,12 @@ impl Supplemental {
             None => return UnitType::Outlier,
         };
 
-        let found_in_region = region_units
-            .get(region)
-            .or_else(|| region_units.get("001"))
-            .is_some_and(|units| Self::unit_matches_any(unit, units));
+        let preferred_in = |region: &str| {
+            region_units
+                .get(region)
+                .is_some_and(|units| Self::unit_matches_any(unit, units))
+        };
+        let found_in_region = preferred_in(region) || preferred_in("001");
 
         let found_anywhere = region_units
             .values()
