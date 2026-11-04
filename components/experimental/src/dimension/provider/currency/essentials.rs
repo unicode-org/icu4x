@@ -58,12 +58,29 @@ pub struct CurrencyEssentials<'data> {
 
 icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
 
+/// Whether the first and the last character of a currency symbol are letters.
+///
+/// The getters on [`CurrencyEssentials`] use this to choose the `alphaNextToNumber`
+/// patterns, which add a space when a letter of the symbol would touch the number
+/// (`USD 12.00` instead of `USD12.00`).
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
+pub struct SymbolLetters {
+    /// Whether the first character of the symbol is a letter.
+    pub first: bool,
+    /// Whether the last character of the symbol is a letter.
+    pub last: bool,
+}
+
+impl SymbolLetters {
+    /// An ISO code, such as `USD`, is three letters.
+    pub const ISO_CODE: Self = Self {
+        first: true,
+        last: true,
+    };
+}
+
 impl<'a> CurrencyEssentials<'a> {
-    pub fn get_positive(
-        &'a self,
-        symbol_starts_with_letter: bool,
-        symbol_ends_with_letter: bool,
-    ) -> &'a DoublePlaceholderPattern {
+    pub fn get_positive(&'a self, letters: SymbolLetters) -> &'a DoublePlaceholderPattern {
         let standard = self
             .patterns
             .get(self.indices.standard as usize)
@@ -73,7 +90,7 @@ impl<'a> CurrencyEssentials<'a> {
             });
 
         if self.indices.standard_alpha_next_to_number != self.indices.standard
-            && is_alpha_next_to_number(standard, symbol_starts_with_letter, symbol_ends_with_letter)
+            && is_alpha_next_to_number(standard, letters)
         {
             self.patterns
                 .get(self.indices.standard_alpha_next_to_number as usize)
@@ -91,11 +108,7 @@ impl<'a> CurrencyEssentials<'a> {
     /// If the category has no explicit negative pattern, `None` is returned and the caller
     /// falls back to the positive pattern of the same category, applying the sign
     /// itself per UTS #35 (LDML Part 3: Numbers, Section 3.2.1).
-    pub fn get_negative(
-        &'a self,
-        symbol_starts_with_letter: bool,
-        symbol_ends_with_letter: bool,
-    ) -> Option<&'a DoublePlaceholderPattern> {
+    pub fn get_negative(&'a self, letters: SymbolLetters) -> Option<&'a DoublePlaceholderPattern> {
         let Some(standard) = self.patterns.get(self.indices.standard as usize) else {
             debug_assert!(false, "Standard pattern index is out of bounds");
             return None;
@@ -103,7 +116,7 @@ impl<'a> CurrencyEssentials<'a> {
 
         let negative_idx = if self.indices.standard_alpha_next_to_number_negative
             != self.indices.standard_negative
-            && is_alpha_next_to_number(standard, symbol_starts_with_letter, symbol_ends_with_letter)
+            && is_alpha_next_to_number(standard, letters)
         {
             self.indices.standard_alpha_next_to_number_negative
         } else {
@@ -119,8 +132,7 @@ impl<'a> CurrencyEssentials<'a> {
 
     pub fn get_positive_accounting(
         &'a self,
-        symbol_starts_with_letter: bool,
-        symbol_ends_with_letter: bool,
+        letters: SymbolLetters,
     ) -> &'a DoublePlaceholderPattern {
         let standard = self
             .patterns
@@ -131,7 +143,7 @@ impl<'a> CurrencyEssentials<'a> {
             });
 
         if self.indices.accounting_alpha_next_to_number_positive != self.indices.accounting_positive
-            && is_alpha_next_to_number(standard, symbol_starts_with_letter, symbol_ends_with_letter)
+            && is_alpha_next_to_number(standard, letters)
         {
             self.patterns
                 .get(self.indices.accounting_alpha_next_to_number_positive as usize)
@@ -151,8 +163,7 @@ impl<'a> CurrencyEssentials<'a> {
     /// sign itself per UTS #35 (LDML Part 3: Numbers, Section 3.2.1).
     pub fn get_negative_accounting(
         &'a self,
-        symbol_starts_with_letter: bool,
-        symbol_ends_with_letter: bool,
+        letters: SymbolLetters,
     ) -> Option<&'a DoublePlaceholderPattern> {
         let Some(accounting) = self.patterns.get(self.indices.accounting_positive as usize) else {
             debug_assert!(false, "Accounting pattern index is out of bounds");
@@ -161,11 +172,8 @@ impl<'a> CurrencyEssentials<'a> {
 
         let negative_idx = if self.indices.accounting_alpha_next_to_number_negative
             != self.indices.accounting_negative
-            && is_alpha_next_to_number(
-                accounting,
-                symbol_starts_with_letter,
-                symbol_ends_with_letter,
-            ) {
+            && is_alpha_next_to_number(accounting, letters)
+        {
             self.indices.accounting_alpha_next_to_number_negative
         } else {
             self.indices.accounting_negative
@@ -179,11 +187,7 @@ impl<'a> CurrencyEssentials<'a> {
     }
 }
 
-fn is_alpha_next_to_number(
-    pattern: &DoublePlaceholderPattern,
-    symbol_starts_with_letter: bool,
-    symbol_ends_with_letter: bool,
-) -> bool {
+fn is_alpha_next_to_number(pattern: &DoublePlaceholderPattern, letters: SymbolLetters) -> bool {
     let position = |key| {
         pattern
             .iter()
@@ -195,9 +199,9 @@ fn is_alpha_next_to_number(
         position(DoublePlaceholderKey::Place1),
     ) {
         // The symbol comes right after the number: its first character is next to the number.
-        (Some(number), Some(currency)) if number + 1 == currency => symbol_starts_with_letter,
+        (Some(number), Some(currency)) if number + 1 == currency => letters.first,
         // The symbol comes right before the number: its last character is next to the number.
-        (Some(number), Some(currency)) if currency + 1 == number => symbol_ends_with_letter,
+        (Some(number), Some(currency)) if currency + 1 == number => letters.last,
         // They aren't next to each other, or the pattern lacks one of them.
         _ => false,
     }
@@ -205,24 +209,30 @@ fn is_alpha_next_to_number(
 
 #[test]
 fn test_is_alpha_next_to_number() {
+    const FIRST: SymbolLetters = SymbolLetters {
+        first: true,
+        last: false,
+    };
+    const LAST: SymbolLetters = SymbolLetters {
+        first: false,
+        last: true,
+    };
+
     #[track_caller]
-    fn check(pattern: &str, starts_with_letter: bool, ends_with_letter: bool, expected: bool) {
+    fn check(pattern: &str, letters: SymbolLetters, expected: bool) {
         let pattern = DoublePlaceholderPattern::try_from_str(pattern, Default::default()).unwrap();
-        assert_eq!(
-            is_alpha_next_to_number(&pattern, starts_with_letter, ends_with_letter),
-            expected
-        );
+        assert_eq!(is_alpha_next_to_number(&pattern, letters), expected);
     }
 
     // The symbol comes right after the number: its first character is next to the number.
-    check("{0}{1}", true, false, true);
-    check("{0}{1}", false, true, false);
+    check("{0}{1}", FIRST, true);
+    check("{0}{1}", LAST, false);
     // The symbol comes right before the number: its last character is next to the number.
-    check("{1}{0}", false, true, true);
-    check("{1}{0}", true, false, false);
+    check("{1}{0}", LAST, true);
+    check("{1}{0}", FIRST, false);
     // A space separates them.
-    check("{1} {0}", true, true, false);
+    check("{1} {0}", SymbolLetters::ISO_CODE, false);
     // A pattern without one of the placeholders.
-    check("{1}", true, true, false);
-    check("{0}", true, true, false);
+    check("{1}", SymbolLetters::ISO_CODE, false);
+    check("{0}", SymbolLetters::ISO_CODE, false);
 }
