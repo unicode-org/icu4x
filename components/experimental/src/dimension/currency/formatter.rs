@@ -1500,7 +1500,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     essential.get(),
                     self.usage,
                     rounded_value.sign,
-                    SymbolLetters::ISO_CODE,
+                    SymbolLetters::Both,
                 );
                 (pattern, iso_code.as_str(), sign)
             }
