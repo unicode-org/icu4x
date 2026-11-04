@@ -203,8 +203,8 @@ fn test_essentials() {
     let provider = SourceDataProvider::new_testing();
 
     // `$` has no letters; an ISO code like `USD` is all letters.
-    let dollar = SymbolLetters::default();
-    let usd = SymbolLetters::ISO_CODE;
+    let dollar = SymbolLetters::Neither;
+    let usd = SymbolLetters::Both;
 
     let en: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {

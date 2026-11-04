@@ -93,11 +93,13 @@ impl CurrencySymbol<'_> {
         self.0.sized & 0b01 != 0
     }
 
-    /// Returns whether the first and the last character of the symbol are letters.
+    /// Returns which ends of the symbol are letters.
     pub fn letters(&self) -> SymbolLetters {
-        SymbolLetters {
-            first: self.starts_with_letter(),
-            last: self.ends_with_letter(),
+        match (self.starts_with_letter(), self.ends_with_letter()) {
+            (false, false) => SymbolLetters::Neither,
+            (true, false) => SymbolLetters::First,
+            (false, true) => SymbolLetters::Last,
+            (true, true) => SymbolLetters::Both,
         }
     }
 

@@ -58,25 +58,31 @@ pub struct CurrencyEssentials<'data> {
 
 icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
 
-/// Whether the first and the last character of a currency symbol are letters.
+/// Which ends of a currency symbol are letters.
 ///
 /// The getters on [`CurrencyEssentials`] use this to choose the `alphaNextToNumber`
 /// patterns, which add a space when a letter of the symbol would touch the number
 /// (`USD 12.00` instead of `USD12.00`).
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-pub struct SymbolLetters {
-    /// Whether the first character of the symbol is a letter.
-    pub first: bool,
-    /// Whether the last character of the symbol is a letter.
-    pub last: bool,
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum SymbolLetters {
+    /// Neither end is a letter, like `$` or `€`.
+    Neither,
+    /// Only the first character is a letter, like `US$`.
+    First,
+    /// Only the last character is a letter, like `$US` (USD in `fr`).
+    Last,
+    /// Both ends are letters, like an ISO code (`USD`).
+    Both,
 }
 
 impl SymbolLetters {
-    /// An ISO code, such as `USD`, is three letters.
-    pub const ISO_CODE: Self = Self {
-        first: true,
-        last: true,
-    };
+    fn first_is_letter(self) -> bool {
+        matches!(self, Self::First | Self::Both)
+    }
+
+    fn last_is_letter(self) -> bool {
+        matches!(self, Self::Last | Self::Both)
+    }
 }
 
 impl<'a> CurrencyEssentials<'a> {
@@ -199,9 +205,9 @@ fn is_alpha_next_to_number(pattern: &DoublePlaceholderPattern, letters: SymbolLe
         position(DoublePlaceholderKey::Place1),
     ) {
         // The symbol comes right after the number: its first character is next to the number.
-        (Some(number), Some(currency)) if number + 1 == currency => letters.first,
+        (Some(number), Some(currency)) if number + 1 == currency => letters.first_is_letter(),
         // The symbol comes right before the number: its last character is next to the number.
-        (Some(number), Some(currency)) if currency + 1 == number => letters.last,
+        (Some(number), Some(currency)) if currency + 1 == number => letters.last_is_letter(),
         // They aren't next to each other, or the pattern lacks one of them.
         _ => false,
     }
@@ -209,15 +215,6 @@ fn is_alpha_next_to_number(pattern: &DoublePlaceholderPattern, letters: SymbolLe
 
 #[test]
 fn test_is_alpha_next_to_number() {
-    const FIRST: SymbolLetters = SymbolLetters {
-        first: true,
-        last: false,
-    };
-    const LAST: SymbolLetters = SymbolLetters {
-        first: false,
-        last: true,
-    };
-
     #[track_caller]
     fn check(pattern: &str, letters: SymbolLetters, expected: bool) {
         let pattern = DoublePlaceholderPattern::try_from_str(pattern, Default::default()).unwrap();
@@ -225,14 +222,16 @@ fn test_is_alpha_next_to_number() {
     }
 
     // The symbol comes right after the number: its first character is next to the number.
-    check("{0}{1}", FIRST, true);
-    check("{0}{1}", LAST, false);
+    check("{0}{1}", SymbolLetters::First, true);
+    check("{0}{1}", SymbolLetters::Last, false);
     // The symbol comes right before the number: its last character is next to the number.
-    check("{1}{0}", LAST, true);
-    check("{1}{0}", FIRST, false);
+    check("{1}{0}", SymbolLetters::Last, true);
+    check("{1}{0}", SymbolLetters::First, false);
+    // No letters at either end.
+    check("{1}{0}", SymbolLetters::Neither, false);
     // A space separates them.
-    check("{1} {0}", SymbolLetters::ISO_CODE, false);
+    check("{1} {0}", SymbolLetters::Both, false);
     // A pattern without one of the placeholders.
-    check("{1}", SymbolLetters::ISO_CODE, false);
-    check("{0}", SymbolLetters::ISO_CODE, false);
+    check("{1}", SymbolLetters::Both, false);
+    check("{0}", SymbolLetters::Both, false);
 }
