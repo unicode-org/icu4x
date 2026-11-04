@@ -260,7 +260,6 @@ impl ExportDriver {
     ///
     /// The currently supported `AdaBoost` models are
     /// * `Chinese_adaboost`
-    /// * `CJ_adaboost`
     /// * `Japanese_adaboost`
     /// * `Thai_adaboost`
     ///
