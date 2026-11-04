@@ -745,10 +745,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
                 if !cli.overwrite && path.exists() {
                     eyre::bail!("Output path is present: {:?}", path);
                 }
-                Box::new(
-                    std::fs::File::create(&path)
-                        .with_context(|| path.to_string_lossy().to_string())?,
-                )
+                Box::new(File::create(&path).with_context(|| path.to_string_lossy().to_string())?)
             } else {
                 Box::new(std::io::stdout())
             };
@@ -777,7 +774,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
     let _metadata = metadata.or_else(missing_data_message)?;
 
     if cli.warning_log.is_some() {
-        icu_provider_source::flush_warning_file();
+        let _ = icu_provider_source::flush_warning_file();
     }
 
     Ok(())
