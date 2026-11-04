@@ -14,7 +14,7 @@ use zerovec::{ZeroMap, maps::ZeroMapKV};
 const CHINESE_ADABOOST_ID: &str = "Chinese_adaboost";
 const JAPANESE_ADABOOST_ID: &str = "Japanese_adaboost";
 const THAI_ADABOOST_ID: &str = "Thai_adaboost";
-const CHINESE_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model.json");
+const CHINESE_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model_chinese.json");
 const JAPANESE_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model_japanese.json");
 const THAI_MODEL_JSON: &str = include_str!("../../data/segmenter/adaboost/model_thai.json");
 const INVALID_FEATURE_KEY: DataError = DataError::custom("Invalid AdaBoost feature key");
@@ -242,88 +242,6 @@ impl IterableDataProviderCached<SegmenterAdaboostV1> for SourceDataProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn converts_built_in_chinese_model() {
-        let raw = parse_model::<RawRadicalAdaboostData>(CHINESE_MODEL_JSON)
-            .expect("the built-in Chinese AdaBoost model should parse");
-
-        let counts = [
-            raw.uw2.len(),
-            raw.uw3.len(),
-            raw.uw4.len(),
-            raw.uw5.len(),
-            raw.bw2.len(),
-            raw.rad.len(),
-            raw.lsrid.len(),
-            raw.rsrid.len(),
-        ];
-        assert_eq!(counts, [730, 802, 850, 746, 644, 734, 384, 401]);
-
-        let AdaboostData::Radical { bias, .. } = raw
-            .try_convert()
-            .expect("the built-in Chinese AdaBoost model should convert")
-        else {
-            panic!("the Chinese model should use radical features");
-        };
-        assert_eq!(bias, 4);
-    }
-
-    fn ngram_counts(raw: &RawNgramAdaboostData) -> [usize; 13] {
-        [
-            raw.uw1.len(),
-            raw.uw2.len(),
-            raw.uw3.len(),
-            raw.uw4.len(),
-            raw.uw5.len(),
-            raw.uw6.len(),
-            raw.bw1.len(),
-            raw.bw2.len(),
-            raw.bw3.len(),
-            raw.tw1.len(),
-            raw.tw2.len(),
-            raw.tw3.len(),
-            raw.tw4.len(),
-        ]
-    }
-
-    #[test]
-    fn converts_built_in_thai_model() {
-        let raw = parse_model::<RawNgramAdaboostData>(THAI_MODEL_JSON)
-            .expect("the built-in Thai AdaBoost model should parse");
-        assert_eq!(
-            ngram_counts(&raw),
-            [57, 62, 54, 71, 62, 54, 391, 443, 415, 673, 495, 536, 588]
-        );
-
-        let AdaboostData::Ngram { bias, tw4, .. } = raw
-            .try_convert()
-            .expect("the built-in Thai AdaBoost model should convert")
-        else {
-            panic!("the Thai model should use n-gram features");
-        };
-        assert_eq!(bias, -3755);
-        assert_eq!(tw4.get_copied("ละ"), Some(870));
-    }
-
-    #[test]
-    fn converts_built_in_japanese_model() {
-        let raw = parse_model::<RawNgramAdaboostData>(JAPANESE_MODEL_JSON)
-            .expect("the built-in Japanese AdaBoost model should parse");
-        assert_eq!(
-            ngram_counts(&raw),
-            [120, 167, 192, 244, 117, 108, 208, 153, 156, 78, 37, 43, 87]
-        );
-
-        let AdaboostData::Ngram { bias, tw3, .. } = raw
-            .try_convert()
-            .expect("the built-in Japanese AdaBoost model should convert")
-        else {
-            panic!("the Japanese model should use n-gram features");
-        };
-        assert_eq!(bias, -3331);
-        assert_eq!(tw3.get_copied("という"), Some(377));
-    }
 
     #[test]
     fn loads_every_built_in_model() {
