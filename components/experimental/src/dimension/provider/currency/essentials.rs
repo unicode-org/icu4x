@@ -92,7 +92,7 @@ impl<'a> CurrencyEssentials<'a> {
     /// Returns the patterns for `usage` and a symbol with the given `letters`.
     pub fn patterns(&'a self, usage: CurrencyUsage, letters: SymbolLetters) -> PatternPair<'a> {
         let i = self.indices;
-        let (normal, alpha_next_to_number) = match usage {
+        let (plain, alpha_next_to_number) = match usage {
             CurrencyUsage::Standard => (
                 self.pair(i.standard, i.standard_negative),
                 self.pair(
@@ -111,7 +111,7 @@ impl<'a> CurrencyEssentials<'a> {
 
         // CLDR's `alphaNextToNumber` patterns are for symbols that touch the number with a
         // letter: `USD 12.00`, but `$12.00`. The positive pattern decides for both signs.
-        let letter_touches_number = match SymbolPlacement::of(normal.positive) {
+        let letter_touches_number = match SymbolPlacement::of(plain.positive) {
             SymbolPlacement::JustBefore => letters.last_is_letter(),
             SymbolPlacement::JustAfter => letters.first_is_letter(),
             SymbolPlacement::Apart => false,
@@ -119,7 +119,7 @@ impl<'a> CurrencyEssentials<'a> {
         if letter_touches_number {
             alpha_next_to_number
         } else {
-            normal
+            plain
         }
     }
 
