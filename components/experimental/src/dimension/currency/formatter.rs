@@ -8,13 +8,13 @@ use super::super::provider::currency::{
     essentials::{CurrencyEssentialsV1, SymbolLetters},
     extended::CurrencyExtendedDataV1,
     fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
-    no_currency::{CurrencyPatternsNoCurrency, CurrencyPatternsNoCurrencyV1},
+    no_currency::CurrencyPatternsNoCurrencyV1,
     patterns::CurrencyPatternsDataV1,
     symbols::{CurrencyDecimalSymbolsV1, CurrencySymbolWidth, CurrencySymbolsV1},
 };
 use super::CurrencyType;
 use fixed_decimal::{
-    Decimal as FixedDecimal, RoundingIncrement, Sign, SignedRoundingMode, UnsignedRoundingMode,
+    Decimal as FixedDecimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode,
 };
 use icu_decimal::preferences::CompactDecimalFormatterPreferences;
 use icu_decimal::{
@@ -1496,12 +1496,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 essential,
                 iso_code,
             } => {
-                let (pattern, sign) = select_essentials_pattern(
-                    essential.get(),
-                    self.usage,
-                    rounded_value.sign,
-                    SymbolLetters::Both,
-                );
+                let (pattern, sign) = essential
+                    .get()
+                    .patterns(self.usage, SymbolLetters::Both)
+                    .for_sign(rounded_value.sign);
                 (pattern, iso_code.as_str(), sign)
             }
             CurrencyFormatterData::IsoCodeName { patterns, iso_code } => {
@@ -1510,12 +1508,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             }
             CurrencyFormatterData::Symbol { essential, symbol } => {
                 let symbol = symbol.get();
-                let (pattern, sign) = select_essentials_pattern(
-                    essential.get(),
-                    self.usage,
-                    rounded_value.sign,
-                    symbol.letters(),
-                );
+                let (pattern, sign) = essential
+                    .get()
+                    .patterns(self.usage, symbol.letters())
+                    .for_sign(rounded_value.sign);
                 (pattern, symbol.as_str(), sign)
             }
             CurrencyFormatterData::Name {
@@ -1529,8 +1525,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 (pattern, currency_str, rounded_value.sign)
             }
             CurrencyFormatterData::NoCurrency { patterns } => {
-                let (pattern, sign) =
-                    select_no_currency_pattern(patterns.get(), self.usage, rounded_value.sign);
+                let (pattern, sign) = patterns
+                    .get()
+                    .patterns(self.usage)
+                    .for_sign(rounded_value.sign);
                 (pattern, "", sign)
             }
         };
@@ -1545,66 +1543,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             sign,
         )
     }
-}
-
-/// Selects the pattern for no-currency formatting for the given sign.
-///
-/// Returns [`Sign::None`] if an explicit negative pattern is matched (which already encodes the sign).
-fn select_no_currency_pattern<'a>(
-    patterns: &'a CurrencyPatternsNoCurrency<'_>,
-    usage: CurrencyUsage,
-    sign: Sign,
-) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
-    if usage == CurrencyUsage::Accounting {
-        if sign == Sign::Negative
-            && let Some(pattern) = patterns.get_negative_accounting()
-        {
-            return (pattern, Sign::None);
-        }
-        return (patterns.get_positive_accounting(), sign);
-    }
-
-    if sign == Sign::Negative
-        && let Some(pattern) = patterns.get_negative()
-    {
-        return (pattern, Sign::None);
-    }
-
-    (patterns.get_positive(), sign)
-}
-
-/// Selects the pattern from the currency essentials for the given sign.
-///
-/// If an explicit negative pattern exists for a negative value, it is returned along with
-/// [`Sign::None`]: such patterns already encode the sign (e.g. parentheses, or a minus sign
-/// placed by the pattern), so the pattern is interpolated with the absolute value and no
-/// sign is applied on top of it. Otherwise, per UTS #35 (LDML Part 3: Numbers, Section 3.2.1),
-/// the positive pattern of the same category is returned with the original sign, and the sign is
-/// rendered by the value formatter.
-fn select_essentials_pattern<'a>(
-    essentials: &'a super::super::provider::currency::essentials::CurrencyEssentials<'_>,
-    usage: CurrencyUsage,
-    sign: Sign,
-    letters: SymbolLetters,
-) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
-    let accounting = usage == CurrencyUsage::Accounting;
-    if sign == Sign::Negative {
-        let negative_pattern = if accounting {
-            essentials.get_negative_accounting(letters)
-        } else {
-            essentials.get_negative(letters)
-        };
-        if let Some(pattern) = negative_pattern {
-            return (pattern, Sign::None);
-        }
-    }
-
-    let positive_pattern = if accounting {
-        essentials.get_positive_accounting(letters)
-    } else {
-        essentials.get_positive(letters)
-    };
-    (positive_pattern, sign)
 }
 
 // TODO: Discuss reusing the `load_with_fallback` helper from `icu_decimal`
