@@ -181,7 +181,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -199,7 +199,7 @@ fn test_basic() {
         .interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
