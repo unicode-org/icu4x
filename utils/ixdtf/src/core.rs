@@ -16,6 +16,14 @@ pub(crate) struct Cursor<'a, T: EncodingType> {
     source: &'a [T::CodeUnit],
 }
 
+impl<T: EncodingType> Copy for Cursor<'_, T> {}
+
+impl<T: EncodingType> Clone for Cursor<'_, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
 impl<'a, T: EncodingType> Cursor<'a, T> {
     /// Create a new cursor from a source UTF8 string.
     #[must_use]
@@ -33,53 +41,31 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         self.pos
     }
 
-    /// Get current position
-    pub(crate) fn set_position(&mut self, pos: usize) {
-        self.pos = pos;
-    }
-
-    /// Returns current position in source as `char`.
-    pub(crate) fn current(&self) -> ParserResult<Option<u8>> {
-        self.peek_n(0)
-    }
-
-    /// Peeks the value at `n` as a `char`.
-    pub(crate) fn peek_n(&self, n: usize) -> ParserResult<Option<u8>> {
-        T::get_ascii(self.source, self.pos + n)
-    }
-
-    /// Runs the provided check on the current position.
-    pub(crate) fn check<F>(&self, f: F) -> ParserResult<Option<bool>>
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        Ok(self.current()?.map(f))
-    }
-
-    /// Runs the provided check on current position returns the default value if None.
-    pub(crate) fn check_or<F>(&self, default: bool, f: F) -> ParserResult<bool>
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        Ok(self.current()?.map_or(default, f))
-    }
-
     /// Returns `Cursor`'s current char and advances to the next position.
     pub(crate) fn next(&mut self) -> ParserResult<Option<u8>> {
-        let result = self.current();
-        self.advance_n(1);
+        let result = T::get_ascii(self.source, self.pos);
+        self.pos += 1;
         result
+    }
+
+    /// Runs `f` on a speculative copy of the cursor, committing the cursor's
+    /// advancement only if `f` returns `Ok(Some(_))`.
+    pub(crate) fn speculative_parse<R>(
+        &mut self,
+        f: impl FnOnce(&mut Self) -> ParserResult<Option<R>>,
+    ) -> ParserResult<Option<R>> {
+        let mut next = *self;
+        if let Some(result) = f(&mut next)? {
+            *self = next;
+            Ok(Some(result))
+        } else {
+            Ok(None)
+        }
     }
 
     /// Advances the cursor and returns the current char if it satisfies `f`.
     pub(crate) fn next_if(&mut self, f: impl FnOnce(u8) -> bool) -> ParserResult<Option<u8>> {
-        if let Some(ch) = self.current()? {
-            if f(ch) {
-                self.advance();
-                return Ok(Some(ch));
-            }
-        }
-        Ok(None)
+        self.speculative_parse(|cursor| Ok(cursor.next()?.filter(|&ch| f(ch))))
     }
 
     /// Returns the next value as a digit
@@ -98,23 +84,6 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
     /// A utility next method that returns an [`ParseError::AbruptEnd`] error if invalid.
     pub(crate) fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
         self.next()?.ok_or(err)
-    }
-
-    /// Advances the cursor's position by n code points.
-    pub(crate) fn advance_n(&mut self, n: usize) {
-        self.pos += n;
-    }
-
-    // Advances the cursor by 1 code point.
-    pub(crate) fn advance(&mut self) {
-        self.advance_n(1)
-    }
-
-    /// Utility function to advance when a condition is true
-    pub(crate) fn advance_if(&mut self, condition: bool) {
-        if condition {
-            self.advance();
-        }
     }
 
     /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.
