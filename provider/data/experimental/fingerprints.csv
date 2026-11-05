@@ -72536,7 +72536,7 @@ units/id/v1, und/week-person, 2B, 2B, f3063024e8cdd789
 units/id/v1, und/yard, 2B, 2B, 45c353942c1c7a6b
 units/id/v1, und/year, 2B, 2B, a7eca90793b8bfd
 units/id/v1, und/year-person, 2B, 2B, f31a481ab840dad
-units/info/v1, <singleton>, 4657B, 4635B, 261d97f3b3e99319
+units/info/v1, <singleton>, 4628B, 4606B, 258877957dafa8fe
 units/names/area/core/v1, <lookup>, 16804B, 1113 identifiers
 units/names/area/core/v1, <total>, 37464B, 22991B, 630 unique payloads
 units/names/area/core/v1, af/long-hectare, 34B, 11B, bdbf2d1fdfceb6a3
