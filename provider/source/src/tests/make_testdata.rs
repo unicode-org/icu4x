@@ -3,10 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::decimal::provider::DecimalSymbolsV1;
 use icu::experimental::dimension::provider::currency::symbols::{
     CurrencyDecimalSymbolsV1, CurrencySymbolsV1,
 };
 use icu::locale::{DataLocale, data_locale};
+use icu_provider::prelude::*;
 use icu_provider_export::prelude::*;
 
 include!("../../tests/locales.rs.data");
@@ -36,6 +38,30 @@ fn make_testdata() {
     .unwrap();
 
     let provider = SourceDataProvider::new_testing();
+
+    // `pt-PT` isn't in `LOCALES`: the test data only has its numbers and currencies files,
+    // for the escudo (PTE), which overrides the locale's decimal symbols. So write only
+    // these two payloads for it.
+    let pt_pt = data_locale!("pt-PT");
+    for (marker, attributes) in [
+        (DecimalSymbolsV1::INFO, ""),
+        (CurrencyDecimalSymbolsV1::INFO, "PTE"),
+    ] {
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::from_str_or_panic(attributes),
+            &pt_pt,
+        );
+        let response = provider
+            .load_data(
+                marker,
+                DataRequest {
+                    id,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        exporter.put_payload(marker, id, &response.payload).unwrap();
+    }
 
     ExportDriver::new(
         LOCALES.iter().copied().map(DataLocaleFamily::single),
