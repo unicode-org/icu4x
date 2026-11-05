@@ -48,6 +48,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "regex-automata",
     "smallvec",
     "stable_deref_trait",
+    "utf_types",
     "utf16_iter",
     "utf8_iter",
     "write16",
