@@ -42,7 +42,14 @@ fn test_cldr_unit_tests() {
 
     for test in tests {
         if test.input_unit == "beaufort" {
-            // TODO(#6804): Support beaufort
+            // TODO(#8673): Support beaufort. Until then, it has no conversion data.
+            let input_unit = MeasureUnit::try_from_str(&test.input_unit).unwrap();
+            let output_unit = MeasureUnit::try_from_str(&test.output_unit).unwrap();
+            assert!(
+                converter_factory
+                    .converter::<f64>(&input_unit, &output_unit)
+                    .is_err()
+            );
             continue;
         }
 

@@ -44,6 +44,9 @@ pub(crate) struct ConvertUnit {
 
     #[serde(rename = "_offset")]
     pub(crate) offset: Option<String>,
+
+    #[serde(rename = "_special")]
+    pub(crate) special: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
