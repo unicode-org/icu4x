@@ -161,7 +161,12 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     CurrencySymbolsV1::make_attributes(currency, width, &mut Default::default()),
                     &locale,
                 ),
-                ..Default::default()
+                // A missing entry is expected (it falls back to the ISO code), so don't log it.
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
             },
         )
         .allow_identifier_not_found()?
@@ -284,7 +289,12 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     marker_attributes,
                     &locale,
                 ),
-                ..Default::default()
+                // A missing name is expected (see above), so don't log it.
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
             })
             .allow_identifier_not_found()?
             .map(|res| res.payload);
@@ -346,7 +356,12 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                     marker_attributes,
                     &locale,
                 ),
-                ..Default::default()
+                // A missing name is expected (see above), so don't log it.
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
             })
             .allow_identifier_not_found()?
             .map(|res| res.payload);
