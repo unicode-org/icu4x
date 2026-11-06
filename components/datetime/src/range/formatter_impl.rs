@@ -6,7 +6,7 @@ use crate::FormattedDateTime;
 use crate::format::DateTimeInputUnchecked;
 use crate::pattern::RawDateTimeNamesBorrowed;
 use crate::provider::range_patterns::RangePatternInfoBorrowed;
-use crate::range::difference::{Difference, resolve_difference};
+use crate::range::difference::{Difference, DifferenceFields, resolve_difference};
 use crate::range::write::{
     FormattedDateRange, FormattedDateRangeInner, FormattedGreatestDifference,
     FormattedRangeFallback, FormattedTimeRangeMixed,
@@ -129,8 +129,8 @@ impl<'a> RangeFormatterCore<'a> {
     ) -> FormattedDateRange<'a> {
         let dayperiods = self.names.dayperiod_names();
 
-        // 1. Resolve difference
-        let diff = resolve_difference(start, end, dayperiods);
+        // 1. Resolve difference, looking only at the fields of the field set.
+        let diff = resolve_difference(start, end, dayperiods, self.difference_fields());
 
         // CLDR Step 5: If there is no difference among any of the fields in the fieldset,
         // format as a single date using availableFormats, and return.
@@ -242,5 +242,37 @@ impl<'a> RangeFormatterCore<'a> {
         };
 
         diff >= smallest_diff
+    }
+
+    /// The fields of the input that the field set shows.
+    ///
+    /// [`Self::contains_difference`] handles differences that are finer than the field set;
+    /// this handles the other fields: a different year is not a difference of `MD`, and a
+    /// time zone is only a difference of a field set that shows one.
+    fn difference_fields(&self) -> DifferenceFields {
+        use crate::fieldsets::builder::DateFields as F;
+
+        let zone = self.selection.zone.is_some();
+        let Some(date_fields) = self.selection.options.date_fields else {
+            if !self.range_selection.time_range.payload.is_payload() && !zone {
+                // Not a field set that we know how to narrow down.
+                return DifferenceFields::ALL;
+            }
+            return DifferenceFields {
+                year: false,
+                month: false,
+                day_of_month: false,
+                weekday: false,
+                zone,
+            };
+        };
+        let shows = |fields: &[F]| fields.contains(&date_fields);
+        DifferenceFields {
+            year: shows(&[F::Y, F::YM, F::YMD, F::YMDE]),
+            month: shows(&[F::M, F::YM, F::MD, F::YMD, F::MDE, F::YMDE]),
+            day_of_month: shows(&[F::D, F::MD, F::YMD, F::DE, F::MDE, F::YMDE]),
+            weekday: shows(&[F::DE, F::MDE, F::YMDE, F::E]),
+            zone,
+        }
     }
 }

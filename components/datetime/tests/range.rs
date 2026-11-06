@@ -754,3 +754,58 @@ fn test_step_5_single_date_fallback() {
         "Dec 1, 2023, 9:30\u{202f}AM\u{2009}–\u{2009}5:30\u{202f}PM"
     );
 }
+
+/// Fields that are not part of the field set must not influence a range: a dynamic field set
+/// receives all fields of the input (including the zone), a typed one only its own.
+/// <https://github.com/unicode-org/icu4x/issues/8382>
+#[test]
+fn test_range_ignores_fields_outside_the_field_set() {
+    use icu_datetime::fieldsets::enums::{CompositeFieldSet, DateFieldSet};
+    use icu_time::{ZonedDateTime, zone::IanaParser};
+
+    let zoned = |s: &str| {
+        ZonedDateTime::try_lenient_from_str(s, icu_calendar::Iso, IanaParser::new()).unwrap()
+    };
+
+    // The zone differs between start and end, but the field set has no zone.
+    let ymd = DateRangeFormatter::try_new(
+        locale!("th-u-ca-buddhist").into(),
+        CompositeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium())),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        ymd.format(
+            &zoned("2023-12-22T09:00:00+00:00[Etc/UTC]"),
+            &zoned("2023-12-23T17:00:00+00:00[Etc/UTC]")
+        ),
+        "22–23 ธ.ค. 2566"
+    );
+
+    // Only the year differs, and the field set has no year.
+    let md = DateRangeFormatter::try_new(
+        locale!("en").into(),
+        CompositeFieldSet::Date(DateFieldSet::MD(fieldsets::MD::medium())),
+    )
+    .unwrap();
+    assert_writeable_eq!(
+        md.format(
+            &zoned("2022-12-22T09:00:00+00:00[Etc/UTC]"),
+            &zoned("2023-12-22T09:00:00+00:00[Etc/UTC]")
+        ),
+        "Dec 22"
+    );
+}
+
+/// A weekday-only field set differs when the weekday differs.
+#[test]
+fn test_range_weekday_only() {
+    let start = Date::try_new_gregorian(2023, 12, 22).unwrap();
+    let next_day = Date::try_new_gregorian(2023, 12, 23).unwrap();
+    let next_week = Date::try_new_gregorian(2023, 12, 29).unwrap();
+    let fmt = DateRangeFormatter::try_new(locale!("en").into(), fieldsets::E::long()).unwrap();
+    assert_writeable_eq!(
+        fmt.format(&start, &next_day),
+        "Friday\u{2009}–\u{2009}Saturday"
+    );
+    assert_writeable_eq!(fmt.format(&start, &next_week), "Friday");
+}

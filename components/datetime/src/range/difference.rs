@@ -58,6 +58,36 @@ impl Difference {
         matches!(self, Self::Day | Self::Month | Self::Year | Self::Era)
     }
 }
+/// The fields of the input that take part in the comparison.
+///
+/// A field set only shows some of the fields of a date, so a difference in another field
+/// must not turn `December 22` into `December 22 – December 22`. A typed field set is only
+/// given its own fields, but a dynamic one (`CompositeDateTimeFieldSet`,
+/// `CompositeFieldSet`) is given all of them.
+///
+/// Time fields are not listed: a time difference finer than the field set is handled by
+/// the threshold of `contains_difference`.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub(crate) struct DifferenceFields {
+    /// The era and the year.
+    pub(crate) year: bool,
+    pub(crate) month: bool,
+    pub(crate) day_of_month: bool,
+    pub(crate) weekday: bool,
+    pub(crate) zone: bool,
+}
+
+impl DifferenceFields {
+    /// Compare everything.
+    pub(crate) const ALL: Self = Self {
+        year: true,
+        month: true,
+        day_of_month: true,
+        weekday: true,
+        zone: true,
+    };
+}
+
 /// Resolves the greatest difference between two datetimes.
 ///
 /// If `dayperiod_names` is provided, it will be used to resolve flexible day periods (`B`).
@@ -67,13 +97,19 @@ pub(crate) fn resolve_difference(
     input1: &DateTimeInputUnchecked,
     input2: &DateTimeInputUnchecked,
     dayperiod_names: Option<&DayPeriodNames<'_>>,
+    fields: DifferenceFields,
 ) -> Difference {
-    if !input1.has_same_zone(input2) {
+    if fields.zone && !input1.has_same_zone(input2) {
         return Difference::Incomparable;
     }
 
     // Compare Date fields
-    match (input1.year, input2.year) {
+    let (year1, year2) = if fields.year {
+        (input1.year, input2.year)
+    } else {
+        (None, None)
+    };
+    match (year1, year2) {
         (Some(YearInfo::Era(e1)), Some(YearInfo::Era(e2))) => {
             if e1.era != e2.era {
                 return Difference::Era;
@@ -99,7 +135,7 @@ pub(crate) fn resolve_difference(
 
     let month1 = input1.month.map(|m| m.to_input());
     let month2 = input2.month.map(|m| m.to_input());
-    if month1 != month2 {
+    if fields.month && month1 != month2 {
         // This also catches the Some != None case in case
         // one input chooses to not use month codes. This is
         // expected: date time formatting typically needs month codes
@@ -107,7 +143,12 @@ pub(crate) fn resolve_difference(
         return Difference::Month;
     }
 
-    if input1.day_of_month != input2.day_of_month {
+    if fields.day_of_month && input1.day_of_month != input2.day_of_month {
+        return Difference::Day;
+    }
+
+    // A weekday-only field set has no day-of-month to compare.
+    if fields.weekday && input1.weekday != input2.weekday {
         return Difference::Day;
     }
 
@@ -178,14 +219,20 @@ mod tests {
     fn test_identical() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 10, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::None);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
+            Difference::None
+        );
     }
 
     #[test]
     fn test_year_diff() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2025, 1, 15, 10, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::Year);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
+            Difference::Year
+        );
     }
 
     #[test]
@@ -193,7 +240,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 2, 15, 10, 30, 0);
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
             Difference::Month
         );
     }
@@ -202,14 +249,20 @@ mod tests {
     fn test_day_diff() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 16, 10, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::Day);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
+            Difference::Day
+        );
     }
 
     #[test]
     fn test_hour_diff_same_ampm() {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 11, 30, 0);
-        assert_eq!(resolve_difference(&input1, &input2, None), Difference::Hour);
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
+            Difference::Hour
+        );
     }
 
     #[test]
@@ -217,7 +270,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 22, 30, 0); // 10 PM
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
             Difference::DayPeriodA
         );
     }
@@ -227,7 +280,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 10, 31, 0);
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
             Difference::Minute
         );
     }
@@ -237,7 +290,7 @@ mod tests {
         let input1 = create_input(2024, 1, 15, 10, 30, 0);
         let input2 = create_input(2024, 1, 15, 10, 30, 1);
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
             Difference::Second
         );
     }
@@ -249,8 +302,71 @@ mod tests {
         input1.zone_offset = Some(icu_time::zone::UtcOffset::zero());
         input2.zone_offset = Some(icu_time::zone::UtcOffset::try_from_seconds(3600).unwrap());
         assert_eq!(
-            resolve_difference(&input1, &input2, None),
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
             Difference::Incomparable
+        );
+    }
+
+    #[test]
+    fn test_fields_outside_the_field_set_are_not_compared() {
+        let year_only = create_input(2023, 12, 22, 9, 0, 0);
+        let other_year = create_input(2024, 12, 22, 9, 0, 0);
+        // `MD`: the year is not shown, and neither is the weekday that follows from it.
+        let md = DifferenceFields {
+            year: false,
+            weekday: false,
+            ..DifferenceFields::ALL
+        };
+        assert_eq!(
+            resolve_difference(&year_only, &other_year, None, DifferenceFields::ALL),
+            Difference::Year
+        );
+        assert_eq!(
+            resolve_difference(&year_only, &other_year, None, md),
+            Difference::None
+        );
+    }
+
+    #[test]
+    fn test_zone_is_compared_only_with_a_zone_field() {
+        let mut input1 = create_input(2024, 1, 15, 10, 30, 0);
+        let mut input2 = create_input(2024, 1, 15, 10, 30, 0);
+        input1.zone_offset = Some(icu_time::zone::UtcOffset::zero());
+        input2.zone_offset = Some(icu_time::zone::UtcOffset::try_from_seconds(3600).unwrap());
+        let no_zone = DifferenceFields {
+            zone: false,
+            ..DifferenceFields::ALL
+        };
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, DifferenceFields::ALL),
+            Difference::Incomparable
+        );
+        assert_eq!(
+            resolve_difference(&input1, &input2, None, no_zone),
+            Difference::None
+        );
+    }
+
+    /// A weekday-only field set has no day-of-month, so the weekday is what differs.
+    #[test]
+    fn test_weekday_only_diff() {
+        let weekday_only = DifferenceFields {
+            year: false,
+            month: false,
+            day_of_month: false,
+            weekday: true,
+            zone: false,
+        };
+        let friday = create_input(2023, 12, 22, 0, 0, 0);
+        let saturday = create_input(2023, 12, 23, 0, 0, 0);
+        let next_friday = create_input(2023, 12, 29, 0, 0, 0);
+        assert_eq!(
+            resolve_difference(&friday, &saturday, None, weekday_only),
+            Difference::Day
+        );
+        assert_eq!(
+            resolve_difference(&friday, &next_friday, None, weekday_only),
+            Difference::None
         );
     }
 }
