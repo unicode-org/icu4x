@@ -75,10 +75,25 @@ pub struct CurrencySymbol<'a>(
 );
 
 impl CurrencySymbol<'_> {
+    const USE_ISO_CODE: u8 = 0b0100;
+
     pub fn new(symbol: &str, starts_with_letter: bool, ends_with_letter: bool) -> Self {
         let sized = (starts_with_letter as u8) << 1 | (ends_with_letter as u8);
         let variable = VarZeroCow::from(symbol);
         Self(VarZeroCow::from_encodeable(&VarTuple { sized, variable }))
+    }
+
+    /// Creates a [`CurrencySymbol`] that indicates the currency's ISO code should be used as the symbol.
+    pub fn use_iso_code() -> Self {
+        Self(VarZeroCow::from_encodeable(&VarTuple {
+            sized: Self::USE_ISO_CODE,
+            variable: VarZeroCow::from(""),
+        }))
+    }
+
+    /// Returns true if the currency's ISO code should be used as the symbol.
+    pub fn is_iso_code(&self) -> bool {
+        self.0.sized & Self::USE_ISO_CODE != 0
     }
 
     /// Returns true if the symbol starts with a letter.
@@ -92,6 +107,10 @@ impl CurrencySymbol<'_> {
     }
 
     /// Returns the symbol as a string slice.
+    ///
+    /// Returns `""` for the ISO-code marker (see [`Self::use_iso_code`]), so check
+    /// [`Self::is_iso_code`] first: otherwise, an empty symbol means the locale has no
+    /// symbol for the currency (e.g. `PTE` in `pt-PT`).
     pub fn as_str(&self) -> &str {
         &self.0.variable
     }
