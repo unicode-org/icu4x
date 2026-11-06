@@ -120,7 +120,8 @@ impl DecimalFormatter {
         ))
     }
 
-    pub(crate) fn format_unsigned<'l>(
+    #[doc(hidden)] // used by relativetime
+    pub fn format_unsigned<'l>(
         &'l self,
         value: Cow<'l, UnsignedDecimal>,
     ) -> FormattedUnsignedDecimal<'l> {
