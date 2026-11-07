@@ -79,6 +79,20 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     #[doc(hidden)]
     fn into_raw(self) -> NonNull<Self::Raw>;
 
+    /// Extracts the raw pointer from `KindaSortaDangling<Option<Self>>` without
+    /// retagging `Box<T>`.
+    #[doc(hidden)]
+    #[allow(private_interfaces)]
+    #[inline]
+    fn option_into_raw(
+        opt: crate::kinda_sorta_dangling::KindaSortaDangling<Option<Self>>,
+    ) -> Option<NonNull<Self::Raw>>
+    where
+        Self: Sized,
+    {
+        opt.into_inner().map(Self::into_raw)
+    }
+
     /// Drops any memory associated with this pointer-like.
     ///
     /// # Safety
@@ -156,7 +170,22 @@ unsafe impl<T> CartablePointerLike for Box<T> {
 
     #[inline]
     fn into_raw(self) -> NonNull<T> {
-        NonNull::from(Box::leak(self))
+        // SAFETY: `Box::into_raw` is guaranteed to return a non-null pointer.
+        unsafe { NonNull::new_unchecked(Box::into_raw(self)) }
+    }
+    #[allow(private_interfaces)]
+    #[inline]
+    fn option_into_raw(
+        opt: crate::kinda_sorta_dangling::KindaSortaDangling<Option<Self>>,
+    ) -> Option<NonNull<T>> {
+        let opt = core::mem::ManuallyDrop::new(opt);
+        // SAFETY: By https://doc.rust-lang.org/std/option/index.html#representation,
+        // `Option<Box<T>>` (for `T: Sized`) is guaranteed to have the exact same layout and
+        // bit representation as `Option<NonNull<T>>`, and `KindaSortaDangling` is
+        // `#[repr(transparent)]` over `ManuallyDrop`. Reading `Option<NonNull<T>>` directly
+        // upholds `Yoke::cart` safety invariant #2 by avoiding moving `Box<T>` by value outside
+        // `KindaSortaDangling`.
+        unsafe { core::ptr::read((&raw const opt).cast::<Option<NonNull<T>>>()) }
     }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
@@ -303,9 +332,15 @@ where
     }
 
     /// Creates a new instance corresponding to a `Some` value.
+    #[cfg(test)]
     #[inline]
     pub(crate) fn from_cartable(cartable: C) -> Self {
-        let inner = cartable.into_raw();
+        Self::from_raw(cartable.into_raw())
+    }
+
+    /// Creates a new instance from a raw pointer returned by `CartablePointerLike`.
+    #[inline]
+    pub(crate) fn from_raw(inner: NonNull<C::Raw>) -> Self {
         debug_assert_ne!(inner, sentinel_for::<C::Raw>());
         Self {
             inner,

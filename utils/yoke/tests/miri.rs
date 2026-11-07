@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::Cow;
+use std::rc::Rc;
 use std::sync::Arc;
+use yoke::either::EitherCart;
+use yoke::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use yoke::{Yoke, Yokeable};
 
 // Test for strong protection, should pass under miri with -Zmiri-retag-fields
@@ -156,6 +159,91 @@ fn box_with_mut() {
         assert_eq!(&**cow, "hello");
     });
     assert_eq!(x.get(), "hello");
+}
+
+#[test]
+fn box_wrap_cart_in_option() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y: Yoke<&'static u8, Option<Box<u8>>> = x.wrap_cart_in_option();
+    assert_eq!(**y.get(), 42);
+    let y = y.try_into_yokeable().unwrap_err();
+    assert_eq!(**y.get(), 42);
+    // Nested Option<Option<Box<u8>>> (non-niche outer Option!)
+    let z: Yoke<&'static u8, Option<Option<Box<u8>>>> = y.wrap_cart_in_option();
+    assert_eq!(**z.get(), 42);
+}
+
+#[test]
+fn box_wrap_cart_in_either_then_option() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let ya: Yoke<&'static u8, EitherCart<Box<u8>, Rc<u8>>> = x.wrap_cart_in_either_a();
+    let yopt = ya.wrap_cart_in_option();
+    assert_eq!(**yopt.get(), 42);
+}
+
+#[test]
+fn box_wrap_cart_in_box() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y: Yoke<&'static u8, Box<Box<u8>>> = x.wrap_cart_in_box();
+    assert_eq!(**y.get(), 42);
+}
+
+#[test]
+fn box_wrap_cart_in_rc() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y: Yoke<&'static u8, Rc<Box<u8>>> = x.wrap_cart_in_rc();
+    assert_eq!(**y.get(), 42);
+    let y2 = y.clone();
+    assert_eq!(**y.get(), 42);
+    assert_eq!(**y2.get(), 42);
+}
+
+#[test]
+fn box_wrap_cart_in_arc() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y: Yoke<&'static u8, Arc<Box<u8>>> = x.wrap_cart_in_arc();
+    assert_eq!(**y.get(), 42);
+    let y2 = y.clone();
+    assert_eq!(**y.get(), 42);
+    assert_eq!(**y2.get(), 42);
+}
+
+#[test]
+fn box_wrap_cart_in_either() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let ya: Yoke<&'static u8, EitherCart<Box<u8>, Rc<u8>>> = x.wrap_cart_in_either_a();
+    assert_eq!(**ya.get(), 42);
+
+    let x2: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(99), |data| data);
+    let yb: Yoke<&'static u8, EitherCart<Rc<u8>, Box<u8>>> = x2.wrap_cart_in_either_b();
+    assert_eq!(**yb.get(), 99);
+}
+
+#[test]
+fn box_erase_box_cart() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y: Yoke<&'static u8, ErasedBoxCart> = x.erase_box_cart();
+    assert_eq!(**y.get(), 42);
+}
+
+#[test]
+fn box_erase_rc_and_arc_cart() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y: Yoke<&'static u8, ErasedRcCart> = x.wrap_cart_in_rc().erase_rc_cart();
+    assert_eq!(**y.get(), 42);
+
+    let x2: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y2: Yoke<&'static u8, ErasedArcCart> = x2.wrap_cart_in_arc().erase_arc_cart();
+    assert_eq!(**y2.get(), 42);
+}
+
+#[test]
+fn box_convert_cart_into_option_pointer() {
+    let x: Yoke<&'static u8, Box<u8>> = Yoke::attach_to_cart(Box::new(42), |data| data);
+    let y = x.wrap_cart_in_option().convert_cart_into_option_pointer();
+    assert_eq!(**y.get(), 42);
+    let y = y.try_into_yokeable().unwrap_err();
+    assert_eq!(**y.get(), 42);
 }
 
 #[test]

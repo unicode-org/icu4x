@@ -47,6 +47,7 @@ use stable_deref_trait::StableDeref;
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug)]
 #[allow(clippy::exhaustive_enums)] // stable
+#[repr(C)]
 pub enum EitherCart<C0, C1> {
     A(C0),
     B(C1),
