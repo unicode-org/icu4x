@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::mem::{ManuallyDrop, MaybeUninit};
+use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 
 /// This type is intended to be similar to the type `MaybeDangling<T>`
@@ -11,85 +11,83 @@ use core::ops::{Deref, DerefMut};
 /// The effect of this is that in Rust's safety model, types inside here are not
 /// expected to have any memory dependent validity properties (`dereferenceable`, `noalias`).
 ///
-/// See [#3696] for a testcase where `Yoke` fails under miri's field-retagging mode if not using
-/// [`KindaSortaDangling`].
+/// Since Rust 1.96.0 ([rust-lang/rust#147228]), [`ManuallyDrop<T>`] wraps
+/// `core::mem::MaybeDangling<T>` ([rust-lang/rust#118166]) internally, which suppresses
+/// field retagging (`noalias` / `dereferenceable`) in `rustc` and Miri while preserving
+/// layout niches of `T` (unlike `MaybeUninit<T>`, which is a `union` and strips all niches).
 ///
-/// This has `T: 'static` since we don't need anything
-/// else and we don't want to have to think (more) about variance over lifetimes or dropck.
+/// See [#3696] and [#2095] for testcases where `Yoke` fails under miri's field-retagging mode
+/// if not using [`KindaSortaDangling`].
 ///
-/// After [RFC 3336] lands we can use `MaybeDangling` instead.
+/// After [RFC 3336] lands publicly we can use `MaybeDangling` directly instead.
 ///
 /// Note that a version of this type also exists publicly as the [`maybe_dangling`]
 /// crate; which also exports a patched `ManuallyDrop` with similar semantics and
 /// does not require `T: 'static`. Consider using this if you need something more general
 /// and are okay with adding dependencies.
 ///
-/// [RFC 3336]: https://github.com/rust-lang/rfcs/pull/3336
+/// [RFC 3336]: https://rust-lang.github.io/rfcs/3336-maybe-dangling.html
+/// [rust-lang/rust#118166]: https://github.com/rust-lang/rust/issues/118166
+/// [rust-lang/rust#147228]: https://github.com/rust-lang/rust/pull/147228
 /// [#3696]: https://github.com/unicode-org/icu4x/issues/3696
+/// [#2095]: https://github.com/unicode-org/icu4x/issues/2095
 /// [`maybe_dangling`](https://docs.rs/maybe-dangling/0.1.0/maybe_dangling/struct.MaybeDangling.html)
 #[repr(transparent)]
-pub(crate) struct KindaSortaDangling<T: 'static> {
+pub(crate) struct KindaSortaDangling<T> {
     /// Safety invariant: This is always an initialized T, never uninit or other
     /// invalid bit patterns. Its drop glue will execute during [`Drop::drop`] rather than
     /// during the drop glue for [`KindaSortaDangling`], which means that we have to be careful about
     /// not touching the values as initialized during `drop` after that, but that's a short period of time.
-    dangle: MaybeUninit<T>,
+    dangle: ManuallyDrop<T>,
 }
 
-impl<T: 'static> KindaSortaDangling<T> {
+impl<T> KindaSortaDangling<T> {
     #[inline]
     pub(crate) const fn new(dangle: T) -> Self {
         KindaSortaDangling {
-            dangle: MaybeUninit::new(dangle),
+            dangle: ManuallyDrop::new(dangle),
         }
     }
     #[inline]
     pub(crate) fn into_inner(self) -> T {
         // Self has a destructor, we want to avoid having it be called
         let manual = ManuallyDrop::new(self);
-        // Safety:
-        // We can call assume_init_read() due to the library invariant on this type,
-        // however since it is a read() we must be careful about data duplication.
-        // The only code using `self` after this is the drop glue, which we have disabled via
-        // the ManuallyDrop.
-        unsafe { manual.dangle.assume_init_read() }
+        // SAFETY:
+        // `self.dangle` is guaranteed initialized by the type's safety invariant,
+        // and `self`'s drop glue has been disabled via `ManuallyDrop` so it will not
+        // be dropped twice. `ManuallyDrop` and `KindaSortaDangling` are both
+        // `#[repr(transparent)]` over `T`.
+        unsafe { (&raw const manual).cast::<T>().read() }
     }
 }
 
-impl<T: 'static> Deref for KindaSortaDangling<T> {
+impl<T> Deref for KindaSortaDangling<T> {
     type Target = T;
     #[inline]
     fn deref(&self) -> &T {
-        // Safety: Due to the safety invariant on `dangle`, it is guaranteed to be always
-        // initialized as deref is never called during drop.
-        unsafe { self.dangle.assume_init_ref() }
+        &self.dangle
     }
 }
 
-impl<T: 'static> DerefMut for KindaSortaDangling<T> {
+impl<T> DerefMut for KindaSortaDangling<T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut T {
-        // Safety: Due to the safety invariant on `dangle`, it is guaranteed to be always
-        // initialized as deref_mut is never called during drop.
-        unsafe { self.dangle.assume_init_mut() }
+        &mut self.dangle
     }
 }
 
-impl<T: 'static> Drop for KindaSortaDangling<T> {
+impl<T> Drop for KindaSortaDangling<T> {
     #[inline]
     fn drop(&mut self) {
-        // Safety: We are reading and dropping a valid initialized T.
+        // SAFETY: `self.dangle` is guaranteed to always be a valid initialized `T`,
+        // and is only dropped once here during `Drop::drop` (as `ManuallyDrop` itself
+        // has no drop glue).
         //
-        // As `drop_in_place()` is a `read()`-like duplication operation we must be careful that the original value isn't
-        // used afterwards. It won't be because this is drop and the only
-        // code that will run after this is `self`'s drop glue, and that drop glue is empty
-        // because MaybeUninit has no drop.
-        //
-        // We use `drop_in_place()` instead of `let _ = ... .assume_init_read()` to avoid creating a move
-        // of the inner `T` (without `KindaSortaDangling` protection!) type into a local -- we don't want to
-        // assert any of `T`'s memory-related validity properties here.
+        // We use `ManuallyDrop::drop` (which drops in-place) rather than moving the inner `T`
+        // into a local without `KindaSortaDangling` / `ManuallyDrop` protection, avoiding asserting
+        // any of `T`'s memory-related validity properties (`noalias`, `dereferenceable`) during drop.
         unsafe {
-            self.dangle.as_mut_ptr().drop_in_place();
+            ManuallyDrop::drop(&mut self.dangle);
         }
     }
 }

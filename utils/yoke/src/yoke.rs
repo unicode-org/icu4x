@@ -724,11 +724,11 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// use yoke::cartable_ptr::CartableOptionPointer;
     /// use std::rc::Rc;
     ///
-    /// // The data struct is 6 words:
+    /// // The data struct is 6 words (with no internal niche):
     /// # #[derive(yoke::Yokeable)]
     /// # struct MyDataStruct<'a> {
-    /// #     _s: (usize, usize, usize, usize),
-    /// #     _p: &'a str,
+    /// #     _s: [usize; 6],
+    /// #     _p: core::marker::PhantomData<&'a str>,
     /// # }
     /// const W: usize = size_of::<usize>();
     /// assert_eq!(W * 6, size_of::<MyDataStruct>());
