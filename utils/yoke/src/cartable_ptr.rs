@@ -17,6 +17,7 @@
 //! In addition, all except `Box<T>` impl [`CloneableCartablePointerLike`],
 //! which allows [`CartableOptionPointer`] to implement `Clone`.
 
+use crate::kinda_sorta_dangling::KindaSortaDangling;
 use crate::CloneableCart;
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
@@ -59,17 +60,24 @@ use private::Sealed;
 ///
 /// # Safety
 ///
-/// Implementer safety:
-///
-/// 1. `into_raw` transfers ownership of the values referenced by [`StableDeref`] to the caller,
-///    if there is ownership to transfer
-/// 2. `drop_raw` returns ownership back to the impl, if there is ownership to transfer
-///
-/// Note: if `into_raw` returns the sentinel pointer, memory leaks may occur, but this will not
-/// lead to undefined behaviour.
-///
-/// Note: the pointer `NonNull<Self::Raw>` may or may not be aligned and it should never
-/// be dereferenced. Rust allows unaligned pointers; see [`std::ptr::read_unaligned`].
+/// This trait is currently sealed and not intended to be implemented by others
+/// (this may be relaxed in the future).
+//
+// Internal implementer safety:
+//
+// 1. `into_raw` transfers ownership of the values referenced by `StableDeref` to the caller,
+//    if there is ownership to transfer.
+// 2. `drop_raw` returns ownership back to the impl, if there is ownership to transfer.
+// 3. `option_into_raw` must behave equivalently to `opt.into_inner().map(Self::into_raw)`,
+//    transferring ownership of the values referenced by `StableDeref` to the caller when `Some`
+//    (and returning `None` when `None`) without invalidating any existing references to the
+//    `StableDeref` target.
+//
+// Note: if `into_raw` or `option_into_raw` returns the sentinel pointer, memory leaks may occur,
+// but this will not lead to undefined behaviour.
+//
+// Note: the pointer `NonNull<Self::Raw>` may or may not be aligned and it should never
+// be dereferenced. Rust allows unaligned pointers; see `std::ptr::read_unaligned`.
 pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     /// The raw type used for [`Self::into_raw`] and [`Self::drop_raw`].
     #[doc(hidden)]
@@ -80,18 +88,12 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     fn into_raw(self) -> NonNull<Self::Raw>;
 
     /// Extracts the raw pointer from `KindaSortaDangling<Option<Self>>` without
-    /// retagging `Box<T>`.
+    /// invalidating existing references to the [`StableDeref`] target.
     #[doc(hidden)]
     #[allow(private_interfaces)]
-    #[inline]
-    fn option_into_raw(
-        opt: crate::kinda_sorta_dangling::KindaSortaDangling<Option<Self>>,
-    ) -> Option<NonNull<Self::Raw>>
+    fn option_into_raw(opt: KindaSortaDangling<Option<Self>>) -> Option<NonNull<Self::Raw>>
     where
-        Self: Sized,
-    {
-        opt.into_inner().map(Self::into_raw)
-    }
+        Self: Sized;
 
     /// Drops any memory associated with this pointer-like.
     ///
@@ -99,7 +101,7 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     ///
     /// Caller safety:
     ///
-    /// 1. The pointer MUST have been returned by this impl's `into_raw`.
+    /// 1. The pointer MUST have been returned by this impl's `into_raw` or `option_into_raw`.
     /// 2. The pointer MUST NOT be dangling.
     #[doc(hidden)]
     unsafe fn drop_raw(pointer: NonNull<Self::Raw>);
@@ -110,11 +112,14 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 ///
 /// # Safety
 ///
-/// Implementer safety:
-///
-/// 1. `addref_raw` must create a new owner such that an additional call to
-///    `drop_raw` does not create a dangling pointer
-/// 2. `addref_raw` must not change the address of any referenced data.
+/// This trait is currently sealed and not intended to be implemented by others
+/// (this may be relaxed in the future).
+//
+// Internal implementer safety:
+//
+// 1. `addref_raw` must create a new owner such that an additional call to
+//    `drop_raw` does not create a dangling pointer.
+// 2. `addref_raw` must not change the address of any referenced data.
 pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
@@ -122,7 +127,7 @@ pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     ///
     /// Caller safety:
     ///
-    /// 1. The pointer MUST have been returned by this impl's `into_raw`.
+    /// 1. The pointer MUST have been returned by this impl's `into_raw` or `option_into_raw`.
     /// 2. The pointer MUST NOT be dangling.
     #[doc(hidden)]
     unsafe fn addref_raw(pointer: NonNull<Self::Raw>);
@@ -133,12 +138,18 @@ impl<'a, T> Sealed for &'a T {}
 // Safety:
 // 1. There is no ownership to transfer
 // 2. There is no ownership to transfer
+// 3. Moving `&'a T` does not invalidate shared references to `T`.
 unsafe impl<'a, T> CartablePointerLike for &'a T {
     type Raw = T;
 
     #[inline]
     fn into_raw(self) -> NonNull<T> {
         self.into()
+    }
+    #[allow(private_interfaces)]
+    #[inline]
+    fn option_into_raw(opt: KindaSortaDangling<Option<Self>>) -> Option<NonNull<T>> {
+        opt.into_inner().map(CartablePointerLike::into_raw)
     }
     #[inline]
     unsafe fn drop_raw(_pointer: NonNull<T>) {
@@ -165,33 +176,42 @@ impl<T> Sealed for Box<T> {}
 //    memory previously managed by the Box."
 // 2. `Box::from_raw` says: "After calling this function, the raw pointer is owned by the
 //    resulting Box."
+// 3. `option_into_raw` reads `Option<NonNull<T>>` directly from `ManuallyDrop<KindaSortaDangling<Option<Box<T>>>>`,
+//    transferring ownership of the `Box<T>` allocation when `Some` (and returning `None` when `None`)
+//    without moving `Box<T>` by value outside `KindaSortaDangling`.
 unsafe impl<T> CartablePointerLike for Box<T> {
     type Raw = T;
 
     #[inline]
     fn into_raw(self) -> NonNull<T> {
-        // SAFETY: `Box::into_raw` is guaranteed to return a non-null pointer.
-        unsafe { NonNull::new_unchecked(Box::into_raw(self)) }
+        NonNull::from(Box::leak(self))
     }
     #[allow(private_interfaces)]
     #[inline]
-    fn option_into_raw(
-        opt: crate::kinda_sorta_dangling::KindaSortaDangling<Option<Self>>,
-    ) -> Option<NonNull<T>> {
+    fn option_into_raw(opt: KindaSortaDangling<Option<Self>>) -> Option<NonNull<T>> {
+        const {
+            assert!(
+                size_of::<KindaSortaDangling<Option<Box<T>>>>() == size_of::<Option<NonNull<T>>>()
+            );
+            assert!(
+                align_of::<KindaSortaDangling<Option<Box<T>>>>()
+                    == align_of::<Option<NonNull<T>>>()
+            );
+        }
         let opt = core::mem::ManuallyDrop::new(opt);
-        // SAFETY: By https://doc.rust-lang.org/std/option/index.html#representation,
-        // `Option<Box<T>>` (for `T: Sized`) is guaranteed to have the exact same layout and
-        // bit representation as `Option<NonNull<T>>`, and `KindaSortaDangling` is
-        // `#[repr(transparent)]` over `ManuallyDrop`. Reading `Option<NonNull<T>>` directly
-        // upholds `Yoke::cart` safety invariant #2 by avoiding moving `Box<T>` by value outside
-        // `KindaSortaDangling`.
+        // SAFETY: For `T: Sized`, `Option<Box<T>>` and `Option<NonNull<T>>` are [guaranteed to have
+        // identical representations](https://doc.rust-lang.org/core/option/index.html#representation),
+        // and `ManuallyDrop` and `KindaSortaDangling` are both `#[repr(transparent)]`. Reading
+        // `Option<NonNull<T>>` directly from `opt` (`ManuallyDrop`) transfers ownership of the
+        // `Box<T>` allocation without unwrapping `Box<T>` by value outside `KindaSortaDangling`
+        // (`Yoke::cart` invariant #2).
         unsafe { core::ptr::read((&raw const opt).cast::<Option<NonNull<T>>>()) }
     }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
-        // `Self::into_raw`, i.e. by `Box::leak`. In this circumstances, calling
-        // `Box::from_raw` is safe.
+        // SAFETY: By `drop_raw`'s precondition, `pointer` is non-dangling and was returned by
+        // `Self::into_raw` or `Self::option_into_raw`, transferring ownership of the `Box<T>`
+        // allocation to `Box::from_raw`.
         let _box = unsafe { Box::from_raw(pointer.as_ptr()) };
 
         // Boxes are always dropped
@@ -208,6 +228,7 @@ impl<T> Sealed for Rc<T> {}
 // 1. `Rc::into_raw` says: "Consumes the Rc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Rc using Rc::from_raw."
 // 2. See 1.
+// 3. Moving `Rc<T>` does not retag `T` or invalidate shared references to `T`.
 unsafe impl<T> CartablePointerLike for Rc<T> {
     type Raw = T;
 
@@ -217,11 +238,17 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
         unsafe { NonNull::new_unchecked(Rc::into_raw(self) as *mut T) }
     }
 
+    #[allow(private_interfaces)]
+    #[inline]
+    fn option_into_raw(opt: KindaSortaDangling<Option<Self>>) -> Option<NonNull<T>> {
+        opt.into_inner().map(CartablePointerLike::into_raw)
+    }
+
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
         // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
-        // `Self::into_raw`, i.e. by `Rc::into_raw`. In this circumstances, calling
-        // `Rc::from_raw` is safe.
+        // `Self::into_raw` or `Self::option_into_raw`, i.e. by `Rc::into_raw`. In these
+        // circumstances, calling `Rc::from_raw` is safe.
         let _rc = unsafe { Rc::from_raw(pointer.as_ptr()) };
 
         // Rc is dropped if refcount is 1
@@ -240,7 +267,7 @@ unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
     #[inline]
     unsafe fn addref_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
-        // 1. The pointer was obtained through Rc::into_raw
+        // 1. The pointer was obtained through Rc::into_raw (via into_raw or option_into_raw)
         // 2. The associated Rc instance is valid
         // Further, this impl is not defined for anything but the global allocator.
         unsafe {
@@ -254,9 +281,10 @@ impl<T> Sealed for Arc<T> {}
 
 #[cfg(feature = "alloc")]
 // Safety:
-// 1. `Rc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
+// 1. `Arc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Arc using Arc::from_raw."
 // 2. See 1.
+// 3. Moving `Arc<T>` does not retag `T` or invalidate shared references to `T`.
 unsafe impl<T> CartablePointerLike for Arc<T> {
     type Raw = T;
 
@@ -265,11 +293,16 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
         // Safety: Arcs must contain data (and not be null)
         unsafe { NonNull::new_unchecked(Arc::into_raw(self) as *mut T) }
     }
+    #[allow(private_interfaces)]
+    #[inline]
+    fn option_into_raw(opt: KindaSortaDangling<Option<Self>>) -> Option<NonNull<T>> {
+        opt.into_inner().map(CartablePointerLike::into_raw)
+    }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
         // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
-        // `Self::into_raw`, i.e. by `Rc::into_raw`. In this circumstances, calling
-        // `Rc::from_raw` is safe.
+        // `Self::into_raw` or `Self::option_into_raw`, i.e. by `Arc::into_raw`. In these
+        // circumstances, calling `Arc::from_raw` is safe.
         let _arc = unsafe { Arc::from_raw(pointer.as_ptr()) };
 
         // Arc is dropped if refcount is 1
@@ -288,7 +321,7 @@ unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
     #[inline]
     unsafe fn addref_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
-        // 1. The pointer was obtained through Arc::into_raw
+        // 1. The pointer was obtained through Arc::into_raw (via into_raw or option_into_raw)
         // 2. The associated Arc instance is valid
         // Further, this impl is not defined for anything but the global allocator.
         unsafe {

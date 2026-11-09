@@ -26,7 +26,7 @@ fn run_test() {
 struct Words<'cart>(Vec<&'cart String>);
 
 #[cfg(not(feature = "derive"))]
-// SAFETY: `Words<'cart>` is covariant over `'cart`.
+// SAFETY: `Words<'cart>(Vec<&'cart String>)` is covariant in `'cart`.
 unsafe impl<'a> Yokeable<'a> for Words<'static> {
     type Output = Words<'a>;
     fn transform(&'a self) -> &'a Self::Output {
@@ -36,14 +36,16 @@ unsafe impl<'a> Yokeable<'a> for Words<'static> {
         self
     }
     unsafe fn make(from: Self::Output) -> Self {
-        // SAFETY: `Self::Output` is `Words<'a>`, which has identical layout to `Words<'static>`.
+        // SAFETY: `Words<'a>` and `Words<'static>` differ only in their lifetime parameter,
+        // and the caller of `make` guarantees that `'a` borrows remain valid for `Self`.
         unsafe { core::mem::transmute(from) }
     }
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
-        // SAFETY: Caller guarantees no borrowed data with shorter lifetime is inserted into `self`.
+        // SAFETY: `Words<'static>` and `Words<'a>` have identical layout, and the HRTB on `F`
+        // prevents `f` from storing references shorter than `'a` into `self`.
         f(unsafe { core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self) })
     }
 }

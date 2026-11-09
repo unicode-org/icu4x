@@ -34,10 +34,7 @@ use core::ops::{Deref, DerefMut};
 /// [`maybe_dangling`](https://docs.rs/maybe-dangling/0.1.0/maybe_dangling/struct.MaybeDangling.html)
 #[repr(transparent)]
 pub(crate) struct KindaSortaDangling<T> {
-    /// Safety invariant: This is always an initialized T, never uninit or other
-    /// invalid bit patterns. Its drop glue will execute during [`Drop::drop`] rather than
-    /// during the drop glue for [`KindaSortaDangling`], which means that we have to be careful about
-    /// not touching the values as initialized during `drop` after that, but that's a short period of time.
+    // Safety invariant: `dangle` is a live (not-yet-dropped) `T`.
     dangle: ManuallyDrop<T>,
 }
 
@@ -50,13 +47,11 @@ impl<T> KindaSortaDangling<T> {
     }
     #[inline]
     pub(crate) fn into_inner(self) -> T {
-        // Self has a destructor, we want to avoid having it be called
         let manual = ManuallyDrop::new(self);
-        // SAFETY:
-        // `self.dangle` is guaranteed initialized by the type's safety invariant,
-        // and `self`'s drop glue has been disabled via `ManuallyDrop` so it will not
-        // be dropped twice. `ManuallyDrop` and `KindaSortaDangling` are both
-        // `#[repr(transparent)]` over `T`.
+        // SAFETY: `ManuallyDrop` and `KindaSortaDangling` are both `#[repr(transparent)]`
+        // over `T`, and by `dangle`'s safety invariant the wrapped value is a live `T`.
+        // Wrapping `self` in `ManuallyDrop` suppresses `KindaSortaDangling::drop` so the
+        // inner `T` is not dropped a second time.
         unsafe { (&raw const manual).cast::<T>().read() }
     }
 }
@@ -79,13 +74,11 @@ impl<T> DerefMut for KindaSortaDangling<T> {
 impl<T> Drop for KindaSortaDangling<T> {
     #[inline]
     fn drop(&mut self) {
-        // SAFETY: `self.dangle` is guaranteed to always be a valid initialized `T`,
-        // and is only dropped once here during `Drop::drop` (as `ManuallyDrop` itself
-        // has no drop glue).
+        // Drop in place via `ManuallyDrop::drop` rather than moving `T` out by value,
+        // avoiding `noalias` / `dereferenceable` retags on `T`.
         //
-        // We use `ManuallyDrop::drop` (which drops in-place) rather than moving the inner `T`
-        // into a local without `KindaSortaDangling` / `ManuallyDrop` protection, avoiding asserting
-        // any of `T`'s memory-related validity properties (`noalias`, `dereferenceable`) during drop.
+        // SAFETY: By `dangle`'s safety invariant, `self.dangle` is a live `T` on entry
+        // to `drop` and is not accessed or dropped again afterwards.
         unsafe {
             ManuallyDrop::drop(&mut self.dangle);
         }
