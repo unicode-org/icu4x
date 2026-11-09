@@ -19,21 +19,40 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 use icu_collections::char16trie::Char16TrieCursor;
-use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::SmallCodePointTrie;
+use icu_collections::codepointtrie::TypedCodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 use zerovec::ule::AsULE;
 use zerovec::{ZeroSlice, zeroslice};
 
 use crate::elements::CollationElement;
+
+#[cfg(not(feature = "datagen"))]
 use crate::elements::CollationElement32;
+#[cfg(not(feature = "datagen"))]
+use crate::elements::Tag;
+
+#[cfg(feature = "datagen")]
+pub use crate::elements::COMMON_SEC_AND_TER_CE32;
+#[cfg(feature = "datagen")]
+pub use crate::elements::CollationElement32;
+#[cfg(feature = "datagen")]
+pub use crate::elements::LONG_PRIMARY_FOR_REORDERABLE_CE32_LOW_BYTE;
+#[cfg(feature = "datagen")]
+pub use crate::elements::MAX_INDEX;
+#[cfg(feature = "datagen")]
+pub use crate::elements::SPECIAL_CE32_LOW_BYTE;
+#[cfg(feature = "datagen")]
+pub use crate::elements::Tag;
+
 use crate::elements::EMPTY_U16;
 use crate::elements::FFFD_CE;
 use crate::elements::FFFD_CE_VALUE;
 use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
+use crate::elements::FFFD_PRIMARY;
 use crate::elements::NO_CE_PRIMARY;
-use crate::elements::Tag;
 use crate::preferences::CollationCaseFirst;
 
 use crate::options::MaxVariable;
@@ -191,7 +210,7 @@ pub struct CollationData<'data> {
     /// Mapping from `char` to `CollationElement32` (represented
     /// as its `u32` bits).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub trie: CodePointTrie<'data, u32>,
+    pub trie: SmallCodePointTrie<'data, u32>,
     /// `CollationElement`s used in expansions and offset CE32s
     /// (represented as their `u64` bits)
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -242,6 +261,15 @@ impl<'data> CollationData<'data> {
         // GIGO case
         debug_assert!(false);
         SINGLE_U64
+    }
+    pub(crate) fn get_primary_from_ces(&'data self, index: usize) -> u32 {
+        if let Some(ce) = self.ces.get(index) {
+            (ce >> 32) as u32
+        } else {
+            // GIGO case
+            debug_assert!(false);
+            FFFD_PRIMARY
+        }
     }
     fn get_default_and_trie_impl(
         &'data self,
@@ -745,4 +773,29 @@ fn test_special_primaries_serde_roundtrip() {
     let json = serde_json::to_string(payload.get()).unwrap();
     let deserialized: CollationSpecialPrimaries<'_> = serde_json::from_str(&json).unwrap();
     assert_eq!(payload.get(), &deserialized);
+}
+
+/// Lists the locale and collation keyword combinations that the collator knows about.
+/// The `standard` collation is represented as the empty string.
+/// The root collation is represented as `und`.
+/// Chinese collations are listed as `und-Hani` with `und-Hant` and `und-Hans` resolving
+/// to `stroke` and `pinyin` despite not listing the collation keyword.
+///
+/// The iterator may (in practice _will_) yield duplicate items.
+#[cfg(all(feature = "compiled_data", feature = "unstable"))]
+#[expect(clippy::expect_used)] // baked provider
+pub fn list_locales() -> impl Iterator<Item = (DataLocale, tinystr::TinyAsciiStr<8>)> {
+    use icu_provider::baked::DataStore;
+    Baked::DATA_COLLATION_METADATA_V1
+        .iter()
+        .chain(Baked::DATA_COLLATION_TAILORING_V1.iter())
+        .chain(Baked::DATA_COLLATION_REORDERING_V1.iter())
+        .chain(Baked::DATA_COLLATION_DIACRITICS_V1.iter())
+        .map(|d| {
+            (
+                d.locale,
+                tinystr::TinyAsciiStr::<8>::try_from_str(d.marker_attributes.as_str())
+                    .expect("Marker attribute invariants upheld"),
+            )
+        })
 }

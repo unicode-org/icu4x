@@ -5,7 +5,7 @@ collation/diacritics/v1, und, 182B, 160B, 8ace760351a33687
 collation/diacritics/v1, vi, 182B, 160B, 6b057eec42bee512
 collation/diacritics/v1, vi/trad, -> vi
 collation/jamo/v1, <singleton>, 1048B, 1026B, ccbfc88a6d3a411e
-collation/metadata/v1, <lookup>, 547B, 112 identifiers
+collation/metadata/v1, <lookup>, 535B, 111 identifiers
 collation/metadata/v1, <total>, 36B, 12B, 9 unique payloads
 collation/metadata/v1, af, 4B, 1B, 9aab82d56f3b362e
 collation/metadata/v1, am, 4B, 1B, d1dcef7af54c8272
@@ -30,7 +30,6 @@ collation/metadata/v1, de/phonebk, -> af
 collation/metadata/v1, dsb, -> af
 collation/metadata/v1, ee, 4B, 1B, ed0e600a85b6c191
 collation/metadata/v1, el, -> am
-collation/metadata/v1, en-US-posix, -> af
 collation/metadata/v1, eo, -> af
 collation/metadata/v1, es, -> af
 collation/metadata/v1, es/trad, -> af
@@ -180,109 +179,108 @@ collation/reordering/v1, und-Hani/zhuyin, -> und-Hani/stroke
 collation/reordering/v1, und-Hans, -> und-Hani/pinyin
 collation/reordering/v1, und-Hant, -> und-Hani/stroke
 collation/reordering/v1, ur, -> ar
-collation/root/v1, <singleton>, 134434B, 134309B, 8a38b84c62c280a3
+collation/root/v1, <singleton>, 134926B, 134801B, 6dcba1b9f4bb4b45
 collation/special/primaries/v1, <singleton>, 96B, 42B, 4926c05315df8486
-collation/tailoring/v1, <lookup>, 608B, 102 identifiers
-collation/tailoring/v1, <total>, 921266B, 908769B, 93 unique payloads
-collation/tailoring/v1, af, 1012B, 877B, 8e3ca7ba0c0efe4b
-collation/tailoring/v1, ar, 8120B, 7987B, f87603c60cb612d4
+collation/tailoring/v1, <lookup>, 595B, 101 identifiers
+collation/tailoring/v1, <total>, 946098B, 933811B, 92 unique payloads
+collation/tailoring/v1, af, 1268B, 1134B, 1cf03a500b4feeab
+collation/tailoring/v1, ar, 8988B, 8856B, a7637ec690c8ed97
 collation/tailoring/v1, ar/compat, 1788B, 1652B, 9bab07c54d28766b
-collation/tailoring/v1, as, 1276B, 1141B, 843d744a99db647
-collation/tailoring/v1, az, 1520B, 1386B, 1d650da7c8113f79
-collation/tailoring/v1, be, 1264B, 1129B, f24de586782c187
-collation/tailoring/v1, blo, 1522B, 1388B, ab4d1eb24e450711
-collation/tailoring/v1, bn, 1044B, 909B, 7eee2648e1f06612
+collation/tailoring/v1, as, 1596B, 1462B, a77584c3e5b5bcf4
+collation/tailoring/v1, az, 1608B, 1475B, 2545f65ddf27c152
+collation/tailoring/v1, be, 1552B, 1418B, 9c79a0a756bcb5ec
+collation/tailoring/v1, blo, 1778B, 1645B, 6831481c9f66fe90
+collation/tailoring/v1, bn, 1564B, 1430B, 2bcddd6131be0e81
 collation/tailoring/v1, bn/trad, 10820B, 10688B, 4e1b1fb7a3214b6a
-collation/tailoring/v1, br, 1176B, 1040B, 55f9b93713c93e67
-collation/tailoring/v1, bs, 1474B, 1340B, 9be5f72ebc7e523b
-collation/tailoring/v1, bs-Cyrl, 952B, 817B, 359888a615a8c9ff
-collation/tailoring/v1, ceb, 844B, 709B, d55c379ed3f621ce
-collation/tailoring/v1, cs, 924B, 790B, a94c474689ce4b17
-collation/tailoring/v1, cy, 1056B, 922B, 44031cd86b8dadeb
-collation/tailoring/v1, da, 1720B, 1586B, af21578c14045163
+collation/tailoring/v1, br, 1432B, 1297B, 931a8d8a069cf1f9
+collation/tailoring/v1, bs, 1686B, 1553B, cd1349f25f676f7c
+collation/tailoring/v1, bs-Cyrl, 1496B, 1362B, 8b48eddbf58ab977
+collation/tailoring/v1, ceb, 1100B, 966B, bc3be1ac01581261
+collation/tailoring/v1, cs, 1180B, 1047B, 2b2d767b721ae1ce
+collation/tailoring/v1, cy, 1312B, 1179B, 7ed8af2b1603aca8
+collation/tailoring/v1, da, 1976B, 1843B, dc1b069dc529caa3
 collation/tailoring/v1, de-AT/phonebk, 1312B, 1175B, bcb73718474d63b3
 collation/tailoring/v1, de/phonebk, 910B, 775B, 7b88d3e20523de29
-collation/tailoring/v1, dsb, 1272B, 1138B, 282c4909b7d43453
-collation/tailoring/v1, ee, 1836B, 1702B, f42f57b0081b06e5
-collation/tailoring/v1, en-US-posix, 1296B, 1163B, f4cd1c9233455e8f
-collation/tailoring/v1, eo, 944B, 810B, 388dee595e344bc6
-collation/tailoring/v1, es, 820B, 685B, bf196f19cfa09254
+collation/tailoring/v1, dsb, 1528B, 1395B, 785a1cf98066a450
+collation/tailoring/v1, ee, 2080B, 1947B, 252d328f74607dc
+collation/tailoring/v1, eo, 1200B, 1067B, 4d235c2458c31ceb
+collation/tailoring/v1, es, 1076B, 942B, df2094947aaaca53
 collation/tailoring/v1, es/trad, 886B, 751B, 1063a8d2ddb42042
-collation/tailoring/v1, et, 948B, 814B, 56aa18188ee72859
-collation/tailoring/v1, fa, 1766B, 1631B, 9af3670432971a1c
-collation/tailoring/v1, fa-AF, 2052B, 1916B, e85f643dcd12c498
-collation/tailoring/v1, ff-Adlm, 3308B, 3174B, a9f4d24b3a72ad57
-collation/tailoring/v1, fi, 2262B, 2127B, bbe77cac92bd5960
+collation/tailoring/v1, et, 1204B, 1071B, b7938daef55bc709
+collation/tailoring/v1, fa, 2226B, 2092B, 79010a62028ea0a2
+collation/tailoring/v1, fa-AF, 2508B, 2373B, 429f410e6e4e7303
+collation/tailoring/v1, ff-Adlm, 3564B, 3431B, 475a7623e91839fa
+collation/tailoring/v1, fi, 2518B, 2384B, f79b56a690705708
 collation/tailoring/v1, fi/trad, 1742B, 1608B, 438f42dd64e25aab
 collation/tailoring/v1, fil, -> ceb
-collation/tailoring/v1, fo, 1760B, 1627B, 18732f373424521f
-collation/tailoring/v1, fy, 792B, 657B, b96c0dc9ab3e5fa6
+collation/tailoring/v1, fo, 2016B, 1884B, a0340429e96ea1d9
+collation/tailoring/v1, fy, 1048B, 914B, dfa0aab0afa69efd
 collation/tailoring/v1, gl, -> es
-collation/tailoring/v1, gu, 1052B, 917B, 1ed8da8e6c722fd7
-collation/tailoring/v1, ha, 1680B, 1545B, c147bcbff3192512
-collation/tailoring/v1, hi, 1052B, 917B, 6438e6523c665358
+collation/tailoring/v1, gu, 1572B, 1438B, fa5c6e3cafff03b6
+collation/tailoring/v1, ha, 1724B, 1590B, 6201d9fb584f50d8
+collation/tailoring/v1, hi, 1576B, 1442B, 17e364c4b05270fd
 collation/tailoring/v1, hr, -> bs
-collation/tailoring/v1, hsb, 1228B, 1094B, 86f8d728396ea701
-collation/tailoring/v1, hu, 1692B, 1559B, fafd8cc08b9b30aa
-collation/tailoring/v1, hy, 1028B, 893B, e37edd22cc013f5b
-collation/tailoring/v1, ig, 1144B, 1010B, ac03392aea894ea0
-collation/tailoring/v1, is, 1500B, 1366B, 213af3731421a0ee
-collation/tailoring/v1, ja, 84478B, 84345B, 72d25529700363e2
-collation/tailoring/v1, ja/unihan, 9714B, 9580B, 39ab33e54cefe5e8
-collation/tailoring/v1, kk, 1360B, 1225B, 72b84de4a4899461
-collation/tailoring/v1, kk-Arab, 1464B, 1329B, a49ee74478533158
-collation/tailoring/v1, km, 2518B, 2383B, d438b214067f8bfd
-collation/tailoring/v1, kn, 1100B, 965B, 82ef807011a4ec63
+collation/tailoring/v1, hsb, 1484B, 1351B, 4ddb43f14f99c83
+collation/tailoring/v1, hu, 1948B, 1816B, 6580f7c9a7f3c117
+collation/tailoring/v1, hy, 1628B, 1494B, 5b6cf6997521570e
+collation/tailoring/v1, ig, 1400B, 1267B, 95869b4f79f27e47
+collation/tailoring/v1, is, 1756B, 1623B, 6b18ee3cfaebe82d
+collation/tailoring/v1, ja, 85106B, 84974B, faac085e12b6ed4d
+collation/tailoring/v1, ja/unihan, 10082B, 9948B, d7bd6ad81b077e6a
+collation/tailoring/v1, kk, 1656B, 1522B, a6650b44077fd926
+collation/tailoring/v1, kk-Arab, 2108B, 1974B, c932c2dbc05b53a0
+collation/tailoring/v1, km, 2774B, 2640B, 196d3bc32c4474a3
+collation/tailoring/v1, kn, 1556B, 1422B, f476360900ea89a1
 collation/tailoring/v1, kn/trad, 11086B, 10953B, f56aa35745e4206a
-collation/tailoring/v1, ko, 220864B, 220732B, 4258b53995162825
+collation/tailoring/v1, ko, 221120B, 220989B, 51f8e81ab98a6c0
 collation/tailoring/v1, ko/unihan, 3072B, 2937B, a67002f48e4de51c
-collation/tailoring/v1, kok, 1068B, 933B, d6c5b12cbe4c27bd
-collation/tailoring/v1, ku, 976B, 842B, 2c7cf1548527bdc4
-collation/tailoring/v1, ky, 992B, 857B, a759c6b319fc915a
-collation/tailoring/v1, lt, 1024B, 890B, 91a9f2d95622b70b
-collation/tailoring/v1, lv, 1136B, 1002B, 6f7dab89b6cc6e51
-collation/tailoring/v1, mk, 1028B, 893B, b1b9675c525c3a04
-collation/tailoring/v1, ml, 1504B, 1369B, 761bed1c0a0fc2e4
-collation/tailoring/v1, mr, 1084B, 949B, 846d0fe986b17041
-collation/tailoring/v1, mt, 1128B, 993B, 4c38f6abc6dc6779
-collation/tailoring/v1, my, 20120B, 19985B, 632e41a02ab5dca0
-collation/tailoring/v1, no, 1760B, 1627B, 2b2a4cac191657d0
-collation/tailoring/v1, nso, 872B, 737B, f175960e45f40968
-collation/tailoring/v1, om, 1026B, 892B, 8fb6ca5d98bf4ac
-collation/tailoring/v1, or, 1192B, 1057B, 6faff07eb2577b39
-collation/tailoring/v1, pa, 1288B, 1153B, 8d26229b0cfd604f
-collation/tailoring/v1, pl, 1244B, 1110B, d7acc20dbe63fa6f
+collation/tailoring/v1, kok, 1592B, 1458B, 5b2a21fee4dade81
+collation/tailoring/v1, ku, 1232B, 1099B, 41b09ee1cb0a9a0c
+collation/tailoring/v1, ky, 1524B, 1390B, 2fe4add8b4c3da45
+collation/tailoring/v1, lt, 1280B, 1147B, 6215e77cd4975945
+collation/tailoring/v1, lv, 1392B, 1259B, ec065cc6936e4268
+collation/tailoring/v1, mk, 1552B, 1418B, 2acd8bbda1f1cc8f
+collation/tailoring/v1, ml, 1776B, 1642B, 647ef1eb8da434fd
+collation/tailoring/v1, mr, 1608B, 1474B, 2296ee663785f08f
+collation/tailoring/v1, mt, 1252B, 1118B, 26f0f71465dd793a
+collation/tailoring/v1, my, 20376B, 20242B, d9e3f2709fc1f0a4
+collation/tailoring/v1, no, 2016B, 1884B, eee95cb1cd7916af
+collation/tailoring/v1, nso, 1128B, 994B, 473c4534864405aa
+collation/tailoring/v1, om, 1282B, 1149B, 96f5e603d4f89ed5
+collation/tailoring/v1, or, 1572B, 1438B, 64877edfa369ac45
+collation/tailoring/v1, pa, 1556B, 1422B, 982da831e484910b
+collation/tailoring/v1, pl, 1500B, 1367B, 1eeb8ca686e35f4b
 collation/tailoring/v1, ps, -> fa-AF
-collation/tailoring/v1, ro, 940B, 806B, 7e02b7b458875b84
-collation/tailoring/v1, si, 1040B, 905B, 6ac8e1d5ac9f4590
+collation/tailoring/v1, ro, 1196B, 1063B, 4433d84287849039
+collation/tailoring/v1, si, 1556B, 1422B, 283b16568d6a5014
 collation/tailoring/v1, si/dict, 1052B, 917B, 3499aaf5315ce0e5
-collation/tailoring/v1, sk, 976B, 842B, ab8b5cec368b01e7
-collation/tailoring/v1, sl, 1120B, 985B, 3d4815266923b35f
-collation/tailoring/v1, sq, 1152B, 1018B, e2264f21f96e79c0
+collation/tailoring/v1, sk, 1232B, 1099B, c56c49732ffa368
+collation/tailoring/v1, sl, 1332B, 1198B, e575bf468cdd57
+collation/tailoring/v1, sq, 1408B, 1275B, 4674867b9e421f7e
 collation/tailoring/v1, sr, -> bs-Cyrl
 collation/tailoring/v1, sr-Latn, -> bs
-collation/tailoring/v1, sv, 1750B, 1616B, 5afc3c4d0865ba9
+collation/tailoring/v1, sv, 2006B, 1873B, c70dc2fd0c28518d
 collation/tailoring/v1, sv/trad, 1750B, 1616B, 9aa44c768559138a
-collation/tailoring/v1, ta, 1378B, 1244B, df97ddd66f7ce81
-collation/tailoring/v1, te, 1044B, 909B, ebfc219feff369fc
-collation/tailoring/v1, th, 1138B, 1003B, f7f85e934c8f779e
-collation/tailoring/v1, tk, 1004B, 870B, 80548ed0d782d945
+collation/tailoring/v1, ta, 1890B, 1757B, fa9f17117bd82209
+collation/tailoring/v1, te, 1568B, 1434B, 7c042b9337689e2c
+collation/tailoring/v1, th, 1598B, 1464B, 8c3854d04fedc27f
+collation/tailoring/v1, tk, 1260B, 1127B, ede340e2ea1c0907
 collation/tailoring/v1, tn, -> nso
-collation/tailoring/v1, to, 1288B, 1154B, adcb5c16b04276d4
-collation/tailoring/v1, tr, 1152B, 1018B, 763f87814c8915c1
-collation/tailoring/v1, ug, 1464B, 1329B, 2d75fab408a3c026
-collation/tailoring/v1, uk, 1748B, 1612B, 76fa552c67e8aba3
-collation/tailoring/v1, und-Hani/pinyin, 104678B, 104546B, 127015bc900db351
-collation/tailoring/v1, und-Hani/stroke, 174798B, 174666B, 87ab3f91febe7be7
+collation/tailoring/v1, to, 1544B, 1411B, 3cc642baa805d0ad
+collation/tailoring/v1, tr, 1252B, 1119B, 9bc480ec23691c4a
+collation/tailoring/v1, ug, 2108B, 1974B, e7f00a3d4c60f19c
+collation/tailoring/v1, uk, 2096B, 1961B, 2ae475bf245238a9
+collation/tailoring/v1, und-Hani/pinyin, 105110B, 104979B, 4ec0191f956e9927
+collation/tailoring/v1, und-Hani/stroke, 175174B, 175043B, 144433efe8ba7d2b
 collation/tailoring/v1, und-Hani/unihan, 3888B, 3754B, 6464e85d743fbcec
-collation/tailoring/v1, und-Hani/zhuyin, 129014B, 128882B, 18644b02ec14d0a4
+collation/tailoring/v1, und-Hani/zhuyin, 129466B, 129335B, b67bdb9dac9a4922
 collation/tailoring/v1, und-Hans, -> und-Hani/pinyin
 collation/tailoring/v1, und-Hant, -> und-Hani/stroke
 collation/tailoring/v1, und/emoji, 31134B, 31000B, 444f94ca2f4d6526
-collation/tailoring/v1, und/eor, 6072B, 5936B, 1c5d50b247390a29
-collation/tailoring/v1, ur, 2136B, 2002B, 7e8f14f6779fcca6
-collation/tailoring/v1, uz, 1008B, 874B, 706867e9d8297fb0
-collation/tailoring/v1, vi, 1140B, 1006B, 71debe4932b5ccee
+collation/tailoring/v1, und/eor, 6096B, 5960B, 83a053064e51e21e
+collation/tailoring/v1, ur, 2476B, 2343B, 55055f5a944b602e
+collation/tailoring/v1, uz, 1264B, 1131B, f55eb65399d9f61b
+collation/tailoring/v1, vi, 1372B, 1239B, f62ce54a0672b4a6
 collation/tailoring/v1, vi/trad, 1484B, 1350B, ab0f795a88f09246
-collation/tailoring/v1, wo, 1124B, 989B, 5592e28ce837eff7
-collation/tailoring/v1, yo, 902B, 767B, 92f70d4321618dec
+collation/tailoring/v1, wo, 1380B, 1246B, 85fe5258f8b84fac
+collation/tailoring/v1, yo, 1158B, 1024B, 4e9378d2b88de438

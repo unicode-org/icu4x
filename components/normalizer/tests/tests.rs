@@ -1786,6 +1786,27 @@ fn test_canonical_composition_owned() {
 }
 
 #[test]
+fn test_canonical_composition_reversed_vowel() {
+    // Pairs whose starter is an ASCII vowel are stored reversed in the data.
+    // Make sure that the reversed pair does not compose.
+    let comp = CanonicalCompositionBorrowed::new();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+
+    assert_eq!(comp.compose('a', '\u{0301}'), Some('á'));
+    assert_eq!(comp.compose('\u{0301}', 'a'), None);
+    assert_eq!(comp.compose('U', '\u{0308}'), Some('Ü'));
+    assert_eq!(comp.compose('\u{0308}', 'U'), None);
+    assert_eq!(nfc.normalize("\u{0301}a"), "\u{0301}a");
+
+    // No character composes with a following ASCII vowel.
+    for c in (0..=0x10FFFF).filter_map(char::from_u32) {
+        for vowel in ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'] {
+            assert_eq!(comp.compose(c, vowel), None, "{c:?} + {vowel:?}");
+        }
+    }
+}
+
+#[test]
 fn test_canonical_decomposition() {
     let decomp = CanonicalDecompositionBorrowed::new();
 
@@ -2314,10 +2335,238 @@ fn test_is_normalized_up_to() {
 }
 
 #[test]
+fn test_latin1_split_normalized_nfd() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfd(b"abc\xA8\xE4efg"),
+        (&b"abc\xA8"[..], &b"\xE4efg"[..])
+    );
+}
+
+#[test]
+fn test_latin1_split_normalized_nfkd() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfkd(b"abc\xA8\xE4efg"),
+        (&b"abc"[..], &b"\xA8\xE4efg"[..])
+    );
+}
+
+#[test]
+fn test_latin1_split_normalized_nfkc() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfkc(b"abc\xE4\xA8efg"),
+        (&b"abc\xE4"[..], &b"\xA8efg"[..])
+    );
+}
+
+#[test]
+fn test_latin1_normalize_nfd_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfd_to(&text, &mut normalized).is_ok());
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfd.is_normalized_utf16(&normalized));
+}
+
+#[test]
+fn test_latin1_normalize_nkfd_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfkd_to(&text, &mut normalized).is_ok());
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfkd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfkd.is_normalized_utf16(&normalized));
+}
+
+#[test]
+fn test_latin1_normalize_nkfc_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfkc_to(&text, &mut normalized).is_ok());
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfkc.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfkc.is_normalized_utf16(&normalized));
+}
+
+#[test]
+fn test_hangul_enclosed_nfkc() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    assert_eq!(
+        &nfkc.normalize_utf16(&[0x320Eu16])[..],
+        &[0x0028u16, 0xAC00, 0x0029]
+    );
+}
+
+#[test]
+fn test_hangul_enclosed_nfkc_iter() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    assert!(
+        nfkc.normalize_iter("\u{320E}".chars())
+            .eq("(\u{AC00})".chars())
+    );
+}
+
+#[test]
+fn test_hangul_l_v_t_nfc() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(
+        &nfc.normalize_utf16(&[0x1100u16, 0x1161, 0x11A8])[..],
+        &[0xAC01u16]
+    );
+}
+
+#[test]
+fn test_hangul_l_v_t_nfc_iter() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert!(
+        nfc.normalize_iter("\u{1100}\u{1161}\u{11A8}".chars())
+            .eq("\u{AC01}".chars())
+    );
+}
+
+#[test]
+fn test_hangul_lv_t_nfc() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(&nfc.normalize_utf16(&[0xAC00u16, 0x11A8])[..], &[0xAC01u16]);
+}
+
+#[test]
+fn test_hangul_lv_t_nfc_iter() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert!(
+        nfc.normalize_iter("\u{AC00}\u{11A8}".chars())
+            .eq("\u{AC01}".chars())
+    );
+}
+
+#[test]
+fn test_nfd_skip_one_combining() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(&nfd.normalize("εα\u{0301}ο")[..], "εα\u{0301}ο");
+}
+
+#[test]
+fn test_nfd_skip_one_combining_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8("εα\u{0301}ο".as_bytes())[..],
+        "εα\u{0301}ο"
+    );
+}
+
+#[test]
+fn test_nfd_skip_one_combining_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0301, 0x03BF]
+    );
+}
+
+#[test]
+fn test_nfd_two_combining() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize("εα\u{0301}\u{0326}ο")[..],
+        "εα\u{0326}\u{0301}ο"
+    );
+}
+
+#[test]
+fn test_nfd_two_combining_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8("εα\u{0301}\u{0326}ο".as_bytes())[..],
+        "εα\u{0326}\u{0301}ο"
+    );
+}
+
+#[test]
+fn test_nfd_two_combining_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0x0326, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0326, 0x0301, 0x03BF]
+    );
+}
+
+#[test]
+fn test_nfd_combining_error_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8(&[206u8, 181, 206, 177, 204, 129, 0xFF, 206, 191])[..],
+        "εα\u{0301}\u{FFFD}ο"
+    );
+}
+
+#[test]
+fn test_nfd_combining_error_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x03B5u16, 0x03B1, 0x0301, 0xD800, 0x03BF])[..],
+        &[0x03B5u16, 0x03B1, 0x0301, 0xFFFD, 0x03BF]
+    );
+}
+
+#[test]
+fn test_mixed_hangul() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize("\u{1100}\u{AC00}\u{11A8}")[..],
+        "\u{1100}\u{1100}\u{1161}\u{11A8}"
+    );
+}
+
+#[test]
+fn test_mixed_hangul_utf8() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf8(&[225, 132, 128, 234, 176, 128, 225, 134, 168])[..],
+        "\u{1100}\u{1100}\u{1161}\u{11A8}"
+    );
+}
+
+#[test]
+fn test_mixed_hangul_utf16() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(
+        &nfd.normalize_utf16(&[0x1100u16, 0xAC00, 0x11A8])[..],
+        &[0x1100, 0x1100, 0x1161, 0x11A8]
+    );
+}
+
+#[test]
 fn test_reject_invalid_replacement_character_trie_value() {
     use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType};
     use icu_normalizer::provider::{
-        DecompositionData, NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdTablesV1,
+        DecompositionData, NormalizerNfcV2, NormalizerNfdDataV1, NormalizerNfdTablesV1,
         NormalizerNfkdDataV1, NormalizerNfkdTablesV1, NormalizerUts46DataV1,
     };
     use icu_provider::prelude::*;
@@ -2393,8 +2642,8 @@ fn test_reject_invalid_replacement_character_trie_value() {
         }
     }
 
-    impl DataProvider<NormalizerNfcV1> for BogusProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV1>, DataError> {
+    impl DataProvider<NormalizerNfcV2> for BogusProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV2>, DataError> {
             icu_normalizer::provider::Baked.load(req)
         }
     }

@@ -106,13 +106,13 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
             ),
         },
         BenchDataContent {
-            file_name: "TestRandomWordsUDHR_th".to_owned(),
+            file_name: "Carroll-11-th".to_owned(),
             #[cfg(debug_assertions)]
             pairs: Vec::new(),
             #[cfg(not(debug_assertions))]
-            pairs: decompose_data(&nfc_normalizer.normalize(&strip_headers(include_str!(
-                "./data/TestRandomWordsUDHR_th.txt"
-            )))),
+            pairs: decompose_data(
+                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/Carroll-11-th.txt"))),
+            ),
         },
         BenchDataContent {
             file_name: "Carroll-11-tr".to_owned(),

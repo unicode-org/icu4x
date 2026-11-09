@@ -5,6 +5,7 @@ include!("normalizer_nfkd_data_v1.rs.data");
 include!("normalizer_nfkd_tables_v1.rs.data");
 include!("normalizer_nfc_v1.rs.data");
 include!("normalizer_nfd_data_v1.rs.data");
+include!("normalizer_nfc_v2.rs.data");
 include!("normalizer_uts46_data_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -45,6 +46,7 @@ macro_rules! impl_data_provider {
         impl_normalizer_nfkd_tables_v1!($provider);
         impl_normalizer_nfc_v1!($provider);
         impl_normalizer_nfd_data_v1!($provider);
+        impl_normalizer_nfc_v2!($provider);
         impl_normalizer_uts46_data_v1!($provider);
     };
 }
