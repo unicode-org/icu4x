@@ -89,6 +89,7 @@ members = [
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/changelog",
+    "tools/composition_freq",
     "tools/dump-json",
     "tools/make/bakeddata",
     "tools/make/codegen",
