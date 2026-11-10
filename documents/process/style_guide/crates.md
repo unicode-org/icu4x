@@ -5,11 +5,11 @@ This page is part of the [ICU4X Style Guide](README.md). Rules are **required** 
 
 ## Crate Features
 
-### Use no_std :: suggested
+### Use `no_std` :: suggested
 
 Main issues: [#77](https://github.com/unicode-org/icu4x/issues/77), [#151](https://github.com/unicode-org/icu4x/issues/151)
 
-Library crates are `no_std`: they use `core` and `alloc` instead of `std`. Allocating is fine. [principles.md](../../design/principles.md#no-standard-library-dependencies-in-the-core-library) says that the `icu` crate and all of its dependencies "should be `#[no_std]`, but may use the `alloc` crate".
+Library crates are `no_std`: they use `core` and `alloc` instead of `std`. Allocating is fine. [`principles.md`](../../design/principles.md#no-standard-library-dependencies-in-the-core-library) says that the `icu` crate and all of its dependencies "should be `#[no_std]`, but may use the `alloc` crate".
 
 **Why:** ICU4X runs in resource-constrained environments that don't have a standard library.
 
@@ -33,7 +33,7 @@ use alloc::string::String;
 
 Add an `std` feature only for code that needs `std`, such as file I/O.
 
-**Enforcement:** `cargo make ci-job-nostd` builds `icu_capi`, which depends on all components, for a target without `std` (`thumbv7m-none-eabi`).
+**Enforcement:** With `#![cfg_attr(not(any(test, doc)), no_std)]`, `cargo check` and `cargo build` fail if non-test code imports `std`. The workspace also enables `clippy::alloc_instead_of_core`, and `cargo make ci-job-nostd` builds `icu_capi` for a target without `std` (`thumbv7m-none-eabi`).
 
 ### When to add crate [features][features] :: suggested
 
@@ -77,7 +77,7 @@ When possible, write your code in such a way as to reduce dependencies, especial
 
 ### Avoid `std::collections::HashMap` :: suggested
 
-The standard library HashMap makes bloated binaries.  In order to reduce code size, consider one of these options:
+The standard library `HashMap` makes bloated binaries.  In order to reduce code size, consider one of these options:
 
 1. If the keys are known ahead of time, use a `struct` or `enum_map`.
 1. Otherwise, use a sorted vector.
@@ -85,13 +85,13 @@ The standard library HashMap makes bloated binaries.  In order to reduce code si
 If using a vector, please note that sorting algorithms are also bloated.  Better practice to reduce code size is to either perform sorting offline (e.g., by requiring that data returned by the data provider is already sorted), or to perform binary searches when inserting new elements.  Example:
 
 ```rust
-fn insert_sorted<A>(vec: &mut Vec<A>, item: A) {
+fn insert_sorted<A: Ord>(vec: &mut Vec<A>, item: A) {
   if let Err(idx) = vec.binary_search(&item) {
     vec.insert(idx, item);
   }
 }
 ```
 
-**Why:** Besides code size, `std::collections::HashMap` isn't available in `no_std` crates (see [Use no_std](#use-no_std--suggested)). In data structs, use `ZeroMap` (see [Zero-copy in DataProvider structs](data_types.md#zero-copy-in-dataprovider-structs--required)).
+**Why:** Besides code size, `std::collections::HashMap` isn't available in `no_std` crates (see [Use `no_std`](#use-no_std--suggested)). Use `LiteMap` (`litemap::LiteMap`) for a sorted-vector map, or `ZeroMap` in data structs (see [Zero-copy in `DataProvider` structs](data_types.md#zero-copy-in-dataprovider-structs--required)).
 
 **Enforcement:** Review only. Clippy doesn't check this.
