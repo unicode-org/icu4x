@@ -322,7 +322,7 @@ fn run_trie_tests<T: TrieValue + Debug>(trie: &CodePointTrie<T>, check_ranges: &
 }
 
 fn check_builder<T: TrieValue + Debug>(trie: &CodePointTrie<T>) {
-    let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+    let mut builder = CodePointTrieBuilder::new(
         trie.null_value(),
         trie.error_value(),
         match trie.as_typed_ref() {

@@ -17,11 +17,13 @@ Examples of types that can be used in zero-copy data structs:
 - Vectors of fixed-width types: `ZeroVec<'data, T>`
     - Examples: `ZeroVec<'data, u32>`, `ZeroVec<'data, TinyStr8>`
 - Vectors of variable-width types: `VarZeroVec<'data, T>`
-    - Example: `VarZeroVec<'data, String>`
+    - Example: `VarZeroVec<'data, str>`
 - Maps: `ZeroMap<'data, K, V>`
-    - Example: `ZeroMap<'data, TinyStr4, String>`
+    - Example: `ZeroMap<'data, TinyStr4, str>`
 
 In addition to supporting zero-copy deserialization, data structs should also support being fully owned (`'static`). For example, `&str` or `&T` require that the data be borrowed from somewhere, and so cannot be used in a data struct. `Cow` and all the other types listed above support the optional ownership model.
+
+**Why:** Blob data is a byte buffer that is loaded at runtime. A zero-copy struct borrows from that buffer, so loading copies nothing to the heap. Compiled data uses the same struct with `'static` borrows, and datagen builds it from owned values, so each field must be able to borrow and to own. Without `#[serde(borrow)]`, serde deserializes a `Cow` as `Cow::Owned`, which allocates.
 
 **❌ Don't:**
 
@@ -37,6 +39,7 @@ pub struct CityNames<'data> {
 ```rust
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_foo::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CityNames<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -46,11 +49,9 @@ pub struct CityNames<'data> {
 }
 ```
 
-Real examples: `ListFormatterPatterns` in `components/list/src/provider/mod.rs` and `TimeZoneEssentials` in `components/datetime/src/provider/time_zones.rs`.
+Real examples: `ListFormatterPatterns` in `components/list/src/provider/mod.rs` and `WeekdayNames` in `components/datetime/src/provider/names.rs`.
 
-**Why:** Blob data is a byte buffer that is loaded at runtime. A zero-copy struct borrows from that buffer, so loading copies nothing to the heap. Compiled data uses the same struct with `'static` borrows, and datagen builds it from owned values, so each field must be able to borrow and to own. Without `#[serde(borrow)]`, serde deserializes a `Cow` as `Cow::Owned`, which allocates.
-
-**Enforcement:** `cargo make bakeddata` deserializes every payload with an allocator that counts allocations, and fails on new ones (`ZeroCopyCheckExporter` in `tools/make/bakeddata/src/main.rs`). Its list of allowed violations is empty. Memory that is allocated and freed again during deserialization (for example, to validate data) is allowed only for the markers in `EXPECTED_TRANSIENT_VIOLATIONS`. Ask the ICU4X team before you add a marker to either list.
+**Enforcement:** `cargo make bakeddata` deserializes every payload with an allocator that counts allocations, and fails if a marker allocates (`ZeroCopyCheckExporter` in `tools/make/bakeddata/src/main.rs`). There are two lists of exceptions: `EXPECTED_VIOLATIONS`, where each entry is a bug to fix before stabilization, and `EXPECTED_TRANSIENT_VIOLATIONS`, for markers that allocate memory and free it again while deserializing (for example, to validate data). Ask the ICU4X team before you add a marker to either list.
 
 ## Conventions for strings in structs :: suggested
 
@@ -117,9 +118,9 @@ If it is not possible to obey these requirements in an exotic type, use a standa
 
 ## Keep the serialized layout of stable data structs :: required
 
-Main policy: [data_versioning.md](../data_versioning.md)
+Main policy: [`data_versioning.md`](../data_versioning.md)
 
-Data files must stay readable across ICU4X versions: older code reads newer data, and newer code reads data built for any version with the same major version number. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
+**Why:** Within a major version, older code must read newer data files, and newer code must read older ones. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
 
 **❌ Don't:** Remove a field from a released data struct:
 
@@ -143,4 +144,4 @@ let Raw { offset_separator, offset_pattern, offset_unknown, offset_zero: _offset
 offset_zero: Cow::Borrowed(""),
 ```
 
-Reviewers see changes to serialized data in the `provider/data/*/fingerprints.csv` diff.
+**Enforcement:** Code review. Changes to serialized data show up in the `provider/data/*/fingerprints.csv` diff.

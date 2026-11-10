@@ -353,6 +353,8 @@ make_any_calendar!(
     ///
     /// There are many ways of constructing an [`AnyCalendar`]'d date:
     /// ```
+    /// # #![allow(clippy::eq_op)]
+    /// # #![allow(clippy::neg_cmp_op_on_partial_ord)]
     /// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::{Japanese, Gregorian}, types::MonthCode};
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
@@ -360,7 +362,7 @@ make_any_calendar!(
     ///
     /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
     ///
-    /// let calendar = AnyCalendar::new(AnyCalendarKind::new(locale.into()));
+    /// let calendar = AnyCalendar::new(AnyCalendarKind::try_new(locale.into()).unwrap());
     ///
     /// // This is a Date<AnyCalendar>
     /// let any_japanese_date = Date::try_new_gregorian(2020, 9, 1)

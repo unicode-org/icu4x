@@ -132,6 +132,14 @@ impl<'a> RangeFormatterCore<'a> {
         // 1. Resolve difference
         let diff = resolve_difference(start, end, dayperiods);
 
+        // CLDR Step 5: If there is no difference among any of the fields in the fieldset,
+        // format as a single date using availableFormats, and return.
+        if !self.contains_difference(diff) {
+            return FormattedDateRange(FormattedDateRangeInner::Single(
+                self.format_datetime(start),
+            ));
+        }
+
         let is_mixed = self.range_selection.date_range.payload.is_payload()
             && self.range_selection.time_range.payload.is_payload();
 
@@ -200,5 +208,39 @@ impl<'a> RangeFormatterCore<'a> {
             end: end_formatted,
             glue,
         })
+    }
+
+    /// Checks whether the fieldset contains fields at or finer than `diff`.
+    ///
+    /// Returns `false` if `diff` is `Difference::None` or is finer than all fields
+    /// in the fieldset (CLDR Step 5).
+    fn contains_difference(&self, diff: Difference) -> bool {
+        use crate::fieldsets::builder::DateFields;
+        use crate::options::TimePrecision;
+
+        let smallest_diff = if self.range_selection.time_range.payload.is_payload() {
+            match self.selection.options.time_precision.unwrap_or_default() {
+                TimePrecision::Hour => Difference::Hour,
+                TimePrecision::Minute | TimePrecision::MinuteOptional => Difference::Minute,
+                TimePrecision::Second | TimePrecision::Subsecond(_) => Difference::Second,
+            }
+        } else {
+            match self.selection.options.date_fields {
+                Some(DateFields::Y) => Difference::Year,
+                Some(DateFields::YM | DateFields::M) => Difference::Month,
+                Some(
+                    DateFields::D
+                    | DateFields::MD
+                    | DateFields::YMD
+                    | DateFields::DE
+                    | DateFields::MDE
+                    | DateFields::YMDE
+                    | DateFields::E,
+                ) => Difference::Day,
+                None => Difference::Incomparable,
+            }
+        };
+
+        diff >= smallest_diff
     }
 }

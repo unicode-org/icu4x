@@ -364,11 +364,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// let mut stack = Vec::from([(trie.cursor(), 0, 0)]);
     /// let mut key = Vec::new();
     /// let mut results = Vec::new();
-    /// loop {
-    ///     let Some((mut cursor, index, suffix_len)) = stack.pop() else {
-    ///         // Nothing left in the trie.
-    ///         break;
-    ///     };
+    /// while let Some((mut cursor, index, suffix_len)) = stack.pop() {
     ///     // Check to see if there is a value at the current node.
     ///     if let Some(value) = cursor.take_value() {
     ///         results.push((String::from_utf8(key.clone()).unwrap(), value));

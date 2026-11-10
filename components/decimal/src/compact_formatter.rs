@@ -36,6 +36,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
+/// # #![allow(clippy::inconsistent_digit_grouping)] // Indian digit grouping
 /// use icu::decimal::CompactDecimalFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;

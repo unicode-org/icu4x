@@ -13,17 +13,11 @@ Most core rust APIs (traits) have two ways to access data, a version that can "p
 
 Note that in cases where the Rust compiler can statically determine that a check is sufficient to avoid panic, it will remove the internal check and panic related code, leaving just a provably safe data access.
 
-### Where Result is needed, use IcuResult<T> :: required
+### Where Result is needed, use a specific error type :: required
 
-While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X consensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
+Each crate defines its own error types for its own failure cases. Examples: `DataError` in `icu_provider`, `ParseError` in `icu_locale_core`, and `DateTimeFormatterLoadError` in `icu_datetime`.
 
-```rust
-// Nesting semantically interesting error information inside the generic error type.
-enum IcuError {
-    Parser(parser::ParseError),
-    Runtime(...)
-}
-```
+See also [Implement Copy on Error types and log details](README.md#implement-copy-on-error-types-and-log-details--suggested).
 
 A couple of crates by `@dtolnay` and `@yaahc` that are considered "new wave of good error APIs" and are complementary to each other:
 
@@ -69,7 +63,7 @@ This should not include the contract of code in a different Crate. I.e. if a fun
 
 See also: the [Panics](README.md#panics--required) section of the style guide.
 
-**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [data_safety.md](../../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
+**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [`data_safety.md`](../../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
 
 **❌ Don't:**
 
@@ -86,15 +80,23 @@ pub fn parse_pair(input: &str) -> Result<(&str, &str), ParseError> {
 }
 ```
 
-If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds find the bug, and release builds continue with the fallback ("garbage in, garbage out"). From `split_normalized` in `components/normalizer/src/lib.rs`:
+If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds catch the problem, and release builds continue with the fallback. For invalid data, ICU4X calls this GIGO ("garbage in, garbage out"). From `components/collator/src/elements.rs`:
 
 ```rust
-text.split_at_checked(up_to).unwrap_or_else(|| {
-    // Internal bug, not even GIGO, never supposed to happen
-    debug_assert!(false);
-    ("", text)
-})
+/// Use this only if the only reason why `opt` could be `None` is bogus
+/// data from the provider.
+pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
+    if let Some(val) = opt {
+        val
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        default
+    }
+}
 ```
+
+**Enforcement:** Clippy, in crates that have the [library annotations](../boilerplate.md#library-annotations). Outside tests, they deny `clippy::indexing_slicing`, `clippy::unwrap_used`, `clippy::expect_used`, and `clippy::panic`. These lints don't cover `split_at` (see below).
 
 #### Special Case: `split_at`
 
@@ -142,7 +144,7 @@ However, you should **never add a check purely in order to call a method which c
 ### Use Result over Option for errors :: suggested
 
 When creating functions which can fail to return a value:
-* Use **IcuResult** for all errors, or any cases where a user facing message is needed.
+* Use **Result** for all errors, or any cases where a user facing message is needed.
 * Use **Option** for data accessors where "no data available" is a valid response (i.e. it's not an error per se).
   * Especially in cases where we expect the caller to have a reasonable response to getting [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None).
 * Use a different enum for non-error cases with multiple return types (which can't use `Option`).

@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "الآن"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "الآن"
+  ],
   "past": {
     "one": [
       0,

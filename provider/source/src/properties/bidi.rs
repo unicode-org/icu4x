@@ -4,26 +4,22 @@
 
 use std::collections::HashSet;
 
+use super::ucd_helpers;
 use crate::SourceDataProvider;
+use icu::collections::codepointtrie::CodePointTrieBuilder;
+use icu::collections::codepointtrie::TrieType;
+use icu::properties::props::BidiMirroringGlyph;
+use icu::properties::props::BidiPairedBracketType;
+use icu::properties::props::EnumeratedProperty;
 use icu::properties::provider::PropertyEnumBidiMirroringGlyphV1;
 use icu_provider::prelude::*;
+use std::collections::HashMap;
 
-// implement data provider 2 different ways, based on whether or not
-// features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
 impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
-    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
-        use super::ucd_helpers;
-        use icu::collections::codepointtrie::TrieType;
-        use icu::properties::props::BidiMirroringGlyph;
-        use icu::properties::props::BidiPairedBracketType;
-        use icu::properties::props::EnumeratedProperty;
-        use icu_codepointtrie_builder::CodePointTrieBuilder;
-        use std::collections::HashMap;
-
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
         if let Some(t) = self
@@ -123,17 +119,6 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
                 icu::properties::provider::PropertyCodePointMap::CodePointTrie(trie),
             ),
         })
-    }
-
-    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
-        self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
-        return Err(DataError::custom(
-            "icu_provider_source must be built with `use_icu4c` or `use_wasm` to build enumerated properties data",
-        ));
     }
 }
 

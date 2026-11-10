@@ -440,7 +440,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakLineV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
+            + DataProvider<SegmenterDictionaryExtendedV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
@@ -719,7 +719,7 @@ impl LineSegmenter {
     /// [`LineSegmenter::new_for_non_complex_scripts`].
     pub fn load_dictionary_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
-        D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
+        D: DataProvider<SegmenterDictionaryExtendedV2> + ?Sized,
     {
         // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
         // characters [1]. Southeast Asian languages however require complex context analysis
@@ -752,7 +752,26 @@ impl LineSegmenter {
         &mut self,
         provider: &(impl BufferProvider + ?Sized),
     ) -> Result<(), DataError> {
-        self.load_dictionary_unstable(&provider.as_deserializing())
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        match self.0 {
+            LineSegmenterInner::V1 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            LineSegmenterInner::V2 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            LineSegmenterInner::V3 {
+                ref mut complex, ..
+            } => complex,
+        }
+        .with_southeast_asian_dictionaries_buffer(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
@@ -1160,34 +1179,12 @@ mod tests {
     include!("../tests/helpers.rs.raw");
 
     // The test data files contain the output of the neo implementation.
-    // Inputs that the v1 and 17 implementations are known to fail are listed here and skipped.
-    const V1_17_KNOWN_FAILURES: &[&str] = &[
-        // #8243
-        "ก\u{2060}รุ\u{2060}ง",
-        // #7218
-        "អស់ នឹង មាន",
-        "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens",
-    ];
-
-    fn run_test(file: &'static str, v1_17: [LineSegmenterBorrowed; 2], neo: LineSegmenterBorrowed) {
+    fn run_test(file: &'static str, segmenters: [LineSegmenterBorrowed; 3]) {
         for expected in parse_test_file(file) {
             let expected = expected.iter().map(String::as_str).collect::<Vec<_>>();
             let s = expected.concat();
-            check_line(&s, &expected, neo);
-            for segmenter in v1_17 {
-                if V1_17_KNOWN_FAILURES.contains(&s.as_str()) {
-                    let actual = segmenter
-                        .segment_str(&s)
-                        .tuple_windows()
-                        .map(|(a, b)| &s[a..b])
-                        .collect::<Vec<_>>();
-                    assert_ne!(
-                        actual, expected,
-                        "{s} passes on v1/17, remove it from the known failures"
-                    );
-                } else {
-                    check_line(&s, &expected, segmenter);
-                }
+            for segmenter in segmenters {
+                check_line(&s, &expected, segmenter);
             }
         }
     }
@@ -1200,8 +1197,7 @@ mod tests {
         neo.load_lstm();
         run_test(
             include_str!("../tests/testdata/LineBreakLstm.txt"),
-            [LineSegmenter::new_auto(Default::default()), s17],
-            neo,
+            [LineSegmenter::new_auto(Default::default()), s17, neo],
         );
     }
 
@@ -1213,8 +1209,7 @@ mod tests {
         neo.load_dictionary();
         run_test(
             include_str!("../tests/testdata/LineBreakDictionary.txt"),
-            [LineSegmenter::new_dictionary(Default::default()), s17],
-            neo,
+            [LineSegmenter::new_dictionary(Default::default()), s17, neo],
         );
     }
 
@@ -1246,13 +1241,13 @@ mod tests {
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
-        assert_eq!(breaks, [0, 12, 22]);
+        assert_eq!(breaks, [0, 22]);
 
         let unpaired_surrogate = [
             0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
         ];
         let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
-        assert_eq!(breaks, [0, 4, 8]);
+        assert_eq!(breaks, [0, 8]);
     }
 
     #[test]
@@ -1278,13 +1273,13 @@ mod tests {
         let ill_formed =
             b"\xE0\xB8\xA0\xE0\xB8\xB2\xE0\xB8\xA9\xE0\xB8\xB2\xFF\xE0\xB9\x84\xE0\xB8\x97\xE0\xB8\xA2";
         let breaks: Vec<usize> = segmenter.segment_utf8(ill_formed).collect();
-        assert_eq!(breaks, [0, 12, 22]);
+        assert_eq!(breaks, [0, 22]);
 
         let unpaired_surrogate = [
             0x0E20, 0x0E32, 0x0E29, 0x0E32, 0xD800, 0x0E44, 0x0E17, 0x0E22,
         ];
         let breaks: Vec<usize> = segmenter.segment_utf16(&unpaired_surrogate).collect();
-        assert_eq!(breaks, [0, 4, 8]);
+        assert_eq!(breaks, [0, 8]);
     }
 
     #[test]

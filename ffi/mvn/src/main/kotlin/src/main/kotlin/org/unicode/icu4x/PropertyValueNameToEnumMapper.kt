@@ -47,11 +47,11 @@ internal interface PropertyValueNameToEnumMapperLib: Library {
 /**
  * A type capable of looking up a property value from a string name.
  *
- * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyParser.html) for more information.
+ * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyParser.html) for more information.
  *
- * See the [Rust documentation for `PropertyParserBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyParserBorrowed.html) for more information.
+ * See the [Rust documentation for `PropertyParserBorrowed`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyParserBorrowed.html) for more information.
  *
- * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyParser.html#method.new) for more information.
+ * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyParser.html#method.new) for more information.
  */
 class PropertyValueNameToEnumMapper internal constructor (
     internal val handle: Pointer,
@@ -84,7 +84,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `BidiClass` property, using compiled data.
          *
-         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
+         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.BidiClass.html) for more information.
          */
         fun createBidiClass(): PropertyValueNameToEnumMapper {
             
@@ -99,7 +99,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `BidiClass` property, using a particular data source.
          *
-         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
+         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.BidiClass.html) for more information.
          */
         fun createBidiClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -119,7 +119,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `Block` property, using compiled data.
          *
-         * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+         * See the [Rust documentation for `Block`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html) for more information.
          */
         fun createBlock(): PropertyValueNameToEnumMapper {
             
@@ -134,7 +134,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `Block` property, using a particular data source.
          *
-         * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+         * See the [Rust documentation for `Block`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html) for more information.
          */
         fun createBlockWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -154,7 +154,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
          *
-         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
          */
         fun createCanonicalCombiningClass(): PropertyValueNameToEnumMapper {
             
@@ -169,7 +169,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using a particular data source.
          *
-         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
          */
         fun createCanonicalCombiningClassWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -189,7 +189,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `EastAsianWidth` property, using compiled data.
          *
-         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
          */
         fun createEastAsianWidth(): PropertyValueNameToEnumMapper {
             
@@ -204,7 +204,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `EastAsianWidth` property, using a particular data source.
          *
-         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
          */
         fun createEastAsianWidthWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -224,7 +224,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `GeneralCategory` property, using compiled data.
          *
-         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/enum.GeneralCategory.html) for more information.
          */
         fun createGeneralCategory(): PropertyValueNameToEnumMapper {
             
@@ -239,7 +239,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `GeneralCategory` property, using a particular data source.
          *
-         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/enum.GeneralCategory.html) for more information.
          */
         fun createGeneralCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -259,7 +259,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `GraphemeClusterBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
          */
         fun createGraphemeClusterBreak(): PropertyValueNameToEnumMapper {
             
@@ -274,7 +274,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `GraphemeClusterBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
          */
         fun createGraphemeClusterBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -294,7 +294,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `HangulSyllableType` property, using compiled data.
          *
-         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
          */
         fun createHangulSyllableType(): PropertyValueNameToEnumMapper {
             
@@ -309,7 +309,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `HangulSyllableType` property, using a particular data source.
          *
-         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
          */
         fun createHangulSyllableTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -329,7 +329,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `IndicConjunctBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
          */
         fun createIndicConjunctBreak(): PropertyValueNameToEnumMapper {
             
@@ -344,7 +344,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `IndicConjunctBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
          */
         fun createIndicConjunctBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -364,7 +364,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using compiled data.
          *
-         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
          */
         fun createIndicSyllabicCategory(): PropertyValueNameToEnumMapper {
             
@@ -379,7 +379,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using a particular data source.
          *
-         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
          */
         fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -399,7 +399,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `JoiningGroup` property, using compiled data.
          *
-         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html) for more information.
          */
         fun createJoiningGroup(): PropertyValueNameToEnumMapper {
             
@@ -414,7 +414,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `JoiningGroup` property, using a particular data source.
          *
-         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html) for more information.
          */
         fun createJoiningGroupWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -434,7 +434,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `JoiningType` property, using compiled data.
          *
-         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
+         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningType.html) for more information.
          */
         fun createJoiningType(): PropertyValueNameToEnumMapper {
             
@@ -449,7 +449,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `JoiningType` property, using a particular data source.
          *
-         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
+         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningType.html) for more information.
          */
         fun createJoiningTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -469,7 +469,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `LineBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.LineBreak.html) for more information.
+         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.LineBreak.html) for more information.
          */
         fun createLineBreak(): PropertyValueNameToEnumMapper {
             
@@ -484,7 +484,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `LineBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.LineBreak.html) for more information.
+         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.LineBreak.html) for more information.
          */
         fun createLineBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -504,7 +504,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `NumericType` property, using compiled data.
          *
-         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.NumericType.html) for more information.
+         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.NumericType.html) for more information.
          */
         fun createNumericType(): PropertyValueNameToEnumMapper {
             
@@ -519,7 +519,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `NumericType` property, using a particular data source.
          *
-         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.NumericType.html) for more information.
+         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.NumericType.html) for more information.
          */
         fun createNumericTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -539,7 +539,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `Script` property, using compiled data.
          *
-         * See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
+         * See the [Rust documentation for `Script`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Script.html) for more information.
          */
         fun createScript(): PropertyValueNameToEnumMapper {
             
@@ -554,7 +554,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `Script` property, using a particular data source.
          *
-         * See the [Rust documentation for `Script`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Script.html) for more information.
+         * See the [Rust documentation for `Script`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Script.html) for more information.
          */
         fun createScriptWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -574,7 +574,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `SentenceBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.SentenceBreak.html) for more information.
          */
         fun createSentenceBreak(): PropertyValueNameToEnumMapper {
             
@@ -589,7 +589,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `SentenceBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.SentenceBreak.html) for more information.
          */
         fun createSentenceBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -609,7 +609,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `VerticalOrientation` property, using compiled data.
          *
-         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
          */
         fun createVerticalOrientation(): PropertyValueNameToEnumMapper {
             
@@ -624,7 +624,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `VerticalOrientation` property, using a particular data source.
          *
-         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
          */
         fun createVerticalOrientationWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -644,7 +644,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `WordBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.WordBreak.html) for more information.
+         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.WordBreak.html) for more information.
          */
         fun createWordBreak(): PropertyValueNameToEnumMapper {
             
@@ -659,7 +659,7 @@ class PropertyValueNameToEnumMapper internal constructor (
         /**
          * Create a name-to-enum mapper for the `WordBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.WordBreak.html) for more information.
+         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.WordBreak.html) for more information.
          */
         fun createWordBreakWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
@@ -681,7 +681,7 @@ class PropertyValueNameToEnumMapper internal constructor (
      *
      * Returns -1 if the name is unknown for this property
      *
-     * See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+     * See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
      */
     fun getStrict(name: String): Short {
         val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)
@@ -699,7 +699,7 @@ class PropertyValueNameToEnumMapper internal constructor (
      *
      * Returns -1 if the name is unknown for this property
      *
-     * See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+     * See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
      */
     fun getLoose(name: String): Short {
         val nameSliceMemory = PrimitiveArrayTools.borrowUtf8(name)

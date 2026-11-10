@@ -196,8 +196,17 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV1<'_, '_, Y> {
 
         // If we have break point cache by previous run, return this result
         if let Some(&first_pos) = self.result_cache.as_slice().first() {
+            let is_run_end = self.result_cache.len() == 1;
             let mut i = 0;
             loop {
+                if is_run_end
+                    && i + self.get_current_codepoint().map_or(0, Y::char_len) == first_pos
+                {
+                    // The break at the end of the complex run depends on the
+                    // following character, so leave it to the rules below.
+                    self.result_cache = Default::default();
+                    break;
+                }
                 if i == first_pos {
                     self.result_cache.next();
                     return self.get_current_position();
@@ -238,7 +247,9 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV1<'_, '_, Y> {
                 if result.is_some() {
                     return result;
                 }
-                // I may have to fetch text until non-SA character?.
+                // The iterator is now on the last character of the run, and
+                // the break after it is left to the rules.
+                continue 'a;
             }
 
             let after_zwj = lb8a_after_lb9
@@ -545,8 +556,15 @@ where
     let previous_offset = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
     iter.result_cache = result_cache_from_offsets(breaks, previous_offset);
     let first_pos = *iter.result_cache.as_slice().first()?;
+    let is_run_end = iter.result_cache.len() == 1;
     let mut i = 0;
     loop {
+        if is_run_end && i + iter.get_current_codepoint().map_or(0, T::char_len) == first_pos {
+            // The break at the end of the complex run depends on the following
+            // character, so return None and let the rules in `next` decide it.
+            iter.result_cache = Default::default();
+            return None;
+        }
         if i == first_pos {
             iter.result_cache.next();
             return iter.get_current_position();

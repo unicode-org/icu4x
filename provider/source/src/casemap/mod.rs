@@ -7,23 +7,13 @@ use crate::properties::ucd_helpers;
 use icu::casemap::provider::data::{CaseMapData, CaseType, DotType};
 use icu::casemap::provider::exceptions::{CaseMapExceptions, Exception};
 use icu::casemap::provider::{CaseMap, CaseMapUnfold, CaseMapUnfoldV1, CaseMapV1};
+use icu::collections::codepointtrie::CodePointTrieBuilder;
 use icu::locale::LanguageIdentifier;
 use icu::properties::{CodePointMapData, CodePointSetData, props};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
 use std::convert::TryFrom;
 
-#[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-impl DataProvider<CaseMapV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
-        self.check_req::<CaseMapV1>(req)?;
-        Err(DataError::custom(
-            "The `use_wasm` or `use_icu4c` feature must be enabled to use CaseMapV1",
-        ))
-    }
-}
-
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl DataProvider<CaseMapV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
         self.check_req::<CaseMapV1>(req)?;
@@ -210,7 +200,7 @@ impl DataProvider<CaseMapV1> for SourceDataProvider {
         let gc = CodePointMapData::<props::GeneralCategory>::try_new_unstable(self)?;
         let gc = gc.as_borrowed();
 
-        let mut builder = icu_codepointtrie_builder::CodePointTrieBuilder::new(
+        let mut builder = CodePointTrieBuilder::new(
             CaseMapData::UNCASED_INSENSITIVE_NO_DOT,
             CaseMapData::UNCASED_INSENSITIVE_NO_DOT,
             self.trie_type().into(),

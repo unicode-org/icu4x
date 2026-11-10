@@ -97,8 +97,6 @@ use crate::provider::NormalizerUts46DataV1;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use icu_collections::char16trie::Char16Trie;
-use icu_collections::char16trie::Char16TrieIterator;
-use icu_collections::char16trie::TrieResult;
 #[cfg(not(icu4x_unstable_fast_trie_only))]
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(icu4x_unstable_fast_trie_only)]
@@ -329,10 +327,10 @@ fn in_inclusive_range16(u: u16, start: u16, end: u16) -> bool {
 /// characters or returns `None` if these characters don't compose.
 /// Composition exclusions are taken into account.
 #[inline]
-fn compose(iter: Char16TrieIterator, starter: char, second: char) -> Option<char> {
+fn compose(canonical_compositions: &Char16Trie, starter: char, second: char) -> Option<char> {
     let v = u32::from(second).wrapping_sub(HANGUL_V_BASE);
     if v >= HANGUL_JAMO_LIMIT - HANGUL_V_BASE {
-        return compose_non_hangul(iter, starter, second);
+        return compose_non_hangul(canonical_compositions, starter, second);
     }
     if v < HANGUL_V_COUNT {
         let l = u32::from(starter).wrapping_sub(HANGUL_L_BASE);
@@ -357,35 +355,38 @@ fn compose(iter: Char16TrieIterator, starter: char, second: char) -> Option<char
 /// Performs (non-Hangul) canonical composition on a pair of characters
 /// or returns `None` if these characters don't compose. Composition
 /// exclusions are taken into account.
-fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char) -> Option<char> {
+fn compose_non_hangul(
+    canonical_compositions: &Char16Trie,
+    starter: char,
+    second: char,
+) -> Option<char> {
     // To make the trie smaller, the pairs are stored second character first.
     // Given how this method is used in ways where it's known that `second`
     // is or isn't a starter. We could potentially split the trie into two
     // tries depending on whether `second` is a starter.
-    match iter.next(second) {
-        TrieResult::NoMatch => None,
-        TrieResult::NoValue => match iter.next(starter) {
-            TrieResult::NoMatch => None,
-            TrieResult::FinalValue(i) => {
-                if let Some(c) = char::from_u32(i as u32) {
-                    Some(c)
-                } else {
-                    // GIGO case
-                    debug_assert!(false);
-                    None
-                }
-            }
-            TrieResult::NoValue | TrieResult::Intermediate(_) => {
-                // GIGO case
-                debug_assert!(false);
-                None
-            }
-        },
-        TrieResult::FinalValue(_) | TrieResult::Intermediate(_) => {
-            // GIGO case
-            debug_assert!(false);
-            None
-        }
+    let mut cursor = canonical_compositions.cursor();
+    cursor.step(second);
+    if cursor.is_empty() {
+        return None;
+    }
+    if cursor.value().is_some() {
+        // GIGO case
+        debug_assert!(false);
+        return None;
+    }
+    cursor.step(starter);
+    let i = cursor.value()?;
+    if !cursor.is_empty() {
+        // GIGO case
+        debug_assert!(false);
+        return None;
+    }
+    if let Some(c) = char::from_u32(i as u32) {
+        Some(c)
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        None
     }
 }
 
@@ -1057,7 +1058,7 @@ where
     /// Composition exclusions are taken into account.
     #[inline(always)]
     pub fn compose(&self, starter: char, second: char) -> Option<char> {
-        compose(self.canonical_compositions.iter(), starter, second)
+        compose(&self.canonical_compositions, starter, second)
     }
 
     /// Performs (non-Hangul) canonical composition on a pair of characters
@@ -1065,7 +1066,7 @@ where
     /// exclusions are taken into account.
     #[inline(always)]
     fn compose_non_hangul(&self, starter: char, second: char) -> Option<char> {
-        compose_non_hangul(self.canonical_compositions.iter(), starter, second)
+        compose_non_hangul(&self.canonical_compositions, starter, second)
     }
 }
 
@@ -2258,6 +2259,13 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
         }
+        // SAFETY invariant: U+FFFD must have `NON_ROUND_TRIP_MARKER` set in the trie so that
+        // UTF-8 decoding errors (which yield U+FFFD) never pass the fast-path passthrough checks
+        // in `normalize_utf8_to` before `str::from_utf8_unchecked`.
+        if (decompositions.get().trie.get(char::REPLACEMENT_CHARACTER) & NON_ROUND_TRIP_MARKER) == 0
+        {
+            return Err(DataError::custom("invalid").with_marker(NormalizerNfdDataV1::INFO));
+        }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -2325,6 +2333,13 @@ impl DecomposingNormalizer {
         if cap > 0x0300 {
             return Err(DataError::custom("invalid").with_marker(NormalizerNfkdDataV1::INFO));
         }
+        // SAFETY invariant: U+FFFD must have `NON_ROUND_TRIP_MARKER` set in the trie so that
+        // UTF-8 decoding errors (which yield U+FFFD) never pass the fast-path passthrough checks
+        // in `normalize_utf8_to` before `str::from_utf8_unchecked`.
+        if (decompositions.get().trie.get(char::REPLACEMENT_CHARACTER) & NON_ROUND_TRIP_MARKER) == 0
+        {
+            return Err(DataError::custom("invalid").with_marker(NormalizerNfkdDataV1::INFO));
+        }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
@@ -2387,6 +2402,13 @@ impl DecomposingNormalizer {
 
         let cap = decompositions.get().passthrough_cap;
         if cap > 0x0300 {
+            return Err(DataError::custom("invalid").with_marker(NormalizerUts46DataV1::INFO));
+        }
+        // SAFETY invariant: U+FFFD must have `NON_ROUND_TRIP_MARKER` set in the trie so that
+        // UTF-8 decoding errors (which yield U+FFFD) never pass the fast-path passthrough checks
+        // in `normalize_utf8_to` before `str::from_utf8_unchecked`.
+        if (decompositions.get().trie.get(char::REPLACEMENT_CHARACTER) & NON_ROUND_TRIP_MARKER) == 0
+        {
             return Err(DataError::custom("invalid").with_marker(NormalizerUts46DataV1::INFO));
         }
         let decomposition_capped = cap.min(0xC0);
@@ -2991,8 +3013,8 @@ impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut iter = self.expect.chars();
-        if iter.next() == Some(c) {
+        let mut iter = utf16_iter::ErrorReportingUtf16Chars::new(self.expect);
+        if iter.next() == Some(Ok(c)) {
             self.expect = iter.as_slice();
             Ok(())
         } else {
@@ -3033,8 +3055,8 @@ impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut iter = self.expect.chars();
-        if iter.next() == Some(c) {
+        let mut iter = utf8_iter::ErrorReportingUtf8Chars::new(self.expect);
+        if iter.next() == Some(Ok(c)) {
             self.expect = iter.as_slice();
             Ok(())
         } else {
