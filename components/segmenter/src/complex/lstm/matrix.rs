@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::math::{exp, sigmoid, tanh};
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
-#[allow(unused_imports)]
-use core_maths::*;
 use zerovec::ZeroSlice;
 use zerovec::ule::AsULE;
 
@@ -197,7 +196,7 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
     /// Mutates this matrix by applying a softmax transformation.
     pub(super) fn softmax_transform(&mut self) {
         for v in self.data.iter_mut() {
-            *v = v.exp();
+            *v = exp(*v);
         }
         let sm = 1.0 / self.data.iter().sum::<f32>();
         for v in self.data.iter_mut() {
@@ -207,13 +206,13 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
 
     pub(super) fn sigmoid_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
-            *x = 1.0 / (1.0 + (-*x).exp());
+            *x = sigmoid(*x);
         }
     }
 
     pub(super) fn tanh_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
-            *x = x.tanh();
+            *x = tanh(*x);
         }
     }
 
@@ -252,7 +251,7 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
             // Safety: The lengths are all the same (checked above)
             unsafe {
                 *self.data.get_unchecked_mut(idx) =
-                    o.get_unchecked(idx) * c.get_unchecked(idx).tanh();
+                    o.get_unchecked(idx) * tanh(*c.get_unchecked(idx));
             }
         }
     }

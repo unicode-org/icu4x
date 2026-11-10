@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::ops::Range;
-#[allow(unused_imports)]
-use core_maths::*;
 use std::vec;
 use std::vec::Vec;
 use zerovec::ZeroSlice;
