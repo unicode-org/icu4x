@@ -1,7 +1,8 @@
 {
-  "relatives": {
-    "0": "esta hora"
-  },
+  "zero_index": 0,
+  "relatives": [
+    "esta hora"
+  ],
   "past": {
     "other": [
       0,

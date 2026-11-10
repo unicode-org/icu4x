@@ -72,3 +72,21 @@ Die |Katze |hat |»miau« |gesagt.
 # LB25
 (0,1)+(2,3)
 🏻 |🏻
+
+# #7218: the break at the end of a complex run follows the line break rules
+ไทย!
+ไทย, |ไทย
+(ไทย)
+“ไทย”
+ไทย%
+ไทย-|ไทย
+ไทย...
+ไทย  |ไทย
+ไทย\u{200B}|ไทย
+ไทย\u{A0}ไทย
+ไทย\u{A}|ไทย
+ไทยabc
+ไทย|中|文
+ปี
+ปี๒๕๖๘ |๒๕๖๘ปี
+ລາວ! |ລາວ

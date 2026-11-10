@@ -925,14 +925,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
+    /// #         unsafe { mem::transmute::<Self::Output, Self>(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
+    /// #         unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
     /// #     }
     /// # }
     /// ```
@@ -1032,14 +1032,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
+    /// #         unsafe { mem::transmute::<Self::Output, Self>(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
+    /// #         unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
     /// #     }
     /// # }
     /// ```
@@ -1281,14 +1281,14 @@ where
     /// #     }
     /// #
     /// #     unsafe fn make(from: Foo<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
+    /// #         unsafe { mem::transmute::<Self::Output, Self>(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
+    /// #         unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
     /// #     }
     /// # }
     /// #
@@ -1304,14 +1304,14 @@ where
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
+    /// #         unsafe { mem::transmute::<Self::Output, Self>(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
+    /// #         unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
     /// #     }
     /// # }
     /// ```
@@ -1726,7 +1726,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// #     where
 /// #         F: 'static + FnOnce(&'a mut Self::Output),
 /// #     {
-/// #         unsafe { f(mem::transmute(self)) }
+/// #         unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
 /// #     }
 /// # }
 /// ```
@@ -2009,7 +2009,7 @@ const _: () = ();
 /// #     where
 /// #         F: 'static + FnOnce(&'a mut Self::Output),
 /// #     {
-/// #         unsafe { f(mem::transmute(self)) }
+/// #         unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
 /// #     }
 /// # }
 /// ```
@@ -2104,6 +2104,7 @@ const _: () = ();
 ///
 /// type Contra<'a> = fn(&'a ());
 ///
+/// #[allow(clippy::extra_unused_lifetimes)]
 /// fn scope<'b>() {
 ///     let local = String::from("Hello World!");
 ///     let yoke: Yoke<&'static str, Option<Rc<Contra<'b>>>> = Yoke::new_owned("hi");
@@ -2120,6 +2121,7 @@ const _: () = ();
 ///
 /// type Contra<'a> = fn(&'a ());
 ///
+/// #[allow(clippy::extra_unused_lifetimes)]
 /// fn scope<'b>() {
 ///     let local = String::from("Hello World!");
 ///     let yoke: Yoke<&'static str, Option<Rc<Contra<'b>>>> =

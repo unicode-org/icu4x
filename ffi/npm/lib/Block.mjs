@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `Block`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html) for more information.
+ * See the [Rust documentation for `Block`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html) for more information.
  */
 export class Block {
     #value = undefined;
@@ -767,1425 +767,1425 @@ export class Block {
     ];
 
     /**
-     * See the [Rust documentation for `NoBlock`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.NoBlock) for more information.
+     * See the [Rust documentation for `NoBlock`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.NoBlock) for more information.
      */
     static NoBlock = Block.#objectValues[0];
     /**
-     * See the [Rust documentation for `BasicLatin`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BasicLatin) for more information.
+     * See the [Rust documentation for `BasicLatin`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BasicLatin) for more information.
      */
     static BasicLatin = Block.#objectValues[1];
     /**
-     * See the [Rust documentation for `Latin1Supplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Latin1Supplement) for more information.
+     * See the [Rust documentation for `Latin1Supplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Latin1Supplement) for more information.
      */
     static Latin1Supplement = Block.#objectValues[2];
     /**
-     * See the [Rust documentation for `LatinExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedA) for more information.
+     * See the [Rust documentation for `LatinExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedA) for more information.
      */
     static LatinExtendedA = Block.#objectValues[3];
     /**
-     * See the [Rust documentation for `LatinExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedB) for more information.
+     * See the [Rust documentation for `LatinExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedB) for more information.
      */
     static LatinExtendedB = Block.#objectValues[4];
     /**
-     * See the [Rust documentation for `IPAExtensions`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.IPAExtensions) for more information.
+     * See the [Rust documentation for `IPAExtensions`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.IPAExtensions) for more information.
      */
     static IpaExtensions = Block.#objectValues[5];
     /**
-     * See the [Rust documentation for `SpacingModifierLetters`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SpacingModifierLetters) for more information.
+     * See the [Rust documentation for `SpacingModifierLetters`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SpacingModifierLetters) for more information.
      */
     static SpacingModifierLetters = Block.#objectValues[6];
     /**
-     * See the [Rust documentation for `CombiningDiacriticalMarks`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarks) for more information.
+     * See the [Rust documentation for `CombiningDiacriticalMarks`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarks) for more information.
      */
     static CombiningDiacriticalMarks = Block.#objectValues[7];
     /**
-     * See the [Rust documentation for `GreekAndCoptic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GreekAndCoptic) for more information.
+     * See the [Rust documentation for `GreekAndCoptic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GreekAndCoptic) for more information.
      */
     static GreekAndCoptic = Block.#objectValues[8];
     /**
-     * See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Cyrillic) for more information.
+     * See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Cyrillic) for more information.
      */
     static Cyrillic = Block.#objectValues[9];
     /**
-     * See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Armenian) for more information.
+     * See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Armenian) for more information.
      */
     static Armenian = Block.#objectValues[10];
     /**
-     * See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Hebrew) for more information.
+     * See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Hebrew) for more information.
      */
     static Hebrew = Block.#objectValues[11];
     /**
-     * See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Arabic) for more information.
+     * See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Arabic) for more information.
      */
     static Arabic = Block.#objectValues[12];
     /**
-     * See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Syriac) for more information.
+     * See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Syriac) for more information.
      */
     static Syriac = Block.#objectValues[13];
     /**
-     * See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Thaana) for more information.
+     * See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Thaana) for more information.
      */
     static Thaana = Block.#objectValues[14];
     /**
-     * See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Devanagari) for more information.
+     * See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Devanagari) for more information.
      */
     static Devanagari = Block.#objectValues[15];
     /**
-     * See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Bengali) for more information.
+     * See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Bengali) for more information.
      */
     static Bengali = Block.#objectValues[16];
     /**
-     * See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Gurmukhi) for more information.
+     * See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Gurmukhi) for more information.
      */
     static Gurmukhi = Block.#objectValues[17];
     /**
-     * See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Gujarati) for more information.
+     * See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Gujarati) for more information.
      */
     static Gujarati = Block.#objectValues[18];
     /**
-     * See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Oriya) for more information.
+     * See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Oriya) for more information.
      */
     static Oriya = Block.#objectValues[19];
     /**
-     * See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tamil) for more information.
+     * See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tamil) for more information.
      */
     static Tamil = Block.#objectValues[20];
     /**
-     * See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Telugu) for more information.
+     * See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Telugu) for more information.
      */
     static Telugu = Block.#objectValues[21];
     /**
-     * See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Kannada) for more information.
+     * See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Kannada) for more information.
      */
     static Kannada = Block.#objectValues[22];
     /**
-     * See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Malayalam) for more information.
+     * See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Malayalam) for more information.
      */
     static Malayalam = Block.#objectValues[23];
     /**
-     * See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Sinhala) for more information.
+     * See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Sinhala) for more information.
      */
     static Sinhala = Block.#objectValues[24];
     /**
-     * See the [Rust documentation for `Thai`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Thai) for more information.
+     * See the [Rust documentation for `Thai`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Thai) for more information.
      */
     static Thai = Block.#objectValues[25];
     /**
-     * See the [Rust documentation for `Lao`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Lao) for more information.
+     * See the [Rust documentation for `Lao`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Lao) for more information.
      */
     static Lao = Block.#objectValues[26];
     /**
-     * See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tibetan) for more information.
+     * See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tibetan) for more information.
      */
     static Tibetan = Block.#objectValues[27];
     /**
-     * See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Myanmar) for more information.
+     * See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Myanmar) for more information.
      */
     static Myanmar = Block.#objectValues[28];
     /**
-     * See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Georgian) for more information.
+     * See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Georgian) for more information.
      */
     static Georgian = Block.#objectValues[29];
     /**
-     * See the [Rust documentation for `HangulJamo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HangulJamo) for more information.
+     * See the [Rust documentation for `HangulJamo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HangulJamo) for more information.
      */
     static HangulJamo = Block.#objectValues[30];
     /**
-     * See the [Rust documentation for `Ethiopic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Ethiopic) for more information.
+     * See the [Rust documentation for `Ethiopic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Ethiopic) for more information.
      */
     static Ethiopic = Block.#objectValues[31];
     /**
-     * See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Cherokee) for more information.
+     * See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Cherokee) for more information.
      */
     static Cherokee = Block.#objectValues[32];
     /**
-     * See the [Rust documentation for `UnifiedCanadianAboriginalSyllabics`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.UnifiedCanadianAboriginalSyllabics) for more information.
+     * See the [Rust documentation for `UnifiedCanadianAboriginalSyllabics`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.UnifiedCanadianAboriginalSyllabics) for more information.
      */
     static UnifiedCanadianAboriginalSyllabics = Block.#objectValues[33];
     /**
-     * See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Ogham) for more information.
+     * See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Ogham) for more information.
      */
     static Ogham = Block.#objectValues[34];
     /**
-     * See the [Rust documentation for `Runic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Runic) for more information.
+     * See the [Rust documentation for `Runic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Runic) for more information.
      */
     static Runic = Block.#objectValues[35];
     /**
-     * See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Khmer) for more information.
+     * See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Khmer) for more information.
      */
     static Khmer = Block.#objectValues[36];
     /**
-     * See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Mongolian) for more information.
+     * See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Mongolian) for more information.
      */
     static Mongolian = Block.#objectValues[37];
     /**
-     * See the [Rust documentation for `LatinExtendedAdditional`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedAdditional) for more information.
+     * See the [Rust documentation for `LatinExtendedAdditional`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedAdditional) for more information.
      */
     static LatinExtendedAdditional = Block.#objectValues[38];
     /**
-     * See the [Rust documentation for `GreekExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GreekExtended) for more information.
+     * See the [Rust documentation for `GreekExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GreekExtended) for more information.
      */
     static GreekExtended = Block.#objectValues[39];
     /**
-     * See the [Rust documentation for `GeneralPunctuation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GeneralPunctuation) for more information.
+     * See the [Rust documentation for `GeneralPunctuation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GeneralPunctuation) for more information.
      */
     static GeneralPunctuation = Block.#objectValues[40];
     /**
-     * See the [Rust documentation for `SuperscriptsAndSubscripts`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SuperscriptsAndSubscripts) for more information.
+     * See the [Rust documentation for `SuperscriptsAndSubscripts`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SuperscriptsAndSubscripts) for more information.
      */
     static SuperscriptsAndSubscripts = Block.#objectValues[41];
     /**
-     * See the [Rust documentation for `CurrencySymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CurrencySymbols) for more information.
+     * See the [Rust documentation for `CurrencySymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CurrencySymbols) for more information.
      */
     static CurrencySymbols = Block.#objectValues[42];
     /**
-     * See the [Rust documentation for `CombiningDiacriticalMarksForSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarksForSymbols) for more information.
+     * See the [Rust documentation for `CombiningDiacriticalMarksForSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarksForSymbols) for more information.
      */
     static CombiningDiacriticalMarksForSymbols = Block.#objectValues[43];
     /**
-     * See the [Rust documentation for `LetterlikeSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LetterlikeSymbols) for more information.
+     * See the [Rust documentation for `LetterlikeSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LetterlikeSymbols) for more information.
      */
     static LetterlikeSymbols = Block.#objectValues[44];
     /**
-     * See the [Rust documentation for `NumberForms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.NumberForms) for more information.
+     * See the [Rust documentation for `NumberForms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.NumberForms) for more information.
      */
     static NumberForms = Block.#objectValues[45];
     /**
-     * See the [Rust documentation for `Arrows`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Arrows) for more information.
+     * See the [Rust documentation for `Arrows`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Arrows) for more information.
      */
     static Arrows = Block.#objectValues[46];
     /**
-     * See the [Rust documentation for `MathematicalOperators`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MathematicalOperators) for more information.
+     * See the [Rust documentation for `MathematicalOperators`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MathematicalOperators) for more information.
      */
     static MathematicalOperators = Block.#objectValues[47];
     /**
-     * See the [Rust documentation for `MiscellaneousTechnical`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousTechnical) for more information.
+     * See the [Rust documentation for `MiscellaneousTechnical`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousTechnical) for more information.
      */
     static MiscellaneousTechnical = Block.#objectValues[48];
     /**
-     * See the [Rust documentation for `ControlPictures`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ControlPictures) for more information.
+     * See the [Rust documentation for `ControlPictures`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ControlPictures) for more information.
      */
     static ControlPictures = Block.#objectValues[49];
     /**
-     * See the [Rust documentation for `OpticalCharacterRecognition`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OpticalCharacterRecognition) for more information.
+     * See the [Rust documentation for `OpticalCharacterRecognition`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OpticalCharacterRecognition) for more information.
      */
     static OpticalCharacterRecognition = Block.#objectValues[50];
     /**
-     * See the [Rust documentation for `EnclosedAlphanumerics`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EnclosedAlphanumerics) for more information.
+     * See the [Rust documentation for `EnclosedAlphanumerics`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EnclosedAlphanumerics) for more information.
      */
     static EnclosedAlphanumerics = Block.#objectValues[51];
     /**
-     * See the [Rust documentation for `BoxDrawing`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BoxDrawing) for more information.
+     * See the [Rust documentation for `BoxDrawing`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BoxDrawing) for more information.
      */
     static BoxDrawing = Block.#objectValues[52];
     /**
-     * See the [Rust documentation for `BlockElements`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BlockElements) for more information.
+     * See the [Rust documentation for `BlockElements`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BlockElements) for more information.
      */
     static BlockElements = Block.#objectValues[53];
     /**
-     * See the [Rust documentation for `GeometricShapes`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GeometricShapes) for more information.
+     * See the [Rust documentation for `GeometricShapes`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GeometricShapes) for more information.
      */
     static GeometricShapes = Block.#objectValues[54];
     /**
-     * See the [Rust documentation for `MiscellaneousSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbols) for more information.
+     * See the [Rust documentation for `MiscellaneousSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbols) for more information.
      */
     static MiscellaneousSymbols = Block.#objectValues[55];
     /**
-     * See the [Rust documentation for `Dingbats`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Dingbats) for more information.
+     * See the [Rust documentation for `Dingbats`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Dingbats) for more information.
      */
     static Dingbats = Block.#objectValues[56];
     /**
-     * See the [Rust documentation for `BraillePatterns`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BraillePatterns) for more information.
+     * See the [Rust documentation for `BraillePatterns`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BraillePatterns) for more information.
      */
     static BraillePatterns = Block.#objectValues[57];
     /**
-     * See the [Rust documentation for `CJKRadicalsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKRadicalsSupplement) for more information.
+     * See the [Rust documentation for `CJKRadicalsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKRadicalsSupplement) for more information.
      */
     static CjkRadicalsSupplement = Block.#objectValues[58];
     /**
-     * See the [Rust documentation for `KangxiRadicals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KangxiRadicals) for more information.
+     * See the [Rust documentation for `KangxiRadicals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KangxiRadicals) for more information.
      */
     static KangxiRadicals = Block.#objectValues[59];
     /**
-     * See the [Rust documentation for `IdeographicDescriptionCharacters`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.IdeographicDescriptionCharacters) for more information.
+     * See the [Rust documentation for `IdeographicDescriptionCharacters`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.IdeographicDescriptionCharacters) for more information.
      */
     static IdeographicDescriptionCharacters = Block.#objectValues[60];
     /**
-     * See the [Rust documentation for `CJKSymbolsAndPunctuation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKSymbolsAndPunctuation) for more information.
+     * See the [Rust documentation for `CJKSymbolsAndPunctuation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKSymbolsAndPunctuation) for more information.
      */
     static CjkSymbolsAndPunctuation = Block.#objectValues[61];
     /**
-     * See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Hiragana) for more information.
+     * See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Hiragana) for more information.
      */
     static Hiragana = Block.#objectValues[62];
     /**
-     * See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Katakana) for more information.
+     * See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Katakana) for more information.
      */
     static Katakana = Block.#objectValues[63];
     /**
-     * See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Bopomofo) for more information.
+     * See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Bopomofo) for more information.
      */
     static Bopomofo = Block.#objectValues[64];
     /**
-     * See the [Rust documentation for `HangulCompatibilityJamo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HangulCompatibilityJamo) for more information.
+     * See the [Rust documentation for `HangulCompatibilityJamo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HangulCompatibilityJamo) for more information.
      */
     static HangulCompatibilityJamo = Block.#objectValues[65];
     /**
-     * See the [Rust documentation for `Kanbun`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Kanbun) for more information.
+     * See the [Rust documentation for `Kanbun`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Kanbun) for more information.
      */
     static Kanbun = Block.#objectValues[66];
     /**
-     * See the [Rust documentation for `BopomofoExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BopomofoExtended) for more information.
+     * See the [Rust documentation for `BopomofoExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BopomofoExtended) for more information.
      */
     static BopomofoExtended = Block.#objectValues[67];
     /**
-     * See the [Rust documentation for `EnclosedCJKLettersAndMonths`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EnclosedCJKLettersAndMonths) for more information.
+     * See the [Rust documentation for `EnclosedCJKLettersAndMonths`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EnclosedCJKLettersAndMonths) for more information.
      */
     static EnclosedCjkLettersAndMonths = Block.#objectValues[68];
     /**
-     * See the [Rust documentation for `CJKCompatibility`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibility) for more information.
+     * See the [Rust documentation for `CJKCompatibility`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibility) for more information.
      */
     static CjkCompatibility = Block.#objectValues[69];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionA) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionA) for more information.
      */
     static CjkUnifiedIdeographsExtensionA = Block.#objectValues[70];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographs) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographs) for more information.
      */
     static CjkUnifiedIdeographs = Block.#objectValues[71];
     /**
-     * See the [Rust documentation for `YiSyllables`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.YiSyllables) for more information.
+     * See the [Rust documentation for `YiSyllables`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.YiSyllables) for more information.
      */
     static YiSyllables = Block.#objectValues[72];
     /**
-     * See the [Rust documentation for `YiRadicals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.YiRadicals) for more information.
+     * See the [Rust documentation for `YiRadicals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.YiRadicals) for more information.
      */
     static YiRadicals = Block.#objectValues[73];
     /**
-     * See the [Rust documentation for `HangulSyllables`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HangulSyllables) for more information.
+     * See the [Rust documentation for `HangulSyllables`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HangulSyllables) for more information.
      */
     static HangulSyllables = Block.#objectValues[74];
     /**
-     * See the [Rust documentation for `HighSurrogates`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HighSurrogates) for more information.
+     * See the [Rust documentation for `HighSurrogates`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HighSurrogates) for more information.
      */
     static HighSurrogates = Block.#objectValues[75];
     /**
-     * See the [Rust documentation for `HighPrivateUseSurrogates`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HighPrivateUseSurrogates) for more information.
+     * See the [Rust documentation for `HighPrivateUseSurrogates`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HighPrivateUseSurrogates) for more information.
      */
     static HighPrivateUseSurrogates = Block.#objectValues[76];
     /**
-     * See the [Rust documentation for `LowSurrogates`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LowSurrogates) for more information.
+     * See the [Rust documentation for `LowSurrogates`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LowSurrogates) for more information.
      */
     static LowSurrogates = Block.#objectValues[77];
     /**
-     * See the [Rust documentation for `PrivateUseArea`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PrivateUseArea) for more information.
+     * See the [Rust documentation for `PrivateUseArea`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PrivateUseArea) for more information.
      */
     static PrivateUseArea = Block.#objectValues[78];
     /**
-     * See the [Rust documentation for `CJKCompatibilityIdeographs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibilityIdeographs) for more information.
+     * See the [Rust documentation for `CJKCompatibilityIdeographs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibilityIdeographs) for more information.
      */
     static CjkCompatibilityIdeographs = Block.#objectValues[79];
     /**
-     * See the [Rust documentation for `AlphabeticPresentationForms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AlphabeticPresentationForms) for more information.
+     * See the [Rust documentation for `AlphabeticPresentationForms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AlphabeticPresentationForms) for more information.
      */
     static AlphabeticPresentationForms = Block.#objectValues[80];
     /**
-     * See the [Rust documentation for `ArabicPresentationFormsA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicPresentationFormsA) for more information.
+     * See the [Rust documentation for `ArabicPresentationFormsA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicPresentationFormsA) for more information.
      */
     static ArabicPresentationFormsA = Block.#objectValues[81];
     /**
-     * See the [Rust documentation for `CombiningHalfMarks`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CombiningHalfMarks) for more information.
+     * See the [Rust documentation for `CombiningHalfMarks`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CombiningHalfMarks) for more information.
      */
     static CombiningHalfMarks = Block.#objectValues[82];
     /**
-     * See the [Rust documentation for `CJKCompatibilityForms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibilityForms) for more information.
+     * See the [Rust documentation for `CJKCompatibilityForms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibilityForms) for more information.
      */
     static CjkCompatibilityForms = Block.#objectValues[83];
     /**
-     * See the [Rust documentation for `SmallFormVariants`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SmallFormVariants) for more information.
+     * See the [Rust documentation for `SmallFormVariants`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SmallFormVariants) for more information.
      */
     static SmallFormVariants = Block.#objectValues[84];
     /**
-     * See the [Rust documentation for `ArabicPresentationFormsB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicPresentationFormsB) for more information.
+     * See the [Rust documentation for `ArabicPresentationFormsB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicPresentationFormsB) for more information.
      */
     static ArabicPresentationFormsB = Block.#objectValues[85];
     /**
-     * See the [Rust documentation for `Specials`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Specials) for more information.
+     * See the [Rust documentation for `Specials`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Specials) for more information.
      */
     static Specials = Block.#objectValues[86];
     /**
-     * See the [Rust documentation for `HalfwidthAndFullwidthForms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HalfwidthAndFullwidthForms) for more information.
+     * See the [Rust documentation for `HalfwidthAndFullwidthForms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HalfwidthAndFullwidthForms) for more information.
      */
     static HalfwidthAndFullwidthForms = Block.#objectValues[87];
     /**
-     * See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldItalic) for more information.
+     * See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldItalic) for more information.
      */
     static OldItalic = Block.#objectValues[88];
     /**
-     * See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Gothic) for more information.
+     * See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Gothic) for more information.
      */
     static Gothic = Block.#objectValues[89];
     /**
-     * See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Deseret) for more information.
+     * See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Deseret) for more information.
      */
     static Deseret = Block.#objectValues[90];
     /**
-     * See the [Rust documentation for `ByzantineMusicalSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ByzantineMusicalSymbols) for more information.
+     * See the [Rust documentation for `ByzantineMusicalSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ByzantineMusicalSymbols) for more information.
      */
     static ByzantineMusicalSymbols = Block.#objectValues[91];
     /**
-     * See the [Rust documentation for `MusicalSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbols) for more information.
+     * See the [Rust documentation for `MusicalSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbols) for more information.
      */
     static MusicalSymbols = Block.#objectValues[92];
     /**
-     * See the [Rust documentation for `MathematicalAlphanumericSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MathematicalAlphanumericSymbols) for more information.
+     * See the [Rust documentation for `MathematicalAlphanumericSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MathematicalAlphanumericSymbols) for more information.
      */
     static MathematicalAlphanumericSymbols = Block.#objectValues[93];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionB) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionB) for more information.
      */
     static CjkUnifiedIdeographsExtensionB = Block.#objectValues[94];
     /**
-     * See the [Rust documentation for `CJKCompatibilityIdeographsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibilityIdeographsSupplement) for more information.
+     * See the [Rust documentation for `CJKCompatibilityIdeographsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKCompatibilityIdeographsSupplement) for more information.
      */
     static CjkCompatibilityIdeographsSupplement = Block.#objectValues[95];
     /**
-     * See the [Rust documentation for `Tags`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tags) for more information.
+     * See the [Rust documentation for `Tags`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tags) for more information.
      */
     static Tags = Block.#objectValues[96];
     /**
-     * See the [Rust documentation for `CyrillicSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CyrillicSupplement) for more information.
+     * See the [Rust documentation for `CyrillicSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CyrillicSupplement) for more information.
      */
     static CyrillicSupplement = Block.#objectValues[97];
     /**
-     * See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tagalog) for more information.
+     * See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tagalog) for more information.
      */
     static Tagalog = Block.#objectValues[98];
     /**
-     * See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Hanunoo) for more information.
+     * See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Hanunoo) for more information.
      */
     static Hanunoo = Block.#objectValues[99];
     /**
-     * See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Buhid) for more information.
+     * See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Buhid) for more information.
      */
     static Buhid = Block.#objectValues[100];
     /**
-     * See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tagbanwa) for more information.
+     * See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tagbanwa) for more information.
      */
     static Tagbanwa = Block.#objectValues[101];
     /**
-     * See the [Rust documentation for `MiscellaneousMathematicalSymbolsA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousMathematicalSymbolsA) for more information.
+     * See the [Rust documentation for `MiscellaneousMathematicalSymbolsA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousMathematicalSymbolsA) for more information.
      */
     static MiscellaneousMathematicalSymbolsA = Block.#objectValues[102];
     /**
-     * See the [Rust documentation for `SupplementalArrowsA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementalArrowsA) for more information.
+     * See the [Rust documentation for `SupplementalArrowsA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementalArrowsA) for more information.
      */
     static SupplementalArrowsA = Block.#objectValues[103];
     /**
-     * See the [Rust documentation for `SupplementalArrowsB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementalArrowsB) for more information.
+     * See the [Rust documentation for `SupplementalArrowsB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementalArrowsB) for more information.
      */
     static SupplementalArrowsB = Block.#objectValues[104];
     /**
-     * See the [Rust documentation for `MiscellaneousMathematicalSymbolsB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousMathematicalSymbolsB) for more information.
+     * See the [Rust documentation for `MiscellaneousMathematicalSymbolsB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousMathematicalSymbolsB) for more information.
      */
     static MiscellaneousMathematicalSymbolsB = Block.#objectValues[105];
     /**
-     * See the [Rust documentation for `SupplementalMathematicalOperators`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementalMathematicalOperators) for more information.
+     * See the [Rust documentation for `SupplementalMathematicalOperators`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementalMathematicalOperators) for more information.
      */
     static SupplementalMathematicalOperators = Block.#objectValues[106];
     /**
-     * See the [Rust documentation for `KatakanaPhoneticExtensions`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KatakanaPhoneticExtensions) for more information.
+     * See the [Rust documentation for `KatakanaPhoneticExtensions`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KatakanaPhoneticExtensions) for more information.
      */
     static KatakanaPhoneticExtensions = Block.#objectValues[107];
     /**
-     * See the [Rust documentation for `VariationSelectors`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.VariationSelectors) for more information.
+     * See the [Rust documentation for `VariationSelectors`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.VariationSelectors) for more information.
      */
     static VariationSelectors = Block.#objectValues[108];
     /**
-     * See the [Rust documentation for `SupplementaryPrivateUseAreaA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementaryPrivateUseAreaA) for more information.
+     * See the [Rust documentation for `SupplementaryPrivateUseAreaA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementaryPrivateUseAreaA) for more information.
      */
     static SupplementaryPrivateUseAreaA = Block.#objectValues[109];
     /**
-     * See the [Rust documentation for `SupplementaryPrivateUseAreaB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementaryPrivateUseAreaB) for more information.
+     * See the [Rust documentation for `SupplementaryPrivateUseAreaB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementaryPrivateUseAreaB) for more information.
      */
     static SupplementaryPrivateUseAreaB = Block.#objectValues[110];
     /**
-     * See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Limbu) for more information.
+     * See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Limbu) for more information.
      */
     static Limbu = Block.#objectValues[111];
     /**
-     * See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TaiLe) for more information.
+     * See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TaiLe) for more information.
      */
     static TaiLe = Block.#objectValues[112];
     /**
-     * See the [Rust documentation for `KhmerSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KhmerSymbols) for more information.
+     * See the [Rust documentation for `KhmerSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KhmerSymbols) for more information.
      */
     static KhmerSymbols = Block.#objectValues[113];
     /**
-     * See the [Rust documentation for `PhoneticExtensions`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PhoneticExtensions) for more information.
+     * See the [Rust documentation for `PhoneticExtensions`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PhoneticExtensions) for more information.
      */
     static PhoneticExtensions = Block.#objectValues[114];
     /**
-     * See the [Rust documentation for `MiscellaneousSymbolsAndArrows`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrows) for more information.
+     * See the [Rust documentation for `MiscellaneousSymbolsAndArrows`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrows) for more information.
      */
     static MiscellaneousSymbolsAndArrows = Block.#objectValues[115];
     /**
-     * See the [Rust documentation for `YijingHexagramSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.YijingHexagramSymbols) for more information.
+     * See the [Rust documentation for `YijingHexagramSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.YijingHexagramSymbols) for more information.
      */
     static YijingHexagramSymbols = Block.#objectValues[116];
     /**
-     * See the [Rust documentation for `LinearBSyllabary`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LinearBSyllabary) for more information.
+     * See the [Rust documentation for `LinearBSyllabary`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LinearBSyllabary) for more information.
      */
     static LinearBSyllabary = Block.#objectValues[117];
     /**
-     * See the [Rust documentation for `LinearBIdeograms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LinearBIdeograms) for more information.
+     * See the [Rust documentation for `LinearBIdeograms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LinearBIdeograms) for more information.
      */
     static LinearBIdeograms = Block.#objectValues[118];
     /**
-     * See the [Rust documentation for `AegeanNumbers`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AegeanNumbers) for more information.
+     * See the [Rust documentation for `AegeanNumbers`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AegeanNumbers) for more information.
      */
     static AegeanNumbers = Block.#objectValues[119];
     /**
-     * See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Ugaritic) for more information.
+     * See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Ugaritic) for more information.
      */
     static Ugaritic = Block.#objectValues[120];
     /**
-     * See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Shavian) for more information.
+     * See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Shavian) for more information.
      */
     static Shavian = Block.#objectValues[121];
     /**
-     * See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Osmanya) for more information.
+     * See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Osmanya) for more information.
      */
     static Osmanya = Block.#objectValues[122];
     /**
-     * See the [Rust documentation for `CypriotSyllabary`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CypriotSyllabary) for more information.
+     * See the [Rust documentation for `CypriotSyllabary`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CypriotSyllabary) for more information.
      */
     static CypriotSyllabary = Block.#objectValues[123];
     /**
-     * See the [Rust documentation for `TaiXuanJingSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TaiXuanJingSymbols) for more information.
+     * See the [Rust documentation for `TaiXuanJingSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TaiXuanJingSymbols) for more information.
      */
     static TaiXuanJingSymbols = Block.#objectValues[124];
     /**
-     * See the [Rust documentation for `VariationSelectorsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.VariationSelectorsSupplement) for more information.
+     * See the [Rust documentation for `VariationSelectorsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.VariationSelectorsSupplement) for more information.
      */
     static VariationSelectorsSupplement = Block.#objectValues[125];
     /**
-     * See the [Rust documentation for `AncientGreekMusicalNotation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AncientGreekMusicalNotation) for more information.
+     * See the [Rust documentation for `AncientGreekMusicalNotation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AncientGreekMusicalNotation) for more information.
      */
     static AncientGreekMusicalNotation = Block.#objectValues[126];
     /**
-     * See the [Rust documentation for `AncientGreekNumbers`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AncientGreekNumbers) for more information.
+     * See the [Rust documentation for `AncientGreekNumbers`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AncientGreekNumbers) for more information.
      */
     static AncientGreekNumbers = Block.#objectValues[127];
     /**
-     * See the [Rust documentation for `ArabicSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicSupplement) for more information.
+     * See the [Rust documentation for `ArabicSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicSupplement) for more information.
      */
     static ArabicSupplement = Block.#objectValues[128];
     /**
-     * See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Buginese) for more information.
+     * See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Buginese) for more information.
      */
     static Buginese = Block.#objectValues[129];
     /**
-     * See the [Rust documentation for `CJKStrokes`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKStrokes) for more information.
+     * See the [Rust documentation for `CJKStrokes`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKStrokes) for more information.
      */
     static CjkStrokes = Block.#objectValues[130];
     /**
-     * See the [Rust documentation for `CombiningDiacriticalMarksSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarksSupplement) for more information.
+     * See the [Rust documentation for `CombiningDiacriticalMarksSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarksSupplement) for more information.
      */
     static CombiningDiacriticalMarksSupplement = Block.#objectValues[131];
     /**
-     * See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Coptic) for more information.
+     * See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Coptic) for more information.
      */
     static Coptic = Block.#objectValues[132];
     /**
-     * See the [Rust documentation for `EthiopicExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EthiopicExtended) for more information.
+     * See the [Rust documentation for `EthiopicExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EthiopicExtended) for more information.
      */
     static EthiopicExtended = Block.#objectValues[133];
     /**
-     * See the [Rust documentation for `EthiopicSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EthiopicSupplement) for more information.
+     * See the [Rust documentation for `EthiopicSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EthiopicSupplement) for more information.
      */
     static EthiopicSupplement = Block.#objectValues[134];
     /**
-     * See the [Rust documentation for `GeorgianSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GeorgianSupplement) for more information.
+     * See the [Rust documentation for `GeorgianSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GeorgianSupplement) for more information.
      */
     static GeorgianSupplement = Block.#objectValues[135];
     /**
-     * See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Glagolitic) for more information.
+     * See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Glagolitic) for more information.
      */
     static Glagolitic = Block.#objectValues[136];
     /**
-     * See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Kharoshthi) for more information.
+     * See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Kharoshthi) for more information.
      */
     static Kharoshthi = Block.#objectValues[137];
     /**
-     * See the [Rust documentation for `ModifierToneLetters`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ModifierToneLetters) for more information.
+     * See the [Rust documentation for `ModifierToneLetters`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ModifierToneLetters) for more information.
      */
     static ModifierToneLetters = Block.#objectValues[138];
     /**
-     * See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.NewTaiLue) for more information.
+     * See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.NewTaiLue) for more information.
      */
     static NewTaiLue = Block.#objectValues[139];
     /**
-     * See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldPersian) for more information.
+     * See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldPersian) for more information.
      */
     static OldPersian = Block.#objectValues[140];
     /**
-     * See the [Rust documentation for `PhoneticExtensionsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PhoneticExtensionsSupplement) for more information.
+     * See the [Rust documentation for `PhoneticExtensionsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PhoneticExtensionsSupplement) for more information.
      */
     static PhoneticExtensionsSupplement = Block.#objectValues[141];
     /**
-     * See the [Rust documentation for `SupplementalPunctuation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementalPunctuation) for more information.
+     * See the [Rust documentation for `SupplementalPunctuation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementalPunctuation) for more information.
      */
     static SupplementalPunctuation = Block.#objectValues[142];
     /**
-     * See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SylotiNagri) for more information.
+     * See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SylotiNagri) for more information.
      */
     static SylotiNagri = Block.#objectValues[143];
     /**
-     * See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tifinagh) for more information.
+     * See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tifinagh) for more information.
      */
     static Tifinagh = Block.#objectValues[144];
     /**
-     * See the [Rust documentation for `VerticalForms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.VerticalForms) for more information.
+     * See the [Rust documentation for `VerticalForms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.VerticalForms) for more information.
      */
     static VerticalForms = Block.#objectValues[145];
     /**
-     * See the [Rust documentation for `NKo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.NKo) for more information.
+     * See the [Rust documentation for `NKo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.NKo) for more information.
      */
     static NKo = Block.#objectValues[146];
     /**
-     * See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Balinese) for more information.
+     * See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Balinese) for more information.
      */
     static Balinese = Block.#objectValues[147];
     /**
-     * See the [Rust documentation for `LatinExtendedC`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedC) for more information.
+     * See the [Rust documentation for `LatinExtendedC`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedC) for more information.
      */
     static LatinExtendedC = Block.#objectValues[148];
     /**
-     * See the [Rust documentation for `LatinExtendedD`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedD) for more information.
+     * See the [Rust documentation for `LatinExtendedD`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedD) for more information.
      */
     static LatinExtendedD = Block.#objectValues[149];
     /**
-     * See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PhagsPa) for more information.
+     * See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PhagsPa) for more information.
      */
     static PhagsPa = Block.#objectValues[150];
     /**
-     * See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Phoenician) for more information.
+     * See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Phoenician) for more information.
      */
     static Phoenician = Block.#objectValues[151];
     /**
-     * See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Cuneiform) for more information.
+     * See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Cuneiform) for more information.
      */
     static Cuneiform = Block.#objectValues[152];
     /**
-     * See the [Rust documentation for `CuneiformNumbersAndPunctuation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CuneiformNumbersAndPunctuation) for more information.
+     * See the [Rust documentation for `CuneiformNumbersAndPunctuation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CuneiformNumbersAndPunctuation) for more information.
      */
     static CuneiformNumbersAndPunctuation = Block.#objectValues[153];
     /**
-     * See the [Rust documentation for `CountingRodNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CountingRodNumerals) for more information.
+     * See the [Rust documentation for `CountingRodNumerals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CountingRodNumerals) for more information.
      */
     static CountingRodNumerals = Block.#objectValues[154];
     /**
-     * See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Sundanese) for more information.
+     * See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Sundanese) for more information.
      */
     static Sundanese = Block.#objectValues[155];
     /**
-     * See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Lepcha) for more information.
+     * See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Lepcha) for more information.
      */
     static Lepcha = Block.#objectValues[156];
     /**
-     * See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OlChiki) for more information.
+     * See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OlChiki) for more information.
      */
     static OlChiki = Block.#objectValues[157];
     /**
-     * See the [Rust documentation for `CyrillicExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedA) for more information.
+     * See the [Rust documentation for `CyrillicExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedA) for more information.
      */
     static CyrillicExtendedA = Block.#objectValues[158];
     /**
-     * See the [Rust documentation for `Vai`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Vai) for more information.
+     * See the [Rust documentation for `Vai`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Vai) for more information.
      */
     static Vai = Block.#objectValues[159];
     /**
-     * See the [Rust documentation for `CyrillicExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedB) for more information.
+     * See the [Rust documentation for `CyrillicExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedB) for more information.
      */
     static CyrillicExtendedB = Block.#objectValues[160];
     /**
-     * See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Saurashtra) for more information.
+     * See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Saurashtra) for more information.
      */
     static Saurashtra = Block.#objectValues[161];
     /**
-     * See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KayahLi) for more information.
+     * See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KayahLi) for more information.
      */
     static KayahLi = Block.#objectValues[162];
     /**
-     * See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Rejang) for more information.
+     * See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Rejang) for more information.
      */
     static Rejang = Block.#objectValues[163];
     /**
-     * See the [Rust documentation for `Cham`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Cham) for more information.
+     * See the [Rust documentation for `Cham`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Cham) for more information.
      */
     static Cham = Block.#objectValues[164];
     /**
-     * See the [Rust documentation for `AncientSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AncientSymbols) for more information.
+     * See the [Rust documentation for `AncientSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AncientSymbols) for more information.
      */
     static AncientSymbols = Block.#objectValues[165];
     /**
-     * See the [Rust documentation for `PhaistosDisc`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PhaistosDisc) for more information.
+     * See the [Rust documentation for `PhaistosDisc`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PhaistosDisc) for more information.
      */
     static PhaistosDisc = Block.#objectValues[166];
     /**
-     * See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Lycian) for more information.
+     * See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Lycian) for more information.
      */
     static Lycian = Block.#objectValues[167];
     /**
-     * See the [Rust documentation for `Carian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Carian) for more information.
+     * See the [Rust documentation for `Carian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Carian) for more information.
      */
     static Carian = Block.#objectValues[168];
     /**
-     * See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Lydian) for more information.
+     * See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Lydian) for more information.
      */
     static Lydian = Block.#objectValues[169];
     /**
-     * See the [Rust documentation for `MahjongTiles`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MahjongTiles) for more information.
+     * See the [Rust documentation for `MahjongTiles`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MahjongTiles) for more information.
      */
     static MahjongTiles = Block.#objectValues[170];
     /**
-     * See the [Rust documentation for `DominoTiles`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.DominoTiles) for more information.
+     * See the [Rust documentation for `DominoTiles`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.DominoTiles) for more information.
      */
     static DominoTiles = Block.#objectValues[171];
     /**
-     * See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Samaritan) for more information.
+     * See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Samaritan) for more information.
      */
     static Samaritan = Block.#objectValues[172];
     /**
-     * See the [Rust documentation for `UnifiedCanadianAboriginalSyllabicsExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.UnifiedCanadianAboriginalSyllabicsExtended) for more information.
+     * See the [Rust documentation for `UnifiedCanadianAboriginalSyllabicsExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.UnifiedCanadianAboriginalSyllabicsExtended) for more information.
      */
     static UnifiedCanadianAboriginalSyllabicsExtended = Block.#objectValues[173];
     /**
-     * See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TaiTham) for more information.
+     * See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TaiTham) for more information.
      */
     static TaiTham = Block.#objectValues[174];
     /**
-     * See the [Rust documentation for `VedicExtensions`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.VedicExtensions) for more information.
+     * See the [Rust documentation for `VedicExtensions`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.VedicExtensions) for more information.
      */
     static VedicExtensions = Block.#objectValues[175];
     /**
-     * See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Lisu) for more information.
+     * See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Lisu) for more information.
      */
     static Lisu = Block.#objectValues[176];
     /**
-     * See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Bamum) for more information.
+     * See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Bamum) for more information.
      */
     static Bamum = Block.#objectValues[177];
     /**
-     * See the [Rust documentation for `CommonIndicNumberForms`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CommonIndicNumberForms) for more information.
+     * See the [Rust documentation for `CommonIndicNumberForms`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CommonIndicNumberForms) for more information.
      */
     static CommonIndicNumberForms = Block.#objectValues[178];
     /**
-     * See the [Rust documentation for `DevanagariExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.DevanagariExtended) for more information.
+     * See the [Rust documentation for `DevanagariExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.DevanagariExtended) for more information.
      */
     static DevanagariExtended = Block.#objectValues[179];
     /**
-     * See the [Rust documentation for `HangulJamoExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HangulJamoExtendedA) for more information.
+     * See the [Rust documentation for `HangulJamoExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HangulJamoExtendedA) for more information.
      */
     static HangulJamoExtendedA = Block.#objectValues[180];
     /**
-     * See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Javanese) for more information.
+     * See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Javanese) for more information.
      */
     static Javanese = Block.#objectValues[181];
     /**
-     * See the [Rust documentation for `MyanmarExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MyanmarExtendedA) for more information.
+     * See the [Rust documentation for `MyanmarExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MyanmarExtendedA) for more information.
      */
     static MyanmarExtendedA = Block.#objectValues[182];
     /**
-     * See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TaiViet) for more information.
+     * See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TaiViet) for more information.
      */
     static TaiViet = Block.#objectValues[183];
     /**
-     * See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MeeteiMayek) for more information.
+     * See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MeeteiMayek) for more information.
      */
     static MeeteiMayek = Block.#objectValues[184];
     /**
-     * See the [Rust documentation for `HangulJamoExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HangulJamoExtendedB) for more information.
+     * See the [Rust documentation for `HangulJamoExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HangulJamoExtendedB) for more information.
      */
     static HangulJamoExtendedB = Block.#objectValues[185];
     /**
-     * See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ImperialAramaic) for more information.
+     * See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ImperialAramaic) for more information.
      */
     static ImperialAramaic = Block.#objectValues[186];
     /**
-     * See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldSouthArabian) for more information.
+     * See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldSouthArabian) for more information.
      */
     static OldSouthArabian = Block.#objectValues[187];
     /**
-     * See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Avestan) for more information.
+     * See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Avestan) for more information.
      */
     static Avestan = Block.#objectValues[188];
     /**
-     * See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.InscriptionalParthian) for more information.
+     * See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.InscriptionalParthian) for more information.
      */
     static InscriptionalParthian = Block.#objectValues[189];
     /**
-     * See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.InscriptionalPahlavi) for more information.
+     * See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.InscriptionalPahlavi) for more information.
      */
     static InscriptionalPahlavi = Block.#objectValues[190];
     /**
-     * See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldTurkic) for more information.
+     * See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldTurkic) for more information.
      */
     static OldTurkic = Block.#objectValues[191];
     /**
-     * See the [Rust documentation for `RumiNumeralSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.RumiNumeralSymbols) for more information.
+     * See the [Rust documentation for `RumiNumeralSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.RumiNumeralSymbols) for more information.
      */
     static RumiNumeralSymbols = Block.#objectValues[192];
     /**
-     * See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Kaithi) for more information.
+     * See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Kaithi) for more information.
      */
     static Kaithi = Block.#objectValues[193];
     /**
-     * See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EgyptianHieroglyphs) for more information.
+     * See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EgyptianHieroglyphs) for more information.
      */
     static EgyptianHieroglyphs = Block.#objectValues[194];
     /**
-     * See the [Rust documentation for `EnclosedAlphanumericSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EnclosedAlphanumericSupplement) for more information.
+     * See the [Rust documentation for `EnclosedAlphanumericSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EnclosedAlphanumericSupplement) for more information.
      */
     static EnclosedAlphanumericSupplement = Block.#objectValues[195];
     /**
-     * See the [Rust documentation for `EnclosedIdeographicSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EnclosedIdeographicSupplement) for more information.
+     * See the [Rust documentation for `EnclosedIdeographicSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EnclosedIdeographicSupplement) for more information.
      */
     static EnclosedIdeographicSupplement = Block.#objectValues[196];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionC`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionC) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionC`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionC) for more information.
      */
     static CjkUnifiedIdeographsExtensionC = Block.#objectValues[197];
     /**
-     * See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Mandaic) for more information.
+     * See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Mandaic) for more information.
      */
     static Mandaic = Block.#objectValues[198];
     /**
-     * See the [Rust documentation for `Batak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Batak) for more information.
+     * See the [Rust documentation for `Batak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Batak) for more information.
      */
     static Batak = Block.#objectValues[199];
     /**
-     * See the [Rust documentation for `EthiopicExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EthiopicExtendedA) for more information.
+     * See the [Rust documentation for `EthiopicExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EthiopicExtendedA) for more information.
      */
     static EthiopicExtendedA = Block.#objectValues[200];
     /**
-     * See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Brahmi) for more information.
+     * See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Brahmi) for more information.
      */
     static Brahmi = Block.#objectValues[201];
     /**
-     * See the [Rust documentation for `BamumSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BamumSupplement) for more information.
+     * See the [Rust documentation for `BamumSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BamumSupplement) for more information.
      */
     static BamumSupplement = Block.#objectValues[202];
     /**
-     * See the [Rust documentation for `KanaSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KanaSupplement) for more information.
+     * See the [Rust documentation for `KanaSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KanaSupplement) for more information.
      */
     static KanaSupplement = Block.#objectValues[203];
     /**
-     * See the [Rust documentation for `PlayingCards`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PlayingCards) for more information.
+     * See the [Rust documentation for `PlayingCards`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PlayingCards) for more information.
      */
     static PlayingCards = Block.#objectValues[204];
     /**
-     * See the [Rust documentation for `MiscellaneousSymbolsAndPictographs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndPictographs) for more information.
+     * See the [Rust documentation for `MiscellaneousSymbolsAndPictographs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndPictographs) for more information.
      */
     static MiscellaneousSymbolsAndPictographs = Block.#objectValues[205];
     /**
-     * See the [Rust documentation for `Emoticons`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Emoticons) for more information.
+     * See the [Rust documentation for `Emoticons`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Emoticons) for more information.
      */
     static Emoticons = Block.#objectValues[206];
     /**
-     * See the [Rust documentation for `TransportAndMapSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TransportAndMapSymbols) for more information.
+     * See the [Rust documentation for `TransportAndMapSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TransportAndMapSymbols) for more information.
      */
     static TransportAndMapSymbols = Block.#objectValues[207];
     /**
-     * See the [Rust documentation for `AlchemicalSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AlchemicalSymbols) for more information.
+     * See the [Rust documentation for `AlchemicalSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AlchemicalSymbols) for more information.
      */
     static AlchemicalSymbols = Block.#objectValues[208];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionD`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionD) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionD`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionD) for more information.
      */
     static CjkUnifiedIdeographsExtensionD = Block.#objectValues[209];
     /**
-     * See the [Rust documentation for `ArabicExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicExtendedA) for more information.
+     * See the [Rust documentation for `ArabicExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicExtendedA) for more information.
      */
     static ArabicExtendedA = Block.#objectValues[210];
     /**
-     * See the [Rust documentation for `ArabicMathematicalAlphabeticSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicMathematicalAlphabeticSymbols) for more information.
+     * See the [Rust documentation for `ArabicMathematicalAlphabeticSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicMathematicalAlphabeticSymbols) for more information.
      */
     static ArabicMathematicalAlphabeticSymbols = Block.#objectValues[211];
     /**
-     * See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Chakma) for more information.
+     * See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Chakma) for more information.
      */
     static Chakma = Block.#objectValues[212];
     /**
-     * See the [Rust documentation for `MeeteiMayekExtensions`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MeeteiMayekExtensions) for more information.
+     * See the [Rust documentation for `MeeteiMayekExtensions`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MeeteiMayekExtensions) for more information.
      */
     static MeeteiMayekExtensions = Block.#objectValues[213];
     /**
-     * See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MeroiticCursive) for more information.
+     * See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MeroiticCursive) for more information.
      */
     static MeroiticCursive = Block.#objectValues[214];
     /**
-     * See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MeroiticHieroglyphs) for more information.
+     * See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MeroiticHieroglyphs) for more information.
      */
     static MeroiticHieroglyphs = Block.#objectValues[215];
     /**
-     * See the [Rust documentation for `Miao`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Miao) for more information.
+     * See the [Rust documentation for `Miao`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Miao) for more information.
      */
     static Miao = Block.#objectValues[216];
     /**
-     * See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Sharada) for more information.
+     * See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Sharada) for more information.
      */
     static Sharada = Block.#objectValues[217];
     /**
-     * See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SoraSompeng) for more information.
+     * See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SoraSompeng) for more information.
      */
     static SoraSompeng = Block.#objectValues[218];
     /**
-     * See the [Rust documentation for `SundaneseSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SundaneseSupplement) for more information.
+     * See the [Rust documentation for `SundaneseSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SundaneseSupplement) for more information.
      */
     static SundaneseSupplement = Block.#objectValues[219];
     /**
-     * See the [Rust documentation for `Takri`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Takri) for more information.
+     * See the [Rust documentation for `Takri`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Takri) for more information.
      */
     static Takri = Block.#objectValues[220];
     /**
-     * See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BassaVah) for more information.
+     * See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BassaVah) for more information.
      */
     static BassaVah = Block.#objectValues[221];
     /**
-     * See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CaucasianAlbanian) for more information.
+     * See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CaucasianAlbanian) for more information.
      */
     static CaucasianAlbanian = Block.#objectValues[222];
     /**
-     * See the [Rust documentation for `CopticEpactNumbers`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CopticEpactNumbers) for more information.
+     * See the [Rust documentation for `CopticEpactNumbers`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CopticEpactNumbers) for more information.
      */
     static CopticEpactNumbers = Block.#objectValues[223];
     /**
-     * See the [Rust documentation for `CombiningDiacriticalMarksExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarksExtended) for more information.
+     * See the [Rust documentation for `CombiningDiacriticalMarksExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CombiningDiacriticalMarksExtended) for more information.
      */
     static CombiningDiacriticalMarksExtended = Block.#objectValues[224];
     /**
-     * See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Duployan) for more information.
+     * See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Duployan) for more information.
      */
     static Duployan = Block.#objectValues[225];
     /**
-     * See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Elbasan) for more information.
+     * See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Elbasan) for more information.
      */
     static Elbasan = Block.#objectValues[226];
     /**
-     * See the [Rust documentation for `GeometricShapesExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GeometricShapesExtended) for more information.
+     * See the [Rust documentation for `GeometricShapesExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GeometricShapesExtended) for more information.
      */
     static GeometricShapesExtended = Block.#objectValues[227];
     /**
-     * See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Grantha) for more information.
+     * See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Grantha) for more information.
      */
     static Grantha = Block.#objectValues[228];
     /**
-     * See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Khojki) for more information.
+     * See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Khojki) for more information.
      */
     static Khojki = Block.#objectValues[229];
     /**
-     * See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Khudawadi) for more information.
+     * See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Khudawadi) for more information.
      */
     static Khudawadi = Block.#objectValues[230];
     /**
-     * See the [Rust documentation for `LatinExtendedE`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedE) for more information.
+     * See the [Rust documentation for `LatinExtendedE`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedE) for more information.
      */
     static LatinExtendedE = Block.#objectValues[231];
     /**
-     * See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LinearA) for more information.
+     * See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LinearA) for more information.
      */
     static LinearA = Block.#objectValues[232];
     /**
-     * See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Mahajani) for more information.
+     * See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Mahajani) for more information.
      */
     static Mahajani = Block.#objectValues[233];
     /**
-     * See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Manichaean) for more information.
+     * See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Manichaean) for more information.
      */
     static Manichaean = Block.#objectValues[234];
     /**
-     * See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MendeKikakui) for more information.
+     * See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MendeKikakui) for more information.
      */
     static MendeKikakui = Block.#objectValues[235];
     /**
-     * See the [Rust documentation for `Modi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Modi) for more information.
+     * See the [Rust documentation for `Modi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Modi) for more information.
      */
     static Modi = Block.#objectValues[236];
     /**
-     * See the [Rust documentation for `Mro`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Mro) for more information.
+     * See the [Rust documentation for `Mro`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Mro) for more information.
      */
     static Mro = Block.#objectValues[237];
     /**
-     * See the [Rust documentation for `MyanmarExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MyanmarExtendedB) for more information.
+     * See the [Rust documentation for `MyanmarExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MyanmarExtendedB) for more information.
      */
     static MyanmarExtendedB = Block.#objectValues[238];
     /**
-     * See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Nabataean) for more information.
+     * See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Nabataean) for more information.
      */
     static Nabataean = Block.#objectValues[239];
     /**
-     * See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldNorthArabian) for more information.
+     * See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldNorthArabian) for more information.
      */
     static OldNorthArabian = Block.#objectValues[240];
     /**
-     * See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldPermic) for more information.
+     * See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldPermic) for more information.
      */
     static OldPermic = Block.#objectValues[241];
     /**
-     * See the [Rust documentation for `OrnamentalDingbats`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OrnamentalDingbats) for more information.
+     * See the [Rust documentation for `OrnamentalDingbats`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OrnamentalDingbats) for more information.
      */
     static OrnamentalDingbats = Block.#objectValues[242];
     /**
-     * See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PahawhHmong) for more information.
+     * See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PahawhHmong) for more information.
      */
     static PahawhHmong = Block.#objectValues[243];
     /**
-     * See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Palmyrene) for more information.
+     * See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Palmyrene) for more information.
      */
     static Palmyrene = Block.#objectValues[244];
     /**
-     * See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PauCinHau) for more information.
+     * See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PauCinHau) for more information.
      */
     static PauCinHau = Block.#objectValues[245];
     /**
-     * See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.PsalterPahlavi) for more information.
+     * See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.PsalterPahlavi) for more information.
      */
     static PsalterPahlavi = Block.#objectValues[246];
     /**
-     * See the [Rust documentation for `ShorthandFormatControls`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ShorthandFormatControls) for more information.
+     * See the [Rust documentation for `ShorthandFormatControls`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ShorthandFormatControls) for more information.
      */
     static ShorthandFormatControls = Block.#objectValues[247];
     /**
-     * See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Siddham) for more information.
+     * See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Siddham) for more information.
      */
     static Siddham = Block.#objectValues[248];
     /**
-     * See the [Rust documentation for `SinhalaArchaicNumbers`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SinhalaArchaicNumbers) for more information.
+     * See the [Rust documentation for `SinhalaArchaicNumbers`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SinhalaArchaicNumbers) for more information.
      */
     static SinhalaArchaicNumbers = Block.#objectValues[249];
     /**
-     * See the [Rust documentation for `SupplementalArrowsC`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementalArrowsC) for more information.
+     * See the [Rust documentation for `SupplementalArrowsC`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementalArrowsC) for more information.
      */
     static SupplementalArrowsC = Block.#objectValues[250];
     /**
-     * See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tirhuta) for more information.
+     * See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tirhuta) for more information.
      */
     static Tirhuta = Block.#objectValues[251];
     /**
-     * See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.WarangCiti) for more information.
+     * See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.WarangCiti) for more information.
      */
     static WarangCiti = Block.#objectValues[252];
     /**
-     * See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Ahom) for more information.
+     * See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Ahom) for more information.
      */
     static Ahom = Block.#objectValues[253];
     /**
-     * See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.AnatolianHieroglyphs) for more information.
+     * See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.AnatolianHieroglyphs) for more information.
      */
     static AnatolianHieroglyphs = Block.#objectValues[254];
     /**
-     * See the [Rust documentation for `CherokeeSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CherokeeSupplement) for more information.
+     * See the [Rust documentation for `CherokeeSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CherokeeSupplement) for more information.
      */
     static CherokeeSupplement = Block.#objectValues[255];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionE`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionE) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionE`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionE) for more information.
      */
     static CjkUnifiedIdeographsExtensionE = Block.#objectValues[256];
     /**
-     * See the [Rust documentation for `EarlyDynasticCuneiform`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EarlyDynasticCuneiform) for more information.
+     * See the [Rust documentation for `EarlyDynasticCuneiform`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EarlyDynasticCuneiform) for more information.
      */
     static EarlyDynasticCuneiform = Block.#objectValues[257];
     /**
-     * See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Hatran) for more information.
+     * See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Hatran) for more information.
      */
     static Hatran = Block.#objectValues[258];
     /**
-     * See the [Rust documentation for `Multani`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Multani) for more information.
+     * See the [Rust documentation for `Multani`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Multani) for more information.
      */
     static Multani = Block.#objectValues[259];
     /**
-     * See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldHungarian) for more information.
+     * See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldHungarian) for more information.
      */
     static OldHungarian = Block.#objectValues[260];
     /**
-     * See the [Rust documentation for `SupplementalSymbolsAndPictographs`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SupplementalSymbolsAndPictographs) for more information.
+     * See the [Rust documentation for `SupplementalSymbolsAndPictographs`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SupplementalSymbolsAndPictographs) for more information.
      */
     static SupplementalSymbolsAndPictographs = Block.#objectValues[261];
     /**
-     * See the [Rust documentation for `SuttonSignWriting`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SuttonSignWriting) for more information.
+     * See the [Rust documentation for `SuttonSignWriting`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SuttonSignWriting) for more information.
      */
     static SuttonSignWriting = Block.#objectValues[262];
     /**
-     * See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Adlam) for more information.
+     * See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Adlam) for more information.
      */
     static Adlam = Block.#objectValues[263];
     /**
-     * See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Bhaiksuki) for more information.
+     * See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Bhaiksuki) for more information.
      */
     static Bhaiksuki = Block.#objectValues[264];
     /**
-     * See the [Rust documentation for `CyrillicExtendedC`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedC) for more information.
+     * See the [Rust documentation for `CyrillicExtendedC`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedC) for more information.
      */
     static CyrillicExtendedC = Block.#objectValues[265];
     /**
-     * See the [Rust documentation for `GlagoliticSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GlagoliticSupplement) for more information.
+     * See the [Rust documentation for `GlagoliticSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GlagoliticSupplement) for more information.
      */
     static GlagoliticSupplement = Block.#objectValues[266];
     /**
-     * See the [Rust documentation for `IdeographicSymbolsAndPunctuation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.IdeographicSymbolsAndPunctuation) for more information.
+     * See the [Rust documentation for `IdeographicSymbolsAndPunctuation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.IdeographicSymbolsAndPunctuation) for more information.
      */
     static IdeographicSymbolsAndPunctuation = Block.#objectValues[267];
     /**
-     * See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Marchen) for more information.
+     * See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Marchen) for more information.
      */
     static Marchen = Block.#objectValues[268];
     /**
-     * See the [Rust documentation for `MongolianSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MongolianSupplement) for more information.
+     * See the [Rust documentation for `MongolianSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MongolianSupplement) for more information.
      */
     static MongolianSupplement = Block.#objectValues[269];
     /**
-     * See the [Rust documentation for `Newa`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Newa) for more information.
+     * See the [Rust documentation for `Newa`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Newa) for more information.
      */
     static Newa = Block.#objectValues[270];
     /**
-     * See the [Rust documentation for `Osage`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Osage) for more information.
+     * See the [Rust documentation for `Osage`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Osage) for more information.
      */
     static Osage = Block.#objectValues[271];
     /**
-     * See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tangut) for more information.
+     * See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tangut) for more information.
      */
     static Tangut = Block.#objectValues[272];
     /**
-     * See the [Rust documentation for `TangutComponents`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TangutComponents) for more information.
+     * See the [Rust documentation for `TangutComponents`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TangutComponents) for more information.
      */
     static TangutComponents = Block.#objectValues[273];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionF`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionF) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionF`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionF) for more information.
      */
     static CjkUnifiedIdeographsExtensionF = Block.#objectValues[274];
     /**
-     * See the [Rust documentation for `KanaExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KanaExtendedA) for more information.
+     * See the [Rust documentation for `KanaExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KanaExtendedA) for more information.
      */
     static KanaExtendedA = Block.#objectValues[275];
     /**
-     * See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MasaramGondi) for more information.
+     * See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MasaramGondi) for more information.
      */
     static MasaramGondi = Block.#objectValues[276];
     /**
-     * See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Nushu) for more information.
+     * See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Nushu) for more information.
      */
     static Nushu = Block.#objectValues[277];
     /**
-     * See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Soyombo) for more information.
+     * See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Soyombo) for more information.
      */
     static Soyombo = Block.#objectValues[278];
     /**
-     * See the [Rust documentation for `SyriacSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SyriacSupplement) for more information.
+     * See the [Rust documentation for `SyriacSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SyriacSupplement) for more information.
      */
     static SyriacSupplement = Block.#objectValues[279];
     /**
-     * See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ZanabazarSquare) for more information.
+     * See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ZanabazarSquare) for more information.
      */
     static ZanabazarSquare = Block.#objectValues[280];
     /**
-     * See the [Rust documentation for `ChessSymbols`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ChessSymbols) for more information.
+     * See the [Rust documentation for `ChessSymbols`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ChessSymbols) for more information.
      */
     static ChessSymbols = Block.#objectValues[281];
     /**
-     * See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Dogra) for more information.
+     * See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Dogra) for more information.
      */
     static Dogra = Block.#objectValues[282];
     /**
-     * See the [Rust documentation for `GeorgianExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GeorgianExtended) for more information.
+     * See the [Rust documentation for `GeorgianExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GeorgianExtended) for more information.
      */
     static GeorgianExtended = Block.#objectValues[283];
     /**
-     * See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GunjalaGondi) for more information.
+     * See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GunjalaGondi) for more information.
      */
     static GunjalaGondi = Block.#objectValues[284];
     /**
-     * See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.HanifiRohingya) for more information.
+     * See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.HanifiRohingya) for more information.
      */
     static HanifiRohingya = Block.#objectValues[285];
     /**
-     * See the [Rust documentation for `IndicSiyaqNumbers`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.IndicSiyaqNumbers) for more information.
+     * See the [Rust documentation for `IndicSiyaqNumbers`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.IndicSiyaqNumbers) for more information.
      */
     static IndicSiyaqNumbers = Block.#objectValues[286];
     /**
-     * See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Makasar) for more information.
+     * See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Makasar) for more information.
      */
     static Makasar = Block.#objectValues[287];
     /**
-     * See the [Rust documentation for `MayanNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MayanNumerals) for more information.
+     * See the [Rust documentation for `MayanNumerals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MayanNumerals) for more information.
      */
     static MayanNumerals = Block.#objectValues[288];
     /**
-     * See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Medefaidrin) for more information.
+     * See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Medefaidrin) for more information.
      */
     static Medefaidrin = Block.#objectValues[289];
     /**
-     * See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldSogdian) for more information.
+     * See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldSogdian) for more information.
      */
     static OldSogdian = Block.#objectValues[290];
     /**
-     * See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Sogdian) for more information.
+     * See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Sogdian) for more information.
      */
     static Sogdian = Block.#objectValues[291];
     /**
-     * See the [Rust documentation for `EgyptianHieroglyphFormatControls`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EgyptianHieroglyphFormatControls) for more information.
+     * See the [Rust documentation for `EgyptianHieroglyphFormatControls`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EgyptianHieroglyphFormatControls) for more information.
      */
     static EgyptianHieroglyphFormatControls = Block.#objectValues[292];
     /**
-     * See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Elymaic) for more information.
+     * See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Elymaic) for more information.
      */
     static Elymaic = Block.#objectValues[293];
     /**
-     * See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Nandinagari) for more information.
+     * See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Nandinagari) for more information.
      */
     static Nandinagari = Block.#objectValues[294];
     /**
-     * See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.NyiakengPuachueHmong) for more information.
+     * See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.NyiakengPuachueHmong) for more information.
      */
     static NyiakengPuachueHmong = Block.#objectValues[295];
     /**
-     * See the [Rust documentation for `OttomanSiyaqNumbers`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OttomanSiyaqNumbers) for more information.
+     * See the [Rust documentation for `OttomanSiyaqNumbers`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OttomanSiyaqNumbers) for more information.
      */
     static OttomanSiyaqNumbers = Block.#objectValues[296];
     /**
-     * See the [Rust documentation for `SmallKanaExtension`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SmallKanaExtension) for more information.
+     * See the [Rust documentation for `SmallKanaExtension`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SmallKanaExtension) for more information.
      */
     static SmallKanaExtension = Block.#objectValues[297];
     /**
-     * See the [Rust documentation for `SymbolsAndPictographsExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SymbolsAndPictographsExtendedA) for more information.
+     * See the [Rust documentation for `SymbolsAndPictographsExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SymbolsAndPictographsExtendedA) for more information.
      */
     static SymbolsAndPictographsExtendedA = Block.#objectValues[298];
     /**
-     * See the [Rust documentation for `TamilSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TamilSupplement) for more information.
+     * See the [Rust documentation for `TamilSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TamilSupplement) for more information.
      */
     static TamilSupplement = Block.#objectValues[299];
     /**
-     * See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Wancho) for more information.
+     * See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Wancho) for more information.
      */
     static Wancho = Block.#objectValues[300];
     /**
-     * See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Chorasmian) for more information.
+     * See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Chorasmian) for more information.
      */
     static Chorasmian = Block.#objectValues[301];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionG`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionG) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionG`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionG) for more information.
      */
     static CjkUnifiedIdeographsExtensionG = Block.#objectValues[302];
     /**
-     * See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.DivesAkuru) for more information.
+     * See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.DivesAkuru) for more information.
      */
     static DivesAkuru = Block.#objectValues[303];
     /**
-     * See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KhitanSmallScript) for more information.
+     * See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KhitanSmallScript) for more information.
      */
     static KhitanSmallScript = Block.#objectValues[304];
     /**
-     * See the [Rust documentation for `LisuSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LisuSupplement) for more information.
+     * See the [Rust documentation for `LisuSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LisuSupplement) for more information.
      */
     static LisuSupplement = Block.#objectValues[305];
     /**
-     * See the [Rust documentation for `SymbolsForLegacyComputing`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SymbolsForLegacyComputing) for more information.
+     * See the [Rust documentation for `SymbolsForLegacyComputing`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SymbolsForLegacyComputing) for more information.
      */
     static SymbolsForLegacyComputing = Block.#objectValues[306];
     /**
-     * See the [Rust documentation for `TangutSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TangutSupplement) for more information.
+     * See the [Rust documentation for `TangutSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TangutSupplement) for more information.
      */
     static TangutSupplement = Block.#objectValues[307];
     /**
-     * See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Yezidi) for more information.
+     * See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Yezidi) for more information.
      */
     static Yezidi = Block.#objectValues[308];
     /**
-     * See the [Rust documentation for `ArabicExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicExtendedB) for more information.
+     * See the [Rust documentation for `ArabicExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicExtendedB) for more information.
      */
     static ArabicExtendedB = Block.#objectValues[309];
     /**
-     * See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CyproMinoan) for more information.
+     * See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CyproMinoan) for more information.
      */
     static CyproMinoan = Block.#objectValues[310];
     /**
-     * See the [Rust documentation for `EthiopicExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EthiopicExtendedB) for more information.
+     * See the [Rust documentation for `EthiopicExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EthiopicExtendedB) for more information.
      */
     static EthiopicExtendedB = Block.#objectValues[311];
     /**
-     * See the [Rust documentation for `KanaExtendedB`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KanaExtendedB) for more information.
+     * See the [Rust documentation for `KanaExtendedB`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KanaExtendedB) for more information.
      */
     static KanaExtendedB = Block.#objectValues[312];
     /**
-     * See the [Rust documentation for `LatinExtendedF`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedF) for more information.
+     * See the [Rust documentation for `LatinExtendedF`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedF) for more information.
      */
     static LatinExtendedF = Block.#objectValues[313];
     /**
-     * See the [Rust documentation for `LatinExtendedG`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedG) for more information.
+     * See the [Rust documentation for `LatinExtendedG`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.LatinExtendedG) for more information.
      */
     static LatinExtendedG = Block.#objectValues[314];
     /**
-     * See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OldUyghur) for more information.
+     * See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OldUyghur) for more information.
      */
     static OldUyghur = Block.#objectValues[315];
     /**
-     * See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Tangsa) for more information.
+     * See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Tangsa) for more information.
      */
     static Tangsa = Block.#objectValues[316];
     /**
-     * See the [Rust documentation for `Toto`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Toto) for more information.
+     * See the [Rust documentation for `Toto`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Toto) for more information.
      */
     static Toto = Block.#objectValues[317];
     /**
-     * See the [Rust documentation for `UnifiedCanadianAboriginalSyllabicsExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.UnifiedCanadianAboriginalSyllabicsExtendedA) for more information.
+     * See the [Rust documentation for `UnifiedCanadianAboriginalSyllabicsExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.UnifiedCanadianAboriginalSyllabicsExtendedA) for more information.
      */
     static UnifiedCanadianAboriginalSyllabicsExtendedA = Block.#objectValues[318];
     /**
-     * See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Vithkuqi) for more information.
+     * See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Vithkuqi) for more information.
      */
     static Vithkuqi = Block.#objectValues[319];
     /**
-     * See the [Rust documentation for `ZnamennyMusicalNotation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ZnamennyMusicalNotation) for more information.
+     * See the [Rust documentation for `ZnamennyMusicalNotation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ZnamennyMusicalNotation) for more information.
      */
     static ZnamennyMusicalNotation = Block.#objectValues[320];
     /**
-     * See the [Rust documentation for `ArabicExtendedC`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArabicExtendedC) for more information.
+     * See the [Rust documentation for `ArabicExtendedC`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArabicExtendedC) for more information.
      */
     static ArabicExtendedC = Block.#objectValues[321];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionH`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionH) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionH`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionH) for more information.
      */
     static CjkUnifiedIdeographsExtensionH = Block.#objectValues[322];
     /**
-     * See the [Rust documentation for `CyrillicExtendedD`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedD) for more information.
+     * See the [Rust documentation for `CyrillicExtendedD`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CyrillicExtendedD) for more information.
      */
     static CyrillicExtendedD = Block.#objectValues[323];
     /**
-     * See the [Rust documentation for `DevanagariExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.DevanagariExtendedA) for more information.
+     * See the [Rust documentation for `DevanagariExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.DevanagariExtendedA) for more information.
      */
     static DevanagariExtendedA = Block.#objectValues[324];
     /**
-     * See the [Rust documentation for `KaktovikNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KaktovikNumerals) for more information.
+     * See the [Rust documentation for `KaktovikNumerals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KaktovikNumerals) for more information.
      */
     static KaktovikNumerals = Block.#objectValues[325];
     /**
-     * See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Kawi) for more information.
+     * See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Kawi) for more information.
      */
     static Kawi = Block.#objectValues[326];
     /**
-     * See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.NagMundari) for more information.
+     * See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.NagMundari) for more information.
      */
     static NagMundari = Block.#objectValues[327];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionI`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionI) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionI`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionI) for more information.
      */
     static CjkUnifiedIdeographsExtensionI = Block.#objectValues[328];
     /**
-     * See the [Rust documentation for `EgyptianHieroglyphsExtendedA`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.EgyptianHieroglyphsExtendedA) for more information.
+     * See the [Rust documentation for `EgyptianHieroglyphsExtendedA`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.EgyptianHieroglyphsExtendedA) for more information.
      */
     static EgyptianHieroglyphsExtendedA = Block.#objectValues[329];
     /**
-     * See the [Rust documentation for `Garay`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Garay) for more information.
+     * See the [Rust documentation for `Garay`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Garay) for more information.
      */
     static Garay = Block.#objectValues[330];
     /**
-     * See the [Rust documentation for `GurungKhema`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.GurungKhema) for more information.
+     * See the [Rust documentation for `GurungKhema`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.GurungKhema) for more information.
      */
     static GurungKhema = Block.#objectValues[331];
     /**
-     * See the [Rust documentation for `KiratRai`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.KiratRai) for more information.
+     * See the [Rust documentation for `KiratRai`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.KiratRai) for more information.
      */
     static KiratRai = Block.#objectValues[332];
     /**
-     * See the [Rust documentation for `MyanmarExtendedC`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MyanmarExtendedC) for more information.
+     * See the [Rust documentation for `MyanmarExtendedC`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MyanmarExtendedC) for more information.
      */
     static MyanmarExtendedC = Block.#objectValues[333];
     /**
-     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.OlOnal) for more information.
+     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.OlOnal) for more information.
      */
     static OlOnal = Block.#objectValues[334];
     /**
-     * See the [Rust documentation for `Sunuwar`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Sunuwar) for more information.
+     * See the [Rust documentation for `Sunuwar`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Sunuwar) for more information.
      */
     static Sunuwar = Block.#objectValues[335];
     /**
-     * See the [Rust documentation for `SymbolsForLegacyComputingSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SymbolsForLegacyComputingSupplement) for more information.
+     * See the [Rust documentation for `SymbolsForLegacyComputingSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SymbolsForLegacyComputingSupplement) for more information.
      */
     static SymbolsForLegacyComputingSupplement = Block.#objectValues[336];
     /**
-     * See the [Rust documentation for `Todhri`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Todhri) for more information.
+     * See the [Rust documentation for `Todhri`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Todhri) for more information.
      */
     static Todhri = Block.#objectValues[337];
     /**
-     * See the [Rust documentation for `TuluTigalari`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TuluTigalari) for more information.
+     * See the [Rust documentation for `TuluTigalari`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TuluTigalari) for more information.
      */
     static TuluTigalari = Block.#objectValues[338];
     /**
-     * See the [Rust documentation for `BeriaErfe`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BeriaErfe) for more information.
+     * See the [Rust documentation for `BeriaErfe`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BeriaErfe) for more information.
      */
     static BeriaErfe = Block.#objectValues[339];
     /**
-     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionJ`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionJ) for more information.
+     * See the [Rust documentation for `CJKUnifiedIdeographsExtensionJ`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.CJKUnifiedIdeographsExtensionJ) for more information.
      */
     static CjkUnifiedIdeographsExtensionJ = Block.#objectValues[340];
     /**
-     * See the [Rust documentation for `MiscellaneousSymbolsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsSupplement) for more information.
+     * See the [Rust documentation for `MiscellaneousSymbolsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsSupplement) for more information.
      */
     static MiscellaneousSymbolsSupplement = Block.#objectValues[341];
     /**
-     * See the [Rust documentation for `SharadaSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.SharadaSupplement) for more information.
+     * See the [Rust documentation for `SharadaSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.SharadaSupplement) for more information.
      */
     static SharadaSupplement = Block.#objectValues[342];
     /**
-     * See the [Rust documentation for `Sidetic`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Sidetic) for more information.
+     * See the [Rust documentation for `Sidetic`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Sidetic) for more information.
      */
     static Sidetic = Block.#objectValues[343];
     /**
-     * See the [Rust documentation for `TaiYo`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TaiYo) for more information.
+     * See the [Rust documentation for `TaiYo`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TaiYo) for more information.
      */
     static TaiYo = Block.#objectValues[344];
     /**
-     * See the [Rust documentation for `TangutComponentsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TangutComponentsSupplement) for more information.
+     * See the [Rust documentation for `TangutComponentsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TangutComponentsSupplement) for more information.
      */
     static TangutComponentsSupplement = Block.#objectValues[345];
     /**
-     * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.TolongSiki) for more information.
+     * See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.TolongSiki) for more information.
      */
     static TolongSiki = Block.#objectValues[346];
     /**
-     * See the [Rust documentation for `ArchaicCuneiformNumerals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.ArchaicCuneiformNumerals) for more information.
+     * See the [Rust documentation for `ArchaicCuneiformNumerals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.ArchaicCuneiformNumerals) for more information.
      */
     static ArchaicCuneiformNumerals = Block.#objectValues[347];
     /**
-     * See the [Rust documentation for `BengaliSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.BengaliSupplement) for more information.
+     * See the [Rust documentation for `BengaliSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.BengaliSupplement) for more information.
      */
     static BengaliSupplement = Block.#objectValues[348];
     /**
-     * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Jurchen) for more information.
+     * See the [Rust documentation for `Jurchen`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Jurchen) for more information.
      */
     static Jurchen = Block.#objectValues[349];
     /**
-     * See the [Rust documentation for `JurchenRadicals`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.JurchenRadicals) for more information.
+     * See the [Rust documentation for `JurchenRadicals`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.JurchenRadicals) for more information.
      */
     static JurchenRadicals = Block.#objectValues[350];
     /**
-     * See the [Rust documentation for `MiscellaneousSymbolsAndArrowsExtended`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrowsExtended) for more information.
+     * See the [Rust documentation for `MiscellaneousSymbolsAndArrowsExtended`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MiscellaneousSymbolsAndArrowsExtended) for more information.
      */
     static MiscellaneousSymbolsAndArrowsExtended = Block.#objectValues[351];
     /**
-     * See the [Rust documentation for `MusicalSymbolsSupplement`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbolsSupplement) for more information.
+     * See the [Rust documentation for `MusicalSymbolsSupplement`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.MusicalSymbolsSupplement) for more information.
      */
     static MusicalSymbolsSupplement = Block.#objectValues[352];
     /**
-     * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#associatedconstant.Seal) for more information.
+     * See the [Rust documentation for `Seal`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#associatedconstant.Seal) for more information.
      */
     static Seal = Block.#objectValues[353];
 
 
     /**
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.4.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
 
@@ -2203,7 +2203,7 @@ export class Block {
     /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
@@ -2227,7 +2227,7 @@ export class Block {
     /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
@@ -2251,7 +2251,7 @@ export class Block {
     /**
      * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
 
@@ -2269,7 +2269,7 @@ export class Block {
     /**
      * Convert from an integer value from ICU4C or `CodePointMapData`
      *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.Block.html#method.from_icu4c_value) for more information.
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.Block.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);

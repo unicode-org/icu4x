@@ -352,6 +352,10 @@ enum CollationRootHan {
 // Mirrors icu_provider_source::AltVariantKind
 enum AltVariantKind {
     DatetimeAscii,
+    LocaleNamesRegionHkShort,
+    LocaleNamesRegionMoShort,
+    LocaleNamesRegionFkVariant,
+    LocaleNamesRegionPsShort,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -514,6 +518,18 @@ fn run(cli: Cli) -> eyre::Result<()> {
 
             p = p.with_alt_variants(cli.alt_variants.iter().copied().map(|v| match v {
                 AltVariantKind::DatetimeAscii => icu_provider_source::AltVariantKind::DatetimeAscii,
+                AltVariantKind::LocaleNamesRegionHkShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionHkShort
+                }
+                AltVariantKind::LocaleNamesRegionMoShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionMoShort
+                }
+                AltVariantKind::LocaleNamesRegionFkVariant => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionFkVariant
+                }
+                AltVariantKind::LocaleNamesRegionPsShort => {
+                    icu_provider_source::AltVariantKind::LocaleNamesRegionPsShort
+                }
             }));
 
             if cli.trie_type == TrieType::Fast {
@@ -939,6 +955,10 @@ mod test_consistency {
         let upstream = Upstream::DatetimeAscii;
         let _ = match upstream {
             Upstream::DatetimeAscii => AltVariantKind::DatetimeAscii,
+            Upstream::LocaleNamesRegionHkShort => AltVariantKind::LocaleNamesRegionHkShort,
+            Upstream::LocaleNamesRegionMoShort => AltVariantKind::LocaleNamesRegionMoShort,
+            Upstream::LocaleNamesRegionFkVariant => AltVariantKind::LocaleNamesRegionFkVariant,
+            Upstream::LocaleNamesRegionPsShort => AltVariantKind::LocaleNamesRegionPsShort,
             _ => unreachable!(),
         };
     }

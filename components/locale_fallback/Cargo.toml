@@ -52,3 +52,6 @@ std = ["icu_provider/std"]
 serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "potential_utf/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake", "icu_provider/export"]
 compiled_data = ["dep:icu_locale_fallback_data", "icu_provider/baked"]
+
+[lints]
+workspace = true

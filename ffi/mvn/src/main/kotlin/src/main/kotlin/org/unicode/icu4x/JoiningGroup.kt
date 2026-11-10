@@ -15,7 +15,7 @@ internal interface JoiningGroupLib: Library {
     fun icu4x_JoiningGroup_try_from_str_mv1(s: Slice): OptionInt
 }
 /**
- * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+ * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html) for more information.
 */
 enum class JoiningGroup {
     NoJoiningGroup,
@@ -153,7 +153,7 @@ enum class JoiningGroup {
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.4.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
          */
         fun forChar(ch: Int): JoiningGroup {
             
@@ -165,7 +165,7 @@ enum class JoiningGroup {
         /**
          * Convert from an integer value from ICU4C or `CodePointMapData`
          *
-         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html#method.from_icu4c_value) for more information.
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html#method.from_icu4c_value) for more information.
          */
         fun fromIntegerValue(other: UByte): JoiningGroup? {
             
@@ -198,7 +198,7 @@ enum class JoiningGroup {
     /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     fun longName(): String? {
         
@@ -212,7 +212,7 @@ enum class JoiningGroup {
     /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     fun shortName(): String? {
         
@@ -226,7 +226,7 @@ enum class JoiningGroup {
     /**
      * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html#method.to_icu4c_value) for more information.
      */
     fun toIntegerValue(): UByte {
         

@@ -743,7 +743,8 @@ By implementing the generic [`TryFrom<&str>`](https://doc.rust-lang.org/std/conv
 
 ```rust
 impl TryFrom<&str> for LocaleId {
-  fn try_from(s: &str) -> IcuResult<LocaleId> {
+  type Error = ParseError;
+  fn try_from(s: &str) -> Result<LocaleId, ParseError> {
     ...
   }
 }

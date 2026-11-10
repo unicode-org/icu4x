@@ -25,15 +25,8 @@
 //!
 //! * `networking`
 //!   * enables networking support to download CLDR and ICU source data from GitHub
-//! * `use_wasm` / `use_icu4c`
-//!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
 //! * `unstable`
 //!   * enables unstable data markers
-
-#![cfg_attr(
-    not(any(feature = "use_wasm", feature = "use_icu4c")),
-    allow(dead_code, unused_imports)
-)]
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
@@ -133,10 +126,10 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_CLDR_TAG: &'static str = "49.0.0-BETA3";
+    pub const TESTED_CLDR_TAG: &'static str = "49.0.0";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-79.1rc";
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-79.1";
 
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -149,7 +142,7 @@ impl SourceDataProvider {
     pub const TESTED_UCD_TAG: &'static str = Self::TESTED_UNICODE_TAG;
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2026e";
+    pub const TESTED_TZDB_TAG: &'static str = "2026f";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -489,6 +482,7 @@ impl SourceDataProvider {
     pub fn with_alt_variants(self, variants: impl IntoIterator<Item = AltVariantKind>) -> Self {
         Self {
             alt_variants: variants.into_iter().collect(),
+            requests_cache: Default::default(),
             ..self
         }
     }
@@ -686,6 +680,14 @@ pub enum AltVariantKind {
     ///
     /// Intended for compatibility with older websites.
     DatetimeAscii,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="HK"]`.
+    LocaleNamesRegionHkShort,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="MO"]`.
+    LocaleNamesRegionMoShort,
+    /// Use `alt="variant"` for `//ldml/localeDisplayNames/territories/territory[@type="FK"]`.
+    LocaleNamesRegionFkVariant,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="PS"]`.
+    LocaleNamesRegionPsShort,
 }
 
 /// A language's CLDR coverage level.

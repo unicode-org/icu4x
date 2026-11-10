@@ -13,7 +13,7 @@ internal interface CaseMapCloserLib: Library {
     fun icu4x_CaseMapCloser_add_string_case_closure_to_mv1(handle: Pointer, s: Slice, builder: Pointer): Byte
 }
 /**
- * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/2.3.1/icu/casemap/struct.CaseMapCloser.html) for more information.
+ * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/2.4.0/icu/casemap/struct.CaseMapCloser.html) for more information.
  */
 class CaseMapCloser internal constructor (
     internal val handle: Pointer,
@@ -46,7 +46,7 @@ class CaseMapCloser internal constructor (
         /**
          * Construct a new `CaseMapCloser` instance using compiled data.
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
          */
         fun create(): Result<CaseMapCloser> {
             
@@ -66,7 +66,7 @@ class CaseMapCloser internal constructor (
         /**
          * Construct a new `CaseMapCloser` instance using a particular data source.
          *
-         * See the [Rust documentation for `new`](https://docs.rs/icu/2.3.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+         * See the [Rust documentation for `new`](https://docs.rs/icu/2.4.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
          */
         fun createWithProvider(provider: DataProvider): Result<CaseMapCloser> {
             
@@ -87,7 +87,7 @@ class CaseMapCloser internal constructor (
      * Adds all simple case mappings and the full case folding for `c` to `builder`.
      * Also adds special case closure mappings.
      *
-     * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/2.3.1/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
+     * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/2.4.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
      */
     fun addCaseClosureTo(c: Int, builder: CodePointSetBuilder): Unit {
         
@@ -101,7 +101,7 @@ class CaseMapCloser internal constructor (
      *
      * Returns true if the string was found
      *
-     * See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.3.1/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
+     * See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.4.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
      */
     fun addStringCaseClosureTo(s: String, builder: CodePointSetBuilder): Boolean {
         val sSliceMemory = PrimitiveArrayTools.borrowUtf8(s)

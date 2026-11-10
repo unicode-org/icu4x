@@ -44,7 +44,7 @@ So here are steps to test Github Actions change on your personal fork, with link
 
 1. Create a new testing-only branch that tacks on [an extra commit to make testing-appropriate changes](https://github.com/echeran/icu4x/pull/22/commits/538176500f54594cffa1844c0244c7135ea24b84).
 2. Push the testing branch to the personal fork of `icu4x` and create a [testing PR targeting personal fork's main](https://github.com/echeran/icu4x/pull/22).
-3. [GitHub Actions will run a new job]((https://github.com/echeran/icu4x/actions/runs/539462550)) because the testing PR satisfies the execution trigger conditions.
+3. [GitHub Actions will run a new job](https://github.com/echeran/icu4x/actions/runs/539462550) because the testing PR satisfies the execution trigger conditions.
 4. Optional extra step - merge the testing PR to get Github Actions [execute the job that copies GH pages over to the fork of the docs repo](https://github.com/echeran/icu4x/actions/runs/539466271).
 
 Also, part of your testing-appropriate changes can be as primitive-yet-sufficient as adding lots of stdout debugging that gets captured in the logs ([example](https://github.com/echeran/icu4x/pull/13/commits/d6168715ac644b785c920b639cd5238e7a52f806)).

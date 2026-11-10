@@ -25,7 +25,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
  *
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */

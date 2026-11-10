@@ -32,13 +32,13 @@ namespace icu4x {
  * This struct holds free functions for loading display names for languages, scripts,
  * regions, and language identifiers.
  *
- * See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html) for more information.
+ * See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
  *
- * See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html) for more information.
+ * See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
  *
- * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html) for more information.
+ * See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
  *
- * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
+ * See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
  *
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
@@ -46,7 +46,7 @@ class LocaleNamesUnstable {
 public:
 
   /**
-   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -55,7 +55,7 @@ public:
   inline static void for_region_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -64,7 +64,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -73,7 +73,7 @@ public:
   inline static void for_region_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -82,7 +82,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_tiny_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+   * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -91,7 +91,7 @@ public:
   inline static void for_region_short_tiny_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+   * See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -100,7 +100,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_short_tiny_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+   * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -109,7 +109,7 @@ public:
   inline static void for_region_short_light_write(const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+   * See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -118,7 +118,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_region_short_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view region, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -127,7 +127,7 @@ public:
   inline static void for_script_light_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+   * See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -136,7 +136,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -145,7 +145,7 @@ public:
   inline static void for_script_tiny_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+   * See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -154,7 +154,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_tiny_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -163,7 +163,7 @@ public:
   inline static void for_script_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -172,7 +172,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+   * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -181,7 +181,7 @@ public:
   inline static void for_script_short_heavy_write(const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+   * See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -190,7 +190,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_script_short_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view script, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -199,7 +199,7 @@ public:
   inline static void for_variant_heavy_write(const icu4x::Locale& locale, std::string_view variant, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+   * See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -208,7 +208,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_variant_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view variant, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -217,7 +217,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_light_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+   * See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -226,7 +226,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -235,7 +235,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_tiny_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+   * See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -244,7 +244,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_tiny_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+   * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -253,7 +253,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_light_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+   * See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -262,7 +262,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+   * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -271,7 +271,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_long_light_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+   * See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -280,7 +280,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_long_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+   * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -289,7 +289,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_menu_light_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+   * See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -298,7 +298,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_menu_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+   * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -307,7 +307,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_menu_light_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+   * See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -316,7 +316,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_menu_light_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -325,7 +325,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_heavy_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+   * See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -334,7 +334,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+   * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -343,7 +343,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_heavy_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+   * See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -352,7 +352,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+   * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -361,7 +361,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_long_heavy_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+   * See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -370,7 +370,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_long_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+   * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -379,7 +379,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_menu_heavy_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+   * See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -388,7 +388,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_menu_heavy_with_provider_write(const icu4x::DataProvider& provider, const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+   * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */
@@ -397,7 +397,7 @@ public:
   inline static icu4x::diplomat::result<std::monostate, icu4x::DataError> for_language_identifier_short_menu_heavy_write(const icu4x::Locale& locale, const icu4x::Locale& langid, icu4x::LanguageDisplayUnstable language_display, W& writeable_output);
 
   /**
-   * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+   * See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
    *
    * 🚧 This API is unstable and may experience breaking changes outside major releases.
    */

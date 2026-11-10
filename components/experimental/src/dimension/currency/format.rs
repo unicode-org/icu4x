@@ -118,23 +118,25 @@ mod tests {
 
         // In CLDR, `pt-PT` sets the decimal separator override for PTE to '$' and the
         // currency symbol to U+200B (ZERO WIDTH SPACE), as the cifrão ('$') serves as
-        // the decimal separator (e.g. "12,345$67").
+        // the decimal separator (e.g. "12,345$67"). Datagen stores that symbol as the
+        // empty string.
         //
         // Because the locale's standard currency pattern ("#,##0.00 ¤") contains a
         // non-breaking space (U+00A0) before the symbol placeholder ('¤'), formatting
-        // with `try_new_symbol` produces "12,345$67" followed by U+00A0 and U+200B.
-        // Visually this appears as a trailing space, but it faithfully matches CLDR data
-        // (tracked in CLDR-19771).
-        // (Note: `try_new_no_currency` below formats without the placeholder or trailing space).
+        // with the raw symbol would produce a trailing space (tracked in CLDR-19771).
+        // To resolve this, when the currency symbol is empty, `CurrencyFormatter` uses
+        // `noCurrency` formatting so that the amount formats cleanly without any
+        // placeholder or trailing space ("12,345$67").
         let escudo =
             CurrencyFormatter::try_new_symbol(prefs, currency!("PTE"), Default::default()).unwrap();
-        assert_writeable_eq!(escudo.format_fixed_decimal(&value), "12,345$67 \u{200B}");
+        assert_writeable_eq!(escudo.format_fixed_decimal(&value), "12,345$67");
 
         let escudo_narrow =
             CurrencyFormatter::try_new_symbol_narrow(prefs, currency!("PTE"), Default::default())
                 .unwrap();
-        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so it falls back to the ISO code
-        assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67 PTE");
+        // Narrow symbol for PTE is not defined in pt-PT CLDR data, so the narrow data entry
+        // carries the standard symbol (#8486), matching `try_new_symbol` above.
+        assert_writeable_eq!(escudo_narrow.format_fixed_decimal(&value), "12,345$67");
 
         let escudo_code =
             CurrencyFormatter::try_new_code(prefs, currency!("PTE"), Default::default()).unwrap();
@@ -458,6 +460,30 @@ mod tests {
             fmt_symbol_narrow.format_fixed_decimal(&value),
             "XYZ\u{a0}12,345.67"
         );
+    }
+
+    #[test]
+    pub fn test_narrow_symbol_fallback_to_standard_symbol() {
+        // Test currency where standard symbol is defined, but narrow symbol is not in CLDR.
+        // Per UTS #35 lateral inheritance, narrow symbols fall back to standard symbols before
+        // the ISO code. The fallback is resolved at datagen time, so the narrow data entry
+        // already carries the standard symbol.
+        let prefs_fr: CurrencyFormatterPreferences = locale!("fr-FR").into();
+        let currency_frf = currency!("FRF");
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_symbol =
+            CurrencyFormatter::try_new_symbol(prefs_fr, currency_frf, Default::default()).unwrap();
+        let fmt_narrow =
+            CurrencyFormatter::try_new_symbol_narrow(prefs_fr, currency_frf, Default::default())
+                .unwrap();
+
+        let formatted_symbol = fmt_symbol.format_fixed_decimal(&value);
+        let formatted_narrow = fmt_narrow.format_fixed_decimal(&value);
+
+        // Both use "F" (standard symbol) instead of falling back to ISO code "FRF"
+        assert_writeable_eq!(formatted_symbol, "12\u{202f}345,67\u{a0}F");
+        assert_writeable_eq!(formatted_narrow, "12\u{202f}345,67\u{a0}F");
     }
 
     #[test]
