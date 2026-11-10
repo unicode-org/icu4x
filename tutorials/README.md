@@ -18,7 +18,7 @@ If you intend to use ICU4X from other languages, check out our examples for [C++
 
 We're happy to answer any questions on our [discussions forum]!
 
-Contributors should also check out [CONTRIBUTING.md](../../CONTRIBUTING.md).
+Contributors should also check out [CONTRIBUTING.md](../CONTRIBUTING.md).
 
  [discussions forum]: https://github.com/unicode-org/icu4x/discussions
  [icu-crate-docs]: https://docs.rs/icu/latest/icu/

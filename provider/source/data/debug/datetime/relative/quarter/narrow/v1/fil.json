@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "nakaraang quarter",
-    "0": "ngayong quarter",
-    "1": "susunod na quarter"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "nakaraang quarter",
+    "ngayong quarter",
+    "susunod na quarter"
+  ],
   "past": {
     "other": [
       0,

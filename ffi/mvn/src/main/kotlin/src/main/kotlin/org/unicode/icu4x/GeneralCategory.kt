@@ -16,7 +16,7 @@ internal interface GeneralCategoryLib: Library {
     fun icu4x_GeneralCategory_to_group_mv1(inner: Int): GeneralCategoryGroupNative
 }
 /**
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/enum.GeneralCategory.html) for more information.
 */
 enum class GeneralCategory {
     Unassigned,
@@ -68,7 +68,7 @@ enum class GeneralCategory {
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.3.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+         * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.4.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
          */
         fun forChar(ch: Int): GeneralCategory {
             
@@ -80,7 +80,7 @@ enum class GeneralCategory {
         /**
          * Convert from an integer value from ICU4C or `CodePointMapData`
          *
-         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
+         * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
          */
         fun fromIntegerValue(other: UByte): GeneralCategory? {
             
@@ -113,7 +113,7 @@ enum class GeneralCategory {
     /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     fun longName(): String? {
         
@@ -127,7 +127,7 @@ enum class GeneralCategory {
     /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     fun shortName(): String? {
         
@@ -141,7 +141,7 @@ enum class GeneralCategory {
     /**
      * Convert to an integer value usable with ICU4C and `CodePointMapData`
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
      */
     fun toIntegerValue(): UByte {
         
@@ -152,7 +152,7 @@ enum class GeneralCategory {
     /**
      * Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     fun toGroup(): GeneralCategoryGroup {
         

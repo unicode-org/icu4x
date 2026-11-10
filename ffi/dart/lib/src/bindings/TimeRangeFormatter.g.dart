@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
+/// See the [Rust documentation for `NoCalendarRangeFormatter`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html) for more information.
 @meta.experimental
 final class TimeRangeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -29,11 +29,11 @@ final class TimeRangeFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_TimeRangeFormatter_destroy_mv1));
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
+  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   @meta.experimental
@@ -45,11 +45,11 @@ final class TimeRangeFormatter implements ffi.Finalizable {
     return TimeRangeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
+  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   @meta.experimental
@@ -61,7 +61,7 @@ final class TimeRangeFormatter implements ffi.Finalizable {
     return TimeRangeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/range/type.NoCalendarRangeFormatter.html#method.format) for more information.
   @meta.experimental
   String format(Time startTime, Time endTime) {
     final write = _Write();

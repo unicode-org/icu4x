@@ -368,18 +368,18 @@ impl Rules for China {
 /// let chinese_a = iso_a.to_calendar(ChineseTraditional::new());
 ///
 /// assert_eq!(korean_a.month().number(), 3);
-/// assert_eq!(korean_a.month().to_input().is_leap(), true);
+/// assert!(korean_a.month().to_input().is_leap());
 /// assert_eq!(chinese_a.month().number(), 4);
-/// assert_eq!(chinese_a.month().to_input().is_leap(), false);
+/// assert!(!chinese_a.month().to_input().is_leap());
 ///
 /// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
 /// let korean_b = iso_b.to_calendar(KoreanTraditional::new());
 /// let chinese_b = iso_b.to_calendar(ChineseTraditional::new());
 ///
 /// assert_eq!(korean_b.month().number(), 4);
-/// assert_eq!(korean_b.month().to_input().is_leap(), false);
+/// assert!(!korean_b.month().to_input().is_leap());
 /// assert_eq!(chinese_b.month().number(), 4);
-/// assert_eq!(chinese_b.month().to_input().is_leap(), true);
+/// assert!(chinese_b.month().to_input().is_leap());
 /// ```
 pub type KoreanTraditional = EastAsianTraditional<Korea>;
 

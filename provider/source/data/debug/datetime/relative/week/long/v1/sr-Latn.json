@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "prošle nedelje",
-    "0": "ove nedelje",
-    "1": "sledeće nedelje"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "prošle nedelje",
+    "ove nedelje",
+    "sledeće nedelje"
+  ],
   "past": {
     "one": [
       0,

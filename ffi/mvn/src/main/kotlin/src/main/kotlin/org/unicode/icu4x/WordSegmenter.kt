@@ -24,7 +24,7 @@ internal interface WordSegmenterLib: Library {
 /**
  * An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
  *
- * See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html) for more information.
+ * See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html) for more information.
  */
 class WordSegmenter internal constructor (
     internal val handle: Pointer,
@@ -61,7 +61,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
+         * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
          */
         fun createAuto(): WordSegmenter {
             
@@ -80,7 +80,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
+         * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
          */
         fun createAutoWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
@@ -104,7 +104,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
+         * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
          */
         fun createAutoWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
@@ -128,7 +128,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
+         * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
          */
         fun createLstm(): WordSegmenter {
             
@@ -147,7 +147,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
+         * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
          */
         fun createLstmWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
@@ -171,7 +171,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
+         * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
          */
         fun createLstmWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
@@ -195,7 +195,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
+         * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
          */
         fun createDictionary(): WordSegmenter {
             
@@ -214,7 +214,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
+         * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
          */
         fun createDictionaryWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
@@ -238,7 +238,7 @@ class WordSegmenter internal constructor (
          * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
          * Khmer, Lao, and Thai.
          *
-         * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
+         * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
          */
         fun createDictionaryWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
@@ -259,7 +259,7 @@ class WordSegmenter internal constructor (
          * Construct a [WordSegmenter] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
          * Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
          *
-         * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.new_for_non_complex_scripts) for more information.
+         * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.new_for_non_complex_scripts) for more information.
          */
         fun createForNonComplexScripts(): WordSegmenter {
             
@@ -275,7 +275,7 @@ class WordSegmenter internal constructor (
          * Construct a [WordSegmenter] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
          * Burmese, Khmer, Lao, and Thai), using compiled data.
          *
-         * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
+         * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
          */
         fun createForNonComplexScriptsWithContentLocale(locale: Locale): Result<WordSegmenter> {
             
@@ -296,7 +296,7 @@ class WordSegmenter internal constructor (
          * Construct a [WordSegmenter] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
          * Burmese, Khmer, Lao, and Thai), using a particular data source.
          *
-         * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
+         * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
          */
         fun createForNonComplexScriptsWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): Result<WordSegmenter> {
             
@@ -319,7 +319,7 @@ class WordSegmenter internal constructor (
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.3.1/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf16) for more information.
+     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.4.0/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf16) for more information.
      */
     fun segment(input: String): WordBreakIteratorUtf16 {
         // This lifetime edge depends on lifetimes: 'a

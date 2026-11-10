@@ -1,11 +1,12 @@
 {
-  "relatives": {
-    "-2": "prekjuče",
-    "-1": "juče",
-    "0": "danas",
-    "1": "sutra",
-    "2": "prekosutra"
-  },
+  "zero_index": 2,
+  "relatives": [
+    "prekjuče",
+    "juče",
+    "danas",
+    "sutra",
+    "prekosutra"
+  ],
   "past": {
     "other": [
       0,

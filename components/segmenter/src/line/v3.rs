@@ -257,8 +257,17 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
 
         // If we have break point cache by previous run, return this result
         if let Some(&first_pos) = self.result_cache.first() {
+            let is_run_end = self.result_cache.len() == 1;
             let mut i = 0;
             loop {
+                if is_run_end
+                    && i + self.get_current_codepoint().map_or(0, Y::char_len) == first_pos
+                {
+                    // The break at the end of the complex run depends on the
+                    // following character, so leave it to the rules below.
+                    self.result_cache.clear();
+                    break;
+                }
                 if i == first_pos {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return self.get_current_position();
@@ -433,7 +442,9 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
                 if result.is_some() {
                     return result;
                 }
-                // I may have to fetch text until non-SA character?.
+                // The iterator is now on the last character of the run, and
+                // the break after it is left to the rules.
+                continue 'a;
             }
 
             if self.options.strictness != LineBreakStrictness::Anywhere {
@@ -938,8 +949,15 @@ where
     let breaks = T::segment_complex_run(iter.complex, &iter.input, run_start, run_end);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
+    let is_run_end = iter.result_cache.len() == 1;
     let mut i = start_point.map_or(iter.len, |(pos, _)| pos) - run_start;
     loop {
+        if is_run_end && i + iter.get_current_codepoint().map_or(0, T::char_len) == first_pos {
+            // The break at the end of the complex run depends on the following
+            // character, so return None and let the rules in `next` decide it.
+            iter.result_cache.clear();
+            return None;
+        }
         if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();

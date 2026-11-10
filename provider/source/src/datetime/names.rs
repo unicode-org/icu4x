@@ -449,6 +449,12 @@ fn months_convert(
         // The CLDR 48 data, for e.g. fa, can be inspected at
         // https://github.com/unicode-org/cldr-json/blob/48.0.0/cldr-json/cldr-cal-hebrew-full/main/fa/ca-hebrew.json#L28-L43
 
+        // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
+        let leap_pattern =
+            SinglePlaceholderPattern::try_from_str("{0}a", Default::default()).unwrap();
+        let leap_base_pattern =
+            SinglePlaceholderPattern::try_from_str("{0}b", Default::default()).unwrap();
+
         Ok(MonthNames::LeapPattern(
             (&[
                 months[&"1".to_string().into()].as_str(),
@@ -463,42 +469,31 @@ fn months_convert(
                 months[&"10".to_string().into()].as_str(),
                 months[&"11".to_string().into()].as_str(),
                 months[&"12".to_string().into()].as_str(),
-                // For lack of a better solution, we call Adar I and Adar II "a" and "b" instead.
+                // Adar I is modeled as a M05L, so interpolation would use M05's name.
+                // We therefore have to hardcode M06's name in the pattern instead.
                 &SinglePlaceholderPattern::try_from_str(
-                    &format!("{}a", months[&"6".to_string().into()]),
+                    &leap_pattern.interpolate_to_string([&months[&"6".to_string().into()]]),
                     Default::default(),
                 )
                 .unwrap()
                 .store,
-                &SinglePlaceholderPattern::try_from_str(
-                    &format!("{}b", months[&"6".to_string().into()]),
-                    Default::default(),
-                )
-                .unwrap()
-                .store,
+                &leap_base_pattern.store,
             ])
                 .into(),
         ))
     } else if calendar == DatagenCalendar::Hebrew {
-        let shevat = &months[&"5".to_string().into()];
-        let adar_i = &months[&"6".to_string().into()];
-        let adar = &months[&"7".to_string().into()];
-        let adar_ii = &months[&"7-yeartype-leap".to_string().into()];
-        // Adar I is the only leap month, so we can hardcode it as the leap pattern. The placeholder
-        // is the normal fifth month (Shevat), we can try reducing the data size by using it (but it
-        // should not actually match).
-        let leap_pattern = SinglePlaceholderPattern::try_from_str(
-            &adar_i.replace(shevat, "{0}"),
-            Default::default(),
-        )
-        .unwrap();
-        // Adar II is the only leap-base month, so we can hardcode it as the leap-base pattern. The
-        // placeholder is the normal sixth month (Adar), we can reduce the data size by using it.
-        let leap_base_pattern = SinglePlaceholderPattern::try_from_str(
-            &adar_ii.replace(adar, "{0}"),
-            Default::default(),
-        )
-        .unwrap();
+        let m05l = &months[&"6".to_string().into()];
+        let m06 = &months[&"7".to_string().into()];
+        let m06lb = &months[&"7-yeartype-leap".to_string().into()];
+
+        // M05L is the only leap month, so we can hardcode it as the leap pattern.
+        let leap_pattern =
+            SinglePlaceholderPattern::try_from_str(m05l, Default::default()).unwrap();
+        // M06LB is the only leap-base month, so we can hardcode it as the leap-base pattern. The
+        // placeholder is M06, we can reduce the data size by using it.
+        let leap_base_pattern =
+            SinglePlaceholderPattern::try_from_str(&m06lb.replace(m06, "{0}"), Default::default())
+                .unwrap();
 
         let symbols = [
             months[&"1".to_string().into()].as_str(),

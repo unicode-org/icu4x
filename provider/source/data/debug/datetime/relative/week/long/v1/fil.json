@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "nakalipas na linggo",
-    "0": "sa linggong ito",
-    "1": "susunod na linggo"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "nakalipas na linggo",
+    "sa linggong ito",
+    "susunod na linggo"
+  ],
   "past": {
     "other": [
       0,

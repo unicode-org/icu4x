@@ -508,6 +508,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// # Example
     /// ```
+    /// # #![allow(deprecated)]
     /// use icu::calendar::Date;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
