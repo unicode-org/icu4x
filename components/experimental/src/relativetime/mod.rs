@@ -10,6 +10,7 @@ pub mod provider;
 mod relativetime;
 
 pub use format::FormattedRelativeTime;
+pub use format::parts;
 pub use options::RelativeTimeFormatterOptions;
 pub use relativetime::RelativeTimeFormatter;
 pub use relativetime::RelativeTimeFormatterPreferences;

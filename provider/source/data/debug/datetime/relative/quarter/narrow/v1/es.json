@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "el trimestre pasado",
-    "0": "este trimestre",
-    "1": "el próximo trimestre"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "el trimestre pasado",
+    "este trimestre",
+    "el próximo trimestre"
+  ],
   "past": {
     "other": [
       0,

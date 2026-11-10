@@ -30,7 +30,7 @@ resb = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 calendrical_calculations = { workspace = true }
 
-chrono = { version = "0.4", optional = true }
+chrono = { workspace = true, optional = true }
 
 [dev-dependencies]
 itertools.workspace = true

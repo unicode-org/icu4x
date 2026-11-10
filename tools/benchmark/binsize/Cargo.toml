@@ -11,3 +11,6 @@ edition.workspace = true
 [package.metadata.cargo-all-features]
 # Unpublished internal tool; skip
 skip_package = true
+
+[lints]
+workspace = true

@@ -11,7 +11,7 @@ internal interface TimeZoneAndCanonicalIteratorLib: Library {
 }
 typealias TimeZoneAndCanonicalIteratorIteratorItem = TimeZoneAndCanonical
 /**
- * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
+ * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
  */
 class TimeZoneAndCanonicalIterator internal constructor (
     internal val handle: Pointer,
@@ -43,7 +43,7 @@ class TimeZoneAndCanonicalIterator internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.3.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.4.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
      */
     internal fun nextInternal(): TimeZoneAndCanonical? {
         // This lifetime edge depends on lifetimes: 'a

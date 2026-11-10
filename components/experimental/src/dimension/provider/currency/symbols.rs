@@ -99,33 +99,17 @@ impl CurrencySymbol<'_> {
 
 /// The width of a currency symbol.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::symbols))]
 #[non_exhaustive]
 pub enum CurrencySymbolWidth {
     /// Standard or short currency symbol (e.g. `"$"` or `"CA$"`).
     Short,
     /// Narrow currency symbol (e.g. `"$"`).
+    ///
+    /// Data for this width falls back to the standard symbol at datagen time: if CLDR
+    /// defines no narrow symbol for a currency, the narrow entry carries the standard
+    /// symbol instead (UTS #35 lateral inheritance). Consumers therefore never need to
+    /// issue a second request for the standard symbol.
     Narrow,
-}
-
-impl CurrencySymbolWidth {
-    /// Returns the 1-byte ASCII character code used in data marker attributes.
-    pub const fn as_tinystr(self) -> TinyAsciiStr<1> {
-        match self {
-            Self::Short => tinystr!(1, "s"),
-            Self::Narrow => tinystr!(1, "n"),
-        }
-    }
-
-    /// Returns the character code as a string slice.
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::Short => "s",
-            Self::Narrow => "n",
-        }
-    }
 }
 
 impl CurrencySymbolsV1 {
@@ -135,14 +119,28 @@ impl CurrencySymbolsV1 {
     pub fn make_attributes(
         currency: CurrencyType,
         width: CurrencySymbolWidth,
-        buffer: &mut TinyAsciiStr<5>,
+        buffer: &mut TinyAsciiStr<4>,
     ) -> &DataMarkerAttributes {
-        *buffer = width
-            .as_tinystr()
-            .concat::<1, 2>(tinystr!(1, "/"))
-            .concat::<3, 5>(currency.iso_code());
+        *buffer = match width {
+            CurrencySymbolWidth::Short => currency.iso_code().resize(),
+            CurrencySymbolWidth::Narrow => currency.iso_code().concat(tinystr!(1, "n")),
+        };
         // All valid
         DataMarkerAttributes::try_from_str(buffer).unwrap()
+    }
+
+    /// Parses attributes for this marker into parts.
+    #[cfg(feature = "datagen")]
+    pub fn parse_attributes(
+        attrs: &DataMarkerAttributes,
+    ) -> Option<(CurrencyType, CurrencySymbolWidth)> {
+        let attrs = attrs.as_str();
+        if let Ok(currency) = CurrencyType::try_from_str(attrs) {
+            return Some((currency, CurrencySymbolWidth::Short));
+        }
+        let currency = CurrencyType::try_from_str(attrs.strip_suffix('n')?).ok()?;
+
+        Some((currency, CurrencySymbolWidth::Narrow))
     }
 }
 
@@ -186,4 +184,22 @@ fn test_currency_attributes_roundtrip() {
         .unwrap(),
         (None, currency)
     );
+
+    let mut buf = TinyAsciiStr::EMPTY;
+    for width in [CurrencySymbolsV1::SHORT, CurrencySymbolsV1::NARROW] {
+        assert_eq!(
+            CurrencySymbolsV1::parse_attributes(CurrencySymbolsV1::make_attributes(
+                currency, width, &mut buf
+            ))
+            .unwrap(),
+            (currency, width)
+        );
+    }
+
+    for invalid in ["EU", "EURx", "EURnn", "latn/EUR"] {
+        assert_eq!(
+            CurrencySymbolsV1::parse_attributes(DataMarkerAttributes::from_str_or_panic(invalid)),
+            None
+        );
+    }
 }

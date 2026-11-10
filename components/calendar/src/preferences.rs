@@ -47,6 +47,7 @@ impl CalendarPreferences {
     /// # Example
     ///
     /// ```
+    /// # #![allow(deprecated)]
     /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
     /// use icu::locale::locale;
     ///

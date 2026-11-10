@@ -1147,6 +1147,7 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     /// # Examples
     ///
     /// ```rust
+    /// # #![allow(clippy::type_complexity)]
     /// use litemap::LiteMap;
     ///
     /// const MAP: LiteMap<&[u8], usize, &[(&[u8], usize)]> =

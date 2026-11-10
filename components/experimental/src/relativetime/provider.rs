@@ -14,7 +14,7 @@ use core::fmt::Debug;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::VarZeroVec;
 
 icu_provider::data_marker!(
     /// `DatetimeRelativeSecondLongV1`
@@ -144,17 +144,26 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
 pub struct RelativeTimePatternData<'data> {
-    /// Mapping for relative times with unique names.
-    /// Example.
-    /// In English, "-1" corresponds to "yesterday", "1" corresponds to "tomorrow".
+    /// Index of offset 0 within `relatives` (so offset `i` is stored at `i + zero_index`).
+    pub zero_index: u8,
+    /// Mapping for relative times with unique names (e.g. `["yesterday", "today", "tomorrow"]`).
+    /// Empty strings indicate missing entries in the contiguous range.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub relatives: ZeroMap<'data, i8, str>,
+    pub relatives: VarZeroVec<'data, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub past: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
+}
+
+impl<'data> RelativeTimePatternData<'data> {
+    /// Returns the relative time string for `offset` (e.g. `-1` for `"yesterday"`), if present.
+    pub fn get_relative(&self, offset: i8) -> Option<&str> {
+        let idx = usize::from(self.zero_index).wrapping_add_signed(isize::from(offset));
+        self.relatives.as_slice().get(idx).filter(|s| !s.is_empty())
+    }
 }
 
 icu_provider::data_struct!(RelativeTimePatternData<'_>, #[cfg(feature = "datagen")]);

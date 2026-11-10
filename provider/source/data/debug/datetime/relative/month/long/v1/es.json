@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "el mes pasado",
-    "0": "este mes",
-    "1": "el próximo mes"
-  },
+  "zero_index": 1,
+  "relatives": [
+    "el mes pasado",
+    "este mes",
+    "el próximo mes"
+  ],
   "past": {
     "one": [
       0,

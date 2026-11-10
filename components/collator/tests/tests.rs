@@ -1134,10 +1134,10 @@ fn test_th_corner_cases() {
         // In effect, marks are sorted after each syllable.
         "\u{0E01}\u{0E32}\u{0E01}\u{0E49}\u{0E32}",
         // Hyphens and other punctuation follow whitespace but come before letters
-        //            "\u{0E01}\u{0E32}",
+        "\u{0E01}\u{0E32}",
         "\u{0E01}\u{0E32}-",
         // Doubler follows an identical word without the doubler
-        // "\u{0E01}\u{0E32}",
+        "\u{0E01}\u{0E32}",
         "\u{0E01}\u{0E32}\u{0E46}",
         // \u{0E45} after either \u{0E24} or \{u0E26} is treated as a single
         // combining character, similar to "c < ch" in traditional spanish.
@@ -1156,9 +1156,9 @@ fn test_th_corner_cases() {
         "\u{0E01}\u{0E49}\u{0E32}",
         "\u{0E01}\u{0E32}\u{0E4C}",
         "\u{0E01}\u{0E48}\u{0E32}\u{0E01}\u{0E49}\u{0E32}",
-        //            "\u{0E01}\u{0E32}-",
+        "\u{0E01}\u{0E32}-",
         "\u{0E01}\u{0E32}\u{0E01}\u{0E32}",
-        // "\u{0E01}\u{0E32}\u{0E46}",
+        "\u{0E01}\u{0E32}\u{0E46}",
         "\u{0E01}\u{0E32}\u{0E01}\u{0E32}",
         "\u{0E24}\u{0E45}\u{0E29}\u{0E35}",
         "\u{0E26}\u{0E45}\u{0E29}\u{0E35}",
@@ -1171,9 +1171,9 @@ fn test_th_corner_cases() {
         Ordering::Less,
         Ordering::Less,
         Ordering::Less,
-        //            Ordering::Equal,
+        Ordering::Equal,
         Ordering::Less,
-        // Ordering::Equal,
+        Ordering::Equal,
         Ordering::Less,
         Ordering::Less,
         Ordering::Less,
@@ -1183,7 +1183,6 @@ fn test_th_corner_cases() {
     ];
     let prefs = locale!("th").into();
     {
-        // TODO(#2013): Check why the commented-out cases fail
         let collator = Collator::try_new(prefs, Default::default()).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
@@ -1196,8 +1195,7 @@ fn test_th_reordering() {
         // composition
         "\u{0E41}c\u{0301}",
         // supplementaries
-        // TODO(#2013): Why does this fail?
-        // "\u{0E41}\u{1D7CE}",
+        "\u{0E41}\u{1D7CE}",
         // supplementary composition decomps to supplementary
         "\u{0E41}\u{1D15F}",
         // supplementary composition decomps to BMP
@@ -1208,13 +1206,13 @@ fn test_th_reordering() {
     ];
     let right = [
         "\u{0E41}\u{0107}",
-        // "\u{0E41}\u{1D7CF}",
+        "\u{0E41}\u{1D7CF}",
         "\u{0E41}\u{1D158}\u{1D165}",
         "\u{0E41}\u{4E41}", // "\u{0E41}\u{0E24}",
     ];
     let expectations = [
         Ordering::Equal,
-        // Ordering::Less,
+        Ordering::Less,
         Ordering::Equal,
         Ordering::Equal,
         // Ordering::Equal,

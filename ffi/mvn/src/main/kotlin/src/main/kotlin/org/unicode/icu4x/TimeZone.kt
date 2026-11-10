@@ -17,7 +17,7 @@ internal interface TimeZoneLib: Library {
     fun icu4x_TimeZone_without_offset_mv1(handle: Pointer): Pointer
 }
 /**
- * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html) for more information.
+ * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html) for more information.
  */
 class TimeZone internal constructor (
     internal val handle: Pointer,
@@ -50,7 +50,7 @@ class TimeZone internal constructor (
         /**
          * The unknown time zone.
          *
-         * See the [Rust documentation for `unknown`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
+         * See the [Rust documentation for `unknown`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
          */
         fun unknown(): TimeZone {
             
@@ -65,7 +65,7 @@ class TimeZone internal constructor (
         /**
          * Construct a [TimeZone] from an IANA time zone ID.
          *
-         * See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
+         * See the [Rust documentation for `from_iana_id`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html#method.from_iana_id) for more information.
          */
         fun createFromIanaId(ianaId: String): TimeZone {
             val ianaIdSliceMemory = PrimitiveArrayTools.borrowUtf8(ianaId)
@@ -85,7 +85,7 @@ class TimeZone internal constructor (
         /**
          * Construct a [TimeZone] from a Windows time zone ID and region.
          *
-         * See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
+         * See the [Rust documentation for `from_windows_id`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html#method.from_windows_id) for more information.
          */
         fun createFromWindowsId(windowsId: String, region: String): TimeZone {
             val windowsIdSliceMemory = PrimitiveArrayTools.borrowUtf8(windowsId)
@@ -107,7 +107,7 @@ class TimeZone internal constructor (
         /**
          * Construct a [TimeZone] from the platform-specific ID.
          *
-         * See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
+         * See the [Rust documentation for `from_system_id`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html#method.from_system_id) for more information.
          */
         fun createFromSystemId(id: String, region: String): TimeZone {
             val idSliceMemory = PrimitiveArrayTools.borrowUtf8(id)
@@ -131,7 +131,7 @@ class TimeZone internal constructor (
          *
          * Returns the unknown time zone if the string is not a valid BCP-47 subtag.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html)
          */
         fun createFromBcp47(id: String): TimeZone {
             val idSliceMemory = PrimitiveArrayTools.borrowUtf8(id)
@@ -151,7 +151,7 @@ class TimeZone internal constructor (
     /**
      * Whether the time zone is the unknown zone.
      *
-     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
      */
     fun isUnknown(): Boolean {
         
@@ -160,7 +160,7 @@ class TimeZone internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html#method.with_offset) for more information.
+     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html#method.with_offset) for more information.
      */
     fun withOffset(offset: UtcOffset): TimeZoneInfo {
         
@@ -172,7 +172,7 @@ class TimeZone internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZone.html#method.without_offset) for more information.
+     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZone.html#method.without_offset) for more information.
      */
     fun withoutOffset(): TimeZoneInfo {
         

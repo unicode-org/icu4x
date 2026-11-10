@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.3.1/icu/locale/names/enum.LanguageDisplay.html) for more information.
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.4.0/icu/locale/names/enum.LanguageDisplay.html) for more information.
  *
  * @experimental
  */

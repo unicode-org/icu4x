@@ -440,7 +440,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakLineV1>
-            + DataProvider<SegmenterDictionaryExtendedV1>
+            + DataProvider<SegmenterDictionaryExtendedV2>
             + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
@@ -719,7 +719,7 @@ impl LineSegmenter {
     /// [`LineSegmenter::new_for_non_complex_scripts`].
     pub fn load_dictionary_unstable<D>(&mut self, provider: &D) -> Result<(), DataError>
     where
-        D: DataProvider<SegmenterDictionaryExtendedV1> + ?Sized,
+        D: DataProvider<SegmenterDictionaryExtendedV2> + ?Sized,
     {
         // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
         // characters [1]. Southeast Asian languages however require complex context analysis
@@ -752,7 +752,26 @@ impl LineSegmenter {
         &mut self,
         provider: &(impl BufferProvider + ?Sized),
     ) -> Result<(), DataError> {
-        self.load_dictionary_unstable(&provider.as_deserializing())
+        // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+        // characters [1]. Southeast Asian languages however require complex context analysis
+        // [2].
+        //
+        // [1]: https://www.unicode.org/reports/tr14/#ID
+        // [2]: https://www.unicode.org/reports/tr14/#SA
+        match self.0 {
+            LineSegmenterInner::V1 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            LineSegmenterInner::V2 {
+                ref mut complex, ..
+            } => complex,
+            #[cfg(feature = "unstable")]
+            LineSegmenterInner::V3 {
+                ref mut complex, ..
+            } => complex,
+        }
+        .with_southeast_asian_dictionaries_buffer(&provider.as_deserializing())
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.

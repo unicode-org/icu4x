@@ -102,16 +102,119 @@ struct ChangelogEntry {
 
 static CHANGELOG_HEADER: LazyLock<Regex> =
     LazyLock::new(|| Regex::new("(\n|^)#+ Changelog(?<annotation>.*(\n|$))").unwrap());
-static SECTION: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new("^(?<crate>`?\\S+`?:|`\\S+`)(?<entry>.*)$").unwrap());
+static HTML_COMMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new("(?s)<!--.*?-->").unwrap());
+/// Crate headers of the forms `` `crate`: entry ``, `` `crate` entry ``, `[crate] entry`, `crate: entry`
+static SECTION: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(concat!(
+        "^(?:",
+        "`(?<c1>[^`\\s]+)`:?(?:\\s+(?<e1>.*))?",
+        "|\\[(?<c2>[^\\]\\s]+)\\]:?(?:\\s+(?<e2>.*))?",
+        "|(?<c3>[^\\s:`\\[\\]]+):(?:\\s+(?<e3>.*))?",
+        ")$"
+    ))
+    .unwrap()
+});
+/// A bare word (with optional colon), only accepted if it's a known crate or category
+static BARE_SECTION: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new("^(?<crate>[\\w/-]+):?$").unwrap());
 
-#[derive(Clone, Debug)]
-struct SectionState {
-    category: Category,
-    krate: Option<String>,
-    entry: String,
-    bullets: Vec<(usize, String)>,
-    indent_stack: Vec<usize>,
+/// A line (or bullet point) of a changelog, with its nested lines.
+#[derive(Debug)]
+struct Node {
+    text: String,
+    is_bullet: bool,
+    children: Vec<Node>,
+}
+
+impl Node {
+    /// Parses the changelog text into a tree based on indentation.
+    fn parse_tree(text: &str) -> Vec<Node> {
+        let text = HTML_COMMENT.replace_all(text, "");
+
+        // Stack of (indentation key, path of child indices from the root).
+        // Bullets are considered nested under non-bullet lines with the same indentation.
+        let mut roots: Vec<Node> = Vec::new();
+        let mut stack: Vec<((usize, bool), usize)> = Vec::new();
+
+        fn get<'a>(roots: &'a mut [Node], stack: &[((usize, bool), usize)]) -> &'a mut Node {
+            let mut node = &mut roots[stack[0].1];
+            for &(_, idx) in &stack[1..] {
+                node = &mut node.children[idx];
+            }
+            node
+        }
+
+        for line in text.lines() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+            let indent = line.len() - line.trim_start().len();
+            let bullet_text = ["- ", "* ", "+ "]
+                .iter()
+                .find_map(|m| trimmed.strip_prefix(m))
+                .or_else(|| ["-", "*", "+"].contains(&trimmed).then_some(""));
+
+            let Some(bullet_text) = bullet_text else {
+                if indent > 0 && !stack.is_empty() {
+                    // Continuation of a wrapped line
+                    let node = get(&mut roots, &stack);
+                    node.text.push(' ');
+                    node.text.push_str(trimmed);
+                    continue;
+                }
+                stack.clear();
+                roots.push(Node {
+                    text: trimmed.to_owned(),
+                    is_bullet: false,
+                    children: Vec::new(),
+                });
+                stack.push(((indent, false), roots.len() - 1));
+                continue;
+            };
+
+            let key = (indent, true);
+            while stack.last().is_some_and(|&(k, _)| k >= key) {
+                stack.pop();
+            }
+            let node = Node {
+                text: bullet_text.trim().to_owned(),
+                is_bullet: true,
+                children: Vec::new(),
+            };
+            let siblings = if stack.is_empty() {
+                &mut roots
+            } else {
+                &mut get(&mut roots, &stack).children
+            };
+            siblings.push(node);
+            let idx = siblings.len() - 1;
+            stack.push((key, idx));
+        }
+        roots
+    }
+
+    /// Flattens descendants into (depth, text) bullets.
+    fn flatten_children(&self, depth: usize, out: &mut Vec<(usize, String)>) {
+        for child in &self.children {
+            out.push((depth, child.text.clone()));
+            child.flatten_children(depth + 1, out);
+        }
+    }
+
+    fn render(&self, depth: usize, out: &mut String) {
+        let bullet = if self.is_bullet { "- " } else { "" };
+        let _ = writeln!(
+            out,
+            "{:indent$}{bullet}{}",
+            "",
+            self.text,
+            indent = depth * 2
+        );
+        for child in &self.children {
+            child.render(depth + 1, out);
+        }
+    }
 }
 
 impl OrganizedChangelog {
@@ -192,77 +295,22 @@ impl OrganizedChangelog {
 
         let changelog_data = CHANGELOG_HEADER.split(&data.body).nth(1).unwrap();
 
-        let mut current_section: Option<SectionState> = None;
+        let mut found_anything = false;
         let mut additional_lines = String::new();
-        for line in changelog_data.lines() {
-            let trimmed = line.trim();
-            if trimmed.is_empty() {
-                continue;
-            }
-
-            if let Some(header) = SECTION.captures(line) {
-                self.flush(data, &mut current_section);
-                let entry = header.name("entry").unwrap().as_str().trim().to_owned();
-                let krate_str = header
-                    .name("crate")
-                    .unwrap()
-                    .as_str()
-                    .trim_matches(':')
-                    .trim_matches('`')
-                    .to_owned();
-
+        for node in Node::parse_tree(changelog_data) {
+            found_anything = true;
+            if let Some((krate_str, entry)) = self.parse_section_header(&node.text) {
                 let (category, krate) = self.get_category(&krate_str);
-
-                current_section = Some(SectionState {
-                    category,
-                    krate: krate.map(String::from),
-                    entry,
-                    bullets: Vec::new(),
-                    indent_stack: Vec::new(),
-                })
-            } else if trimmed.starts_with('-') || trimmed.starts_with('*') {
-                if let Some(current_section) = current_section.as_mut() {
-                    let bullet_index = line.find(['-', '*']).unwrap();
-                    let bullet_line = line[bullet_index + 1..].trim().to_owned();
-
-                    // Occasionally people misformat changelog entries
-                    // by writing `icu_foo:` and then following it by a bulleted list.
-                    //
-                    // We just make a new entry for each sub bullet there.
-                    if current_section.entry.is_empty() {
-                        // clone instead of flushing if there are multiple bullets
-                        let mut section_to_append = current_section.clone();
-                        section_to_append.entry = bullet_line;
-                        self.append_section(data, section_to_append);
-                        continue;
-                    }
-
-                    let nth = current_section.indent_stack.binary_search(&bullet_index);
-                    let idx = match nth {
-                        Ok(idx) => {
-                            // If there are indents beyond this, skip them
-                            current_section.indent_stack.truncate(idx + 1);
-                            idx
-                        }
-                        Err(idx) => {
-                            // If there are indents beyond this, skip them
-                            current_section.indent_stack.truncate(idx);
-                            current_section.indent_stack.push(bullet_index);
-                            idx
-                        }
-                    };
-                    current_section.bullets.push((idx, bullet_line))
-                } else {
-                    let _ = writeln!(&mut additional_lines, "{line}");
-                }
+                let krate = krate.map(String::from);
+                self.add_section(data, &node, category, krate, entry);
             } else {
-                let _ = writeln!(&mut additional_lines, "{line}");
+                node.render(0, &mut additional_lines);
             }
         }
 
-        self.flush(data, &mut current_section);
-
-        if !additional_lines.is_empty() {
+        if !found_anything {
+            self.no_changelog_found.push(data.clone());
+        } else if !additional_lines.is_empty() {
             if additional_lines.trim().starts_with("N/A") {
                 self.n_a.push(data.clone());
             } else {
@@ -271,26 +319,99 @@ impl OrganizedChangelog {
         }
     }
 
-    fn flush(&mut self, pr: &PrData, section: &mut Option<SectionState>) {
-        if let Some(section) = section.take() {
-            if section.entry.is_empty() {
-                self.misformatted.push(pr.clone());
-                return;
+    /// Parses a line as a section header, returning the crate (or category) and the entry text.
+    fn parse_section_header(&self, text: &str) -> Option<(String, String)> {
+        if let Some(caps) = SECTION.captures(text) {
+            let krate = ["c1", "c2", "c3"]
+                .iter()
+                .find_map(|n| caps.name(n))
+                .unwrap()
+                .as_str();
+            let entry = ["e1", "e2", "e3"]
+                .iter()
+                .find_map(|n| caps.name(n))
+                .map(|e| e.as_str().trim())
+                .unwrap_or_default();
+            return Some((krate.to_owned(), entry.to_owned()));
+        }
+        if let Some(caps) = BARE_SECTION.captures(text) {
+            let krate = caps.name("crate").unwrap().as_str();
+            let is_category = matches!(
+                krate,
+                "General"
+                    | "Components"
+                    | "components"
+                    | "Data"
+                    | "data"
+                    | "FFI"
+                    | "ffi"
+                    | "Utils"
+                    | "utils"
+            );
+            if is_category || self.crate_categories.contains_key(krate) {
+                return Some((krate.to_owned(), String::new()));
             }
-            self.append_section(pr, section);
+        }
+        None
+    }
+
+    fn add_section(
+        &mut self,
+        pr: &PrData,
+        node: &Node,
+        category: Category,
+        krate: Option<String>,
+        entry: String,
+    ) {
+        if !entry.is_empty() {
+            let mut bullets = Vec::new();
+            node.flatten_children(0, &mut bullets);
+            self.append_entry(pr, category, krate, entry, bullets);
+            return;
+        }
+
+        if node.children.is_empty() {
+            self.misformatted.push(pr.clone());
+            return;
+        }
+
+        // `icu_foo:` followed by a list of entries, or `General:` followed by a list of crates/entries.
+        for child in &node.children {
+            if krate.is_none()
+                && let Some((child_krate_str, child_entry)) = self.parse_section_header(&child.text)
+            {
+                let (mut child_category, child_krate) = self.get_category(&child_krate_str);
+                if child_krate.is_some() && !self.crate_categories.contains_key(&child_krate_str) {
+                    // Unknown crate, trust the enclosing category
+                    child_category = category;
+                }
+                let child_krate = child_krate.map(String::from);
+                self.add_section(pr, child, child_category, child_krate, child_entry);
+                continue;
+            }
+            let mut bullets = Vec::new();
+            child.flatten_children(0, &mut bullets);
+            self.append_entry(pr, category, krate.clone(), child.text.clone(), bullets);
         }
     }
 
-    fn append_section(&mut self, pr: &PrData, section: SectionState) {
+    fn append_entry(
+        &mut self,
+        pr: &PrData,
+        category: Category,
+        krate: Option<String>,
+        entry: String,
+        bullets: Vec<(usize, String)>,
+    ) {
         let entry = ChangelogEntry {
             number: pr.number,
-            entry: section.entry,
-            bullets: section.bullets,
+            entry,
+            bullets,
         };
         self.sections
-            .entry(section.category)
+            .entry(category)
             .or_default()
-            .entry(section.krate)
+            .entry(krate)
             .or_default()
             .push(entry)
     }

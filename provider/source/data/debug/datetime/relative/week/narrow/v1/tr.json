@@ -1,9 +1,10 @@
 {
-  "relatives": {
-    "-1": "geçen hf.",
-    "0": "bu hf.",
-    "1": "gelecek hf."
-  },
+  "zero_index": 1,
+  "relatives": [
+    "geçen hf.",
+    "bu hf.",
+    "gelecek hf."
+  ],
   "past": {
     "other": [
       0,

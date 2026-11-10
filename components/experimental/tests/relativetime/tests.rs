@@ -5,7 +5,7 @@
 use fixed_decimal::Decimal;
 use icu_experimental::relativetime::{
     RelativeTimeFormatter, RelativeTimeFormatterOptions, RelativeTimeFormatterPreferences,
-    options::Numeric,
+    options::{GroupingStrategy, Numeric},
 };
 use icu_locale_core::{extensions::unicode::value, locale};
 use writeable::assert_writeable_eq;
@@ -16,8 +16,7 @@ macro_rules! generate_test {
      [$(($ar_time: literal, $ar_expected: literal)),+ $(,)?]) => {
         #[test]
         fn $test_name(){
-            let mut options = RelativeTimeFormatterOptions::default();
-            options.numeric = $options;
+            let options = RelativeTimeFormatterOptions::default().with_numeric($options);
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
                 locale!("en").into(),
                 options
@@ -1161,11 +1160,85 @@ fn test_numbering_system_latn() {
     assert_writeable_eq!(formatter_bn.format(55.into()), "৫৫ দিনের মধ্যে");
     assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
 }
+#[test]
+fn test_options_and_grouping_strategy() {
+    let formatter_default = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default(),
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter_default.format(1500.into()), "in 1,500 days");
+
+    let formatter_min2 = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default().with_grouping_strategy(GroupingStrategy::Min2),
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter_min2.format(1500.into()), "in 1500 days");
+    assert_writeable_eq!(formatter_min2.format(15000.into()), "in 15,000 days");
+
+    let formatter_never = RelativeTimeFormatter::try_new_long_day(
+        locale!("en").into(),
+        RelativeTimeFormatterOptions::default()
+            .with_numeric(Numeric::Auto)
+            .with_grouping_strategy(GroupingStrategy::Never),
+    )
+    .unwrap();
+    assert_writeable_eq!(formatter_never.format(1.into()), "tomorrow");
+    assert_writeable_eq!(formatter_never.format(15000.into()), "in 15000 days");
+}
+
+#[test]
+fn test_write_to_parts() {
+    use icu_experimental::relativetime::parts;
+    use writeable::assert_writeable_parts_eq;
+
+    let mut options = RelativeTimeFormatterOptions::default();
+    options.numeric = Some(Numeric::Auto);
+
+    let formatter_en =
+        RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
+
+    // Non-numeric relative literal ("yesterday")
+    assert_writeable_parts_eq!(
+        formatter_en.format((-1).into()),
+        "yesterday",
+        [(0, 9, parts::LITERAL)]
+    );
+
+    // Numeric interpolated pattern ("in 5 days")
+    assert_writeable_parts_eq!(
+        formatter_en.format(5.into()),
+        "in 5 days",
+        [(3, 4, icu_decimal::parts::INTEGER)]
+    );
+
+    // Numeric interpolated pattern with group and fraction ("1,234.5 days ago")
+    let dec: Decimal = "-1234.5".parse().unwrap();
+    assert_writeable_parts_eq!(
+        formatter_en.format(dec),
+        "1,234.5 days ago",
+        [
+            (0, 5, icu_decimal::parts::INTEGER),
+            (1, 2, icu_decimal::parts::GROUP),
+            (5, 6, icu_decimal::parts::DECIMAL),
+            (6, 7, icu_decimal::parts::FRACTION),
+        ]
+    );
+
+    // Pattern without placeholder (Arabic 1 year ago: "قبل سنة واحدة")
+    let formatter_ar = RelativeTimeFormatter::try_new_long_year(
+        locale!("ar").into(),
+        RelativeTimeFormatterOptions::default(),
+    )
+    .unwrap();
+    assert_writeable_parts_eq!(formatter_ar.format((-1).into()), "قبل سنة واحدة", []);
+}
 
 #[test]
 fn test_negative_zero_and_trailing_zeros() {
     let mut options = RelativeTimeFormatterOptions::default();
-    options.numeric = Numeric::Auto;
+    options.numeric = Some(Numeric::Auto);
     let formatter_auto =
         RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
     let formatter_always = RelativeTimeFormatter::try_new_long_day(
