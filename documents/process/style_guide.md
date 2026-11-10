@@ -700,7 +700,7 @@ pub struct CityNames<'data> {
 }
 ```
 
-Real examples: `ListFormatterPatterns` in `components/list/src/provider/mod.rs` and `TimeZoneEssentials` in `components/datetime/src/provider/time_zones.rs`.
+Real examples: `ListFormatterPatterns` in `components/list/src/provider/mod.rs` and `WeekdayNames` in `components/datetime/src/provider/names.rs`.
 
 **Enforcement:** `cargo make bakeddata` deserializes every payload with an allocator that counts allocations, and fails if a marker allocates (`ZeroCopyCheckExporter` in `tools/make/bakeddata/src/main.rs`). There are two lists of exceptions: `EXPECTED_VIOLATIONS`, where each entry is a bug to fix before stabilization, and `EXPECTED_TRANSIENT_VIOLATIONS`, for markers that allocate memory and free it again while deserializing (for example, to validate data). Ask the ICU4X team before you add a marker to either list.
 
@@ -769,7 +769,7 @@ If it is not possible to obey these requirements in an exotic type, use a standa
 
 ### Keep the serialized layout of stable data structs :: required
 
-Main policy: [data_versioning.md](data_versioning.md)
+Main policy: [`data_versioning.md`](data_versioning.md)
 
 **Why:** Within a major version, older code must read newer data files, and newer code must read older ones. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
 
@@ -855,9 +855,9 @@ Call non-panicking data access APIs whenever data is not guaranteed to be safe.
 
 This should not include the contract of code in a different Crate. I.e. if a function in a different Crate promises to return a valid map key, but it's not a compile time checked type (like an enum), then the calling code must allow for it to fail.
 
-See also: the [Panics](#Panics--required) section of this document.
+See also: the [Panics](#panics--required) section of this document.
 
-**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [data_safety.md](../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
+**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [`data_safety.md`](../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
 
 **❌ Don't:**
 
