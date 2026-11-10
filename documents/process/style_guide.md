@@ -674,6 +674,36 @@ Examples of types that can be used in zero-copy data structs:
 
 In addition to supporting zero-copy deserialization, data structs should also support being fully owned (`'static`). For example, `&str` or `&T` require that the data be borrowed from somewhere, and so cannot be used in a data struct. `Cow` and all the other types listed above support the optional ownership model.
 
+**Why:** Blob data is a byte buffer that is loaded at runtime. A zero-copy struct borrows from that buffer, so loading copies nothing to the heap. Compiled data uses the same struct with `'static` borrows, and datagen builds it from owned values, so each field must be able to borrow and to own. Without `#[serde(borrow)]`, serde deserializes a `Cow` as `Cow::Owned`, which allocates.
+
+**❌ Don't:**
+
+```rust
+pub struct CityNames<'data> {
+    pub names: Vec<String>,         // allocates on every load
+    pub separator: Cow<'data, str>, // no #[serde(borrow)]: allocates too
+}
+```
+
+**✅ Do:**
+
+```rust
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_foo::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct CityNames<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: VarZeroVec<'data, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub separator: Cow<'data, str>,
+}
+```
+
+Real examples: `ListFormatterPatterns` in `components/list/src/provider/mod.rs` and `WeekdayNames` in `components/datetime/src/provider/names.rs`.
+
+**Enforcement:** `cargo make bakeddata` deserializes every payload with an allocator that counts allocations, and fails if a marker allocates (`ZeroCopyCheckExporter` in `tools/make/bakeddata/src/main.rs`). There are two lists of exceptions: `EXPECTED_VIOLATIONS`, where each entry is a bug to fix before stabilization, and `EXPECTED_TRANSIENT_VIOLATIONS`, for markers that allocate memory and free it again while deserializing (for example, to validate data). Ask the ICU4X team before you add a marker to either list.
+
 ### Conventions for strings in structs :: suggested
 
 Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113), [#571](https://github.com/unicode-org/icu4x/issues/571)
@@ -737,6 +767,36 @@ Keep the following in mind when using exotic types:
 
 If it is not possible to obey these requirements in an exotic type, use a standard type instead, but make sure that it requires minimal parsing and post-processing.
 
+### Keep the serialized layout of stable data structs :: required
+
+Main policy: [`data_versioning.md`](data_versioning.md)
+
+**Why:** Within a major version, older code must read newer data files, and newer code must read older ones. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
+
+**❌ Don't:** Remove a field from a released data struct:
+
+```diff
+ pub struct TimeZoneEssentials<'data> {
+     pub offset_separator: Cow<'data, str>,
+     pub offset_pattern: Cow<'data, SinglePlaceholderPattern>,
+-    pub offset_zero: Cow<'data, str>,
+     pub offset_unknown: Cow<'data, str>,
+ }
+```
+
+**✅ Do:** Keep the serialized layout with hand-written serde impls, or add a new marker next to the old one ([Retain Old Keys When Possible](data_versioning.md#ii-retain-old-keys-when-possible)). [#8250](https://github.com/unicode-org/icu4x/pull/8250) removed `offset_zero` from the Rust struct, but the serde impls in `components/datetime/src/provider/time_zones.rs` still read the field and write a placeholder:
+
+```rust
+// Deserialize: read the old field, then drop it.
+let Raw { offset_separator, offset_pattern, offset_unknown, offset_zero: _offset_zero } =
+    Raw::deserialize(deserializer)?;
+
+// Serialize (datagen only): write a placeholder, so old code can read new data.
+offset_zero: Cow::Borrowed(""),
+```
+
+**Enforcement:** Code review. Changes to serialized data show up in the `provider/data/*/fingerprints.csv` diff.
+
 ## Error Handling
 
 See also the [Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html) chapter in the Rust Book.
@@ -795,7 +855,42 @@ Call non-panicking data access APIs whenever data is not guaranteed to be safe.
 
 This should not include the contract of code in a different Crate. I.e. if a function in a different Crate promises to return a valid map key, but it's not a compile time checked type (like an enum), then the calling code must allow for it to fail.
 
-See also: the [Panics](#Panics--required) section of this document.
+See also: the [Panics](#panics--required) section of this document.
+
+**Why:** A panic in a library stops the whole program that uses it. ICU4X also loads data that it did not create, and [`data_safety.md`](../design/data_safety.md) says that code should never panic at runtime based on invalid data. Otherwise, bad data can crash the application.
+
+**❌ Don't:**
+
+```rust
+let (key, value) = input.split_once('=').unwrap(); // panics if there is no '='
+let first = names[0];                              // panics if `names` is empty
+```
+
+**✅ Do:** If the caller can do something about the problem, return an error:
+
+```rust
+pub fn parse_pair(input: &str) -> Result<(&str, &str), ParseError> {
+    input.split_once('=').ok_or(ParseError::MissingEquals)
+}
+```
+
+If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds catch the problem, and release builds continue with the fallback. For invalid data, ICU4X calls this GIGO ("garbage in, garbage out"). From `components/collator/src/elements.rs`:
+
+```rust
+/// Use this only if the only reason why `opt` could be `None` is bogus
+/// data from the provider.
+pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
+    if let Some(val) = opt {
+        val
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        default
+    }
+}
+```
+
+**Enforcement:** Clippy, in crates that have the [library annotations](boilerplate.md#library-annotations). Outside tests, they deny `clippy::indexing_slicing`, `clippy::unwrap_used`, `clippy::expect_used`, and `clippy::panic`. These lints don't cover `split_at` (see below).
 
 #### Special Case: `split_at`
 
