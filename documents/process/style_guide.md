@@ -771,7 +771,7 @@ If it is not possible to obey these requirements in an exotic type, use a standa
 
 Main policy: [data_versioning.md](data_versioning.md)
 
-Data files must stay readable across ICU4X versions: older code reads newer data, and newer code reads data built for any version with the same major version number. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
+**Why:** Within a major version, older code must read newer data files, and newer code must read older ones. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
 
 **❌ Don't:** Remove a field from a released data struct:
 
@@ -795,7 +795,7 @@ let Raw { offset_separator, offset_pattern, offset_unknown, offset_zero: _offset
 offset_zero: Cow::Borrowed(""),
 ```
 
-Reviewers see changes to serialized data in the `provider/data/*/fingerprints.csv` diff.
+**Enforcement:** Code review. Changes to serialized data show up in the `provider/data/*/fingerprints.csv` diff.
 
 ## Error Handling
 
