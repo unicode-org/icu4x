@@ -874,15 +874,23 @@ pub fn parse_pair(input: &str) -> Result<(&str, &str), ParseError> {
 }
 ```
 
-If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds find the bug, and release builds continue with the fallback ("garbage in, garbage out"). From `split_normalized` in `components/normalizer/src/lib.rs`:
+If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds catch the problem, and release builds continue with the fallback. For invalid data, ICU4X calls this GIGO ("garbage in, garbage out"). From `components/collator/src/elements.rs`:
 
 ```rust
-text.split_at_checked(up_to).unwrap_or_else(|| {
-    // Internal bug, not even GIGO, never supposed to happen
-    debug_assert!(false);
-    ("", text)
-})
+/// Use this only if the only reason why `opt` could be `None` is bogus
+/// data from the provider.
+pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
+    if let Some(val) = opt {
+        val
+    } else {
+        // GIGO case
+        debug_assert!(false);
+        default
+    }
+}
 ```
+
+**Enforcement:** Clippy, in crates that have the [library annotations](boilerplate.md#library-annotations). Outside tests, they deny `clippy::indexing_slicing`, `clippy::unwrap_used`, `clippy::expect_used`, and `clippy::panic`. These lints don't cover `split_at` (see below).
 
 #### Special Case: `split_at`
 
