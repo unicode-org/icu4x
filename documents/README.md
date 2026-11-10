@@ -33,7 +33,7 @@ Document | Summary
 [release.md](process/release.md) | Documentation on release process.
 [roadmap.md](process/roadmap.md) | ICU4X 1.0 Roadmap
 [rust_versions.md](process/rust_versions.md) | An overview of ICU4X's Rust version policy.
-[style_guide.md](process/style_guide.md) | A guide to best practices for writing Rust code in ICU4x.
+[style_guide/](process/style_guide/README.md) | A guide to best practices for writing Rust code in ICU4x.
 [triaging.md](process/triaging.md) | ICU4X uses GitHub for tracking feature requests and work items.
 
 ## Design
