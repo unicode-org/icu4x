@@ -234,11 +234,16 @@ impl FormattedDuration<'_> {
         let mut prev_formatted = Decimal::from(prev_val % 1000);
         for (style, val) in [
             (self.fmt.options.microsecond, self.duration.microseconds),
-            (self.fmt.options.millisecond, self.duration.milliseconds),
-            (self.fmt.options.second, self.duration.seconds),
+            (
+                self.fmt.options.millisecond,
+                u128::from(self.duration.milliseconds),
+            ),
+            (self.fmt.options.second, u128::from(self.duration.seconds)),
         ] {
             if style == FieldStyle::Fractional {
-                let val = val + prev_val / 1000;
+                // Valid ECMA-402 durations are bounded by 2^53 * 10^9 - 1 nanoseconds (~9e24) and
+                // cannot overflow u128; saturating_add avoids panicking on arbitrary u128::MAX inputs.
+                let val = val.saturating_add(prev_val / 1000);
                 prev_formatted.absolute = UnsignedDecimal::from(val % 1000)
                     .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
@@ -785,6 +790,62 @@ mod tests {
                 .write_to_string()
                 .into_owned(),
             "-0 yrs, 1 mth"
+        );
+    }
+
+    #[test]
+    fn test_max_time_duration() {
+        // ECMA-402 MaxTimeDuration = 9_007_199_254_740_991 * 10^9 - 1 nanoseconds
+        // (and IsValidDurationRecord requires abs(normalizedSeconds) < 2^53).
+        // Spec links:
+        // - https://tc39.es/ecma402/#sec-todurationrecord
+        // - https://tc39.es/ecma402/#sec-isvaliddurationrecord
+        // - https://tc39.es/ecma402/#sec-addfractionaldigits
+        // - https://tc39.es/ecma402/#sec-partitiondurationformatpattern
+        const MAX_TIME_DURATION_NS: u128 = 9_007_199_254_740_991 * 1_000_000_000 - 1;
+        const MAX_TIME_DURATION_US: u128 = 9_007_199_254_740_991 * 1_000_000 - 1;
+
+        let ns_duration = Duration {
+            nanoseconds: MAX_TIME_DURATION_NS,
+            ..Default::default()
+        };
+        let us_duration = Duration {
+            microseconds: MAX_TIME_DURATION_US,
+            nanoseconds: 999,
+            ..Default::default()
+        };
+
+        let options = ValidatedDurationFormatterOptions::validate(DurationFormatterOptions {
+            base: BaseStyle::Long,
+            ..Default::default()
+        })
+        .unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
+
+        assert_eq!(
+            formatter
+                .format(&ns_duration)
+                .write_to_string()
+                .into_owned(),
+            "9,007,199,254,740,990,999,999,999 nanoseconds"
+        );
+
+        let fractional_us_options =
+            ValidatedDurationFormatterOptions::validate(DurationFormatterOptions {
+                base: BaseStyle::Long,
+                nanosecond: Some(NanoSecondStyle::Numeric),
+                ..Default::default()
+            })
+            .unwrap();
+        let fractional_us_formatter =
+            DurationFormatter::try_new(locale!("en").into(), fractional_us_options).unwrap();
+
+        assert_eq!(
+            fractional_us_formatter
+                .format(&us_duration)
+                .write_to_string()
+                .into_owned(),
+            "9,007,199,254,740,990,999,999.999 microseconds"
         );
     }
 }

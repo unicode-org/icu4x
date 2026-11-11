@@ -38,23 +38,23 @@ pub struct Duration {
     /// The number of milliseconds in the duration.
     pub milliseconds: u64,
     /// The number of microseconds in the duration.
-    pub microseconds: u64,
+    pub microseconds: u128,
     /// The number of nanoseconds in the duration.
-    pub nanoseconds: u64,
+    pub nanoseconds: u128,
 }
 
 impl Duration {
     /// Iterate over the units of the duration in descending order.
-    pub(crate) fn iter_units(&self) -> [u64; 10] {
+    pub(crate) fn iter_units(&self) -> [u128; 10] {
         [
-            self.years,
-            self.months,
-            self.weeks,
-            self.days,
-            self.hours,
-            self.minutes,
-            self.seconds,
-            self.milliseconds,
+            u128::from(self.years),
+            u128::from(self.months),
+            u128::from(self.weeks),
+            u128::from(self.days),
+            u128::from(self.hours),
+            u128::from(self.minutes),
+            u128::from(self.seconds),
+            u128::from(self.milliseconds),
             self.microseconds,
             self.nanoseconds,
         ]
