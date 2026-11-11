@@ -3,3 +3,12 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 doc-valid-idents = ["HarfBuzz", "FreeRTOS", "SemVer", "WearOS", "WatchOS", ".."]
+
+# Methods that can panic on bad input and have a non-panicking version in std.
+# See https://github.com/unicode-org/icu4x/issues/8683.
+disallowed-methods = [
+    { path = "slice::split_at", reason = "it panics if `mid > len`; handle the `None` case of `split_at_checked` instead", replacement = "split_at_checked" },
+    { path = "slice::split_at_mut", reason = "it panics if `mid > len`; handle the `None` case of `split_at_mut_checked` instead", replacement = "split_at_mut_checked" },
+    { path = "str::split_at", reason = "it panics if `mid` is out of bounds or not on a char boundary; handle the `None` case of `split_at_checked` instead", replacement = "split_at_checked" },
+    { path = "str::split_at_mut", reason = "it panics if `mid` is out of bounds or not on a char boundary; handle the `None` case of `split_at_mut_checked` instead", replacement = "split_at_mut_checked" },
+]
