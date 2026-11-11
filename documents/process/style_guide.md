@@ -780,10 +780,19 @@ A *data struct* is the type that a data marker loads, that is, the type passed t
 **❌ Don't:** Remove a field from a released data struct:
 
 ```diff
+ icu_provider::data_marker!(TimezoneNamesEssentialsV1, TimeZoneEssentials<'static>);
+
+ #[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+ #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+ #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
+ #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
  pub struct TimeZoneEssentials<'data> {
+     #[cfg_attr(feature = "serde", serde(borrow))]
      pub offset_separator: Cow<'data, str>,
-     pub offset_pattern: Cow<'data, SinglePlaceholderPattern>,
+     // ... offset_pattern ...
+-    #[cfg_attr(feature = "serde", serde(borrow))]
 -    pub offset_zero: Cow<'data, str>,
+     #[cfg_attr(feature = "serde", serde(borrow))]
      pub offset_unknown: Cow<'data, str>,
  }
 ```
