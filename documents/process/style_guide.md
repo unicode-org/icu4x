@@ -771,6 +771,10 @@ If it is not possible to obey these requirements in an exotic type, use a standa
 
 Main policy: [`data_versioning.md`](data_versioning.md)
 
+Once a data struct ships in a stable release, its serialized form must not change: keep the same serialized fields, in the same order, with the same types. You can add an enum variant at the end (see [Aspects of Data File Versioning](data_versioning.md#iv-aspects-of-data-file-versioning)). The Rust struct itself can change if hand-written serde impls keep the serialized form, as in the example below.
+
+A *data struct* is the type that a data marker loads, that is, the type passed to `icu_provider::data_marker!`, such as `DecimalSymbols<'static>` for `DecimalSymbolsV1`. Data structs live in a crate's `provider` module. The rule also covers every type serialized inside a data struct, such as `GroupingSizes` inside `DecimalSymbols`. It doesn't cover formatters, options, preferences, or error types. It also doesn't cover markers of experimental components or markers behind the `unstable` feature, which can still change.
+
 **Why:** Within a major version, older code must read newer data files, and newer code must read older ones. Postcard, the blob data format, doesn't store field names; it reads fields in order. So if you remove, reorder, or retype a field of a data struct that shipped in a stable release, existing data files break, even after all data in the repo is regenerated.
 
 **❌ Don't:** Remove a field from a released data struct:
