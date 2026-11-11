@@ -1,0 +1,22 @@
+#ifndef DurationUnitStyle_H
+#define DurationUnitStyle_H
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include "diplomat_runtime.h"
+
+
+#include "DurationUnitStyle.d.h"
+
+
+
+
+// No Content
+
+
+
+
+
+#endif // DurationUnitStyle_H
