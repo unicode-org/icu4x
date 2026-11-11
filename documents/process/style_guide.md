@@ -879,7 +879,7 @@ let (key, value) = input.split_once('=').unwrap(); // panics if there is no '='
 let first = names[0];                              // panics if `names` is empty
 ```
 
-**✅ Do:** If the caller can do something about the problem, return an error:
+**✅ Do:** Return a `Result` to represent both success and failure outcomes:
 
 ```rust
 pub fn parse_pair(input: &str) -> Result<(&str, &str), ParseError> {
