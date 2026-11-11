@@ -247,7 +247,7 @@ impl FormattedDuration<'_> {
             } else {
                 return Decimal::new(
                     prev_formatted.sign,
-                    UnsignedDecimal::from(val)
+                    UnsignedDecimal::from(val + prev_val / 1000)
                         .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                         .unwrap(),
                 );
@@ -734,6 +734,63 @@ mod tests {
                 (31, 32, icu_decimal::parts::DECIMAL),
                 (32, 37, icu_decimal::parts::FRACTION),
             ]
+        );
+    }
+
+    #[test]
+    fn test_fractional_carry() {
+        // 1. Carry from nanoseconds into microseconds (microsecond = Short, nanosecond = Fractional)
+        let duration1 = Duration {
+            microseconds: 1,
+            nanoseconds: 1500,
+            ..Default::default()
+        };
+        let options1 = DurationFormatterOptions {
+            nanosecond: Some(NanoSecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options1 = ValidatedDurationFormatterOptions::validate(options1).unwrap();
+        let formatter1 = DurationFormatter::try_new(locale!("en").into(), options1).unwrap();
+        assert_eq!(
+            formatter1.format(&duration1).write_to_string().into_owned(),
+            "2.5 μs"
+        );
+
+        // 2. Carry from nanoseconds and microseconds into milliseconds (millisecond = Short, microsecond/nanosecond = Fractional)
+        let duration2 = Duration {
+            milliseconds: 1,
+            microseconds: 2500,
+            nanoseconds: 1500,
+            ..Default::default()
+        };
+        let options2 = DurationFormatterOptions {
+            microsecond: Some(MicroSecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options2 = ValidatedDurationFormatterOptions::validate(options2).unwrap();
+        let formatter2 = DurationFormatter::try_new(locale!("en").into(), options2).unwrap();
+        assert_eq!(
+            formatter2.format(&duration2).write_to_string().into_owned(),
+            "3.5015 ms"
+        );
+
+        // 3. Carry across nanoseconds, microseconds, and milliseconds into seconds (second = Short, sub-second = Fractional)
+        let duration3 = Duration {
+            nanoseconds: 1500,
+            microseconds: 2500,
+            milliseconds: 3500,
+            seconds: 4,
+            ..Default::default()
+        };
+        let options3 = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options3 = ValidatedDurationFormatterOptions::validate(options3).unwrap();
+        let formatter3 = DurationFormatter::try_new(locale!("en").into(), options3).unwrap();
+        assert_eq!(
+            formatter3.format(&duration3).write_to_string().into_owned(),
+            "7.5025015 sec"
         );
     }
 
