@@ -7,5 +7,6 @@ locale
 normalizer
 pluralrules
 properties
+relativetime
 segmenter
 units_converter
