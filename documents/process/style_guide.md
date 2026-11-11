@@ -887,7 +887,7 @@ pub fn parse_pair(input: &str) -> Result<(&str, &str), ParseError> {
 }
 ```
 
-If the problem can only come from invalid data or an internal bug, use a fallback value and a debug assertion. Tests and debug builds catch the problem, and release builds continue with the fallback. For invalid data, ICU4X calls this GIGO ("garbage in, garbage out"). From `components/collator/src/elements.rs`:
+If a code path can only be reached with invalid data, return a fallback value and add a debug assertion. This is the policy in [`data_safety.md`](../design/data_safety.md): "Code paths only reachable by invalid data should use GIGO with debug assertions." GIGO means "garbage in, garbage out": tests and debug builds catch the bad data, and release builds continue with the fallback. From `components/collator/src/elements.rs`:
 
 ```rust
 /// Use this only if the only reason why `opt` could be `None` is bogus
