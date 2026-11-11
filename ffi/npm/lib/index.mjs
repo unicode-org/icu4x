@@ -18,6 +18,10 @@ export { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
+export { Duration } from "./Duration.mjs"
+
+export { DurationFormatterOptions } from "./DurationFormatterOptions.mjs"
+
 export { CalendarMismatchedCalendarError } from "./CalendarMismatchedCalendarError.mjs"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
@@ -103,6 +107,8 @@ export { DecimalFormatter } from "./DecimalFormatter.mjs"
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter.mjs"
 
 export { RegionDisplayNames } from "./RegionDisplayNames.mjs"
+
+export { DurationFormatter } from "./DurationFormatter.mjs"
 
 export { ExemplarCharacters } from "./ExemplarCharacters.mjs"
 
@@ -284,6 +290,16 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
+export { DurationBaseStyle } from "./DurationBaseStyle.mjs"
+
+export { DurationFieldDisplay } from "./DurationFieldDisplay.mjs"
+
+export { DurationFormatterError } from "./DurationFormatterError.mjs"
+
+export { DurationSign } from "./DurationSign.mjs"
+
+export { DurationUnitStyle } from "./DurationUnitStyle.mjs"
+
 export { CalendarDateAddError } from "./CalendarDateAddError.mjs"
 
 export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
@@ -371,4 +387,4 @@ export { TimeZoneVariant } from "./TimeZoneVariant.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import {FUNCTION_PARAM_ALLOC, internalConstructor} from "./diplomat-runtime.mjs";
 
-FUNCTION_PARAM_ALLOC.reserve(internalConstructor, wasm, 67);
+FUNCTION_PARAM_ALLOC.reserve(internalConstructor, wasm, 176);
