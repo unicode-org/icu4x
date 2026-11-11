@@ -149,6 +149,8 @@ pub mod unstable {
     pub mod properties_sets;
     #[cfg(feature = "properties")]
     pub mod properties_unisets;
+    #[cfg(feature = "experimental")]
+    pub mod relativetime;
     #[cfg(feature = "properties")]
     pub mod script;
     #[cfg(feature = "segmenter")]
