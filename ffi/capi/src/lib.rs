@@ -113,6 +113,8 @@ pub mod unstable {
     pub mod decimal;
     #[cfg(feature = "experimental")]
     pub mod displaynames;
+    #[cfg(feature = "experimental")]
+    pub mod duration;
     #[cfg(feature = "locale")]
     pub mod exemplar_chars;
     #[cfg(feature = "locale_fallback")]
