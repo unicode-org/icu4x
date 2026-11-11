@@ -161,7 +161,9 @@ fuzz_target!(|data: &[u8]| {
         return;
     }
 
-    let (meta, tail) = aligned.split_at(2);
+    let Some((meta, tail)) = aligned.split_at_checked(2) else {
+        return;
+    };
     let locale_str = if let Some(locale) = LOCALES.get(meta[0] as usize) {
         locale
     } else {
@@ -181,7 +183,9 @@ fuzz_target!(|data: &[u8]| {
     let options: CollatorOptions = unsafe { core::mem::transmute_copy(&option_bits) };
 
     let mid = tail.len() / 2;
-    let (left, right) = tail.split_at(mid);
+    let Some((left, right)) = tail.split_at_checked(mid) else {
+        return;
+    };
     if !is_utf16(left) || !is_utf16(right) {
         return;
     }

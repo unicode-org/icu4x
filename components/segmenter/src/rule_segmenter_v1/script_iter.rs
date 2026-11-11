@@ -73,7 +73,7 @@ impl<'s> Iterator for ComplexScriptIterator<'s> {
         let lang = get_complex_script(indices.next()?.1 as u32);
         match indices.find(|&(_, ch)| get_complex_script(ch as u32) != lang) {
             Some((i, _)) => {
-                let (result, rest) = self.0.split_at(i);
+                let (result, rest) = self.0.split_at_checked(i)?;
                 self.0 = rest;
                 Some((result, lang))
             }
@@ -92,7 +92,7 @@ impl<'s> Iterator for ComplexScriptIteratorUtf8<'s> {
         let script = get_complex_script(indices.next()?.1 as u32);
         match indices.find(|&(_, ch)| get_complex_script(ch as u32) != script) {
             Some((i, _)) => {
-                let (result, rest) = self.0.split_at(i);
+                let (result, rest) = self.0.split_at_checked(i)?;
                 self.0 = rest;
                 Some((result, script))
             }
@@ -114,7 +114,7 @@ impl<'s> Iterator for ComplexScriptIteratorUtf16<'s> {
             .position(|&ch| get_complex_script(ch as u32) != lang)
         {
             Some(i) => {
-                let (result, rest) = self.0.split_at(i);
+                let (result, rest) = self.0.split_at_checked(i)?;
                 self.0 = rest;
                 Some((result, lang))
             }
