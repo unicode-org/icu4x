@@ -773,7 +773,12 @@ Main policy: [`data_versioning.md`](data_versioning.md)
 
 Once a data struct ships in a stable release, its serialized form must not change: keep the same serialized fields, in the same order, with the same types. You can add an enum variant at the end (see [Aspects of Data File Versioning](data_versioning.md#iv-aspects-of-data-file-versioning)). The Rust struct itself can change if hand-written serde impls keep the serialized form, as in the example below.
 
-A *data struct* is the type that a data marker loads, that is, the type passed to `icu_provider::data_marker!`, such as `DecimalSymbols<'static>` for `DecimalSymbolsV1`. Data structs live in a crate's `provider` module. The rule also covers every type serialized inside a data struct, such as `GroupingSizes` inside `DecimalSymbols`. It doesn't cover formatters, options, preferences, or error types. It also doesn't cover markers of experimental components or markers behind the `unstable` feature, which can still change.
+A *data struct* is the type that a data marker loads, that is, the type passed to `icu_provider::data_marker!`, such as `DecimalSymbols<'static>` for `DecimalSymbolsV1`. Data structs live in a crate's `provider` module.
+
+> [!NOTE]
+> * Types used as fields in data structs can still affect the serialization of the data struct, so this rule **indirectly** applies to many non-data struct types such as `GroupingSizes` inside `DecimalSymbols`.
+> * This rule does not cover markers of experimental components or markers behind the `unstable` feature, which can still change.
+> * This rule doesn't cover formatters, options, preferences, or error types.
 
 **Why:** Within a major version, older code must read newer data files, and newer code must read older ones ([with caveats](data_versioning.md#iii-data-file-versioning)). Postcard, the blob data format, doesn't store field names; it reads fields in order. So if the serialized fields of a stable data struct change, existing data files break, even after all data in the repo is regenerated.
 
