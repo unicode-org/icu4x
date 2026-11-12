@@ -45,24 +45,25 @@ pub struct Duration {
 
 impl Duration {
     /// Iterate over the units of the duration in descending order.
-    pub(crate) fn iter_units(&self) -> [u128; 10] {
+    pub(crate) fn iter_units(&self) -> impl Iterator<Item = u128> {
         [
-            u128::from(self.years),
-            u128::from(self.months),
-            u128::from(self.weeks),
-            u128::from(self.days),
-            u128::from(self.hours),
-            u128::from(self.minutes),
-            u128::from(self.seconds),
-            u128::from(self.milliseconds),
-            self.microseconds,
-            self.nanoseconds,
+            self.years,
+            self.months,
+            self.weeks,
+            self.days,
+            self.hours,
+            self.minutes,
+            self.seconds,
+            self.milliseconds,
         ]
+        .into_iter()
+        .map(u128::from)
+        .chain([self.microseconds, self.nanoseconds])
     }
 
     // Section 1.1.4 DurationSign
     pub(crate) fn get_sign(&self) -> fixed_decimal::Sign {
-        for &unit in self.iter_units().iter() {
+        for unit in self.iter_units() {
             if unit != 0 {
                 return match self.sign {
                     DurationSign::Positive => fixed_decimal::Sign::None,

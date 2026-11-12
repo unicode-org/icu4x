@@ -795,15 +795,15 @@ mod tests {
 
     #[test]
     fn test_max_time_duration() {
-        // ECMA-402 MaxTimeDuration = 9_007_199_254_740_991 * 10^9 - 1 nanoseconds
+        // ECMA-402 MaxTimeDuration = 2^53 * 10^9 - 1 = 9_007_199_254_740_991_999_999_999 nanoseconds
         // (and IsValidDurationRecord requires abs(normalizedSeconds) < 2^53).
         // Spec links:
         // - https://tc39.es/ecma402/#sec-todurationrecord
         // - https://tc39.es/ecma402/#sec-isvaliddurationrecord
         // - https://tc39.es/ecma402/#sec-addfractionaldigits
         // - https://tc39.es/ecma402/#sec-partitiondurationformatpattern
-        const MAX_TIME_DURATION_NS: u128 = 9_007_199_254_740_991 * 1_000_000_000 - 1;
-        const MAX_TIME_DURATION_US: u128 = 9_007_199_254_740_991 * 1_000_000 - 1;
+        const MAX_TIME_DURATION_NS: u128 = (1u128 << 53) * 1_000_000_000 - 1;
+        const MAX_TIME_DURATION_US: u128 = (1u128 << 53) * 1_000_000 - 1;
 
         let ns_duration = Duration {
             nanoseconds: MAX_TIME_DURATION_NS,
@@ -827,7 +827,7 @@ mod tests {
                 .format(&ns_duration)
                 .write_to_string()
                 .into_owned(),
-            "9,007,199,254,740,990,999,999,999 nanoseconds"
+            "9,007,199,254,740,991,999,999,999 nanoseconds"
         );
 
         let fractional_us_options =
@@ -845,7 +845,7 @@ mod tests {
                 .format(&us_duration)
                 .write_to_string()
                 .into_owned(),
-            "9,007,199,254,740,990,999,999.999 microseconds"
+            "9,007,199,254,740,991,999,999.999 microseconds"
         );
     }
 }
