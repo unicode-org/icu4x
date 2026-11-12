@@ -337,7 +337,7 @@ mod tests {
                 for locale in SAMPLE_LOCALES {
                     // Insert an invalid character ('/') at every position along the sample locale
                     for offset in 0..=locale.len() {
-                        let (left, right) = locale.split_at(offset);
+                        let (left, right) = locale.split_at_checked(offset).unwrap();
                         let invalid_locale = format!("{left}/{right}");
                         expect_error(
                             &invalid_locale,
