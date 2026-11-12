@@ -38,14 +38,14 @@ pub struct Duration {
     /// The number of milliseconds in the duration.
     pub milliseconds: u64,
     /// The number of microseconds in the duration.
-    pub microseconds: u64,
+    pub microseconds: u128,
     /// The number of nanoseconds in the duration.
-    pub nanoseconds: u64,
+    pub nanoseconds: u128,
 }
 
 impl Duration {
     /// Iterate over the units of the duration in descending order.
-    pub(crate) fn iter_units(&self) -> [u64; 10] {
+    pub(crate) fn iter_units(&self) -> impl Iterator<Item = u128> {
         [
             self.years,
             self.months,
@@ -55,14 +55,15 @@ impl Duration {
             self.minutes,
             self.seconds,
             self.milliseconds,
-            self.microseconds,
-            self.nanoseconds,
         ]
+        .into_iter()
+        .map(u128::from)
+        .chain([self.microseconds, self.nanoseconds])
     }
 
     // Section 1.1.4 DurationSign
     pub(crate) fn get_sign(&self) -> fixed_decimal::Sign {
-        for &unit in self.iter_units().iter() {
+        for unit in self.iter_units() {
             if unit != 0 {
                 return match self.sign {
                     DurationSign::Positive => fixed_decimal::Sign::None,
