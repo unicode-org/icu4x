@@ -173,10 +173,10 @@ where
     #[inline]
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         // TODO: use split_first_chunk_mut in 1.77
-        // The caller passes `dst.len() == self.encode_var_ule_len()`, which is at least
-        // `size_of::<A::ULE>()`. A short write here would break the `EncodeAsVarULE` safety
-        // contract, so this keeps the panic instead of returning early.
-        #[expect(clippy::disallowed_methods)]
+        #[expect(
+            clippy::disallowed_methods,
+            reason = "EncodeAsVarULE is allowed to panic, and this invariant should have been checked already."
+        )]
         let (sized_chunk, variable_chunk) = dst.split_at_mut(size_of::<A::ULE>());
         sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_bytes());
         self.variable.encode_var_ule_write(variable_chunk);
