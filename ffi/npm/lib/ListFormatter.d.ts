@@ -3,6 +3,7 @@ import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { ListLength } from "./ListLength"
 import type { Locale } from "./Locale"
+import type { Parts } from "./Parts"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -63,4 +64,11 @@ export class ListFormatter {
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/list/struct.ListFormatter.html#method.format) for more information.
      */
     format(list: Array<string>): string;
+
+    /**
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/list/struct.ListFormatter.html#method.format) for more information.
+     *
+     * @experimental
+     */
+    formatToParts(list: Array<string>, parts: Parts): string;
 }
