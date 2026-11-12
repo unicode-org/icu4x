@@ -378,7 +378,7 @@ impl FormattedDuration<'_> {
         // 13. Else,
         // a. Let secondsFormatted be false.
         let seconds_formatted =
-            self.duration.seconds != 0 || self.fmt.options.second_visibility != FieldDisplay::Auto;
+            !seconds_value.is_zero() || self.fmt.options.second_visibility != FieldDisplay::Auto;
 
         // 14. Let minutesFormatted be false.
         let mut minutes_formatted = false;
@@ -465,7 +465,7 @@ impl FormattedDuration<'_> {
         let mut numeric_unit_found = false;
 
         // 4.  While numericUnitFound is false, repeat for each row in Table 2 in table order, except the header row:
-        for ((unit, style, display), value) in self
+        for ((unit, style, display), field_value) in self
             .fmt
             .options
             .iter_units()
@@ -476,6 +476,7 @@ impl FormattedDuration<'_> {
                 break;
             }
             // a. Let value be the value of duration's field whose name is the Value Field value of the current row.
+            let mut value = Decimal::from(field_value);
             // b. Let style be the value of durationFormat's internal slot whose name is the Style Slot value of the current row.
             // c. Let display be the value of durationFormat's internal slot whose name is the Display Slot value of the current row.
             // d. Let unit be the Unit value of the current row.
@@ -490,42 +491,21 @@ impl FormattedDuration<'_> {
             }
             // f. Else,
             else {
-                let mut formatted_value = Decimal::from(value);
-                formatted_value.set_sign(self.duration.get_sign());
-
                 // i. Let nfOpts be OrdinaryObjectCreate(null).
                 // ii. If unit is "seconds", "milliseconds", or "microseconds", then
                 if matches!(unit, Unit::Second | Unit::Millisecond | Unit::Microsecond) {
                     // 1. If NextUnitFractional(durationFormat, unit) is true, then
                     if self.next_unit_fractional(unit) {
                         // a. Set value to value + AddFractionalDigits(durationFormat, duration).
-                        formatted_value = self.add_fractional_digits();
-                        match self.fmt.options.fractional_digits {
-                            // b. If durationFormat.[[FractionalDigits]] is undefined, then
-                            FractionalDigits::ShowAll => {
-                                // i. Let maximumFractionDigits be 9𝔽.
-                                formatted_value.trunc(-9);
-                                // ii. Let minimumFractionDigits be +0𝔽.
-                                formatted_value.absolute.pad_end(0);
-                            }
-                            // c. Else,
-                            FractionalDigits::Fixed(i) => {
-                                let i: i16 = i.into();
-                                // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
-                                formatted_value.trunc(-i);
-                                // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                                formatted_value.absolute.pad_end(-i);
-                            }
-                        } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
-                        // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
-                        // f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
-
+                        value = self.add_fractional_digits();
                         // g. Set numericUnitFound to true.
                         numeric_unit_found = true;
                     }
                 }
                 //  iii. If value is not 0 or display is not "auto", then
-                if value != 0 || display != FieldDisplay::Auto {
+                if !value.is_zero() || display != FieldDisplay::Auto {
+                    value.set_sign(self.duration.get_sign());
+
                     // 1. Let numberingSystem be durationFormat.[[NumberingSystem]].
                     // 2. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
                     // 3. If signDisplayed is true, then
@@ -533,15 +513,40 @@ impl FormattedDuration<'_> {
                         // a. Set signDisplayed to false.
                         sign_displayed = false;
                         // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
-                        if value == 0 && self.duration.get_sign() == fixed_decimal::Sign::Negative {
+                        if value.is_zero()
+                            && self.duration.get_sign() == fixed_decimal::Sign::Negative
+                        {
                             // i. Set value to negative-zero.
-                            formatted_value.apply_sign_display(SignDisplay::Always);
+                            value.apply_sign_display(SignDisplay::Always);
                         }
                     }
                     // 4. Else,
                     else {
                         // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
-                        formatted_value.apply_sign_display(SignDisplay::Never);
+                        value.apply_sign_display(SignDisplay::Never);
+                    }
+
+                    if numeric_unit_found {
+                        match self.fmt.options.fractional_digits {
+                            // ii.1.b. If durationFormat.[[FractionalDigits]] is undefined, then
+                            FractionalDigits::ShowAll => {
+                                // i. Let maximumFractionDigits be 9𝔽.
+                                value.trunc(-9);
+                                // ii. Let minimumFractionDigits be +0𝔽.
+                                value.absolute.pad_end(0);
+                            }
+                            // ii.1.c. Else,
+                            FractionalDigits::Fixed(i) => {
+                                let i: i16 = i.into();
+                                // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
+                                value.trunc(-i);
+                                // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
+                                value.absolute.pad_end(-i);
+                            }
+                        }
+                        // ii.1.d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
+                        // ii.1.e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
+                        // ii.1.f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
                     }
 
                     // 5. Let numberFormatUnit be the NumberFormat Unit value of the current row.
@@ -557,7 +562,7 @@ impl FormattedDuration<'_> {
                     // 12. For each Record { [[Type]], [[Value]] } part of parts, do
                     // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: numberFormatUnit } to list.
                     // 13. Append list to result.
-                    parts_list.push(HeterogenousToFormatter::Right((unit, formatted_value)));
+                    parts_list.push(HeterogenousToFormatter::Right((unit, value)));
                 }
             }
         }
@@ -791,6 +796,78 @@ mod tests {
         assert_eq!(
             formatter3.format(&duration3).write_to_string().into_owned(),
             "7.5025015 sec"
+        );
+    }
+
+    #[test]
+    fn test_fractional_auto_display_and_sign() {
+        // 1. Auto-visibility unit with integer field = 0 and non-zero fractional carry (microseconds = 0, nanoseconds = 1500)
+        let duration1 = Duration {
+            nanoseconds: 1500,
+            ..Default::default()
+        };
+        let options1 = DurationFormatterOptions {
+            nanosecond: Some(NanoSecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options1 = ValidatedDurationFormatterOptions::validate(options1).unwrap();
+        let formatter1 = DurationFormatter::try_new(locale!("en").into(), options1).unwrap();
+        assert_eq!(
+            formatter1.format(&duration1).write_to_string().into_owned(),
+            "1.5 μs"
+        );
+
+        // 2. Auto-visibility unit with integer field = 0 and sub-unit fractional < 1 (seconds = 0, milliseconds = 500)
+        let duration2 = Duration {
+            milliseconds: 500,
+            ..Default::default()
+        };
+        let options2 = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options2 = ValidatedDurationFormatterOptions::validate(options2).unwrap();
+        let formatter2 = DurationFormatter::try_new(locale!("en").into(), options2).unwrap();
+        assert_eq!(
+            formatter2.format(&duration2).write_to_string().into_owned(),
+            "0.5 sec"
+        );
+
+        // 3. Auto-visibility numeric seconds when seconds = 0 and sub-second fractional/carry is non-zero
+        let duration3 = Duration {
+            nanoseconds: 1500,
+            microseconds: 2500,
+            milliseconds: 3500,
+            seconds: 0,
+            ..Default::default()
+        };
+        let options3 = DurationFormatterOptions {
+            second: Some(SecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options3 = ValidatedDurationFormatterOptions::validate(options3).unwrap();
+        let formatter3 = DurationFormatter::try_new(locale!("en").into(), options3).unwrap();
+        assert_eq!(
+            formatter3.format(&duration3).write_to_string().into_owned(),
+            "3.5025015"
+        );
+
+        // 4. Negative duration where the first displayed unit has fractional digits
+        let duration4 = Duration {
+            sign: DurationSign::Negative,
+            seconds: 0,
+            milliseconds: 500,
+            ..Default::default()
+        };
+        let options4 = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            ..Default::default()
+        };
+        let options4 = ValidatedDurationFormatterOptions::validate(options4).unwrap();
+        let formatter4 = DurationFormatter::try_new(locale!("en").into(), options4).unwrap();
+        assert_eq!(
+            formatter4.format(&duration4).write_to_string().into_owned(),
+            "-0.5 sec"
         );
     }
 
