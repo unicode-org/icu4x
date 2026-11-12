@@ -62,6 +62,23 @@ impl SerdeCache {
         .ok_or_else(|| DataError::custom("Cache error").with_type_context::<S>())
     }
 
+    /// Returns the value cached under `key` or, if there is none, computes it
+    /// with `compute` and caches it if successful.
+    ///
+    /// `key` must not collide with a path passed to `read_and_parse`.
+    pub fn get_or_compute<S: Send + Sync + 'static>(
+        &self,
+        key: &str,
+        compute: impl FnOnce() -> Result<S, DataError>,
+    ) -> Result<&S, DataError> {
+        match self.cache.get(key) {
+            Some(x) => x,
+            None => self.cache.insert(key.to_string(), Box::new(compute()?)),
+        }
+        .downcast_ref::<S>()
+        .ok_or_else(|| DataError::custom("Cache error").with_type_context::<S>())
+    }
+
     pub fn read_and_parse_json<S>(&self, path: &str) -> Result<&S, DataError>
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,

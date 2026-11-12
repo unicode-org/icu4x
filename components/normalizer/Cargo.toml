@@ -29,6 +29,7 @@ icu_collections = { workspace = true }
 icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true }
 smallvec = { workspace = true } # alloc
+utf_types = { workspace = true }
 utf16_iter = { workspace = true, optional = true }
 utf8_iter = { workspace = true, optional = true }
 write16 = { workspace = true, features = ["alloc"], optional = true }
@@ -62,6 +63,7 @@ utf16_iter = ["dep:utf16_iter", "dep:write16"]
 # For dealing with potentially ill-formed UTF8 strings
 utf8_iter = ["dep:utf8_iter"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
+latin1 = []
 
 # added by accident
 write16 = []
