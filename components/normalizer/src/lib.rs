@@ -1033,6 +1033,20 @@ where
     >,
 }
 
+// `compose` is `pub` by accident. Delegate for semver compat.
+impl<I> Composition<'_, I>
+where
+    I: Iterator<Item = char>,
+{
+    /// Performs canonical composition (including Hangul) on a pair of
+    /// characters or returns `None` if these characters don't compose.
+    /// Composition exclusions are taken into account.
+    #[inline(always)]
+    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+        self.inner.compose(starter, second)
+    }
+}
+
 impl<I> Iterator for Composition<'_, I>
 where
     I: Iterator<Item = char>,
@@ -1093,7 +1107,7 @@ where
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
     #[inline(always)]
-    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+    fn compose(&self, starter: char, second: char) -> Option<char> {
         compose(&self.canonical_compositions, starter, second)
     }
 
