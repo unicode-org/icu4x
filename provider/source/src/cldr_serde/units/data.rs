@@ -17,10 +17,10 @@ use std::collections::BTreeMap;
 ///     <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub(crate) struct Patterns {
-    #[serde(rename = "displayName-count-0")]
+    #[serde(rename = "unitPattern-count-0")]
     pub(crate) explicit_zero: Option<PatternString<SinglePlaceholder>>,
 
-    #[serde(rename = "displayName-count-1")]
+    #[serde(rename = "unitPattern-count-1")]
     pub(crate) explicit_one: Option<PatternString<SinglePlaceholder>>,
 
     #[serde(rename = "unitPattern-count-zero")]
@@ -49,12 +49,6 @@ pub(crate) struct Patterns {
 
     #[serde(rename = "compoundUnitPattern1")]
     pub(crate) compound_unit_pattern1: Option<String>,
-
-    #[serde(rename = "compountUnitPattern1-count-0")]
-    pub(crate) explicit_zero_compound_unit_pattern1: Option<String>,
-
-    #[serde(rename = "compountUnitPattern1-count-1")]
-    pub(crate) explicit_one_compound_unit_pattern1: Option<String>,
 
     #[serde(rename = "compoundUnitPattern1-count-zero")]
     pub(crate) zero_compound_unit_pattern1: Option<String>,
@@ -139,43 +133,49 @@ impl<'de> Deserialize<'de> for UnitsData {
             duration,
         } = Raw::deserialize(deserializer)?;
 
-        let construct = |mut map: BTreeMap<String, Patterns>| UnitsLengthData {
-            per: map.remove("per").unwrap(),
-            times: map.remove("times").unwrap(),
-            powers: map
-                .iter()
-                .filter_map(|(k, v)| Some((k.strip_prefix("power")?.parse().ok()?, v.clone())))
-                .collect(),
-            binary: map
-                .iter()
-                .filter_map(|(k, v)| Some((k.strip_prefix("1024p")?.parse().ok()?, v.clone())))
-                .collect(),
-            decimal: map
-                .iter()
-                .filter_map(|(k, v)| Some((k.strip_prefix("10p")?.parse().ok()?, v.clone())))
-                .collect(),
-            categories: map
-                .into_iter()
-                .filter_map(|(k, v)| {
-                    if k.starts_with("10p")
-                        || k.starts_with("1024p")
-                        || (k.starts_with("power") && !k.starts_with("power-"))
-                    {
-                        return None;
-                    }
-                    k.split_once('-')
-                        .map(|(category, unit)| (category.to_string(), unit.to_string(), v))
-                })
-                .fold(BTreeMap::new(), |mut acc, (category, unit, pattern)| {
-                    acc.entry(category).or_default().insert(unit, pattern);
-                    acc
-                }),
+        let construct = |mut map: BTreeMap<String, Patterns>| -> Result<UnitsLengthData, D::Error> {
+            Ok(UnitsLengthData {
+                per: map
+                    .remove("per")
+                    .ok_or_else(|| <D::Error as serde::de::Error>::missing_field("per"))?,
+                times: map
+                    .remove("times")
+                    .ok_or_else(|| <D::Error as serde::de::Error>::missing_field("times"))?,
+                powers: map
+                    .iter()
+                    .filter_map(|(k, v)| Some((k.strip_prefix("power")?.parse().ok()?, v.clone())))
+                    .collect(),
+                binary: map
+                    .iter()
+                    .filter_map(|(k, v)| Some((k.strip_prefix("1024p")?.parse().ok()?, v.clone())))
+                    .collect(),
+                decimal: map
+                    .iter()
+                    .filter_map(|(k, v)| Some((k.strip_prefix("10p")?.parse().ok()?, v.clone())))
+                    .collect(),
+                categories: map
+                    .into_iter()
+                    .filter_map(|(k, v)| {
+                        if k.starts_with("10p")
+                            || k.starts_with("1024p")
+                            || (k.starts_with("power") && !k.starts_with("power-"))
+                        {
+                            return None;
+                        }
+                        k.split_once('-')
+                            .map(|(category, unit)| (category.to_string(), unit.to_string(), v))
+                    })
+                    .fold(BTreeMap::new(), |mut acc, (category, unit, pattern)| {
+                        acc.entry(category).or_default().insert(unit, pattern);
+                        acc
+                    }),
+            })
         };
 
         Ok(Self {
-            long: construct(long),
-            short: construct(short),
-            narrow: construct(narrow),
+            long: construct(long)?,
+            short: construct(short)?,
+            narrow: construct(narrow)?,
             duration,
         })
     }
@@ -187,3 +187,53 @@ pub(crate) struct LangUnits {
 }
 
 pub(crate) type Resource = super::super::LocaleResource<LangUnits>;
+
+#[cfg(test)]
+mod tests {
+    use super::UnitsData;
+    use writeable::assert_writeable_eq;
+
+    const UNITS: &str = r#"{
+        "long": {
+            "per": { "compoundUnitPattern": "{0} per {1}" },
+            "times": { "compoundUnitPattern": "{0}-{1}" },
+            "length-meter": {
+                "unitPattern-count-0": "no meters",
+                "unitPattern-count-1": "one meter",
+                "unitPattern-count-other": "{0} meters"
+            }
+        },
+        "short": {
+            "per": { "compoundUnitPattern": "{0}/{1}" },
+            "times": { "compoundUnitPattern": "{0}⋅{1}" }
+        },
+        "narrow": {
+            "per": { "compoundUnitPattern": "{0}/{1}" },
+            "times": { "compoundUnitPattern": "{0}{1}" }
+        },
+        "durationUnit-type-hm": { "durationUnitPattern": "h:mm" },
+        "durationUnit-type-hms": { "durationUnitPattern": "h:mm:ss" },
+        "durationUnit-type-ms": { "durationUnitPattern": "m:ss" }
+    }"#;
+
+    #[test]
+    fn test_explicit_unit_patterns() {
+        let data: UnitsData = serde_json::from_str(UNITS).unwrap();
+        let meter = &data.long.categories["length"]["meter"];
+        assert_writeable_eq!(
+            meter.explicit_zero.as_ref().unwrap().interpolate([0]),
+            "no meters"
+        );
+        assert_writeable_eq!(
+            meter.explicit_one.as_ref().unwrap().interpolate([1]),
+            "one meter"
+        );
+    }
+
+    #[test]
+    fn test_missing_per_is_an_error() {
+        let units = UNITS.replacen(r#""per": { "compoundUnitPattern": "{0}/{1}" },"#, "", 1);
+        let error = serde_json::from_str::<UnitsData>(&units).unwrap_err();
+        assert!(error.to_string().contains("missing field `per`"), "{error}");
+    }
+}
