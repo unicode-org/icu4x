@@ -59,7 +59,7 @@ impl<T> Trio<T> {
 
 /// Some patterns associated with a [`SkeletonQuality`].
 #[derive(Debug, Clone, PartialEq)]
-struct PatternsWithDistance<T> {
+pub(super) struct PatternsWithDistance<T> {
     inner: T,
     distance: SkeletonQuality,
 }
@@ -116,6 +116,24 @@ fn enforce_consistent_field_length(
 pub(crate) struct SemanticSkeletonsContext<'a> {
     skeleton_patterns: BTreeMap<Skeleton, PluralElements<runtime::Pattern<'a>>>,
     length_combinations_v1: GenericLengthPatterns<'a>,
+}
+
+impl<'a> SemanticSkeletonsContext<'a> {
+    pub(super) fn new(provider: &SourceDataProvider, data: &'a cldr_serde::ca::Dates) -> Self {
+        // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
+        let length_combinations_v1 = convert_length_patterns(
+            &data.datetime_formats_at_time,
+            provider.datetime_ascii_preference(),
+        );
+        let skeleton_patterns = data
+            .datetime_formats
+            .available_formats
+            .parse_skeletons(provider.datetime_ascii_preference());
+        Self {
+            skeleton_patterns,
+            length_combinations_v1,
+        }
+    }
 }
 
 impl<'a> PackedPatternItem for PatternsWithDistance<PluralElements<runtime::Pattern<'a>>> {
@@ -249,21 +267,7 @@ impl SourceDataProvider {
             req.id.locale,
             calendar,
             req.id.marker_attributes,
-            |data| {
-                // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-                let length_combinations_v1 = convert_length_patterns(
-                    &data.datetime_formats_at_time,
-                    self.datetime_ascii_preference(),
-                );
-                let skeleton_patterns = data
-                    .datetime_formats
-                    .available_formats
-                    .parse_skeletons(self.datetime_ascii_preference());
-                SemanticSkeletonsContext {
-                    skeleton_patterns,
-                    length_combinations_v1,
-                }
-            },
+            |data| SemanticSkeletonsContext::new(self, data),
             to_components_bag,
         )?;
         Ok(DataResponse {
