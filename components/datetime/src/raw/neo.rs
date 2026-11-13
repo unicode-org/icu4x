@@ -201,6 +201,19 @@ impl DatePatternSelectionData {
     }
 }
 
+/// Reason why a range pattern payload is not present in [`DateRangePatternSelectionData`]
+/// or [`TimeRangePatternSelectionData`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg(feature = "unstable")]
+#[allow(dead_code)]
+pub(crate) enum NoRangePattern {
+    /// The formatter's fieldset does not include this component (date or time).
+    NotInFieldSet,
+    /// The component is part of the fieldset, but range formatting should fall back
+    /// to the glue pattern (`{0} – {1}`).
+    GlueFallback,
+}
+
 /// Data required for selecting date range patterns.
 ///
 /// This struct holds the patterns used to format the date portion of a range.
@@ -208,8 +221,8 @@ impl DatePatternSelectionData {
 #[cfg(feature = "unstable")]
 #[allow(dead_code)]
 pub(crate) struct DateRangePatternSelectionData {
-    /// The loaded date range patterns, or `None` if date range formatting is not supported.
-    pub(crate) payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
+    /// The loaded date range patterns, or why no range pattern payload is present.
+    pub(crate) payload: DataPayloadOr<ErasedPackedRangePatterns, NoRangePattern>,
 }
 
 #[cfg(feature = "unstable")]
@@ -217,8 +230,18 @@ pub(crate) struct DateRangePatternSelectionData {
 impl DateRangePatternSelectionData {
     pub(crate) fn none() -> Self {
         Self {
-            payload: DataPayloadOr::none(),
+            payload: DataPayloadOr::from_other(NoRangePattern::NotInFieldSet),
         }
+    }
+
+    pub(crate) fn fallback() -> Self {
+        Self {
+            payload: DataPayloadOr::from_other(NoRangePattern::GlueFallback),
+        }
+    }
+
+    pub(crate) fn is_present(&self) -> bool {
+        self.payload.get() != Err(&NoRangePattern::NotInFieldSet)
     }
 
     pub(crate) fn try_new_with_skeleton(
@@ -246,7 +269,7 @@ impl DateRangePatternSelectionData {
         options: RawOptions,
         diff: Difference,
     ) -> Option<RangePatternInfoBorrowed<'a>> {
-        let payload = self.payload.get_option()?;
+        let payload = self.payload.get().ok()?;
         let variant = input.resolve_date_variant(options);
         let ule = payload.get_element(options.length(), variant)?;
 
@@ -485,8 +508,8 @@ impl<'a> TimePatternDataBorrowed<'a> {
 #[cfg(feature = "unstable")]
 #[allow(dead_code)]
 pub(crate) struct TimeRangePatternSelectionData {
-    /// The loaded time range patterns, or `None` if time range formatting is not supported.
-    pub(crate) payload: DataPayloadOr<ErasedPackedRangePatterns, ()>,
+    /// The loaded time range patterns, or why no range pattern payload is present.
+    pub(crate) payload: DataPayloadOr<ErasedPackedRangePatterns, NoRangePattern>,
 }
 
 #[cfg(feature = "unstable")]
@@ -494,8 +517,18 @@ pub(crate) struct TimeRangePatternSelectionData {
 impl TimeRangePatternSelectionData {
     pub(crate) fn none() -> Self {
         Self {
-            payload: DataPayloadOr::none(),
+            payload: DataPayloadOr::from_other(NoRangePattern::NotInFieldSet),
         }
+    }
+
+    pub(crate) fn fallback() -> Self {
+        Self {
+            payload: DataPayloadOr::from_other(NoRangePattern::GlueFallback),
+        }
+    }
+
+    pub(crate) fn is_present(&self) -> bool {
+        self.payload.get() != Err(&NoRangePattern::NotInFieldSet)
     }
 
     pub(crate) fn try_new_with_skeleton(
@@ -548,7 +581,7 @@ impl TimeRangePatternSelectionData {
         options: RawOptions,
         diff: Difference,
     ) -> Option<RangePatternInfoBorrowed<'a>> {
-        let payload = self.payload.get_option()?;
+        let payload = self.payload.get().ok()?;
         let field = match diff {
             Difference::DayPeriodB => TimeGreatestDifferenceField::DayPeriodB,
             Difference::DayPeriodA => TimeGreatestDifferenceField::DayPeriodA,
