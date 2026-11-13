@@ -40,6 +40,15 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
 
         // Iterate over all the units and their conversion information.
         for (unit_name, convert_unit) in &units_data.supplemental.convert_units.convert_units {
+            // A special conversion, such as beaufort's, is a function and not a factor.
+            // TODO(#8673): Support special conversions.
+            if let Some(special) = &convert_unit.special {
+                log::warn!(
+                    "Skipping the conversion data for {unit_name}: the special conversion {special:?} is not supported"
+                );
+                continue;
+            }
+
             let base_unit = convert_unit.base_unit.as_str();
             let factor = convert_unit.factor.as_deref().unwrap_or("1");
             let offset = convert_unit.offset.as_deref().unwrap_or("0");
