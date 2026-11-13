@@ -21,6 +21,46 @@ use serde_core::{de, forward_to_deserialize_any, Deserialize};
 /// Systems using EBCDIC are not supported at this time.
 const SYSTEM_CHARSET_FAMILY: CharsetFamily = CharsetFamily::Ascii;
 
+/// Returns the length of a binary ICU resource bundle body in 32-bit words
+/// (`bundle_end` / `URES_INDEX_BUNDLE_TOP`) by parsing the index from
+/// `body_header[1..]`.
+///
+/// Requires at least the first 6 `u32` words of `body` (1 root resource
+/// descriptor word followed by the first 5 index words).
+///
+/// The input data must be in the platform's native endianness.
+pub fn body_word_len(body_header: &[u32]) -> Result<usize, BinaryDeserializerError> {
+    let &[_, field_count, _, _, bundle_end, _, ..] = body_header else {
+        return Err(BinaryDeserializerError::invalid_data(
+            "unexpected end of input",
+        ));
+    };
+
+    if field_count < 5 {
+        return Err(BinaryDeserializerError::invalid_data(
+            "invalid index field count",
+        ));
+    }
+
+    Ok(bundle_end as usize)
+}
+
+/// Deserializes an instance of type `T` from 32-bit words representing the body
+/// of a binary ICU resource bundle (immediately following the file header, as
+/// returned by ICU4C's `udata_getMemory`).
+///
+/// The input data must be in the platform's native endianness, and must use
+/// format version 2.0 with ASCII-family keys and 2-byte UTF-16 characters.
+pub fn from_body_words<'a, T>(body: &'a [u32]) -> Result<T, BinaryDeserializerError>
+where
+    T: Deserialize<'a>,
+{
+    let mut deserializer = ResourceTreeDeserializer::from_body_words(body)?;
+    let t = T::deserialize(&mut deserializer)?;
+
+    Ok(t)
+}
+
 /// Deserializes an instance of type `T` from bytes representing a binary ICU
 /// resource bundle.
 ///
@@ -101,10 +141,32 @@ impl<'de> ResourceTreeDeserializer<'de> {
         }
 
         let body = get_subslice(input, header.size as usize..)?;
+        Self::from_body_bytes(body, header.repr_info.format_version)
+    }
 
+    /// Creates a new deserializer directly from the body of a format version
+    /// 2.0 resource bundle (without the file header).
+    fn from_body_words(body: &'de [u32]) -> Result<Self, BinaryDeserializerError> {
+        // Safety: All valid u32 slices are also valid u8 slices since u32 is plain-old-data.
+        // We're using size_of_val to directly get the length of the underlying data.
+        let body =
+            unsafe { core::slice::from_raw_parts(body.as_ptr() as *const u8, size_of_val(body)) };
+
+        Self::from_body_bytes(body, FormatVersion::V2_0)
+    }
+
+    fn from_body_bytes(
+        body: &'de [u8],
+        format_version: FormatVersion,
+    ) -> Result<Self, BinaryDeserializerError> {
         // Skip the root resource descriptor and get the index area.
         let index = get_subslice(body, size_of::<u32>()..)?;
         let index = BinIndex::try_from(index)?;
+
+        let bundle_end = (index.bundle_end as usize)
+            .checked_mul(size_of::<u32>())
+            .ok_or(BinaryDeserializerError::invalid_data("Offset overflow"))?;
+        let body = get_subslice(body, ..bundle_end)?;
 
         // Keys begin at the start of the body.
         let keys_subslice_len = (index.keys_end as usize)
@@ -112,7 +174,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
             .ok_or(BinaryDeserializerError::invalid_data("Too many keys"))?;
         let keys = get_subslice(body, ..keys_subslice_len)?;
 
-        let data_16_bit = if header.repr_info.format_version < FormatVersion::V2_0 {
+        let data_16_bit = if format_version < FormatVersion::V2_0 {
             // The 16-bit data area was not introduced until format version 2.0.
             None
         } else if let Some(data_16_bit_end) = index.data_16_bit_end {
@@ -133,7 +195,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
 
         Ok(Self {
             input: body,
-            _format_version: header.repr_info.format_version,
+            _format_version: format_version,
             data_16_bit,
             keys,
             body,
@@ -1272,4 +1334,22 @@ fn read_u32(input: &[u8]) -> Result<(u32, &[u8]), BinaryDeserializerError> {
         .get(size_of::<u32>()..)
         .ok_or(const { BinaryDeserializerError::invalid_data("unexpected end of input") })?;
     Ok((value, rest))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_body_word_len() {
+        let resb = crate::include_bytes_as_u32!("../../examples/data/zoneinfo64.res");
+        let body = &resb[8..];
+
+        assert!(body_word_len(&body[..5]).is_err());
+        assert!(body_word_len(&[0, 4, 10, 20, 20, 5]).is_err());
+
+        let word_len = body_word_len(&body[..6]).unwrap();
+        assert_eq!(word_len, 37141);
+        assert!(word_len <= body.len());
+    }
 }

@@ -181,6 +181,24 @@ impl<'a> ZoneInfo64<'a> {
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
         deserialize::deserialize(resb)
     }
+
+    /// Returns the length in 32-bit words of a headerless `zoneinfo64.res`
+    /// resource bundle body (such as the pointer returned by ICU4C's
+    /// `udata_getMemory`).
+    ///
+    /// Requires at least the first 6 `u32` words of `body` (1 root resource
+    /// descriptor word followed by the first 5 index words).
+    pub fn body_word_len(body_header: &[u32]) -> Result<usize, BinaryDeserializerError> {
+        resb::binary::body_word_len(body_header)
+    }
+
+    /// Parse this object from 4-byte aligned headerless resource bundle body
+    /// data (immediately following the file header, as returned by ICU4C's
+    /// `udata_getMemory`).
+    pub fn try_from_body_u32s(body: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
+        deserialize::deserialize_from_body(body)
+    }
+
     #[cfg(test)]
     fn iter(&'a self) -> impl Iterator<Item = Zone<'a>> {
         (0..self.names.len()).map(move |i| Zone::from_raw_parts((i as u16, self)))
@@ -983,6 +1001,25 @@ mod tests {
                     Zone::from_raw_parts((zone.into_raw_parts().0, &other_tzdb))
                 );
             }
+        }
+    }
+
+    #[test]
+    fn test_from_body_u32s() {
+        let resb = resb::include_bytes_as_u32!("../tests/data/2025b.res");
+        // The DataHeader in zoneinfo64.res is 32 bytes (8 u32 words).
+        let body = &resb[8..];
+
+        assert!(ZoneInfo64::body_word_len(&body[..5]).is_err());
+
+        let word_len = ZoneInfo64::body_word_len(&body[..6]).unwrap();
+        assert!(word_len <= body.len());
+
+        assert!(ZoneInfo64::try_from_body_u32s(&body[..word_len - 1]).is_err());
+
+        let from_body = ZoneInfo64::try_from_body_u32s(&body[..word_len]).unwrap();
+        for (a, b) in TZDB.iter().zip(from_body.iter()) {
+            assert_eq!(a, b);
         }
     }
 }

@@ -8,7 +8,7 @@
 
 mod deserializer;
 mod header;
-pub use self::deserializer::from_words;
+pub use self::deserializer::{body_word_len, from_body_words, from_words};
 pub mod helpers;
 
 #[cfg(feature = "serialize")]

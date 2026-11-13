@@ -13,13 +13,26 @@ use serde::Deserialize;
 
 /// Deserialize a [`ZoneInfo64`]
 pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
-    let ZoneInfo64Raw {
+    let raw = resb::binary::from_words::<ZoneInfo64Raw>(resb)?;
+    validate_and_convert(raw)
+}
+
+/// Deserialize a [`ZoneInfo64`] from a headerless resource bundle body
+pub(crate) fn deserialize_from_body<'a>(
+    body: &'a [u32],
+) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
+    let raw = resb::binary::from_body_words::<ZoneInfo64Raw>(body)?;
+    validate_and_convert(raw)
+}
+
+fn validate_and_convert<'a>(
+    ZoneInfo64Raw {
         zones,
         names,
         rules,
         regions,
-    } = resb::binary::from_words::<ZoneInfo64Raw>(resb)?;
-
+    }: ZoneInfo64Raw<'a>,
+) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
     if zones.len() != names.len() || names.len() != regions.len() {
         return Err(BinaryDeserializerError::unknown(
             "zones, names, regions need to have matching lengths",
