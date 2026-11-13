@@ -166,6 +166,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         )
         .allow_identifier_not_found()?
         {
+            Some(res) if res.payload.get().is_iso_code() => CurrencyFormatterData::IsoCodeSymbol {
+                essential,
+                iso_code: currency.iso_code(),
+            },
             // An empty symbol (CLDR's U+200B ZERO WIDTH SPACE, stored as `""` by datagen)
             // means the locale intentionally has no symbol for this currency; see
             // `EmptySymbolFallback`. This is different from a missing entry (`None`),

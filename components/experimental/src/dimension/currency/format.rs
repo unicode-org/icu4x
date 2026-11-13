@@ -571,4 +571,47 @@ mod tests {
             "\u{061c}-١٢\u{66c}٣٤٥\u{66b}٦٧"
         );
     }
+
+    #[test]
+    pub fn test_symbol_equal_to_iso_code() {
+        // When a locale's CLDR currency symbol equals the 3-letter ISO code, datagen
+        // emits a `CurrencySymbol::use_iso_code()` entry so runtime lookup does not
+        // fall back to an ancestor locale's symbol.
+        #[track_caller]
+        fn check(
+            locale_str: &str,
+            currency_str: &str,
+            expected_short: &str,
+            expected_narrow: &str,
+        ) {
+            let prefs: CurrencyFormatterPreferences =
+                locale_str.parse::<icu::locale::Locale>().unwrap().into();
+            let currency = currency_str.parse().unwrap();
+            let value = "12345.67".parse().unwrap();
+
+            let fmt_short =
+                CurrencyFormatter::try_new_symbol(prefs, currency, Default::default()).unwrap();
+            assert_writeable_eq!(fmt_short.format_fixed_decimal(&value), expected_short);
+
+            let fmt_narrow =
+                CurrencyFormatter::try_new_symbol_narrow(prefs, currency, Default::default())
+                    .unwrap();
+            assert_writeable_eq!(fmt_narrow.format_fixed_decimal(&value), expected_narrow);
+        }
+
+        // `en-AU` uses "USD" as the standard symbol for USD, while `en-001` uses "US$".
+        check("en-AU", "USD", "USD 12,345.67", "$12,345.67");
+
+        // `pt-CV` uses "PTE" for PTE, while its parent `pt-PT` uses U+200B (no symbol).
+        check("pt-CV", "PTE", "12,345$67 PTE", "12,345$67 PTE");
+
+        // `es-AR` (via `es-419`) uses "EUR" as the standard symbol for EUR, while `es` uses "€".
+        check("es-AR", "EUR", "EUR 12.345,67", "€ 12.345,67");
+
+        // `fr-FR` uses "JPY" as the standard symbol for JPY, while root (`und`) uses "JP¥".
+        check("fr-FR", "JPY", "12 346 JPY", "12 346 ¥");
+
+        // `de-CH` uses "EUR" for EUR, while `de` uses "€".
+        check("de-CH", "EUR", "EUR 12'345.67", "EUR 12'345.67");
+    }
 }

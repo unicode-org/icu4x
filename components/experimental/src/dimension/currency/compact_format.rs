@@ -407,4 +407,30 @@ mod tests {
             "1,3 mil escudos portugueses",
         );
     }
+
+    #[test]
+    pub fn test_compact_symbol_equal_to_iso_code() {
+        // `en-AU` uses "USD" as the standard symbol for USD, while `en-001` uses "US$".
+        let prefs = locale!("en-AU").into();
+        let usd = currency!("USD");
+        let value = "12345.67".parse().unwrap();
+
+        let fmt_short =
+            CurrencyFormatter::try_new_compact_symbol(prefs, usd, Default::default()).unwrap();
+        assert_writeable_eq!(fmt_short.format_fixed_decimal(&value), "USD 12K");
+
+        let fmt_short_narrow =
+            CurrencyFormatter::try_new_compact_symbol_narrow(prefs, usd, Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt_short_narrow.format_fixed_decimal(&value), "$12K");
+
+        let fmt_long =
+            CurrencyFormatter::try_new_compact_long_symbol(prefs, usd, Default::default()).unwrap();
+        assert_writeable_eq!(fmt_long.format_fixed_decimal(&value), "USD 12 thousand");
+
+        let fmt_long_narrow =
+            CurrencyFormatter::try_new_compact_long_symbol_narrow(prefs, usd, Default::default())
+                .unwrap();
+        assert_writeable_eq!(fmt_long_narrow.format_fixed_decimal(&value), "$12 thousand");
+    }
 }
