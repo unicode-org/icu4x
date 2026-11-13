@@ -462,7 +462,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 m²",
+                "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
@@ -519,7 +519,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 m²",
+                "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
@@ -583,7 +583,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 m²",
+                "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
