@@ -70,7 +70,7 @@ impl FsDataProvider {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let mut path = marker_to_path(marker.id, &self.root);
-        if !path.exists() {
+        if !marker.is_singleton && !path.exists() {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
         let checksum = if marker.is_singleton {
@@ -110,7 +110,11 @@ impl FsDataProvider {
         }
         path.set_extension(self.manifest.file_extension);
         if !path.exists() {
-            return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
+            if marker.is_singleton {
+                return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
+            } else {
+                return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
+            }
         }
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
