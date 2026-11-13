@@ -184,21 +184,45 @@ fn is_alpha_next_to_number(
     symbol_starts_with_letter: bool,
     symbol_ends_with_letter: bool,
 ) -> bool {
-    let number_placeholder_index = pattern
-        .iter()
-        .position(|x| x == PatternItem::Placeholder(DoublePlaceholderKey::Place0))
-        .unwrap_or(usize::MAX);
+    let position = |key| {
+        pattern
+            .iter()
+            .position(|x| x == PatternItem::Placeholder(key))
+    };
 
-    let currency_placeholder_index = pattern
-        .iter()
-        .position(|x| x == PatternItem::Placeholder(DoublePlaceholderKey::Place1))
-        .unwrap_or(usize::MAX);
-
-    if number_placeholder_index + 1 == currency_placeholder_index {
-        symbol_starts_with_letter
-    } else if currency_placeholder_index + 1 == number_placeholder_index {
-        symbol_ends_with_letter
-    } else {
-        false
+    match (
+        position(DoublePlaceholderKey::Place0),
+        position(DoublePlaceholderKey::Place1),
+    ) {
+        // The symbol comes right after the number: its first character is next to the number.
+        (Some(number), Some(currency)) if number + 1 == currency => symbol_starts_with_letter,
+        // The symbol comes right before the number: its last character is next to the number.
+        (Some(number), Some(currency)) if currency + 1 == number => symbol_ends_with_letter,
+        // They aren't next to each other, or the pattern lacks one of them.
+        _ => false,
     }
+}
+
+#[test]
+fn test_is_alpha_next_to_number() {
+    #[track_caller]
+    fn check(pattern: &str, starts_with_letter: bool, ends_with_letter: bool, expected: bool) {
+        let pattern = DoublePlaceholderPattern::try_from_str(pattern, Default::default()).unwrap();
+        assert_eq!(
+            is_alpha_next_to_number(&pattern, starts_with_letter, ends_with_letter),
+            expected
+        );
+    }
+
+    // The symbol comes right after the number: its first character is next to the number.
+    check("{0}{1}", true, false, true);
+    check("{0}{1}", false, true, false);
+    // The symbol comes right before the number: its last character is next to the number.
+    check("{1}{0}", false, true, true);
+    check("{1}{0}", true, false, false);
+    // A space separates them.
+    check("{1} {0}", true, true, false);
+    // A pattern without one of the placeholders.
+    check("{1}", true, true, false);
+    check("{0}", true, true, false);
 }
