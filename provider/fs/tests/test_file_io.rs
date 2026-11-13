@@ -142,18 +142,8 @@ fn prefix_match() {
     }
 }
 
-icu_provider::data_marker!(
-    SingletonV1,
-    "hello/singleton@1",
-    HelloWorld<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    MissingSingletonV1,
-    "hello/missing@1",
-    HelloWorld<'static>,
-    is_singleton = true
-);
+icu_provider::data_marker!(SingletonV1, HelloWorld<'static>, is_singleton = true);
+icu_provider::data_marker!(MissingSingletonV1, HelloWorld<'static>, is_singleton = true);
 
 #[test]
 fn test_singleton() {
