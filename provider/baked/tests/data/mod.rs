@@ -37,3 +37,21 @@ macro_rules! impl_data_provider {
         impl_hello_world_v1!($provider);
     };
 }
+#[allow(unused_macros)]
+macro_rules! impl_blanket_data_provider {
+    ($ wrapper : ty , $ inner_provider : ty) => {
+        impl<M> icu_provider::DataProvider<M> for $wrapper
+        where
+            M: icu_provider::DataMarker,
+        {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<M>, icu_provider::DataError> {
+                use core::any::TypeId;
+                if TypeId::of::<M>() == TypeId::of::<icu_provider::hello_world::HelloWorldV1>() {
+                    let res = icu_provider::DataProvider::<icu_provider::hello_world::HelloWorldV1>::load(&self.0, req)?;
+                    return Ok(icu_provider::DataResponse { metadata: res.metadata, payload: res.payload.dynamic_cast()? });
+                }
+                Err(icu_provider::DataErrorKind::MarkerNotFound.into_error())
+            }
+        }
+    };
+}
