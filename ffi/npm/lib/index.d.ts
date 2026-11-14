@@ -38,6 +38,8 @@ export { BidiMirroringGlyph, BidiMirroringGlyph_obj } from "./BidiMirroringGlyph
 
 export { GeneralCategoryGroup, GeneralCategoryGroup_obj } from "./GeneralCategoryGroup"
 
+export { RelativeTimeFormatterOptions, RelativeTimeFormatterOptions_obj } from "./RelativeTimeFormatterOptions"
+
 export { LineBreakOptions, LineBreakOptions_obj } from "./LineBreakOptions"
 
 export { CollatorResolvedOptions } from "./CollatorResolvedOptions"
@@ -177,6 +179,8 @@ export { CodePointSetData } from "./CodePointSetData"
 export { EmojiSetData } from "./EmojiSetData"
 
 export { DataProvider } from "./DataProvider"
+
+export { RelativeTimeFormatter } from "./RelativeTimeFormatter"
 
 export { ScriptExtensionsSet } from "./ScriptExtensionsSet"
 
@@ -377,6 +381,8 @@ export { SentenceBreak } from "./SentenceBreak"
 export { VerticalOrientation } from "./VerticalOrientation"
 
 export { WordBreak } from "./WordBreak"
+
+export { RelativeTimeNumeric } from "./RelativeTimeNumeric"
 
 export { LineBreakStrictness } from "./LineBreakStrictness"
 
