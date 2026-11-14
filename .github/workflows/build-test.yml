@@ -158,7 +158,10 @@ jobs:
 
   # ci-job-test-cargo
   test-cargo:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
@@ -175,10 +178,24 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Install harfbuzz
+    - name: Install harfbuzz (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt update
         sudo apt install libharfbuzz-dev
+
+    - name: Install harfbuzz (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        choco install pkgconfiglite -y
+        git clone --depth 1 https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+        .\vcpkg\vcpkg install harfbuzz:x64-windows
+        $pkg_path = Join-Path $env:GITHUB_WORKSPACE "vcpkg\installed\x64-windows\lib\pkgconfig"
+        echo "PKG_CONFIG_PATH=$pkg_path" >> $env:GITHUB_ENV
+        $bin_path = Join-Path $env:GITHUB_WORKSPACE "vcpkg\installed\x64-windows\bin"
+        echo "$bin_path" >> $env:GITHUB_PATH
 
     # Actual job
     - name: Run `cargo make ci-job-test-cargo`
