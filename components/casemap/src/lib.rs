@@ -46,6 +46,7 @@ extern crate alloc;
 
 mod casemapper;
 mod closer;
+mod edits;
 pub mod provider;
 mod set;
 pub(crate) mod titlecase;
@@ -57,6 +58,7 @@ mod internals;
 
 pub use casemapper::{CaseMapper, CaseMapperBorrowed};
 pub use closer::{CaseMapCloser, CaseMapCloserBorrowed};
+pub use edits::{CaseMapEdit, CaseMapWriteable};
 pub use set::ClosureSink;
 pub use titlecase::{TitlecaseMapper, TitlecaseMapperBorrowed};
 
