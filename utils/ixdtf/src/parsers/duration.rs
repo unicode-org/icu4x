@@ -72,7 +72,7 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
 
         match cursor.next()? {
             Some(ch) if is_year_designator(ch) => {
-                if previous_unit > DateUnit::Year {
+                if previous_unit >= DateUnit::Year {
                     return Err(ParseError::DateDurationPartOrder);
                 }
                 date.years =
@@ -80,7 +80,7 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
                 previous_unit = DateUnit::Year;
             }
             Some(ch) if is_month_designator(ch) => {
-                if previous_unit > DateUnit::Month {
+                if previous_unit >= DateUnit::Month {
                     return Err(ParseError::DateDurationPartOrder);
                 }
                 date.months =
@@ -88,7 +88,7 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
                 previous_unit = DateUnit::Month;
             }
             Some(ch) if is_week_designator(ch) => {
-                if previous_unit > DateUnit::Week {
+                if previous_unit >= DateUnit::Week {
                     return Err(ParseError::DateDurationPartOrder);
                 }
                 date.weeks =
@@ -96,7 +96,7 @@ pub(crate) fn parse_date_duration<T: EncodingType>(
                 previous_unit = DateUnit::Week;
             }
             Some(ch) if is_day_designator(ch) => {
-                if previous_unit > DateUnit::Day {
+                if previous_unit >= DateUnit::Day {
                     return Err(ParseError::DateDurationPartOrder);
                 }
                 date.days = value;
@@ -143,7 +143,7 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
 
         match cursor.next()? {
             Some(ch) if is_hour_designator(ch) => {
-                if previous_unit > TimeUnit::Hour {
+                if previous_unit >= TimeUnit::Hour {
                     return Err(ParseError::TimeDurationPartOrder);
                 }
                 time.0 = value;
@@ -153,7 +153,7 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
                 previous_unit = TimeUnit::Hour;
             }
             Some(ch) if is_minute_designator(ch) => {
-                if previous_unit > TimeUnit::Minute {
+                if previous_unit >= TimeUnit::Minute {
                     return Err(ParseError::TimeDurationPartOrder);
                 }
                 time.1 = value;
@@ -163,7 +163,7 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
                 previous_unit = TimeUnit::Minute;
             }
             Some(ch) if is_second_designator(ch) => {
-                if previous_unit > TimeUnit::Second {
+                if previous_unit >= TimeUnit::Second {
                     return Err(ParseError::TimeDurationPartOrder);
                 }
                 time.2 = value;
