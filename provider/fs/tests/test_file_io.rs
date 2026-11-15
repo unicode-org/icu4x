@@ -142,18 +142,8 @@ fn prefix_match() {
     }
 }
 
-icu_provider::data_marker!(
-    SingletonV1,
-    "hello/singleton@1",
-    HelloWorld<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    MissingSingletonV1,
-    "hello/missing@1",
-    HelloWorld<'static>,
-    is_singleton = true
-);
+icu_provider::data_marker!(HelloSingletonV1, HelloWorld<'static>, is_singleton = true);
+icu_provider::data_marker!(HelloMissingV1, HelloWorld<'static>, is_singleton = true);
 
 #[test]
 fn test_singleton() {
@@ -173,24 +163,24 @@ fn test_singleton() {
         options.overwrite = OverwriteOption::RemoveAndReplace;
         let exporter = FilesystemExporter::try_new(Box::new(Json::default()), options).unwrap();
 
-        let payload: DataPayload<SingletonV1> = DataPayload::from_owned(HelloWorld {
+        let payload: DataPayload<HelloSingletonV1> = DataPayload::from_owned(HelloWorld {
             message: "Hello, Singleton!".into(),
         });
         let export_payload: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
         let mut flush_metadata = FlushMetadata::default();
         flush_metadata.checksum = Some(1234);
         exporter
-            .flush_singleton(SingletonV1::INFO, &export_payload, flush_metadata)
+            .flush_singleton(HelloSingletonV1::INFO, &export_payload, flush_metadata)
             .unwrap();
     }
     #[cfg(not(feature = "export"))]
     {
         std::fs::create_dir_all(&tmp_dir).unwrap();
         std::fs::write(tmp_dir.join("manifest.json"), r#"{"syntax":"Json"}"#).unwrap();
-        let file_path = tmp_dir.join("singleton/v1.json");
+        let file_path = tmp_dir.join("hello/singleton/v1.json");
         std::fs::create_dir_all(file_path.parent().unwrap()).unwrap();
         std::fs::write(&file_path, r#"{"message":"Hello, Singleton!"}"#).unwrap();
-        std::fs::write(tmp_dir.join("singleton/v1_checksum"), "1234").unwrap();
+        std::fs::write(tmp_dir.join("hello/singleton/v1_checksum"), "1234").unwrap();
     }
 
     let provider = FsDataProvider::try_new(tmp_dir.clone()).unwrap();
@@ -199,7 +189,7 @@ fn test_singleton() {
         ..Default::default()
     };
 
-    let res: DataResponse<SingletonV1> = provider.as_deserializing().load(req).unwrap();
+    let res: DataResponse<HelloSingletonV1> = provider.as_deserializing().load(req).unwrap();
     assert_eq!(res.payload.get().message, "Hello, Singleton!");
     assert_eq!(res.metadata.checksum, Some(1234));
 
@@ -208,13 +198,12 @@ fn test_singleton() {
         id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
         ..Default::default()
     };
-    let err =
-        DataProvider::<SingletonV1>::load(&provider.as_deserializing(), req_invalid).unwrap_err();
+    let err = DataProvider::<HelloSingletonV1>::load(&provider.as_deserializing(), req_invalid)
+        .unwrap_err();
     assert!(matches!(err.kind, DataErrorKind::InvalidRequest));
 
     // Missing singleton MarkerNotFound
-    let err =
-        DataProvider::<MissingSingletonV1>::load(&provider.as_deserializing(), req).unwrap_err();
+    let err = DataProvider::<HelloMissingV1>::load(&provider.as_deserializing(), req).unwrap_err();
     assert!(matches!(err.kind, DataErrorKind::MarkerNotFound));
 
     std::fs::remove_dir_all(&tmp_dir).unwrap();
