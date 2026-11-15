@@ -57,8 +57,9 @@ impl Writeable for Literal<'_> {
             // The escaped character stands for itself. Taking it here also keeps the
             // second backslash of `\\` from being read as the start of an escape.
             let mut chars = escape.chars();
-            if let Some(escaped) = chars.next() {
-                sink.write_char(escaped)?;
+            match chars.next() {
+                Some(escaped) => sink.write_char(escaped)?,
+                None => debug_assert!(false, "{:?} ends with a backslash", self.raw),
             }
             rest = chars.as_str();
         }
@@ -276,11 +277,9 @@ impl<'a> Parser<'a> {
                 p.consume();
                 Value::Literal(self.parse_quoted_literal()?)
             }
-            Some(p) if is_name_char(p.c) => Value::Literal(self.parse_unquoted_literal()?),
             // The start of a function-expression or markup.
             Some(p) if matches!(p.c, ':' | '#' | '/') => return Err(self.unsupported()),
-            Some(p) => return Err(p.unexpected()),
-            None => return Err(self.eof()),
+            _ => Value::Literal(self.parse_unquoted_literal()?),
         };
         self.state = State::Operand;
         Ok((Event::Operand(operand), start..self.offset()))
@@ -348,7 +347,7 @@ impl<'a> Parser<'a> {
     }
 
     // name = [bidi] name-start *name-char [bidi]
-    // The trailing bidi mark is left to the `o` that always follows a name here.
+    // Returns the name without the bidi marks.
     fn parse_name(&mut self) -> Result<&'a str, ParseError> {
         if let Some(p) = self.peek()?.filter(|p| is_bidi(p.c)) {
             p.consume();
@@ -362,7 +361,11 @@ impl<'a> Parser<'a> {
         while let Some(p) = self.peek()?.filter(|p| is_name_char(p.c)) {
             p.consume();
         }
-        Ok(Self::decoded(start, start.len() - self.rest.len()))
+        let name = Self::decoded(start, start.len() - self.rest.len());
+        if let Some(p) = self.peek()?.filter(|p| is_bidi(p.c)) {
+            p.consume();
+        }
+        Ok(name)
     }
 
     /// The first `len` bytes of `input` as text. They must be whole characters
@@ -589,7 +592,7 @@ mod tests {
             parse("{ \u{2066}$x\u{2069}\t}"),
             Ok(vec![
                 (ExpressionStart, 0..1),
-                (var("x"), 5..7),
+                (var("x"), 5..10),
                 (ExpressionEnd, 11..12),
             ])
         );
@@ -609,7 +612,7 @@ mod tests {
             parse("{$\u{200E}x\u{200F}}"),
             Ok(vec![
                 (ExpressionStart, 0..1),
-                (var("x"), 1..6),
+                (var("x"), 1..9),
                 (ExpressionEnd, 9..10),
             ])
         );
@@ -617,11 +620,12 @@ mod tests {
 
     #[test]
     fn multiple_bidi_marks_after_name() {
+        // The name takes one mark; the rest is whitespace before the `}`.
         assert_eq!(
             parse("{$x\u{200E}\u{200F}\u{2069}}"),
             Ok(vec![
                 (ExpressionStart, 0..1),
-                (var("x"), 1..3),
+                (var("x"), 1..6),
                 (ExpressionEnd, 12..13),
             ])
         );
@@ -774,6 +778,17 @@ mod tests {
         );
         assert_writeable_eq!(Literal { raw: "\\\\\\\\" }, "\\\\");
         assert_writeable_eq!(Literal { raw: "\\|" }, "|");
+    }
+
+    #[test]
+    fn parsed_literal_has_unescaped_value() {
+        let mut parser = Parser::new(b"{|a\\|b|}");
+        assert_eq!(parser.next(), Some(Ok((ExpressionStart, 0..1))));
+        let Some(Ok((Operand(Value::Literal(literal)), span))) = parser.next() else {
+            panic!("expected a literal operand");
+        };
+        assert_eq!(span, 1..7);
+        assert_writeable_eq!(literal, "a|b");
     }
 
     #[test]
