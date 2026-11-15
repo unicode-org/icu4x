@@ -4,17 +4,73 @@
 
 //! Parser for MF2 simple messages, following `spec/message.abnf` of LDML 48.2.
 
+use core::fmt;
 use core::ops::Range;
 use utf8_iter::ErrorReportingUtf8Chars;
+use writeable::Writeable;
 
 /// A part of a message.
-#[derive(Debug, PartialEq, Eq)]
+///
+/// The events from an [`Event::ExpressionStart`] to the next [`Event::ExpressionEnd`]
+/// describe one expression.
+#[derive(Debug)]
+#[cfg_attr(test, derive(PartialEq, Eq))]
 pub(crate) enum Event<'a> {
     /// Text to output verbatim.
     Text(&'a str),
-    /// A `{$name}` placeholder. The name excludes `$` and bidi marks.
+    /// The `{` that opens an expression.
+    ExpressionStart,
+    /// The operand of the expression.
+    Operand(Value<'a>),
+    /// The `}` that closes an expression.
+    ExpressionEnd,
+}
+
+/// A literal or a variable.
+#[derive(Debug)]
+#[cfg_attr(test, derive(PartialEq, Eq))]
+pub(crate) enum Value<'a> {
+    Literal(Literal<'a>),
+    /// The name of a variable, without `$` and bidi marks.
     Variable(&'a str),
 }
+
+/// The value of a literal.
+///
+/// Quoted and unquoted literals with the same value are not distinguished.
+/// The value is written with [`Writeable`], because an escape sequence makes it
+/// differ from the source.
+// Equality would compare the source, not the value, so it exists only for tests.
+#[derive(Debug)]
+#[cfg_attr(test, derive(PartialEq, Eq))]
+pub(crate) struct Literal<'a> {
+    /// The source of an unquoted literal, or of a quoted literal between its `|`.
+    /// Every backslash in it starts an escape sequence that the parser has checked.
+    raw: &'a str,
+}
+
+impl Writeable for Literal<'_> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        let mut rest = self.raw;
+        while let Some((unescaped, escape)) = rest.split_once('\\') {
+            sink.write_str(unescaped)?;
+            // The escaped character stands for itself. Taking it here also keeps the
+            // second backslash of `\\` from being read as the start of an escape.
+            let mut chars = escape.chars();
+            if let Some(escaped) = chars.next() {
+                sink.write_char(escaped)?;
+            }
+            rest = chars.as_str();
+        }
+        sink.write_str(rest)
+    }
+
+    fn writeable_borrow(&self) -> Option<&str> {
+        (!self.raw.contains('\\')).then_some(self.raw)
+    }
+}
+
+writeable::impl_display_with_writeable!(Literal<'_>);
 
 /// An error found while parsing a message.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,7 +87,7 @@ pub(crate) enum ParseErrorKind {
     UnexpectedChar(char),
     /// A byte sequence that is not valid UTF-8.
     InvalidUtf8,
-    /// The message ended inside a placeholder or an escape sequence.
+    /// The message ended inside an expression or an escape sequence.
     Eof,
     /// Parsing reached syntax outside the supported subset.
     /// The remaining input has not been validated.
@@ -50,6 +106,15 @@ pub(crate) struct Parser<'a> {
     source: &'a [u8],
     /// The unread end of `source`.
     rest: &'a [u8],
+    state: State,
+}
+
+/// Where the parser is in the message, named after the last event it yielded.
+enum State {
+    /// In a pattern, outside of any expression.
+    Pattern,
+    ExpressionStart,
+    Operand,
 }
 
 impl<'a> Parser<'a> {
@@ -57,6 +122,7 @@ impl<'a> Parser<'a> {
         Self {
             source,
             rest: source,
+            state: State::Pattern,
         }
     }
 
@@ -108,6 +174,16 @@ impl<'a> Parser<'a> {
     }
 
     fn next_event(&mut self) -> Result<Option<(Event<'a>, Range<usize>)>, ParseError> {
+        match self.state {
+            State::Pattern => self.parse_pattern_part(),
+            State::ExpressionStart => self.parse_operand().map(Some),
+            State::Operand => self.parse_expression_end().map(Some),
+        }
+    }
+
+    // pattern = *(text-char / escaped-char / placeholder)
+    // One run of text-char, one escaped-char, or the "{" of a placeholder.
+    fn parse_pattern_part(&mut self) -> Result<Option<(Event<'a>, Range<usize>)>, ParseError> {
         if self.offset() == 0 {
             self.check_simple_start()?;
         }
@@ -116,11 +192,12 @@ impl<'a> Parser<'a> {
             [] => return Ok(None),
             [b'\\', rest @ ..] => {
                 self.rest = rest;
-                self.parse_escape()?
+                Event::Text(self.parse_escaped_char()?)
             }
             [b'{', rest @ ..] => {
                 self.rest = rest;
-                self.parse_placeholder()?
+                self.state = State::ExpressionStart;
+                Event::ExpressionStart
             }
             [b @ (b'}' | b'\0'), ..] => return Err(self.unexpected(char::from(*b))),
             _ => self.parse_text()?,
@@ -135,6 +212,7 @@ impl<'a> Parser<'a> {
         let mut lookahead = Self {
             source: self.source,
             rest: self.rest,
+            state: State::Pattern,
         };
         lookahead.skip_o()?;
         if lookahead.rest.starts_with(b".") || lookahead.rest.starts_with(b"{{") {
@@ -167,12 +245,12 @@ impl<'a> Parser<'a> {
     }
 
     // escaped-char = backslash ( backslash / "{" / "|" / "}" )
-    // The backslash has been consumed.
-    fn parse_escape(&mut self) -> Result<Event<'a>, ParseError> {
+    // The backslash has been consumed. Returns the escaped character.
+    fn parse_escaped_char(&mut self) -> Result<&'static str, ParseError> {
         let Some(p) = self.peek()? else {
             return Err(self.eof());
         };
-        let text = match p.c {
+        let escaped = match p.c {
             '\\' => "\\",
             '{' => "{",
             '|' => "|",
@@ -180,34 +258,93 @@ impl<'a> Parser<'a> {
             _ => return Err(p.unexpected()),
         };
         p.consume();
-        Ok(Event::Text(text))
+        Ok(escaped)
     }
 
+    // literal-expression  = "{" o literal [s function] *(s attribute) o "}"
     // variable-expression = "{" o variable [s function] *(s attribute) o "}"
-    // without function and attributes. The "{" has been consumed.
-    fn parse_placeholder(&mut self) -> Result<Event<'a>, ParseError> {
+    // The `o literal` or `o variable` after the "{".
+    fn parse_operand(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
         self.skip_o()?;
-        match self.peek()? {
-            Some(p) if p.c == '$' => p.consume(),
-            // The start of a literal-expression, function-expression or markup.
-            Some(p) if matches!(p.c, '|' | ':' | '#' | '/') || is_name_char(p.c) => {
-                return Err(self.unsupported());
+        let start = self.offset();
+        let operand = match self.peek()? {
+            Some(p) if p.c == '$' => {
+                p.consume();
+                Value::Variable(self.parse_name()?)
             }
+            Some(p) if p.c == '|' => {
+                p.consume();
+                Value::Literal(self.parse_quoted_literal()?)
+            }
+            Some(p) if is_name_char(p.c) => Value::Literal(self.parse_unquoted_literal()?),
+            // The start of a function-expression or markup.
+            Some(p) if matches!(p.c, ':' | '#' | '/') => return Err(self.unsupported()),
             Some(p) => return Err(p.unexpected()),
             None => return Err(self.eof()),
-        }
-        let name = self.parse_name()?;
+        };
+        self.state = State::Operand;
+        Ok((Event::Operand(operand), start..self.offset()))
+    }
+
+    // The `[s function] *(s attribute) o "}"` after an operand,
+    // without function and attributes.
+    fn parse_expression_end(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
         let saw_ws = self.skip_o()?;
+        let start = self.offset();
         match self.peek()? {
             Some(p) if p.c == '}' => {
                 p.consume();
-                Ok(Event::Variable(name))
+                self.state = State::Pattern;
+                Ok((Event::ExpressionEnd, start..self.offset()))
             }
             // s = *bidi ws o, so bidi marks alone do not separate a function or attribute.
             Some(p) if saw_ws && matches!(p.c, ':' | '@') => Err(self.unsupported()),
             Some(p) => Err(p.unexpected()),
             None => Err(self.eof()),
         }
+    }
+
+    // quoted-literal = "|" *(quoted-char / escaped-char) "|"
+    // The opening "|" has been consumed.
+    fn parse_quoted_literal(&mut self) -> Result<Literal<'a>, ParseError> {
+        let start = self.rest;
+        let len = loop {
+            let len = start.len() - self.rest.len();
+            let Some(p) = self.peek()? else {
+                return Err(self.eof());
+            };
+            match p.c {
+                '|' => {
+                    p.consume();
+                    break len;
+                }
+                '\\' => {
+                    p.consume();
+                    self.parse_escaped_char()?;
+                }
+                '\0' => return Err(p.unexpected()),
+                _ => p.consume(),
+            }
+        };
+        Ok(Literal {
+            raw: Self::decoded(start, len),
+        })
+    }
+
+    // unquoted-literal = 1*name-char
+    fn parse_unquoted_literal(&mut self) -> Result<Literal<'a>, ParseError> {
+        let start = self.rest;
+        match self.peek()? {
+            Some(p) if is_name_char(p.c) => p.consume(),
+            Some(p) => return Err(p.unexpected()),
+            None => return Err(self.eof()),
+        }
+        while let Some(p) = self.peek()?.filter(|p| is_name_char(p.c)) {
+            p.consume();
+        }
+        Ok(Literal {
+            raw: Self::decoded(start, start.len() - self.rest.len()),
+        })
     }
 
     // name = [bidi] name-start *name-char [bidi]
@@ -225,13 +362,19 @@ impl<'a> Parser<'a> {
         while let Some(p) = self.peek()?.filter(|p| is_name_char(p.c)) {
             p.consume();
         }
-        let name = start.get(..start.len() - self.rest.len());
-        Ok(name
-            .and_then(|name| core::str::from_utf8(name).ok())
+        Ok(Self::decoded(start, start.len() - self.rest.len()))
+    }
+
+    /// The first `len` bytes of `input` as text. They must be whole characters
+    /// that `peek` has decoded.
+    fn decoded(input: &'a [u8], len: usize) -> &'a str {
+        input
+            .get(..len)
+            .and_then(|bytes| core::str::from_utf8(bytes).ok())
             .unwrap_or_else(|| {
-                debug_assert!(false, "a name consists of decoded characters");
+                debug_assert!(false, "{len} bytes of {input:?} are not decoded characters");
                 ""
-            }))
+            })
     }
 
     // o = *(ws / bidi)
@@ -277,6 +420,7 @@ impl<'a> Iterator for Parser<'a> {
         let result = self.next_event().transpose();
         if let Some(Err(_)) = result {
             self.rest = &[];
+            self.state = State::Pattern;
         }
         result
     }
@@ -330,6 +474,7 @@ mod tests {
     use super::*;
     use Event::*;
     use ParseErrorKind::*;
+    use writeable::assert_writeable_eq;
 
     type Events<'a> = Vec<(Event<'a>, Range<usize>)>;
 
@@ -339,6 +484,24 @@ mod tests {
 
     fn error(offset: usize, kind: ParseErrorKind) -> Result<Events<'static>, ParseError> {
         Err(ParseError { offset, kind })
+    }
+
+    fn var(name: &str) -> Event<'_> {
+        Operand(Value::Variable(name))
+    }
+
+    fn lit(raw: &str) -> Event<'_> {
+        Operand(Value::Literal(Literal { raw }))
+    }
+
+    /// The events of a message that is a single expression without whitespace,
+    /// whose operand is `len` bytes long in the source.
+    fn expression(operand: Event<'_>, len: usize) -> Events<'_> {
+        vec![
+            (ExpressionStart, 0..1),
+            (operand, 1..len + 1),
+            (ExpressionEnd, len + 1..len + 2),
+        ]
     }
 
     #[test]
@@ -352,17 +515,26 @@ mod tests {
             parse("Hello {$name}!"),
             Ok(vec![
                 (Text("Hello "), 0..6),
-                (Variable("name"), 6..13),
+                (ExpressionStart, 6..7),
+                (var("name"), 7..12),
+                (ExpressionEnd, 12..13),
                 (Text("!"), 13..14),
             ])
         );
     }
 
     #[test]
-    fn adjacent_placeholders() {
+    fn adjacent_expressions() {
         assert_eq!(
-            parse("{$a}{$b}"),
-            Ok(vec![(Variable("a"), 0..4), (Variable("b"), 4..8)])
+            parse("{$a}{|b|}"),
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("a"), 1..3),
+                (ExpressionEnd, 3..4),
+                (ExpressionStart, 4..5),
+                (lit("b"), 5..8),
+                (ExpressionEnd, 8..9),
+            ])
         );
     }
 
@@ -394,12 +566,19 @@ mod tests {
     }
 
     #[test]
+    fn pipe_in_text_is_text() {
+        assert_eq!(parse("a|b|"), Ok(vec![(Text("a|b|"), 0..4)]));
+    }
+
+    #[test]
     fn non_ascii_text_and_name() {
         assert_eq!(
             parse("こんにちは {$名前}"),
             Ok(vec![
                 (Text("こんにちは "), 0..16),
-                (Variable("名前"), 16..25)
+                (ExpressionStart, 16..17),
+                (var("名前"), 17..24),
+                (ExpressionEnd, 24..25),
             ])
         );
     }
@@ -408,16 +587,31 @@ mod tests {
     fn whitespace_and_bidi_inside_braces() {
         assert_eq!(
             parse("{ \u{2066}$x\u{2069}\t}"),
-            Ok(vec![(Variable("x"), 0..12)])
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("x"), 5..7),
+                (ExpressionEnd, 11..12),
+            ])
         );
-        assert_eq!(parse("{\u{3000}$x\r\n}"), Ok(vec![(Variable("x"), 0..9)]));
+        assert_eq!(
+            parse("{\u{3000}|a|\r\n}"),
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (lit("a"), 4..7),
+                (ExpressionEnd, 9..10),
+            ])
+        );
     }
 
     #[test]
     fn bidi_marks_around_name() {
         assert_eq!(
             parse("{$\u{200E}x\u{200F}}"),
-            Ok(vec![(Variable("x"), 0..10)])
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("x"), 1..6),
+                (ExpressionEnd, 9..10),
+            ])
         );
     }
 
@@ -425,7 +619,11 @@ mod tests {
     fn multiple_bidi_marks_after_name() {
         assert_eq!(
             parse("{$x\u{200E}\u{200F}\u{2069}}"),
-            Ok(vec![(Variable("x"), 0..13)])
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("x"), 1..3),
+                (ExpressionEnd, 12..13),
+            ])
         );
     }
 
@@ -472,7 +670,12 @@ mod tests {
         assert_eq!(parse("a.b"), Ok(vec![(Text("a.b"), 0..3)]));
         assert_eq!(
             parse("{$x}."),
-            Ok(vec![(Variable("x"), 0..4), (Text("."), 4..5)])
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("x"), 1..3),
+                (ExpressionEnd, 3..4),
+                (Text("."), 4..5),
+            ])
         );
     }
 
@@ -482,9 +685,11 @@ mod tests {
     }
 
     #[test]
-    fn unclosed_placeholder() {
-        assert_eq!(parse("{$x"), error(3, Eof));
+    fn unclosed_expression() {
         assert_eq!(parse("hi {"), error(4, Eof));
+        assert_eq!(parse("{$x"), error(3, Eof));
+        assert_eq!(parse("{|a|"), error(4, Eof));
+        assert_eq!(parse("{42 "), error(4, Eof));
     }
 
     #[test]
@@ -493,7 +698,7 @@ mod tests {
     }
 
     #[test]
-    fn empty_placeholder() {
+    fn empty_expression() {
         assert_eq!(parse("{}"), error(1, UnexpectedChar('}')));
         assert_eq!(parse("{ }"), error(2, UnexpectedChar('}')));
     }
@@ -508,13 +713,14 @@ mod tests {
 
     #[test]
     fn name_start_boundaries() {
-        assert_eq!(parse("{$+}"), Ok(vec![(Variable("+"), 0..4)]));
-        assert_eq!(parse("{$_}"), Ok(vec![(Variable("_"), 0..4)]));
-        assert_eq!(parse("{$\u{A1}}"), Ok(vec![(Variable("\u{A1}"), 0..5)]));
-        assert_eq!(
-            parse("{$\u{10FFFD}}"),
-            Ok(vec![(Variable("\u{10FFFD}"), 0..7)])
-        );
+        for name in ["+", "_", "\u{A1}", "\u{10FFFD}"] {
+            let source = format!("{{${name}}}");
+            assert_eq!(
+                parse(&source),
+                Ok(expression(var(name), name.len() + 1)),
+                "{source:?}"
+            );
+        }
         for c in ['1', '-', '.', '\u{A0}', '\u{2028}', '\u{FDD0}', '\u{1FFFE}'] {
             let source = format!("{{${c}}}");
             assert_eq!(parse(&source), error(2, UnexpectedChar(c)), "{source:?}");
@@ -523,8 +729,96 @@ mod tests {
 
     #[test]
     fn name_char_continuation() {
-        assert_eq!(parse("{$a1.-}"), Ok(vec![(Variable("a1.-"), 0..7)]));
+        assert_eq!(parse("{$a1.-}"), Ok(expression(var("a1.-"), 5)));
         assert_eq!(parse("{$a\u{FFFE}}"), error(3, UnexpectedChar('\u{FFFE}')));
+    }
+
+    #[test]
+    fn quoted_literal() {
+        assert_eq!(parse("{|hi|}"), Ok(expression(lit("hi"), 4)));
+    }
+
+    #[test]
+    fn empty_quoted_literal() {
+        assert_eq!(parse("{||}"), Ok(expression(lit(""), 2)));
+    }
+
+    #[test]
+    fn quoted_literal_keeps_syntax_characters_and_whitespace() {
+        assert_eq!(
+            parse("{|a {b}\n$c :d @e|}"),
+            Ok(expression(lit("a {b}\n$c :d @e"), 16))
+        );
+    }
+
+    #[test]
+    fn non_ascii_quoted_literal() {
+        assert_eq!(parse("{|名前|}"), Ok(expression(lit("名前"), 8)));
+    }
+
+    #[test]
+    fn quoted_literal_with_escapes_keeps_its_source() {
+        assert_eq!(
+            parse("{|a\\\\b\\|c\\{d\\}|}"),
+            Ok(expression(lit("a\\\\b\\|c\\{d\\}"), 14))
+        );
+    }
+
+    #[test]
+    fn literal_value_drops_escaping_backslashes() {
+        assert_writeable_eq!(
+            Literal {
+                raw: "a\\\\b\\|c\\{d\\}"
+            },
+            "a\\b|c{d}"
+        );
+        assert_writeable_eq!(Literal { raw: "\\\\\\\\" }, "\\\\");
+        assert_writeable_eq!(Literal { raw: "\\|" }, "|");
+    }
+
+    #[test]
+    fn literal_value_is_borrowed_without_escapes() {
+        assert_eq!(Literal { raw: "a {b}" }.writeable_borrow(), Some("a {b}"));
+        assert_eq!(Literal { raw: "" }.writeable_borrow(), Some(""));
+        assert_eq!(Literal { raw: "a\\|b" }.writeable_borrow(), None);
+    }
+
+    #[test]
+    fn invalid_escape_in_quoted_literal() {
+        assert_eq!(parse("{|a\\x|}"), error(4, UnexpectedChar('x')));
+    }
+
+    #[test]
+    fn unclosed_quoted_literal() {
+        assert_eq!(parse("{|a"), error(3, Eof));
+        assert_eq!(parse("{|a\\"), error(4, Eof));
+        // The escaped `|` does not close the literal.
+        assert_eq!(parse("{|a\\|}"), error(6, Eof));
+    }
+
+    #[test]
+    fn nul_in_quoted_literal() {
+        assert_eq!(parse("{|a\0|}"), error(3, UnexpectedChar('\0')));
+    }
+
+    #[test]
+    fn unquoted_literals() {
+        for raw in ["42", "-1.5", "a.b-c", "+", "0E-1", "名前", "\u{B7}"] {
+            let source = format!("{{{raw}}}");
+            assert_eq!(
+                parse(&source),
+                Ok(expression(lit(raw), raw.len())),
+                "{source:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn unquoted_literal_ends_at_first_other_char() {
+        assert_eq!(parse("{4 2}"), error(3, UnexpectedChar('2')));
+        assert_eq!(parse("{42|x|}"), error(3, UnexpectedChar('|')));
+        assert_eq!(parse("{a$b}"), error(2, UnexpectedChar('$')));
+        assert_eq!(parse("{|a|b}"), error(4, UnexpectedChar('b')));
     }
 
     #[test]
@@ -543,11 +837,15 @@ mod tests {
             (b"\xC0\xAF", 0),
             // An encoded surrogate.
             (b"\xED\xA0\x80", 0),
-            // In leading whitespace, inside a placeholder, in a name and after a backslash.
+            // In leading whitespace, inside an expression, in a name and after a backslash.
             (b" \xFF", 1),
             (b"{\xFF$x}", 1),
             (b"{$x\xFF}", 3),
             (b"\\\xFF", 1),
+            // In a quoted literal, after a backslash in it, and in an unquoted literal.
+            (b"{|a\xFF|}", 3),
+            (b"{|\\\xFF|}", 3),
+            (b"{4\xFF}", 2),
         ] {
             assert_eq!(
                 Parser::new(source).collect::<Result<Events, _>>(),
@@ -560,12 +858,11 @@ mod tests {
     #[test]
     fn unsupported_constructs() {
         for (source, offset) in [
-            ("{a}", 1),
-            ("{0}", 1),
-            ("{|a|}", 1),
             ("{:fn}", 1),
             ("{$x :fn}", 4),
             ("{$x @a}", 4),
+            ("{|a| :fn}", 5),
+            ("{42 @a}", 4),
             ("{#b}", 1),
             ("{/b}", 1),
         ] {
@@ -578,19 +875,38 @@ mod tests {
         assert_eq!(parse("{$x:fn}"), error(3, UnexpectedChar(':')));
         assert_eq!(parse("{$x\u{200E}:fn}"), error(6, UnexpectedChar(':')));
         assert_eq!(parse("{$x\u{200E}@a}"), error(6, UnexpectedChar('@')));
+        assert_eq!(parse("{|a|\u{200E}:fn}"), error(7, UnexpectedChar(':')));
     }
 
     #[test]
     fn error_after_valid_prefix() {
         let mut parser = Parser::new(b"Hello {$name} }");
         assert_eq!(parser.next(), Some(Ok((Text("Hello "), 0..6))));
-        assert_eq!(parser.next(), Some(Ok((Variable("name"), 6..13))));
+        assert_eq!(parser.next(), Some(Ok((ExpressionStart, 6..7))));
+        assert_eq!(parser.next(), Some(Ok((var("name"), 7..12))));
+        assert_eq!(parser.next(), Some(Ok((ExpressionEnd, 12..13))));
         assert_eq!(parser.next(), Some(Ok((Text(" "), 13..14))));
         assert_eq!(
             parser.next(),
             Some(Err(ParseError {
                 offset: 14,
                 kind: UnexpectedChar('}')
+            }))
+        );
+        assert_eq!(parser.next(), None);
+        assert_eq!(parser.next(), None);
+    }
+
+    #[test]
+    fn error_inside_expression() {
+        let mut parser = Parser::new(b"{$x !}");
+        assert_eq!(parser.next(), Some(Ok((ExpressionStart, 0..1))));
+        assert_eq!(parser.next(), Some(Ok((var("x"), 1..3))));
+        assert_eq!(
+            parser.next(),
+            Some(Err(ParseError {
+                offset: 4,
+                kind: UnexpectedChar('!')
             }))
         );
         assert_eq!(parser.next(), None);
@@ -619,27 +935,105 @@ mod tests {
             Ok(vec![(Text("\n hello\t"), 0..8)])
         );
         assert_eq!(
+            parse("hello {world}"),
+            Ok(vec![
+                (Text("hello "), 0..6),
+                (ExpressionStart, 6..7),
+                (lit("world"), 7..12),
+                (ExpressionEnd, 12..13),
+            ])
+        );
+        assert_eq!(
+            parse("hello {|world|}"),
+            Ok(vec![
+                (Text("hello "), 0..6),
+                (ExpressionStart, 6..7),
+                (lit("world"), 7..14),
+                (ExpressionEnd, 14..15),
+            ])
+        );
+        assert_eq!(
             parse("hello {$place}"),
-            Ok(vec![(Text("hello "), 0..6), (Variable("place"), 6..14)])
+            Ok(vec![
+                (Text("hello "), 0..6),
+                (ExpressionStart, 6..7),
+                (var("place"), 7..13),
+                (ExpressionEnd, 13..14),
+            ])
         );
         assert_eq!(
             parse("hello {$place-.}"),
-            Ok(vec![(Text("hello "), 0..6), (Variable("place-."), 6..16)])
+            Ok(vec![
+                (Text("hello "), 0..6),
+                (ExpressionStart, 6..7),
+                (var("place-."), 7..15),
+                (ExpressionEnd, 15..16),
+            ])
         );
-        assert_eq!(parse("{$x}"), Ok(vec![(Variable("x"), 0..4)]));
-        assert_eq!(parse("{ $x}"), Ok(vec![(Variable("x"), 0..5)]));
-        assert_eq!(parse("{$x }"), Ok(vec![(Variable("x"), 0..5)]));
+        assert_eq!(parse("{$x}"), Ok(expression(var("x"), 2)));
+        assert_eq!(
+            parse("{ $x}"),
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("x"), 2..4),
+                (ExpressionEnd, 4..5),
+            ])
+        );
+        assert_eq!(
+            parse("{$x }"),
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (var("x"), 1..3),
+                (ExpressionEnd, 4..5),
+            ])
+        );
+        for raw in ["a", "0", "-0", "11", "0.12", "0e1", "0E-1", "+", "-", "🥔"] {
+            let source = format!("{{{raw}}}");
+            assert_eq!(
+                parse(&source),
+                Ok(expression(lit(raw), raw.len())),
+                "{source:?}"
+            );
+        }
+        assert_eq!(
+            parse("hello { world\t\n}"),
+            Ok(vec![
+                (Text("hello "), 0..6),
+                (ExpressionStart, 6..7),
+                (lit("world"), 8..13),
+                (ExpressionEnd, 15..16),
+            ])
+        );
+        assert_eq!(parse("{||}"), Ok(expression(lit(""), 2)));
+        assert_eq!(parse("{|a|}"), Ok(expression(lit("a"), 3)));
+        assert_eq!(parse("{|\\\\|}"), Ok(expression(lit("\\\\"), 4)));
+        assert_eq!(
+            parse("{|a\\\\\\{\\|\\}|}"),
+            Ok(expression(lit("a\\\\\\{\\|\\}"), 11))
+        );
         assert_eq!(
             parse("{$one} and {$two}"),
             Ok(vec![
-                (Variable("one"), 0..6),
+                (ExpressionStart, 0..1),
+                (var("one"), 1..5),
+                (ExpressionEnd, 5..6),
                 (Text(" and "), 6..11),
-                (Variable("two"), 11..17),
+                (ExpressionStart, 11..12),
+                (var("two"), 12..16),
+                (ExpressionEnd, 16..17),
             ])
         );
         assert_eq!(
             parse("  \u{61C} Hello world!"),
             Ok(vec![(Text("  \u{61C} Hello world!"), 0..17)])
+        );
+        assert_eq!(
+            parse("{\u{200E} hello \u{200F}}"),
+            Ok(vec![
+                (ExpressionStart, 0..1),
+                (lit("hello"), 5..10),
+                (ExpressionEnd, 14..15),
+            ])
         );
     }
 
@@ -653,10 +1047,20 @@ mod tests {
             ("{", 1, Eof),
             ("}", 0, UnexpectedChar('}')),
             ("{}", 1, UnexpectedChar('}')),
+            ("{|foo| #markup}", 7, UnexpectedChar('#')),
             ("empty { } placeholder", 8, UnexpectedChar('}')),
+            ("missing space {42:func}", 17, UnexpectedChar(':')),
+            ("missing space {|foo|:func}", 20, UnexpectedChar(':')),
+            ("missing space {|foo|@bar}", 20, UnexpectedChar('@')),
+            ("missing space {+reserved@bar}", 24, UnexpectedChar('@')),
+            ("missing space {&private@bar}", 15, UnexpectedChar('&')),
             ("bad {\\u0000placeholder}", 5, UnexpectedChar('\\')),
             ("bad {$placeholder option}", 18, UnexpectedChar('o')),
+            ("no {placeholder end", 16, UnexpectedChar('e')),
             ("no {$placeholder end", 17, UnexpectedChar('e')),
+            ("no {|placeholder| end", 18, UnexpectedChar('e')),
+            ("no {|literal} end", 17, Eof),
+            ("no {|literal or placeholder end", 31, Eof),
             ("{^}", 1, UnexpectedChar('^')),
             ("{!}", 1, UnexpectedChar('!')),
             ("{%}", 1, UnexpectedChar('%')),
@@ -668,7 +1072,10 @@ mod tests {
             ("{&}", 1, UnexpectedChar('&')),
             ("{\u{FDD0}}", 1, UnexpectedChar('\u{FDD0}')),
             ("{\u{FFFE}}", 1, UnexpectedChar('\u{FFFE}')),
+            ("{!|a|}", 1, UnexpectedChar('!')),
             ("foo {&private}", 5, UnexpectedChar('&')),
+            ("hello {|4.2| %number}", 13, UnexpectedChar('%')),
+            ("hello {|foo| !number}", 13, UnexpectedChar('!')),
             ("hello {?number}", 7, UnexpectedChar('?')),
             ("hello {$foo ~xyzz }", 12, UnexpectedChar('~')),
             ("hello {$x   <xyzz   }", 12, UnexpectedChar('<')),
