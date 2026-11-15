@@ -10,6 +10,7 @@ use core::fmt::{self, Write};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
+use regex_automata::dfa::sparse::DFA;
 use writeable::*;
 
 #[cfg(doc)]
@@ -27,6 +28,11 @@ define_preferences!(
 #[derive(Debug)]
 pub struct ListFormatter {
     data: DataPayload<ErasedMarker<ListFormatterPatterns<'static>>>,
+    // A parsed special case condition: the one of `data.end`, or else the one of `data.pair`.
+    // It can only borrow from static data, other payloads parse theirs on each format.
+    condition: Option<DFA<&'static [u8]>>,
+    // Whether `condition` is the one of `data.pair`, which is parsed on each format otherwise.
+    condition_is_pairs: bool,
 }
 
 macro_rules! constructor {
@@ -67,12 +73,29 @@ macro_rules! constructor {
                 })?
                 .payload
                 .cast();
-            Ok(Self { data })
+            Ok(Self::new(data))
         }
     };
 }
 
 impl ListFormatter {
+    fn new(data: DataPayload<ErasedMarker<ListFormatterPatterns<'static>>>) -> Self {
+        fn condition(
+            pattern: &'static ConditionalListJoinerPattern<'static>,
+        ) -> Option<&'static SerdeDFA<'static>> {
+            Some(&pattern.special_case.as_ref()?.condition)
+        }
+        let patterns = data.get_static();
+        let end = patterns.and_then(|patterns| condition(&patterns.end));
+        let pair = patterns.and_then(|patterns| condition(patterns.pair.as_ref()?));
+        let parsed = end.or(pair);
+        Self {
+            data,
+            condition: parsed.map(SerdeDFA::deref),
+            condition_is_pairs: pair.is_some() && pair == parsed,
+        }
+    }
+
     constructor!(
         try_new_and,
         try_new_and_with_buffer_provider,
@@ -226,17 +249,21 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                         next = next_next;
                     }
 
-                    let (_, end_between, end_after) = patterns.end.parts(&next);
+                    let condition = self.formatter.condition.as_ref();
+                    let (_, end_between, end_after) = patterns.end.parts(condition, &next);
                     literal!(end_between)?;
                     value!(next)?;
                     literal!(end_after)
                 } else {
                     // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                    let (before, between, after) = patterns
-                        .pair
-                        .as_ref()
-                        .unwrap_or(&patterns.end)
-                        .parts(&second);
+                    let condition = self.formatter.condition.as_ref();
+                    let (before, between, after) = match &patterns.pair {
+                        Some(pair) => pair.parts(
+                            condition.filter(|_| self.formatter.condition_is_pairs),
+                            &second,
+                        ),
+                        None => patterns.end.parts(condition, &second),
+                    };
                     literal!(before)?;
                     value!(first)?;
                     literal!(between)?;
@@ -279,9 +306,7 @@ mod tests {
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
     fn formatter(patterns: ListFormatterPatterns<'static>) -> ListFormatter {
-        ListFormatter {
-            data: DataPayload::from_owned(patterns),
-        }
+        ListFormatter::new(DataPayload::from_owned(patterns))
     }
 
     #[test]
@@ -360,6 +385,126 @@ mod tests {
         let formatter = formatter(crate::patterns::test::test_patterns_conditional());
 
         assert_writeable_eq!(formatter.format(["beta", "alpha"].iter()), "beta :o alpha");
+    }
+
+    #[test]
+    fn test_parsed_condition() {
+        fn special_case(condition: &'static str, pattern: &str) -> SpecialCasePattern<'static> {
+            SpecialCasePattern {
+                condition: SerdeDFA::new(condition.into()).unwrap(),
+                pattern: ListJoinerPattern::try_from_str(pattern, true, true).unwrap(),
+            }
+        }
+
+        // Formats with the conditions parsed by the constructor, which needs static data,
+        // and with the conditions parsed on each format.
+        fn check(
+            patterns: &ListFormatterPatterns<'static>,
+            parsed_for_pair: bool,
+            cases: &[(&[&str], &str)],
+        ) {
+            let parsed = ListFormatter::new(DataPayload::from_static_ref(Box::leak(Box::new(
+                patterns.clone(),
+            ))));
+            assert!(parsed.condition.is_some());
+            assert_eq!(parsed.condition_is_pairs, parsed_for_pair);
+
+            let unparsed = formatter(patterns.clone());
+            assert!(unparsed.condition.is_none());
+            assert!(!unparsed.condition_is_pairs);
+
+            for formatter in [&parsed, &unparsed] {
+                for (values, expected) in cases {
+                    assert_writeable_eq!(formatter.format(values.iter()), *expected);
+                }
+            }
+        }
+
+        let end_only = crate::patterns::test::test_patterns_conditional();
+        let pair = ConditionalListJoinerPattern {
+            default: ListJoinerPattern::try_from_str("{0}; {1}", true, true).unwrap(),
+            special_case: None,
+        };
+
+        // No pair pattern, so two items use the end pattern and its condition
+        check(
+            &end_only,
+            false,
+            &[
+                (&["beta", "alpha"], "beta :o alpha"),
+                (&["alpha", "beta"], "alpha. beta"),
+                (&["x", "y", "alpha"], "x: y :o alpha"),
+                (&["x", "y", "beta"], "x: y. beta"),
+                (&["w", "x", "y", "alpha"], "w: x, y :o alpha"),
+            ],
+        );
+
+        // A pair pattern without a condition
+        let mut patterns = end_only.clone();
+        patterns.pair = Some(pair.clone());
+        check(
+            &patterns,
+            false,
+            &[
+                (&["x", "alpha"], "x; alpha"),
+                (&["x", "y", "alpha"], "x: y :o alpha"),
+            ],
+        );
+
+        // The same condition on both patterns
+        patterns.pair = Some(ConditionalListJoinerPattern {
+            special_case: Some(special_case("^a", "{0} :a {1}")),
+            ..pair.clone()
+        });
+        check(
+            &patterns,
+            true,
+            &[
+                (&["x", "alpha"], "x :a alpha"),
+                (&["x", "beta"], "x; beta"),
+                (&["x", "y", "alpha"], "x: y :o alpha"),
+                (&["x", "y", "beta"], "x: y. beta"),
+            ],
+        );
+
+        // Different conditions, the pair pattern must not use the end pattern's
+        patterns.pair = Some(ConditionalListJoinerPattern {
+            special_case: Some(special_case("^b", "{0} :b {1}")),
+            ..pair.clone()
+        });
+        check(
+            &patterns,
+            false,
+            &[
+                (&["x", "alpha"], "x; alpha"),
+                (&["x", "beta"], "x :b beta"),
+                (&["x", "y", "alpha"], "x: y :o alpha"),
+                (&["x", "y", "beta"], "x: y. beta"),
+            ],
+        );
+
+        // A condition on the pair pattern only
+        patterns.end.special_case = None;
+        check(
+            &patterns,
+            true,
+            &[
+                (&["x", "alpha"], "x; alpha"),
+                (&["x", "beta"], "x :b beta"),
+                (&["x", "y", "alpha"], "x: y. alpha"),
+                (&["x", "y", "beta"], "x: y. beta"),
+            ],
+        );
+
+        // Compiled data is static
+        let es =
+            ListFormatter::try_new_or(icu_locale_core::locale!("es").into(), Default::default())
+                .unwrap();
+        assert!(es.condition.is_some());
+        let en =
+            ListFormatter::try_new_or(icu_locale_core::locale!("en").into(), Default::default())
+                .unwrap();
+        assert!(en.condition.is_none());
     }
 
     macro_rules! test {
