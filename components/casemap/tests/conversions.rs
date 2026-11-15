@@ -429,3 +429,77 @@ fn test_greek_upper() {
     // Handle breathing marks on rho
     assert_greek_uppercase("ῥήματα ῤήματα", "ΡΗΜΑΤΑ ΡΗΜΑΤΑ");
 }
+
+#[test]
+fn test_ascii_runs() {
+    let cm = CaseMapper::new();
+    let all_ascii: String = (0..=0x7Fu8).map(char::from).collect();
+
+    // Locales without special handling of ASCII letters
+    for locale in [langid!("und"), langid!("el"), langid!("nl"), langid!("hy")] {
+        assert_eq!(
+            cm.lowercase_to_string(&all_ascii, &locale),
+            all_ascii.to_ascii_lowercase()
+        );
+        assert_eq!(
+            cm.uppercase_to_string(&all_ascii, &locale),
+            all_ascii.to_ascii_uppercase()
+        );
+        assert_eq!(cm.fold_string(&all_ascii), all_ascii.to_ascii_lowercase());
+
+        // Runs of every length up to a few internal buffers, alone and around
+        // characters that are not ASCII
+        for len in 0..=200 {
+            let ascii: String = "aB3 Yz-".chars().cycle().take(len).collect();
+            let lower = ascii.to_ascii_lowercase();
+            let upper = ascii.to_ascii_uppercase();
+            assert_eq!(cm.lowercase_to_string(&ascii, &locale), lower);
+            assert_eq!(cm.uppercase_to_string(&ascii, &locale), upper);
+            assert_eq!(cm.fold_string(&ascii), lower);
+
+            let mixed = format!("É{ascii}ß{ascii}Ж");
+            assert_eq!(
+                cm.lowercase_to_string(&mixed, &locale),
+                format!("é{lower}ß{lower}ж")
+            );
+            assert_eq!(
+                cm.uppercase_to_string(&mixed, &locale),
+                format!("É{upper}SS{upper}Ж")
+            );
+            assert_eq!(cm.fold_string(&mixed), format!("é{lower}ss{lower}ж"));
+
+            // Not through `write_to_string`
+            let mut sink = String::new();
+            writeable::Writeable::write_to(&cm.uppercase(&mixed, &locale), &mut sink).unwrap();
+            assert_eq!(sink, format!("É{upper}SS{upper}Ж"));
+        }
+    }
+
+    // Context is still looked up across ASCII characters
+    let root = langid!("und");
+    assert_eq!(cm.lowercase_to_string("AΣ", &root), "aς");
+    assert_eq!(cm.lowercase_to_string("AΣ B", &root), "aς b");
+    assert_eq!(cm.lowercase_to_string("AΣB", &root), "aσb");
+    // `.` is case-ignorable, so the sigma is not final here
+    assert_eq!(cm.lowercase_to_string("ΑΣ.b", &root), "ασ.b");
+    assert_eq!(
+        cm.uppercase_to_string("ab άδικος, cd", &langid!("el")),
+        "AB ΑΔΙΚΟΣ, CD"
+    );
+
+    // Turkic and Lithuanian map ASCII I/i/J/j by their own rules
+    let tr = langid!("tr");
+    let az = langid!("az");
+    let lt = langid!("lt");
+    assert_eq!(cm.lowercase_to_string("HI Iİ J", &tr), "hı ıi j");
+    assert_eq!(cm.uppercase_to_string("hi ıi j", &tr), "Hİ Iİ J");
+    assert_eq!(cm.lowercase_to_string("BAKI", &az), "bakı");
+    assert_eq!(cm.uppercase_to_string("iki", &az), "İKİ");
+    assert_eq!(
+        cm.lowercase_to_string("I\u{300} J\u{301} ab", &lt),
+        "i\u{307}\u{300} j\u{307}\u{301} ab"
+    );
+    assert_eq!(cm.uppercase_to_string("i\u{307} ab", &lt), "I AB");
+    assert_eq!(cm.fold_string("HI Iİ"), "hi ii\u{307}");
+    assert_eq!(cm.fold_turkic_string("HI Iİ"), "hı ıi");
+}

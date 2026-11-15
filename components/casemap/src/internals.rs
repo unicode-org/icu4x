@@ -64,6 +64,43 @@ impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, '_, I
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let src = self.src;
         let mut mapping = self.mapping;
+        // ASCII maps to ASCII regardless of context, except when titlecasing and under
+        // the I/i/J/j rules of Turkic and Lithuanian, so runs of it can skip `full_helper`.
+        if !IS_TITLE_CONTEXT
+            && !matches!(
+                self.locale,
+                CaseMapLocale::Turkish | CaseMapLocale::Lithuanian
+            )
+        {
+            let mut pos = 0;
+            while pos < src.len() {
+                let rest = &src[pos..];
+                let ascii_len = rest
+                    .bytes()
+                    .position(|b| !b.is_ascii())
+                    .unwrap_or(rest.len());
+                write_ascii_run(&rest[..ascii_len], mapping, sink)?;
+                let non_ascii_start = pos + ascii_len;
+                // Everything up to the next ASCII character, or to the end
+                pos = src.len();
+                for (i, c) in src[non_ascii_start..].char_indices() {
+                    let i = non_ascii_start + i;
+                    if c.is_ascii() {
+                        pos = i;
+                        break;
+                    }
+                    let context = ContextIterator::new(&src[..i], &src[i..]);
+                    self.data.full_helper::<IS_TITLE_CONTEXT, W>(
+                        c,
+                        context,
+                        self.locale,
+                        mapping,
+                        sink,
+                    )?;
+                }
+            }
+            return Ok(());
+        }
         let mut iter = src.char_indices();
         // Number of characters to titlecase at the beginning
         // for the dutch IJ case.
@@ -870,6 +907,45 @@ fn dutch_i_at_beginning(s: &'_ str) -> Option<DutchIData<'_>> {
         }),
         _ => None,
     }
+}
+
+/// Writes an ASCII-only string uppercased for [`MappingKind::Upper`], lowercased otherwise.
+fn write_ascii_run<W: fmt::Write + ?Sized>(
+    ascii: &str,
+    mapping: MappingKind,
+    sink: &mut W,
+) -> fmt::Result {
+    debug_assert!(ascii.is_ascii());
+    let upper = mapping == MappingKind::Upper;
+    // Not worth a buffer: this is the lone space or punctuation mark in non-ASCII text
+    if ascii.len() < 4 {
+        for c in ascii.chars() {
+            sink.write_char(if upper {
+                c.to_ascii_uppercase()
+            } else {
+                c.to_ascii_lowercase()
+            })?;
+        }
+        return Ok(());
+    }
+    // Converted on the stack, so that the sink gets a few `write_str`s rather than one
+    // `write_char` per character.
+    let mut buf = [0u8; 64];
+    for chunk in ascii.as_bytes().chunks(buf.len()) {
+        let Some(out) = buf.get_mut(..chunk.len()) else {
+            debug_assert!(false, "chunks are at most buf.len() long");
+            return Err(fmt::Error);
+        };
+        out.copy_from_slice(chunk);
+        if upper {
+            out.make_ascii_uppercase();
+        } else {
+            out.make_ascii_lowercase();
+        }
+        // ASCII in, ASCII out: this is always valid UTF-8
+        sink.write_str(core::str::from_utf8(out).map_err(|_| fmt::Error)?)?;
+    }
+    Ok(())
 }
 
 /// This checks for a Dutch-relevant IJ pair at the beginning of a string.
