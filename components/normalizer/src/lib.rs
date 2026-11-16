@@ -69,7 +69,7 @@ pub mod provider;
 pub mod uts46;
 
 #[cfg(feature = "serde")]
-use crate::provider::CanonicalCompositionsV1;
+use crate::provider::CanonicalCompositions;
 use crate::provider::CanonicalCompositionsV2;
 use crate::provider::DecompositionData;
 use crate::provider::NormalizerNfdDataV1;
@@ -359,7 +359,7 @@ impl<'data> CanonicalCompositionsPayload {
 pub(crate) enum CanonicalCompositionsBorrowed<'data> {
     Current(&'data CanonicalCompositionsV2<'data>),
     #[cfg(feature = "serde")]
-    Legacy(&'data CanonicalCompositionsV1<'data>),
+    Legacy(&'data CanonicalCompositions<'data>),
 }
 
 impl CanonicalCompositionsBorrowed<'static> {

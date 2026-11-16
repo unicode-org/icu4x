@@ -91,7 +91,7 @@ icu_provider::data_marker!(
     /// Marker for data for composition.
     NormalizerNfcV1,
     "normalizer/nfc/v1",
-    CanonicalCompositionsV1<'static>,
+    CanonicalCompositions<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
@@ -212,7 +212,7 @@ icu_provider::data_struct!(
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CanonicalCompositionsV1<'data> {
+pub struct CanonicalCompositions<'data> {
     /// Trie keys are two-`char` strings with the second
     /// character coming first. The value, if any, is the
     /// (non-Hangul) canonical composition.
@@ -221,7 +221,7 @@ pub struct CanonicalCompositionsV1<'data> {
 }
 
 icu_provider::data_struct!(
-    CanonicalCompositionsV1<'_>,
+    CanonicalCompositions<'_>,
     #[cfg(feature = "datagen")]
 );
 

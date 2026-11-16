@@ -132,7 +132,7 @@ macro_rules! normalization_canonical_compositions_provider {
             {
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(CanonicalCompositionsV1 {
+                    payload: DataPayload::from_owned(CanonicalCompositions {
                         canonical_compositions: Char16Trie::new(ZeroVec::alloc_from_slice(
                             &toml_data.compositions,
                         )),
