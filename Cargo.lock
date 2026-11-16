@@ -536,7 +536,6 @@ name = "composition_freq"
 version = "0.0.0"
 dependencies = [
  "icu_normalizer",
- "icu_properties",
  "serde_json",
  "tinystr",
 ]

@@ -10,7 +10,6 @@ edition.workspace = true
 
 [dependencies]
 icu_normalizer = { workspace = true, features = ["compiled_data"] }
-icu_properties = { workspace = true, features = ["compiled_data"] }
 serde_json = { workspace = true }
 tinystr = { workspace = true }
 
