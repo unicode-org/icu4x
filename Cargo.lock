@@ -1982,7 +1982,6 @@ dependencies = [
 name = "icu_segmenter"
 version = "2.4.0"
 dependencies = [
- "core_maths",
  "criterion",
  "databake",
  "icu",

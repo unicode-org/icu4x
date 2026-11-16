@@ -35,7 +35,6 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 
-core_maths = { workspace = true, optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
 icu_locale_fallback = { workspace = true, optional = true }
@@ -57,7 +56,7 @@ criterion = { workspace = true }
 default = ["compiled_data", "auto"]
 serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "zerotrie/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "zerotrie/databake", "icu_collections/databake", "icu_provider/export"]
-lstm = ["dep:core_maths"]
+lstm = []
 unstable = []
 auto = ["lstm"] # Enables [try_]new_auto constructors
 compiled_data = ["dep:icu_segmenter_data", "dep:icu_locale_fallback", "icu_locale_fallback?/compiled_data", "icu_provider/baked"]

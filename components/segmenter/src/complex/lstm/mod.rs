@@ -11,6 +11,7 @@ use potential_utf::PotentialUtf8;
 use utf8_iter::{Utf8CharIndices, Utf8Chars};
 use zerovec::maps::ZeroMapBorrowed;
 
+mod math;
 mod matrix;
 use matrix::*;
 
