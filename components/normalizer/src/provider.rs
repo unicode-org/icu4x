@@ -201,6 +201,8 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+// TODO (#8709): Remove this struct in ICU4X 3.0.
+//
 /// Non-Hangul canonical compositions, old format
 ///
 /// <div class="stab unstable">
@@ -213,8 +215,6 @@ icu_provider::data_struct!(
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CanonicalCompositions<'data> {
-    // TODO (#8709): Remove this struct in ICU4X 3.0.
-
     /// Trie keys are two-`char` strings with the second
     /// character coming first. The value, if any, is the
     /// (non-Hangul) canonical composition.
