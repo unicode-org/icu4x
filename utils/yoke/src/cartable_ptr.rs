@@ -13,6 +13,8 @@
 //! 3. `Rc<T>`
 //! 4. `Arc<T>`
 //!
+//! `T` may be a sized type, a slice `[U]`, or `str`.
+//!
 //! These four types implement the sealed unsafe trait [`CartablePointerLike`].
 //! In addition, all except `Box<T>` impl [`CloneableCartablePointerLike`],
 //! which allows [`CartableOptionPointer`] to implement `Clone`.
@@ -30,18 +32,61 @@ use core::marker::PhantomData;
 use core::ptr::NonNull;
 use stable_deref_trait::StableDeref;
 
-// Safety note: this method MUST return the same value for the same T, even if i.e. the method gets
-// instantiated in different crates. This can be untrue in surprising ways! For example, just
-// returning a const-ref-to-const would not guarantee that.
-// The current implementation always returns the same address for any T, see
-// [the reference](https://doc.rust-lang.org/reference/items/static-items.html#statics--generics):
-// there is exactly one `SENTINEL` item for any T.
-#[inline]
-fn sentinel_for<T>() -> NonNull<T> {
-    static SENTINEL: &u8 = &0x1a; // SUB
+/// Pointees whose sentinel pointer can be built: sized types, slices and `str`.
+///
+/// Each sentinel points into a static, which owning pointers never do, and empty boxes use their
+/// alignment as address. So only a zero-length reference just past an adjacent static could
+/// match, which, as for sized `&T`, makes `is_none` report `true` without any unsoundness since
+/// references own nothing.
+trait SentinelPointee {
+    fn sentinel() -> NonNull<Self>;
+}
 
-    // Safety: SENTINEL is indeed not a null pointer, even after the casts.
-    unsafe { NonNull::new_unchecked(SENTINEL as *const u8 as *mut T) }
+impl<T> SentinelPointee for T {
+    #[inline]
+    fn sentinel() -> NonNull<Self> {
+        // Safety note: this method MUST return the same value for the same T, even if i.e. the method gets
+        // instantiated in different crates. This can be untrue in surprising ways! For example, just
+        // returning a const-ref-to-const would not guarantee that.
+        // The current implementation always returns the same address for any T, see
+        // [the reference](https://doc.rust-lang.org/reference/items/static-items.html#statics--generics):
+        // there is exactly one `SENTINEL` item for any T.
+        static SENTINEL: u8 = 0x1a; // SUB
+        NonNull::from(&SENTINEL).cast()
+    }
+}
+
+impl<T> SentinelPointee for [T] {
+    #[inline]
+    fn sentinel() -> NonNull<Self> {
+        NonNull::slice_from_raw_parts(T::sentinel(), 0)
+    }
+}
+
+// Unsizing a sized sentinel keeps its address, which is all the sentinel checks compare.
+#[cfg(feature = "alloc")]
+impl SentinelPointee for dyn crate::erased::ErasedDestructor {
+    #[inline]
+    fn sentinel() -> NonNull<Self> {
+        <()>::sentinel()
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl SentinelPointee for dyn crate::erased::ErasedDestructor + Send + Sync {
+    #[inline]
+    fn sentinel() -> NonNull<Self> {
+        <()>::sentinel()
+    }
+}
+
+impl SentinelPointee for str {
+    #[inline]
+    fn sentinel() -> NonNull<Self> {
+        // Its own static, since there's no safe cast to `str`; sentinels are only compared within a pointee type.
+        static SENTINEL: &str = "\x1a"; // SUB
+        NonNull::from(SENTINEL)
+    }
 }
 
 #[cfg(test)]
@@ -73,7 +118,8 @@ use private::Sealed;
 pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     /// The raw type used for [`Self::into_raw`] and [`Self::drop_raw`].
     #[doc(hidden)]
-    type Raw;
+    #[allow(private_bounds, reason = "seals the pointees to those with a sentinel")]
+    type Raw: ?Sized + SentinelPointee;
 
     /// Converts this pointer-like into a pointer.
     #[doc(hidden)]
@@ -114,12 +160,12 @@ pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     unsafe fn addref_raw(pointer: NonNull<Self::Raw>);
 }
 
-impl<'a, T> Sealed for &'a T {}
+impl<'a, T: ?Sized + SentinelPointee> Sealed for &'a T {}
 
 // Safety:
 // 1. There is no ownership to transfer
 // 2. There is no ownership to transfer
-unsafe impl<'a, T> CartablePointerLike for &'a T {
+unsafe impl<'a, T: ?Sized + SentinelPointee> CartablePointerLike for &'a T {
     type Raw = T;
 
     #[inline]
@@ -135,7 +181,7 @@ unsafe impl<'a, T> CartablePointerLike for &'a T {
 // Safety:
 // 1. There is no ownership
 // 2. The impl is a no-op so no addresses are changed.
-unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
+unsafe impl<'a, T: ?Sized + SentinelPointee> CloneableCartablePointerLike for &'a T {
     #[inline]
     unsafe fn addref_raw(_pointer: NonNull<T>) {
         // No-op: references are borrowed from elsewhere
@@ -143,7 +189,7 @@ unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
 }
 
 #[cfg(feature = "alloc")]
-impl<T> Sealed for Box<T> {}
+impl<T: ?Sized + SentinelPointee> Sealed for Box<T> {}
 
 #[cfg(feature = "alloc")]
 // Safety:
@@ -151,7 +197,7 @@ impl<T> Sealed for Box<T> {}
 //    memory previously managed by the Box."
 // 2. `Box::from_raw` says: "After calling this function, the raw pointer is owned by the
 //    resulting Box."
-unsafe impl<T> CartablePointerLike for Box<T> {
+unsafe impl<T: ?Sized + SentinelPointee> CartablePointerLike for Box<T> {
     type Raw = T;
 
     #[inline]
@@ -172,14 +218,14 @@ unsafe impl<T> CartablePointerLike for Box<T> {
 }
 
 #[cfg(feature = "alloc")]
-impl<T> Sealed for Rc<T> {}
+impl<T: ?Sized + SentinelPointee> Sealed for Rc<T> {}
 
 #[cfg(feature = "alloc")]
 // Safety:
 // 1. `Rc::into_raw` says: "Consumes the Rc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Rc using Rc::from_raw."
 // 2. See 1.
-unsafe impl<T> CartablePointerLike for Rc<T> {
+unsafe impl<T: ?Sized + SentinelPointee> CartablePointerLike for Rc<T> {
     type Raw = T;
 
     #[inline]
@@ -207,7 +253,7 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
 // Safety:
 // 1. The impl increases the refcount such that `Drop` will decrease it.
 // 2. The impl increases refcount without changing the address of data.
-unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
+unsafe impl<T: ?Sized + SentinelPointee> CloneableCartablePointerLike for Rc<T> {
     #[inline]
     unsafe fn addref_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
@@ -221,14 +267,14 @@ unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
 }
 
 #[cfg(feature = "alloc")]
-impl<T> Sealed for Arc<T> {}
+impl<T: ?Sized + SentinelPointee> Sealed for Arc<T> {}
 
 #[cfg(feature = "alloc")]
 // Safety:
 // 1. `Rc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Arc using Arc::from_raw."
 // 2. See 1.
-unsafe impl<T> CartablePointerLike for Arc<T> {
+unsafe impl<T: ?Sized + SentinelPointee> CartablePointerLike for Arc<T> {
     type Raw = T;
 
     #[inline]
@@ -255,7 +301,7 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
 // Safety:
 // 1. The impl increases the refcount such that `Drop` will decrease it.
 // 2. The impl increases refcount without changing the address of data.
-unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
+unsafe impl<T: ?Sized + SentinelPointee> CloneableCartablePointerLike for Arc<T> {
     #[inline]
     unsafe fn addref_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
@@ -297,7 +343,7 @@ where
     #[inline]
     pub(crate) fn none() -> Self {
         Self {
-            inner: sentinel_for::<C::Raw>(),
+            inner: C::Raw::sentinel(),
             _cartable: PhantomData,
         }
     }
@@ -305,12 +351,12 @@ where
     /// Creates a new instance corresponding to a `Some` value.
     #[inline]
     pub(crate) fn from_cartable(cartable: C) -> Self {
-        let inner = cartable.into_raw();
-        debug_assert_ne!(inner, sentinel_for::<C::Raw>());
-        Self {
-            inner,
+        let result = Self {
+            inner: cartable.into_raw(),
             _cartable: PhantomData,
-        }
+        };
+        debug_assert!(!result.is_none());
+        result
     }
 
     /// Returns whether this instance is `None`. From the return value:
@@ -319,7 +365,8 @@ where
     /// - If `false`, the instance is a valid `SelectedRc`
     #[inline]
     pub fn is_none(&self) -> bool {
-        self.inner == sentinel_for::<C::Raw>()
+        // The address alone identifies the sentinel; unsized sentinels have no meaningful length.
+        core::ptr::addr_eq(self.inner.as_ptr(), C::Raw::sentinel().as_ptr())
     }
 }
 
@@ -330,11 +377,11 @@ where
     #[inline]
     fn drop(&mut self) {
         let ptr = self.inner;
-        if ptr != sentinel_for::<C::Raw>() {
+        if !self.is_none() {
             // By the invariants, `ptr` is a valid raw value since it's
             // either that or sentinel, and we just checked for sentinel.
             // We will replace it with the sentinel and then drop `ptr`.
-            self.inner = sentinel_for::<C::Raw>();
+            self.inner = C::Raw::sentinel();
             // Safety: by the invariants, `ptr` is a valid raw value.
             unsafe { C::drop_raw(ptr) }
         }
@@ -348,7 +395,7 @@ where
     #[inline]
     fn clone(&self) -> Self {
         let ptr = self.inner;
-        if ptr != sentinel_for::<C::Raw>() {
+        if !self.is_none() {
             // By the invariants, `ptr` is a valid raw value since it's
             // either that or sentinel, and we just checked for sentinel.
             // Safety: by the invariants, `ptr` is a valid raw value.
@@ -397,6 +444,101 @@ mod tests {
             W * 4,
             size_of::<Option<Yoke<[usize; 3], CartableOptionPointer<&&[u8]>>>>()
         );
+    }
+
+    #[test]
+    fn test_unsized_sizes() {
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<Arc<[u8]>>>());
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<Rc<str>>>());
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<Box<[u64]>>>());
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<&[u8]>>());
+
+        // The niche stays free for an enclosing `Option` or enum.
+        assert_eq!(W * 4, size_of::<Yoke<&[u8], CartableOptionPointer<Arc<[u8]>>>>());
+        assert_eq!(
+            W * 4,
+            size_of::<Option<Yoke<&[u8], CartableOptionPointer<Arc<[u8]>>>>>()
+        );
+    }
+
+    #[test]
+    fn test_unsized_none() {
+        let start = DROP_INVOCATIONS.with(Cell::get);
+        {
+            assert!(CartableOptionPointer::<Arc<[u8]>>::none().is_none());
+            assert!(CartableOptionPointer::<Rc<str>>::none().is_none());
+            assert!(CartableOptionPointer::<Box<[u8]>>::none().is_none());
+        }
+        assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
+    }
+
+    #[test]
+    fn test_unsized_empty_is_some() {
+        let start = DROP_INVOCATIONS.with(Cell::get);
+        {
+            let empty = CartableOptionPointer::<Arc<[u8]>>::from_cartable(Arc::from([]));
+            assert!(!empty.is_none());
+            let empty = CartableOptionPointer::<Rc<str>>::from_cartable(Rc::from(""));
+            assert!(!empty.is_none());
+        }
+        assert_eq!(start + 2, DROP_INVOCATIONS.with(Cell::get));
+    }
+
+    #[test]
+    fn test_unsized_clone() {
+        let start = DROP_INVOCATIONS.with(Cell::get);
+        {
+            let x = CartableOptionPointer::<Arc<[u8]>>::from_cartable(SAMPLE_BYTES.into());
+            {
+                let _ = x.clone();
+                let _ = x.clone();
+            }
+            assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
+        }
+        assert_eq!(start + 1, DROP_INVOCATIONS.with(Cell::get));
+    }
+
+    #[test]
+    fn test_unsized_yoke() {
+        let yoke = Yoke::<&'static str, Rc<str>>::attach_to_cart(Rc::from("hello world"), |s| &s[6..])
+            .wrap_cart_in_option()
+            .convert_cart_into_option_pointer();
+        assert_eq!(*yoke.get(), "world");
+        let clone = yoke.clone();
+        assert_eq!(*clone.get(), "world");
+        assert!(!clone.backing_cart().is_none());
+
+        let owned = Yoke::<&'static [u8], Option<Arc<[u8]>>>::new_owned(SAMPLE_BYTES)
+            .convert_cart_into_option_pointer();
+        assert_eq!(*owned.get(), SAMPLE_BYTES);
+        assert!(owned.backing_cart().is_none());
+    }
+
+    #[test]
+    fn test_erased() {
+        use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
+
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<ErasedArcCart>>());
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<ErasedRcCart>>());
+        assert_eq!(W * 2, size_of::<CartableOptionPointer<ErasedBoxCart>>());
+        assert!(CartableOptionPointer::<ErasedArcCart>::none().is_none());
+        assert!(CartableOptionPointer::<ErasedRcCart>::none().is_none());
+        assert!(CartableOptionPointer::<ErasedBoxCart>::none().is_none());
+
+        let yoke = Yoke::<&'static [u8], Arc<Vec<u8>>>::attach_to_cart(Arc::new(SAMPLE_BYTES.to_vec()), |v| &v[2..5])
+            .erase_arc_cart()
+            .wrap_cart_in_option()
+            .convert_cart_into_option_pointer();
+        let clone = yoke.clone();
+        drop(yoke);
+        assert_eq!(*clone.get(), b"CDE");
+        assert!(!clone.backing_cart().is_none());
+
+        let yoke = Yoke::<&'static [u8], Box<Vec<u8>>>::attach_to_cart(Box::new(SAMPLE_BYTES.to_vec()), |v| &v[..2])
+            .erase_box_cart()
+            .wrap_cart_in_option()
+            .convert_cart_into_option_pointer();
+        assert_eq!(*yoke.get(), b"ab");
     }
 
     #[test]
