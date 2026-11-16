@@ -37,8 +37,10 @@ use icu_provider::prelude::*;
 use source::{AbstractFs, RscdCache, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use std::path::Path;
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock};
 
 mod calendar;
 mod casemap;
@@ -772,5 +774,27 @@ impl std::hash::Hasher for DataHasher {
     #[inline]
     fn write_usize(&mut self, i: usize) {
         self.write_u64(i as u64);
+    }
+}
+
+pub(crate) static WARNING_FILE: OnceLock<Mutex<BufWriter<File>>> = OnceLock::new();
+
+/// Set the warning file to be used for logging warnings.
+///
+/// If a warning file is set, it will be used to log warnings that occur during
+/// data loading.
+pub fn set_warning_file(file: File) -> Result<(), File> {
+    WARNING_FILE
+        .set(Mutex::new(BufWriter::new(file)))
+        .map_err(|mutex_buf_writer| mutex_buf_writer.into_inner().unwrap().into_inner().unwrap())
+}
+
+/// Flush the warning file if it is set.
+pub fn flush_warning_file() -> std::io::Result<()> {
+    if let Some(mutex) = WARNING_FILE.get() {
+        let mut warning_file = mutex.lock().expect("poison");
+        warning_file.flush()
+    } else {
+        Ok(())
     }
 }
