@@ -19,6 +19,8 @@
 use alloc::vec::Vec;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(feature = "serde")]
+use icu_collections::codepointtrie::{CodePointTrieBuilder, TrieType, Typed};
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
@@ -360,6 +362,32 @@ impl DecompositionData<'_> {
                 | ((offset as u32) << Self::COMPLEX_OFFSET_SHIFT),
         )
     }
+}
+
+/// If the trie of `payload` has the small type, rebuilds the trie with
+/// the fast type. Otherwise, returns `payload` unchanged.
+#[doc(hidden)] // used by the collator
+#[cfg(feature = "serde")]
+pub fn decomposition_data_with_fast_trie<M>(payload: DataPayload<M>) -> DataPayload<M>
+where
+    M: DynamicDataMarker<DataStruct = DecompositionData<'static>>,
+{
+    let data = payload.get();
+    if matches!(data.trie.as_typed_ref(), Typed::Fast(_)) {
+        return payload;
+    }
+    let mut builder = CodePointTrieBuilder::new(
+        data.trie.null_value(),
+        data.trie.error_value(),
+        TrieType::Fast,
+    );
+    for range in data.trie.iter_ranges() {
+        builder.set_range_value(range.range, range.value);
+    }
+    DataPayload::from_owned(DecompositionData {
+        trie: builder.build(),
+        passthrough_cap: data.passthrough_cap,
+    })
 }
 
 /// The expansion tables for cases where the decomposition isn't

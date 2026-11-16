@@ -31,8 +31,31 @@ pub(crate) fn extract_names_for_zeromap_struct<'a, T, K, F>(
     filter_project: F,
 ) -> ExtractedNames<'a, K>
 where
+    T: Eq + std::hash::Hash + Clone,
     K: Ord + PartialEq<str>,
     F: Fn(&T) -> Option<K>,
+{
+    extract_names_for_zeromap_struct_with_overrides(
+        map,
+        ignored_alts,
+        log_context,
+        filter_project,
+        |_| None,
+    )
+}
+
+pub(crate) fn extract_names_for_zeromap_struct_with_overrides<'a, T, K, F, O>(
+    map: &'a HashMap<WithAlt<T>, String>,
+    ignored_alts: &[Alt],
+    log_context: &str,
+    filter_project: F,
+    default_alt_override: O,
+) -> ExtractedNames<'a, K>
+where
+    T: Eq + std::hash::Hash + Clone,
+    K: Ord + PartialEq<str>,
+    F: Fn(&T) -> Option<K>,
+    O: Fn(&T) -> Option<Alt>,
 {
     let mut names = BTreeMap::new();
     let mut short_names = BTreeMap::new();
@@ -61,7 +84,18 @@ where
                     menu_names.insert(k, val_str);
                 }
                 None => {
-                    names.insert(k, val_str);
+                    let effective_val = default_alt_override(&key.t)
+                        .and_then(|alt| {
+                            map.get(&WithAlt {
+                                t: key.t.clone(),
+                                alt: Some(alt),
+                                menu: None,
+                            })
+                        })
+                        .map(String::as_str)
+                        .filter(|&alt_str| k != *alt_str)
+                        .unwrap_or(val_str);
+                    names.insert(k, effective_val);
                 }
                 Some(alt) => {
                     if alt == Alt::Unknown {
@@ -102,7 +136,7 @@ where
 /// - `$category`: The category field on `CoverageByXPathLevels` (`language`, `territory`, `script`, or `variant`).
 /// - `$tier`: The target coverage tier.
 macro_rules! impl_displaynames_v1 {
-    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:ident, $tier:pat,) => {
+    ($marker:ident, $subtag_ty:ty, $resource:path, $file:literal, $field:ident, $alt_variant:expr, $category:ident, $tier:pat $(, $default_alt_override:expr)? ,) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
@@ -122,17 +156,28 @@ macro_rules! impl_displaynames_v1 {
                     menu: None,
                 };
 
-                let name = data
-                    .main
-                    .value
-                    .localedisplaynames
-                    .$field
-                    .get(&key)
-                    .ok_or_else(|| {
-                        DataErrorKind::IdentifierNotFound
-                            .into_error()
-                            .with_req($marker::INFO, req)
-                    })?;
+                let map = &data.main.value.localedisplaynames.$field;
+                let base_name = map.get(&key).ok_or_else(|| {
+                    DataErrorKind::IdentifierNotFound
+                        .into_error()
+                        .with_req($marker::INFO, req)
+                })?;
+                #[allow(unused_mut)]
+                let mut name = base_name;
+                $(
+                    if key.alt.is_none()
+                        && let Some(override_alt) = ($default_alt_override)(self, subtag)
+                    {
+                        let alt_key = WithAlt {
+                            t: subtag,
+                            alt: Some(override_alt),
+                            menu: None,
+                        };
+                        if let Some(alt_name) = map.get(&alt_key) {
+                            name = alt_name;
+                        }
+                    }
+                )?
 
                 let item_tier =
                     crate::displaynames::coverage_experimental::PathCoverageChain::for_locale(

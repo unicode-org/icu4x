@@ -2336,8 +2336,10 @@ fn test_reject_invalid_replacement_character_trie_value() {
             null_value: 0,
             trie_type: TrieType::Fast,
         };
-        let index = ZeroVec::alloc_from_slice(&[0u16; 1024]);
-        let data = ZeroVec::alloc_from_slice(&[0u32; 64]);
+        let mut arr = [0u16; 1024];
+        arr[1] = 64;
+        let index = ZeroVec::alloc_from_slice(&arr);
+        let data = ZeroVec::alloc_from_slice(&[0u32; 128]);
         let trie = CodePointTrie::try_new(header, index, data).unwrap();
         assert_eq!(trie.get(char::REPLACEMENT_CHARACTER), 0);
         DecompositionData {

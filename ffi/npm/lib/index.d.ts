@@ -20,6 +20,10 @@ export { IsoWeekOfYear, IsoWeekOfYear_obj } from "./IsoWeekOfYear"
 
 export { DisplayNamesOptions, DisplayNamesOptions_obj } from "./DisplayNamesOptions"
 
+export { Duration, Duration_obj } from "./Duration"
+
+export { DurationFormatterOptions, DurationFormatterOptions_obj } from "./DurationFormatterOptions"
+
 export { CalendarMismatchedCalendarError } from "./CalendarMismatchedCalendarError"
 
 export { DateTimeMismatchedCalendarError, DateTimeMismatchedCalendarError_obj } from "./DateTimeMismatchedCalendarError"
@@ -105,6 +109,8 @@ export { DecimalFormatter } from "./DecimalFormatter"
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter"
 
 export { RegionDisplayNames } from "./RegionDisplayNames"
+
+export { DurationFormatter } from "./DurationFormatter"
 
 export { ExemplarCharacters } from "./ExemplarCharacters"
 
@@ -285,6 +291,16 @@ export { DisplayNamesFallback } from "./DisplayNamesFallback"
 export { DisplayNamesStyle } from "./DisplayNamesStyle"
 
 export { LanguageDisplay } from "./LanguageDisplay"
+
+export { DurationBaseStyle } from "./DurationBaseStyle"
+
+export { DurationFieldDisplay } from "./DurationFieldDisplay"
+
+export { DurationFormatterError } from "./DurationFormatterError"
+
+export { DurationSign } from "./DurationSign"
+
+export { DurationUnitStyle } from "./DurationUnitStyle"
 
 export { CalendarDateAddError } from "./CalendarDateAddError"
 

@@ -70,7 +70,7 @@ ureq = { workspace = true, optional = true}
 num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_provider_adapters = { workspace = true }
+icu_provider_adapters = { workspace = true, features = ["export"] }
 icu_provider_export = { workspace = true, features = ["fs_exporter", "rayon", "blob_exporter"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
@@ -78,6 +78,7 @@ icu = { path = "../../components/icu", default-features = false, features = ["un
 num-bigint = { workspace = true }
 num-rational = { workspace = true }
 crlify = { workspace = true }
+icu_provider_blob = { workspace = true, features = ["alloc"] }
 
 [features]
 default = ["networking"]
@@ -99,6 +100,10 @@ max_combination_size = 3
 
 [lib]
 bench = false  # This option is required for Benchmark CI
+
+[[example]]
+name = "alts"
+required-features = ["networking"]
 
 # Standalone benchmark binary for display names data export performance.
 # We set `harness = false` so that it runs as a standalone binary with main() when

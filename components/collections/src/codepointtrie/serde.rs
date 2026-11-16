@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
+use crate::codepointtrie::{
+    CodePointTrie, CodePointTrieHeader, FastCodePointTrie, SmallCodePointTrie, TrieValue,
+    TypedCodePointTrie,
+};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
@@ -27,6 +30,24 @@ impl<T: TrieValue + Serialize> Serialize for CodePointTrie<'_, T> {
             data: ZeroFrom::zero_from(&self.data),
         };
         ser.serialize(serializer)
+    }
+}
+
+impl<T: TrieValue + Serialize> Serialize for SmallCodePointTrie<'_, T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.as_untyped_ref().serialize(serializer)
+    }
+}
+
+impl<T: TrieValue + Serialize> Serialize for FastCodePointTrie<'_, T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.as_untyped_ref().serialize(serializer)
     }
 }
 
@@ -71,6 +92,16 @@ where
                     super::CodePointTrieError::InvalidNullValue => {
                         return Err(D::Error::custom("CodePointTrie has invalid null value"));
                     }
+                    super::CodePointTrieError::DataTooShortForAsciiAccess => {
+                        return Err(D::Error::custom(
+                            "CodePointTrie must be constructed from data vector long enough to accommodate direct ASCII access",
+                        ));
+                    }
+                    super::CodePointTrieError::IndexInconsistentWithAsciiAccess => {
+                        return Err(D::Error::custom(
+                            "CodePointTrie must be constructed from index vector whose first two items are consistent with direct ASCII access",
+                        ));
+                    }
                 }
             }
         };
@@ -82,5 +113,41 @@ where
             error_value,
             null_value,
         })
+    }
+}
+
+impl<'de, 'trie, T: TrieValue + Deserialize<'de>> Deserialize<'de> for SmallCodePointTrie<'trie, T>
+where
+    'de: 'trie,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let untyped_de = CodePointTrie::deserialize(deserializer)?;
+        let Ok(de) = <SmallCodePointTrie<_>>::try_from(untyped_de) else {
+            return Err(D::Error::custom(
+                "SmallCodePointTrie must have small-mode data",
+            ));
+        };
+        Ok(de)
+    }
+}
+
+impl<'de, 'trie, T: TrieValue + Deserialize<'de>> Deserialize<'de> for FastCodePointTrie<'trie, T>
+where
+    'de: 'trie,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let untyped_de = CodePointTrie::deserialize(deserializer)?;
+        let Ok(de) = <FastCodePointTrie<_>>::try_from(untyped_de) else {
+            return Err(D::Error::custom(
+                "FastCodePointTrie must have fast-mode data",
+            ));
+        };
+        Ok(de)
     }
 }

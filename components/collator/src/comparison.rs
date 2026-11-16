@@ -42,6 +42,7 @@ use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::Infallible;
+use icu_collections::codepointtrie::FastCodePointTrie;
 use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_normalizer::Decomposition;
 use icu_normalizer::provider::DecompositionData;
@@ -608,7 +609,17 @@ impl Collator {
             + ?Sized,
     {
         let root = provider.load(Default::default())?.payload;
-        let decompositions = provider.load(Default::default())?.payload;
+        let decompositions: DataPayload<NormalizerNfdDataV1> =
+            provider.load(Default::default())?.payload;
+        #[cfg(feature = "serde")]
+        let decompositions =
+            icu_normalizer::provider::decomposition_data_with_fast_trie(decompositions);
+        // The normalizer used for the identical level assumes the trie type `FastCodePointTrie`.
+        if <&FastCodePointTrie<u32>>::try_from(&decompositions.get().trie).is_err() {
+            return Err(
+                DataError::custom("incorrect trie type").with_marker(NormalizerNfdDataV1::INFO)
+            );
+        }
         let tables = provider.load(Default::default())?.payload;
         let jamo = provider.load(Default::default())?.payload;
         let special_primaries = provider.load(Default::default())?.payload;

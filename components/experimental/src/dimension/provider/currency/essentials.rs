@@ -12,7 +12,9 @@ use zerovec::VarZeroVec;
 use icu_pattern::{DoublePlaceholderKey, DoublePlaceholderPattern, PatternItem};
 
 icu_provider::data_marker!(
-    /// Essential currency data needed for currency formatting. For example, currency patterns.
+    /// Provides standard and accounting currency patterns for currency formatting.
+    ///
+    /// This data is keyed by locale (with an optional numbering system marker attribute), not by currency.
     CurrencyEssentialsV1,
     CurrencyEssentials<'static>
 );

@@ -10,10 +10,10 @@ use icu_pattern::DoublePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedCow;
 
 icu_provider::data_marker!(
-    /// `CurrencyPatternsDataV1`
+    /// Provides plural currency glue patterns to merge values and display names.
     CurrencyPatternsDataV1,
     CurrencyPatternsData<'static>,
 );
 
-/// Currency Extended data struct.
+/// Plural currency glue patterns data struct.
 pub type CurrencyPatternsData<'data> = PluralElementsPackedCow<'data, DoublePlaceholderPattern>;

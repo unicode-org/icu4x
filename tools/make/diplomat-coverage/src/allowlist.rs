@@ -242,6 +242,9 @@ lazy_static::lazy_static! {
         // We do not plan to have FFI for this in 2.0
         "icu_provider_adapters::empty::EmptyDataProvider",
 
+        // This is only really useful during datagen
+        "icu_provider_adapters::difference::DifferenceDataProvider",
+
         // We should add this once we have a better story for FFI custom data structs
         // and callbacks
         "icu_provider_adapters::fixed::FixedProvider",

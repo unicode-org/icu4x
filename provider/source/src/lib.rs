@@ -142,7 +142,7 @@ impl SourceDataProvider {
     pub const TESTED_UCD_TAG: &'static str = Self::TESTED_UNICODE_TAG;
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2026e";
+    pub const TESTED_TZDB_TAG: &'static str = "2026f";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -482,6 +482,7 @@ impl SourceDataProvider {
     pub fn with_alt_variants(self, variants: impl IntoIterator<Item = AltVariantKind>) -> Self {
         Self {
             alt_variants: variants.into_iter().collect(),
+            requests_cache: Default::default(),
             ..self
         }
     }
@@ -679,6 +680,14 @@ pub enum AltVariantKind {
     ///
     /// Intended for compatibility with older websites.
     DatetimeAscii,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="HK"]`.
+    LocaleNamesRegionHkShort,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="MO"]`.
+    LocaleNamesRegionMoShort,
+    /// Use `alt="variant"` for `//ldml/localeDisplayNames/territories/territory[@type="FK"]`.
+    LocaleNamesRegionFkVariant,
+    /// Use `alt="short"` for `//ldml/localeDisplayNames/territories/territory[@type="PS"]`.
+    LocaleNamesRegionPsShort,
 }
 
 /// A language's CLDR coverage level.
