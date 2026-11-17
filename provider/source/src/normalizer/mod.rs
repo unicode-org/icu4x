@@ -1072,6 +1072,17 @@ impl NormalizerData {
                     Some(&[starter, second]) if !full_composition_exclusion.contains(composite) => {
                         compositions.push((starter, second, composite));
 
+                        // `canonical_compositions_v2` stores pairs whose first
+                        // character is an ASCII vowel under the second character,
+                        // but `compose_starter` doesn't swap, so it would miss
+                        // starter + starter compositions with an ASCII vowel first.
+                        if matches!(
+                            starter,
+                            'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U'
+                        ) {
+                            assert_ne!(ccc.get(second), CanonicalCombiningClass::NotReordered);
+                        }
+
                         if ccc.get(second) == CanonicalCombiningClass::NotReordered {
                             backward_combining_starters.add_char(second);
                         }
