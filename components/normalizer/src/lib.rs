@@ -335,7 +335,7 @@ impl CanonicalCompositionsBorrowed<'static> {
 }
 
 impl<'data> CanonicalCompositionsBorrowed<'data> {
-    pub(crate) fn as_ref(&'data self) -> CanonicalCompositionsRef<'data> {
+    pub(crate) fn as_ref(self) -> CanonicalCompositionsRef<'data> {
         match self {
             CanonicalCompositionsBorrowed::Current(s) => {
                 CanonicalCompositionsRef::Current(&s.trie, &s.linear16, &s.linear24)
@@ -2924,7 +2924,7 @@ impl ComposingNormalizerBorrowed<'static> {
 impl<'data> ComposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
-    pub fn normalize_iter<I: Iterator<Item = char>>(&'data self, iter: I) -> Composition<'data, I> {
+    pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<'data, I> {
         Composition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
         }
@@ -2935,7 +2935,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         T: AbstractCodePointTrie<'data, u32> + 'data,
         P: IteratorPolicy,
     >(
-        &'data self,
+        &self,
         iter: I,
     ) -> CompositionInner<'data, I, T, P> {
         CompositionInner::new(
