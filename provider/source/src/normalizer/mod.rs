@@ -871,7 +871,7 @@ fn canonical_compositions_v2(
         // instruction upon decode to account for never having to
         // encode 0.)
         //
-        // The other bits are the length.
+        // The other bits (4..14) are the start index.
         //
         // Any trie value that has bit 15 set but the index bits
         // are out of bounds for linear24 is considered to mark
