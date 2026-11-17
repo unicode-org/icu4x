@@ -228,6 +228,17 @@ const HANGUL_JAMO_LIMIT: u32 = 0x1200;
 /// Trie value base corresponding for L
 const HANGUL_L_TRIE_VAL_BASE: u16 = 0xD6A7;
 
+/// Smallest surrogate code point
+const SURROGATE_BASE: u32 = 0xD800;
+
+// We later rely on this for safety.
+const _: () = assert!(
+    HANGUL_S_BASE
+        + (u16::MAX - HANGUL_L_TRIE_VAL_BASE) as u32
+        + (HANGUL_V_COUNT - 1) * HANGUL_T_COUNT
+        < SURROGATE_BASE
+);
+
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
 ///
@@ -433,10 +444,11 @@ impl<'data> CanonicalCompositionsRef<'data> {
                         let lv = u32::from(packed - HANGUL_L_TRIE_VAL_BASE) + v * HANGUL_T_COUNT;
                         // SAFETY: Safe, because the inputs are known to be in range. Notably
                         // packed cannot have been above 0xFFFF, since it came from `u16`.
-                        // That is, this must be in scalar value range. However, the result
-                        // can still be GIGO if the trie value does not contain the right value
-                        // within its possible range, in which case either of the above debug
-                        // assertions should fail.
+                        // That is, this must be in scalar value range, because
+                        // 0xAC00 + (0xFFFF - 0xD6A7) + 20 * 28 = 0xD788 < 0xD800. However, the
+                        // result can still be GIGO if the trie value does not contain the right
+                        // value within its possible range, in which case either of the above
+                        // debug assertions should fail.
                         return Some(unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) });
                     }
                     return None;
@@ -450,7 +462,7 @@ impl<'data> CanonicalCompositionsRef<'data> {
                 );
                 if in_inclusive_range(secondary, '\u{11A8}', '\u{11C2}') {
                     let lvt = u32::from(primary) + (u32::from(secondary) - HANGUL_T_BASE);
-                    if lvt < 0xD800 {
+                    if lvt < SURROGATE_BASE {
                         // SAFETY: Immediately above we checked that `c32` is below the surrogate
                         // range. (Not using `char::from_u32` itself as a micro optimization.)
                         // This is only a check about the safe `char` range. The result could
@@ -529,10 +541,11 @@ impl<'data> CanonicalCompositionsRef<'data> {
                         let lv = u32::from(packed - HANGUL_L_TRIE_VAL_BASE) + v * HANGUL_T_COUNT;
                         // SAFETY: Safe, because the inputs are known to be in range. Notably
                         // packed cannot have been above 0xFFFF, since it came from `u16`.
-                        // That is, this must be in scalar value range. However, the result
-                        // can still be GIGO if the trie value does not contain the right value
-                        // within its possible range, in which case either of the above debug
-                        // assertions should fail.
+                        // That is, this must be in scalar value range, because
+                        // 0xAC00 + (0xFFFF - 0xD6A7) + 20 * 28 = 0xD788 < 0xD800. However, the
+                        // result can still be GIGO if the trie value does not contain the right
+                        // value within its possible range, in which case either of the above
+                        // debug assertions should fail.
                         return Some((
                             unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) },
                             true,
@@ -581,7 +594,7 @@ impl<'data> CanonicalCompositionsRef<'data> {
                 );
                 if in_inclusive_range(secondary, '\u{11A8}', '\u{11C2}') {
                     let lvt = u32::from(primary) + (u32::from(secondary) - HANGUL_T_BASE);
-                    if lvt < 0xD800 {
+                    if lvt < SURROGATE_BASE {
                         // SAFETY: Immediately above we checked that `c32` is below the surrogate
                         // range. (Not using `char::from_u32` itself as a micro optimization.)
                         // This is only a check about the safe `char` range. The result could
