@@ -13,6 +13,7 @@ use icu::experimental::dimension::provider::units::categorized_display_names::{
     UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
+use icu::experimental::measure::prebuilt_ids::{prebuilt_unit_cldr_id, prebuilt_unit_id};
 use icu_provider::DataMarkerAttributes;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -22,10 +23,16 @@ impl SourceDataProvider {
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
-        let (length, unit) = req
+        // The attribute is the width, then the unit's fixed ID, such as `long-85` for `meter`.
+        let (length, unit_id) = req
             .id
             .marker_attributes
             .split_once('-')
+            .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
+        let unit = unit_id
+            .parse()
+            .ok()
+            .and_then(prebuilt_unit_cldr_id)
             .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
 
         let units_format_data: &cldr_serde::units::data::Resource = self
@@ -113,13 +120,17 @@ impl SourceDataProvider {
                         continue;
                     }
 
+                    let unit_id = prebuilt_unit_id(unit).ok_or_else(|| {
+                        DataError::custom("The unit has no pre-built unit ID")
+                            .with_debug_context(&unit)
+                    })?;
+
                     data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
-                            |_| {
+                        DataMarkerAttributes::try_from_string(format!("{length}-{unit_id}"))
+                            .map_err(|_| {
                                 DataError::custom("Failed to parse the attribute")
                                     .with_debug_context(&unit)
-                            },
-                        )?,
+                            })?,
                         locale,
                     ));
                 }
@@ -184,7 +195,7 @@ fn test_basic() {
     let us_locale_long_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("long-85"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -202,7 +213,7 @@ fn test_basic() {
     let us_locale_short_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                DataMarkerAttributes::from_str_or_panic("short-85"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -219,7 +230,7 @@ fn test_basic() {
     let ar_eg_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("long-85"),
                 &data_locale!("ar-EG"),
             ),
             ..Default::default()
@@ -234,7 +245,7 @@ fn test_basic() {
     let fr_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                DataMarkerAttributes::from_str_or_panic("short-85"),
                 &data_locale!("fr"),
             ),
             ..Default::default()
