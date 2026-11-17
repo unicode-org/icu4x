@@ -463,10 +463,10 @@ impl<'data> CanonicalCompositionsRef<'data> {
                 if in_inclusive_range(secondary, '\u{11A8}', '\u{11C2}') {
                     let lvt = u32::from(primary) + (u32::from(secondary) - HANGUL_T_BASE);
                     if lvt < SURROGATE_BASE {
-                        // SAFETY: Immediately above we checked that `c32` is below the surrogate
+                        // SAFETY: Immediately above we checked that `lvt` is below the surrogate
                         // range. (Not using `char::from_u32` itself as a micro optimization.)
                         // This is only a check about the safe `char` range. The result could
-                        // still be GIGO, wich which case either of the above debug assertions
+                        // still be GIGO, in which case either of the above debug assertions
                         // should fail.
                         return Some(unsafe { char::from_u32_unchecked(lvt) });
                     } else {
@@ -536,7 +536,7 @@ impl<'data> CanonicalCompositionsRef<'data> {
 
                     let v = u32::from(second).wrapping_sub(HANGUL_V_BASE);
                     if v < HANGUL_V_COUNT {
-                        // Acconding to Compiler Explorer, multiplication by `HANGUL_T_COUNT`
+                        // According to Compiler Explorer, multiplication by `HANGUL_T_COUNT`
                         // optimizes to not actually using a multiplication instruction.
                         let lv = u32::from(packed - HANGUL_L_TRIE_VAL_BASE) + v * HANGUL_T_COUNT;
                         // SAFETY: Safe, because the inputs are known to be in range. Notably
@@ -595,10 +595,10 @@ impl<'data> CanonicalCompositionsRef<'data> {
                 if in_inclusive_range(secondary, '\u{11A8}', '\u{11C2}') {
                     let lvt = u32::from(primary) + (u32::from(secondary) - HANGUL_T_BASE);
                     if lvt < SURROGATE_BASE {
-                        // SAFETY: Immediately above we checked that `c32` is below the surrogate
+                        // SAFETY: Immediately above we checked that `lvt` is below the surrogate
                         // range. (Not using `char::from_u32` itself as a micro optimization.)
                         // This is only a check about the safe `char` range. The result could
-                        // still be GIGO, wich which case either of the above debug assertions
+                        // still be GIGO, in which case either of the above debug assertions
                         // should fail.
                         return Some((unsafe { char::from_u32_unchecked(lvt) }, false));
                     } else {
