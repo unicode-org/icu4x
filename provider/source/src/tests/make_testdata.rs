@@ -48,8 +48,9 @@ fn make_testdata() {
         "Thai_codepoints_exclusive_model4_heavy".into(),
     ])
     .with_marker_attributes_filter("units", |attrs| {
-        // The attribute is the width, then the unit's fixed ID, such as `long-85` for `meter`.
-        let (_length, unit_id) = attrs.as_str().split_once('-').unwrap();
+        // The attribute is the first letter of the width, then the unit's fixed ID, such as
+        // `l85` for `meter`.
+        let (_length, unit_id) = attrs.as_str().split_at_checked(1).unwrap();
         let unit = prebuilt_unit_cldr_id(unit_id.parse().unwrap()).unwrap();
         matches!(
             unit,

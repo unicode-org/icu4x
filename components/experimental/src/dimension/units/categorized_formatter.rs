@@ -65,17 +65,17 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
 
 impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     // TODO: Remove this function once we have separate markers for different widths.
-    /// Returns the data marker attribute for a width and a unit: the width, then the unit's
-    /// fixed ID, such as `long-85` for `meter`.
+    /// Returns the data marker attribute for a width and a unit: the first letter of the
+    /// width, then the unit's fixed ID, such as `l85` for `meter`.
     #[inline]
     fn attribute(width: Width, unit: &str) -> Result<SmallVec<[u8; 32]>, DataError> {
         let unit_id = prebuilt_unit_id(unit)
             .ok_or_else(|| DataError::custom("The unit has no pre-built unit ID"))?;
         let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
         let length = match width {
-            Width::Short => "short-",
-            Width::Narrow => "narrow-",
-            Width::Long => "long-",
+            Width::Short => "s",
+            Width::Narrow => "n",
+            Width::Long => "l",
         };
         buffer.extend_from_slice(length.as_bytes());
         // Writes the ID in decimal, without leading zeros.

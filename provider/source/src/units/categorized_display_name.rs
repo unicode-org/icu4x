@@ -23,11 +23,12 @@ impl SourceDataProvider {
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
-        // The attribute is the width, then the unit's fixed ID, such as `long-85` for `meter`.
+        // The attribute is the first letter of the width, then the unit's fixed ID, such as
+        // `l85` for `meter`.
         let (length, unit_id) = req
             .id
             .marker_attributes
-            .split_once('-')
+            .split_at_checked(1)
             .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
         let unit = unit_id
             .parse()
@@ -43,9 +44,9 @@ impl SourceDataProvider {
         let units_format_data = &units_format_data.main.value.units;
 
         let unit_patterns = match length {
-            "long" => &units_format_data.long,
-            "short" => &units_format_data.short,
-            "narrow" => &units_format_data.narrow,
+            "l" => &units_format_data.long,
+            "s" => &units_format_data.short,
+            "n" => &units_format_data.narrow,
             _ => {
                 return Err(DataErrorKind::InvalidRequest
                     .with_req(M::INFO, req)
@@ -88,18 +89,11 @@ impl SourceDataProvider {
                 self.cldr()?.units().read_and_parse(&locale, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
 
-            for length in &["long", "short", "narrow"] {
-                let length_patterns = match *length {
-                    "long" => &units_format_data.long,
-                    "short" => &units_format_data.short,
-                    "narrow" => &units_format_data.narrow,
-                    _ => {
-                        return Err(DataErrorKind::IdentifierNotFound
-                            .into_error()
-                            .with_debug_context(length));
-                    }
-                };
-
+            for (length, length_patterns) in [
+                ("l", &units_format_data.long),
+                ("s", &units_format_data.short),
+                ("n", &units_format_data.narrow),
+            ] {
                 let units_map = length_patterns.categories.get(category).ok_or_else(|| {
                     DataErrorKind::InvalidRequest
                         .into_error()
@@ -126,7 +120,7 @@ impl SourceDataProvider {
                     })?;
 
                     data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit_id}"))
+                        DataMarkerAttributes::try_from_string(format!("{length}{unit_id}"))
                             .map_err(|_| {
                                 DataError::custom("Failed to parse the attribute")
                                     .with_debug_context(&unit)
@@ -195,7 +189,7 @@ fn test_basic() {
     let us_locale_long_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-85"),
+                DataMarkerAttributes::from_str_or_panic("l85"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -213,7 +207,7 @@ fn test_basic() {
     let us_locale_short_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-85"),
+                DataMarkerAttributes::from_str_or_panic("s85"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -230,7 +224,7 @@ fn test_basic() {
     let ar_eg_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-85"),
+                DataMarkerAttributes::from_str_or_panic("l85"),
                 &data_locale!("ar-EG"),
             ),
             ..Default::default()
@@ -245,7 +239,7 @@ fn test_basic() {
     let fr_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-85"),
+                DataMarkerAttributes::from_str_or_panic("s85"),
                 &data_locale!("fr"),
             ),
             ..Default::default()
