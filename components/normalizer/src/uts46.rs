@@ -20,6 +20,8 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::iter::CharIterWithTrie;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
+#[cfg(feature = "serde")]
+use icu_provider::buf::BufferProvider;
 
 type Trie46<'trie> = CodePointTrie<'trie, u32>;
 
@@ -210,7 +212,7 @@ impl Uts46Mapper {
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
-        provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         let normalizer = ComposingNormalizer::try_new_uts46_with_buffer_provider(provider)?;
 
