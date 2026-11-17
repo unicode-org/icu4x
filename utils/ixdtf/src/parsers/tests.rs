@@ -724,6 +724,26 @@ fn temporal_invalid_durations() {
 
 #[test]
 #[cfg(feature = "duration")]
+fn temporal_duration_repeated_units() {
+    use crate::{parsers::IsoDurationParser, ParseError};
+
+    let invalids = [
+        ("P1Y2Y", ParseError::DateDurationPartOrder),
+        ("P1M2M", ParseError::DateDurationPartOrder),
+        ("P1W2W", ParseError::DateDurationPartOrder),
+        ("P1D2D", ParseError::DateDurationPartOrder),
+        ("PT1H2H", ParseError::TimeDurationPartOrder),
+        ("PT1M2M", ParseError::TimeDurationPartOrder),
+        ("PT1S2S", ParseError::TimeDurationPartOrder),
+    ];
+
+    for (test, expected) in invalids {
+        assert_eq!(IsoDurationParser::from_str(test).parse(), Err(expected));
+    }
+}
+
+#[test]
+#[cfg(feature = "duration")]
 fn maximum_duration_fraction() {
     use crate::parsers::IsoDurationParser;
 
