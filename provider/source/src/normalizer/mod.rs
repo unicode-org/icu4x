@@ -763,7 +763,7 @@ fn rank_primary(primary: char) -> u32 {
         '\u{0100}'..='\u{02FF}' => 5,
         '\u{1E00}'..='\u{1EFF}' => 6,
         '\u{0370}'..='\u{03FF}' => 7,
-        '\u{1F00}'..='\u{1FFF}' => 6,
+        '\u{1F00}'..='\u{1FFF}' => 8,
         _ => u32::MAX,
     }
 }
@@ -866,7 +866,7 @@ fn canonical_compositions_v2(
         // Bit 15 is 1 if lookup is from linear24 and 0 if from
         // linear16.
         //
-        // Bits 0..3 are slice length. (We need to be encode 10,
+        // Bits 0..3 are slice length. (We need to be able to encode 10,
         // and this allows us to encode 15. No need to spend one
         // instruction upon decode to account for never having to
         // encode 0.)
