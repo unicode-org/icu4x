@@ -3404,6 +3404,23 @@ impl ComposingNormalizer {
         })
     }
 
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_uts46)]
+    #[cfg(feature = "serde")]
+    pub(crate) fn try_new_uts46_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        let provider = provider.as_deserializing();
+        let decomposing_normalizer =
+            DecomposingNormalizer::try_new_uts46_decomposed_unstable(&provider)?;
+
+        Ok(ComposingNormalizer {
+            decomposing_normalizer,
+            canonical_compositions: CanonicalCompositionsPayload::try_load_with_legacy_fallback(
+                &provider,
+            )?,
+        })
+    }
+
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
     pub(crate) fn try_new_uts46_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
