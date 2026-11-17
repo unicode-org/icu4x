@@ -191,9 +191,16 @@ pub mod ffi {
 
         /// Formats a [`Decimal`] to a string.
         #[diplomat::rust_link(icu::decimal::DecimalFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::DecimalFormatter::format_unsigned, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::DecimalFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal, Struct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal::to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::decimal::FormattedUnsignedDecimal, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::decimal::FormattedUnsignedDecimal::to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn format(&self, value: &Decimal, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
