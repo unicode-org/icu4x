@@ -24,6 +24,7 @@
 
 extern crate alloc;
 
+pub mod difference;
 pub mod either;
 pub mod empty;
 pub mod fallback;

@@ -27,7 +27,7 @@ internal interface ZonedDateTimeFormatterLib: Library {
     fun icu4x_ZonedDateTimeFormatter_format_same_calendar_mv1(handle: Pointer, date: Pointer, time: Pointer, zone: Pointer, write: Pointer): ResultUnitDateTimeMismatchedCalendarErrorNative
 }
 /**
- * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/struct.DateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.4.0/icu/datetime/struct.DateTimeFormatter.html) for more information.
  */
 class ZonedDateTimeFormatter internal constructor (
     internal val handle: Pointer,
@@ -63,7 +63,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+         * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
          */
         fun createSpecificLong(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -86,7 +86,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+         * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
          */
         fun createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -109,7 +109,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+         * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
          */
         fun createSpecificShort(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -132,7 +132,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+         * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
          */
         fun createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -155,7 +155,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+         * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
          */
         fun createLocalizedOffsetLong(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -178,7 +178,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+         * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
          */
         fun createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -201,7 +201,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+         * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
          */
         fun createLocalizedOffsetShort(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -224,7 +224,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+         * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
          */
         fun createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -247,7 +247,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+         * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
          */
         fun createGenericLong(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -270,7 +270,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+         * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
          */
         fun createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -293,7 +293,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+         * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
          */
         fun createGenericShort(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -316,7 +316,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+         * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
          */
         fun createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -339,7 +339,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `Location`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+         * See the [Rust documentation for `Location`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
          */
         fun createLocation(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -362,7 +362,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `Location`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+         * See the [Rust documentation for `Location`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
          */
         fun createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -385,7 +385,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+         * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
          */
         fun createExemplarCity(locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -408,7 +408,7 @@ class ZonedDateTimeFormatter internal constructor (
          * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
          * or else unexpected behavior may occur!
          *
-         * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+         * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
          */
         fun createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): Result<ZonedDateTimeFormatter> {
             
@@ -426,7 +426,7 @@ class ZonedDateTimeFormatter internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
     fun formatIso(isoDate: IsoDate, time: Time, zone: TimeZoneInfo): Result<String> {
         val write = DW.lib.diplomat_buffer_write_create(0)
@@ -442,7 +442,7 @@ class ZonedDateTimeFormatter internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.3.1/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
+     * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.4.0/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
      */
     fun formatSameCalendar(date: Date, time: Time, zone: TimeZoneInfo): Result<String> {
         val write = DW.lib.diplomat_buffer_write_create(0)

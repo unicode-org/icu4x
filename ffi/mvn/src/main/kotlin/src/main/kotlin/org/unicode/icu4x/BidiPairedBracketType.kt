@@ -9,7 +9,7 @@ import com.sun.jna.Structure
 internal interface BidiPairedBracketTypeLib: Library {
 }
 /**
- * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+ * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.4.0/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
 */
 enum class BidiPairedBracketType {
     Open,

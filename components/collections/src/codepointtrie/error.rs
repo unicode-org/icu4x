@@ -32,6 +32,16 @@ pub enum Error {
     /// The null value is not a valid `T`
     #[displaydoc("The null value is not a valid `T`")]
     InvalidNullValue,
+    /// [`CodePointTrie`](super::CodePointTrie) must be constructed from data vector long enough to accommodate direct ASCII access
+    #[displaydoc(
+        "CodePointTrie must be constructed from data vector long enough to accommodate direct ASCII access"
+    )]
+    DataTooShortForAsciiAccess,
+    /// [`CodePointTrie`](super::CodePointTrie) must be constructed from index vector whose first two items are consistent with direct ASCII access
+    #[displaydoc(
+        "CodePointTrie must be constructed from index vector whose first two items are consistent with direct ASCII access"
+    )]
+    IndexInconsistentWithAsciiAccess,
 }
 
 impl core::error::Error for Error {}

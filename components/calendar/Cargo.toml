@@ -50,7 +50,7 @@ serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 simple_logger = { workspace = true }
 ureq = { workspace = true }
-insta = "1.38.0"
+insta = { workspace = true }
 time = { workspace = true, features = ["large-dates"]}
 
 

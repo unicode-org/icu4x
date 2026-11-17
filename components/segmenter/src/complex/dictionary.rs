@@ -42,10 +42,10 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                 cursor: trie.cursor(),
             },
         };
-        let mut intermediate_length = 0;
         let mut not_match = false;
         let mut previous_match = None;
-        let mut last_grapheme_offset = 0;
+        // The grapheme iterator is always at the start of the remaining input
+        let mut last_grapheme_offset = self.iter.clone().next().map_or(self.len, |(i, _)| i);
 
         while let Some(next) = self.iter.next() {
             let step_result = match &mut trie_iter {
@@ -63,55 +63,54 @@ impl<Y: RuleBreakType> Iterator for DictionaryBreakIterator<'_, '_, Y> {
                     (cursor.take_value().is_some(), cursor.is_empty())
                 }
             };
-            match step_result {
-                (true, true) => {
-                    return Some(next.0 + Y::char_len(next.1));
-                }
-                (true, false) => {
-                    // Dictionary has to match with grapheme cluster segment.
-                    // If not, we ignore it.
-                    while last_grapheme_offset < next.0 + Y::char_len(next.1) {
-                        if let Some(offset) = self.grapheme_iter.next() {
-                            last_grapheme_offset = offset;
-                            continue;
-                        }
-                        last_grapheme_offset = self.len;
-                        break;
-                    }
-                    if last_grapheme_offset != next.0 + Y::char_len(next.1) {
-                        continue;
-                    }
+            let end = next.0 + Y::char_len(next.1);
 
-                    intermediate_length = next.0 + Y::char_len(next.1);
-                    previous_match = Some((self.iter.clone(), self.grapheme_iter.clone_internal()));
+            // Dictionary matches have to end at a grapheme cluster boundary. As a grapheme
+            // cluster contains at least one character, we need to advance at most once.
+            if last_grapheme_offset < end {
+                last_grapheme_offset = self.grapheme_iter.next().unwrap_or(self.len);
+            }
+            let at_grapheme_boundary = last_grapheme_offset == end;
+
+            match step_result {
+                (true, true) if at_grapheme_boundary => {
+                    return Some(end);
                 }
-                (false, true) => {
-                    if intermediate_length > 0 {
-                        if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
-                            // Rewind previous match point
-                            self.iter = prev_iter;
-                            self.grapheme_iter = prev_grapheme_iter;
-                        }
-                        return Some(intermediate_length);
-                    }
-                    // Not found
-                    return Some(next.0 + Y::char_len(next.1));
+                (true, false) if at_grapheme_boundary => {
+                    previous_match =
+                        Some((end, self.iter.clone(), self.grapheme_iter.clone_internal()));
                 }
-                (false, false) => {
+                (_, false) => {
                     // Prefix string is matched
                     not_match = true;
+                }
+                (_, true) => {
+                    if let Some((end, prev_iter, prev_grapheme_iter)) = previous_match {
+                        // Rewind previous match point
+                        self.iter = prev_iter;
+                        self.grapheme_iter = prev_grapheme_iter;
+                        return Some(end);
+                    }
+                    // Not found. Extend to the end of the grapheme cluster.
+                    while self
+                        .iter
+                        .clone()
+                        .next()
+                        .is_some_and(|(i, _)| i < last_grapheme_offset)
+                    {
+                        self.iter.next();
+                    }
+                    return Some(last_grapheme_offset);
                 }
             }
         }
 
-        if intermediate_length > 0 {
-            if let Some((prev_iter, prev_grapheme_iter)) = previous_match {
-                // Rewind the previous match point so that the trailing text is
-                // processed by the next call to `next`.
-                self.iter = prev_iter;
-                self.grapheme_iter = prev_grapheme_iter;
-            }
-            Some(intermediate_length)
+        if let Some((end, prev_iter, prev_grapheme_iter)) = previous_match {
+            // Rewind the previous match point so that the trailing text is
+            // processed by the next call to `next`.
+            self.iter = prev_iter;
+            self.grapheme_iter = prev_grapheme_iter;
+            Some(end)
         } else if not_match {
             // no match by scanning text
             Some(self.len)
@@ -141,7 +140,9 @@ impl<'data> DictionarySegmenter<'data> {
         self,
         input: &'s str,
     ) -> DictionaryBreakIterator<'data, 's, Utf8> {
-        let grapheme_iter = self.grapheme.segment_str(input);
+        let mut grapheme_iter = self.grapheme.segment_str(input);
+        // Skip the break at the start of the input
+        grapheme_iter.next();
         DictionaryBreakIterator {
             trie: self.dict,
             iter: input.char_indices(),
@@ -155,7 +156,9 @@ impl<'data> DictionarySegmenter<'data> {
         self,
         input: &'s [u8],
     ) -> DictionaryBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
-        let grapheme_iter = self.grapheme.segment_utf8(input);
+        let mut grapheme_iter = self.grapheme.segment_utf8(input);
+        // Skip the break at the start of the input
+        grapheme_iter.next();
         DictionaryBreakIterator {
             trie: self.dict,
             iter: Utf8CharIndices::new(input),
@@ -169,7 +172,9 @@ impl<'data> DictionarySegmenter<'data> {
         self,
         input: &'s [u16],
     ) -> DictionaryBreakIterator<'data, 's, Utf16> {
-        let grapheme_iter = self.grapheme.segment_utf16(input);
+        let mut grapheme_iter = self.grapheme.segment_utf16(input);
+        // Skip the break at the start of the input
+        grapheme_iter.next();
         DictionaryBreakIterator {
             trie: self.dict,
             iter: Utf16Indices::new(input),

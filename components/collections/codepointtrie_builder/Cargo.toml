@@ -4,28 +4,9 @@
 
 [package]
 name = "icu_codepointtrie_builder"
-description = "Runtime builder for CodePointTrie"
-version = "0.6.2"
-categories.workspace = true
-keywords = ["unicode", "collections", "internationalization"]
-license = "Unicode-3.0"
-include = [
-    "src/**/*",
-    "build.rs",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md",
-    "cpp/**/*"
-]
-
-authors.workspace = true
+version = "0.0.0"
+publish = false
 edition.workspace = true
-homepage.workspace = true
-repository.workspace = true
-rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true

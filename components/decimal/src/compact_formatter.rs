@@ -4,7 +4,6 @@
 
 use core::fmt::Display;
 
-use crate::Cow;
 use crate::input::Decimal;
 use crate::{
     DecimalFormatter,
@@ -565,7 +564,7 @@ impl CompactDecimalFormatter {
             significand.sign,
             pattern.interpolate([self
                 .decimal_formatter
-                .format_unsigned(Cow::Borrowed(&significand.absolute))]),
+                .format_unsigned(&significand.absolute)]),
         ))
     }
 
@@ -618,9 +617,7 @@ impl Writeable for FormattedUnsignedCompactDecimal<'_> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.pattern
             .unwrap_or(Pattern::<SinglePlaceholder>::PASS_THROUGH)
-            .interpolate([self
-                .decimal_formatter
-                .format_unsigned(Cow::Borrowed(&self.significand))])
+            .interpolate([self.decimal_formatter.format_unsigned(&self.significand)])
             .write_to(sink)
     }
 }
@@ -706,7 +703,8 @@ mod tests {
     #[test]
     fn plural() {
         let decimal = DecimalFormatter::try_new(locale!("fr").into(), Default::default()).unwrap();
-        let decimal = decimal.format_unsigned(Cow::Owned(999_999u64.into()));
+        let val = 999_999u64.into();
+        let decimal = decimal.format_unsigned(&val);
 
         let compact =
             CompactDecimalFormatter::try_new_short(locale!("fr").into(), Default::default())

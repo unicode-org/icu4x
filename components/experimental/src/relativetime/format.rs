@@ -59,7 +59,7 @@ impl Writeable for FormattedRelativeTime<'_> {
         .interpolate((self
             .formatter
             .decimal_formatter
-            .format_unsigned(icu_decimal::Cow::Borrowed(&self.value.absolute)),))
+            .format_unsigned(&self.value.absolute),))
         .write_to_parts(sink)
     }
 }

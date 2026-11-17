@@ -6,13 +6,13 @@ part of 'lib.g.dart';
 /// This struct holds free functions for loading display names for languages, scripts,
 /// regions, and language identifiers.
 ///
-/// See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html) for more information.
+/// See the [Rust documentation for `RegionDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html) for more information.
 ///
-/// See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html) for more information.
+/// See the [Rust documentation for `ScriptDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html) for more information.
 ///
-/// See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html) for more information.
+/// See the [Rust documentation for `VariantDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html) for more information.
 ///
-/// See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
+/// See the [Rust documentation for `LanguageIdentifierDisplayName`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html) for more information.
 @meta.experimental
 final class LocaleNamesUnstable implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -38,7 +38,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_LocaleNamesUnstable_destroy_mv1));
 
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
   @meta.experimental
   static String forRegionLight(Locale locale, String region) {
     final temp = _FinalizedArena();
@@ -47,7 +47,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_light_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -61,7 +61,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
   @meta.experimental
   static String forRegionTiny(Locale locale, String region) {
     final temp = _FinalizedArena();
@@ -70,7 +70,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_tiny_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -84,7 +84,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
   @meta.experimental
   static String forRegionShortTiny(Locale locale, String region) {
     final temp = _FinalizedArena();
@@ -93,7 +93,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_tiny_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -107,7 +107,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
   @meta.experimental
   static String forRegionShortLight(Locale locale, String region) {
     final temp = _FinalizedArena();
@@ -116,7 +116,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.RegionDisplayName.html#method.new_short_light_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -130,7 +130,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
   @meta.experimental
   static String forScriptLight(Locale locale, String script) {
     final temp = _FinalizedArena();
@@ -139,7 +139,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
+  /// See the [Rust documentation for `new_light_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_light_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -153,7 +153,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
   @meta.experimental
   static String forScriptTiny(Locale locale, String script) {
     final temp = _FinalizedArena();
@@ -162,7 +162,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
+  /// See the [Rust documentation for `new_tiny_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_tiny_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -176,7 +176,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
   @meta.experimental
   static String forScriptHeavy(Locale locale, String script) {
     final temp = _FinalizedArena();
@@ -185,7 +185,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_heavy_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -199,7 +199,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
   @meta.experimental
   static String forScriptShortHeavy(Locale locale, String script) {
     final temp = _FinalizedArena();
@@ -208,7 +208,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_short_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.ScriptDisplayName.html#method.new_short_heavy_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -222,7 +222,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
   @meta.experimental
   static String forVariantHeavy(Locale locale, String variant) {
     final temp = _FinalizedArena();
@@ -231,7 +231,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
+  /// See the [Rust documentation for `new_heavy_with_fallback`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.VariantDisplayName.html#method.new_heavy_with_fallback) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -245,7 +245,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -258,7 +258,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
+  /// See the [Rust documentation for `try_new_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -271,7 +271,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -284,7 +284,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
+  /// See the [Rust documentation for `try_new_tiny`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_tiny) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -297,7 +297,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -310,7 +310,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
+  /// See the [Rust documentation for `try_new_short_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -323,7 +323,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -336,7 +336,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
+  /// See the [Rust documentation for `try_new_long_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -349,7 +349,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -362,7 +362,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -375,7 +375,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -388,7 +388,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_light`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_light) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -401,7 +401,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -414,7 +414,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
+  /// See the [Rust documentation for `try_new_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -427,7 +427,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -440,7 +440,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -453,7 +453,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -466,7 +466,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
+  /// See the [Rust documentation for `try_new_long_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_long_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -479,7 +479,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -492,7 +492,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -505,7 +505,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -518,7 +518,7 @@ final class LocaleNamesUnstable implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.3.1/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
+  /// See the [Rust documentation for `try_new_short_menu_heavy`](https://docs.rs/icu/2.4.0/icu/locale/names/struct.LanguageIdentifierDisplayName.html#method.try_new_short_menu_heavy) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental

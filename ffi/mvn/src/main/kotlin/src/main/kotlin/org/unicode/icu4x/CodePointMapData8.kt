@@ -48,11 +48,11 @@ internal interface CodePointMapData8Lib: Library {
  *
  * For properties whose values fit into 8 bits.
  *
- * See the [Rust documentation for `properties`](https://docs.rs/icu/2.3.1/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.4.0/icu/properties/index.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapData.html) for more information.
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapData.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
  */
 class CodePointMapData8 internal constructor (
     internal val handle: Pointer,
@@ -85,7 +85,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `BidiClass` property, using compiled data.
          *
-         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
+         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.BidiClass.html) for more information.
          */
         fun createBidiClass(): CodePointMapData8 {
             
@@ -100,7 +100,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `BidiClass` property, using a particular data source.
          *
-         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.BidiClass.html) for more information.
+         * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.BidiClass.html) for more information.
          */
         fun createBidiClassWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -120,7 +120,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `CanonicalCombiningClass` property, using compiled data.
          *
-         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
          */
         fun createCanonicalCombiningClass(): CodePointMapData8 {
             
@@ -135,7 +135,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `CanonicalCombiningClass` property, using a particular data source.
          *
-         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+         * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
          */
         fun createCanonicalCombiningClassWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -155,7 +155,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `EastAsianWidth` property, using compiled data.
          *
-         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
          */
         fun createEastAsianWidth(): CodePointMapData8 {
             
@@ -170,7 +170,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `EastAsianWidth` property, using a particular data source.
          *
-         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+         * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
          */
         fun createEastAsianWidthWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -190,7 +190,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `GeneralCategory` property, using compiled data.
          *
-         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/enum.GeneralCategory.html) for more information.
          */
         fun createGeneralCategory(): CodePointMapData8 {
             
@@ -205,7 +205,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `GeneralCategory` property, using a particular data source.
          *
-         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+         * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/enum.GeneralCategory.html) for more information.
          */
         fun createGeneralCategoryWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -225,7 +225,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `GraphemeClusterBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
          */
         fun createGraphemeClusterBreak(): CodePointMapData8 {
             
@@ -240,7 +240,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `GraphemeClusterBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+         * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
          */
         fun createGraphemeClusterBreakWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -260,7 +260,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `HangulSyllableType` property, using compiled data.
          *
-         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
          */
         fun createHangulSyllableType(): CodePointMapData8 {
             
@@ -275,7 +275,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `HangulSyllableType` property, using a particular data source.
          *
-         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+         * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
          */
         fun createHangulSyllableTypeWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -295,7 +295,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `IndicConjunctBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
          */
         fun createIndicConjunctBreak(): CodePointMapData8 {
             
@@ -310,7 +310,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `IndicConjunctBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+         * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
          */
         fun createIndicConjunctBreakWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -330,7 +330,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `IndicSyllabicCategory` property, using compiled data.
          *
-         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
          */
         fun createIndicSyllabicCategory(): CodePointMapData8 {
             
@@ -345,7 +345,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `IndicSyllabicCategory` property, using a particular data source.
          *
-         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+         * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
          */
         fun createIndicSyllabicCategoryWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -365,7 +365,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `JoiningGroup` property, using compiled data.
          *
-         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html) for more information.
          */
         fun createJoiningGroup(): CodePointMapData8 {
             
@@ -380,7 +380,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `JoiningGroup` property, using a particular data source.
          *
-         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+         * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningGroup.html) for more information.
          */
         fun createJoiningGroupWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -400,7 +400,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `JoiningType` property, using compiled data.
          *
-         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
+         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningType.html) for more information.
          */
         fun createJoiningType(): CodePointMapData8 {
             
@@ -415,7 +415,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `JoiningType` property, using a particular data source.
          *
-         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.JoiningType.html) for more information.
+         * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.JoiningType.html) for more information.
          */
         fun createJoiningTypeWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -435,7 +435,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `LineBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.LineBreak.html) for more information.
+         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.LineBreak.html) for more information.
          */
         fun createLineBreak(): CodePointMapData8 {
             
@@ -450,7 +450,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `LineBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.LineBreak.html) for more information.
+         * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.LineBreak.html) for more information.
          */
         fun createLineBreakWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -470,7 +470,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `NumericType` property, using compiled data.
          *
-         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.NumericType.html) for more information.
+         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.NumericType.html) for more information.
          */
         fun createNumericType(): CodePointMapData8 {
             
@@ -485,7 +485,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `NumericType` property, using a particular data source.
          *
-         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.NumericType.html) for more information.
+         * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.NumericType.html) for more information.
          */
         fun createNumericTypeWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -505,7 +505,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `SentenceBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.SentenceBreak.html) for more information.
          */
         fun createSentenceBreak(): CodePointMapData8 {
             
@@ -520,7 +520,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `SentenceBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+         * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.SentenceBreak.html) for more information.
          */
         fun createSentenceBreakWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -540,7 +540,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `VerticalOrientation` property, using compiled data.
          *
-         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
          */
         fun createVerticalOrientation(): CodePointMapData8 {
             
@@ -555,7 +555,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `VerticalOrientation` property, using a particular data source.
          *
-         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+         * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
          */
         fun createVerticalOrientationWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -575,7 +575,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `WordBreak` property, using compiled data.
          *
-         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.WordBreak.html) for more information.
+         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.WordBreak.html) for more information.
          */
         fun createWordBreak(): CodePointMapData8 {
             
@@ -590,7 +590,7 @@ class CodePointMapData8 internal constructor (
         /**
          * Create a map for the `WordBreak` property, using a particular data source.
          *
-         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.3.1/icu/properties/props/struct.WordBreak.html) for more information.
+         * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.4.0/icu/properties/props/struct.WordBreak.html) for more information.
          */
         fun createWordBreakWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
@@ -610,7 +610,7 @@ class CodePointMapData8 internal constructor (
     /**
      * Gets the value for a code point.
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
      */
     fun get(cp: Int): UByte {
         
@@ -621,7 +621,7 @@ class CodePointMapData8 internal constructor (
     /**
      * Produces an iterator over ranges of code points that map to `value`
      *
-     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
      */
     fun iterRangesForValue(value: UByte): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
@@ -637,7 +637,7 @@ class CodePointMapData8 internal constructor (
     /**
      * Produces an iterator over ranges of code points that do not map to `value`
      *
-     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
      */
     fun iterRangesForValueComplemented(value: UByte): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
@@ -660,7 +660,7 @@ class CodePointMapData8 internal constructor (
      * Should only be used on maps for properties with values less than 32 (like `General_Category`),
      * other maps will have unpredictable results
      *
-     * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+     * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
      */
     fun iterRangesForGroup(group: GeneralCategoryGroup): CodePointRangeIterator {
         // This lifetime edge depends on lifetimes: 'a
@@ -676,7 +676,7 @@ class CodePointMapData8 internal constructor (
     /**
      * Gets a [CodePointSetData] representing all entries in this map that map to the given value
      *
-     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.3.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.4.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
      */
     fun getSetForValue(value: UByte): CodePointSetData {
         

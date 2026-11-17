@@ -4,17 +4,9 @@
 
 [package]
 name = "changelog"
-version.workspace = true
-rust-version.workspace = true
-authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-homepage.workspace = true
-license.workspace = true
-categories.workspace = true
-keywords.workspace = true
-include.workspace = true
+version = "0.0.0"
 publish = false
+edition.workspace = true
 
 [dependencies]
 cargo_metadata = "0.19.2"

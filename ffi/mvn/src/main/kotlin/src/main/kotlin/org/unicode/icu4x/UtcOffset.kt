@@ -18,7 +18,7 @@ internal interface UtcOffsetLib: Library {
     fun icu4x_UtcOffset_to_string_mv1(handle: Pointer, write: Pointer): Unit
 }
 /**
- * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html) for more information.
+ * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html) for more information.
  */
 class UtcOffset internal constructor (
     internal val handle: Pointer,
@@ -53,7 +53,7 @@ class UtcOffset internal constructor (
          *
          * Errors if the offset seconds are out of range.
          *
-         * See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
+         * See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
          */
         fun fromSeconds(seconds: Int): Result<UtcOffset> {
             
@@ -73,9 +73,9 @@ class UtcOffset internal constructor (
         /**
          * Creates an offset from a string.
          *
-         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
+         * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
          */
         fun fromString(offset: String): Result<UtcOffset> {
             val offsetSliceMemory = PrimitiveArrayTools.borrowUtf8(offset)
@@ -100,11 +100,11 @@ class UtcOffset internal constructor (
     /**
      * Returns the value as offset seconds.
      *
-     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.3.1/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.4.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
      *
-     * See the [Rust documentation for `to_seconds`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
+     * See the [Rust documentation for `to_seconds`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
      */
     fun seconds(): Int {
         
@@ -115,9 +115,9 @@ class UtcOffset internal constructor (
     /**
      * Returns whether the offset is positive.
      *
-     * See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
+     * See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
      */
     fun isNonNegative(): Boolean {
         
@@ -128,9 +128,9 @@ class UtcOffset internal constructor (
     /**
      * Returns whether the offset is zero.
      *
-     * See the [Rust documentation for `is_zero`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
+     * See the [Rust documentation for `is_zero`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
      */
     fun isZero(): Boolean {
         
@@ -141,9 +141,9 @@ class UtcOffset internal constructor (
     /**
      * Returns the hours part of the offset.
      *
-     * See the [Rust documentation for `hours_part`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
+     * See the [Rust documentation for `hours_part`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
      */
     fun hoursPart(): Int {
         
@@ -154,9 +154,9 @@ class UtcOffset internal constructor (
     /**
      * Returns the minutes part of the offset.
      *
-     * See the [Rust documentation for `minutes_part`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
+     * See the [Rust documentation for `minutes_part`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
      */
     fun minutesPart(): UInt {
         
@@ -167,9 +167,9 @@ class UtcOffset internal constructor (
     /**
      * Returns the seconds part of the offset.
      *
-     * See the [Rust documentation for `seconds_part`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
+     * See the [Rust documentation for `seconds_part`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html)
+     * Additional information: [1](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html)
      */
     fun secondsPart(): UInt {
         
@@ -180,7 +180,7 @@ class UtcOffset internal constructor (
     /**
      * Formats the [UtcOffset] as a string.
      *
-     * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.3.1/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
+     * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.4.0/icu/time/zone/struct.UtcOffset.html#method.write_to) for more information.
      */
     override fun toString(): String {
         val write = DW.lib.diplomat_buffer_write_create(0)

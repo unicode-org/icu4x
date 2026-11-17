@@ -24,6 +24,8 @@ mod v2;
 pub use v2::*;
 mod complex;
 pub use complex::*;
+#[cfg(feature = "unstable")]
+pub mod adaboost;
 
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
@@ -59,6 +61,8 @@ const _: () = {
     impl_segmenter_lstm_auto_v1!(Baked);
     #[cfg(feature = "unstable")]
     impl_segmenter_unihan_radical_v1!(Baked);
+    #[cfg(feature = "unstable")]
+    impl_segmenter_adaboost_v1!(Baked);
     impl_segmenter_break_word_v1!(Baked);
     impl_segmenter_break_word_override_v1!(Baked);
     impl_segmenter_break_sentence_override_v1!(Baked);
@@ -90,6 +94,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     SegmenterDictionaryAutoV2::INFO,
     SegmenterDictionaryExtendedV2::INFO,
     SegmenterLstmAutoV1::INFO,
+    #[cfg(feature = "unstable")]
+    adaboost::SegmenterAdaboostV1::INFO,
     #[cfg(feature = "unstable")]
     SegmenterUnihanRadicalV1::INFO,
     #[cfg(feature = "unstable")]

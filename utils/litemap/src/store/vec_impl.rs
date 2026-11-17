@@ -250,7 +250,11 @@ fn partition_dedup_by<K: Eq, V>(v: &mut [(K, V)]) -> (&mut [(K, V)], &mut [(K, V
         }
         read_idx += 1;
     }
-    v.split_at_mut(write_idx)
+    // After the loop, `write_idx <= read_idx == v.len()`, so this is always `Some`.
+    v.split_at_mut_checked(write_idx).unwrap_or_else(|| {
+        debug_assert!(false, "write_idx {write_idx} is out of range");
+        Default::default()
+    })
 }
 
 impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {

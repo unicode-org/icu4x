@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
+/// See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html) for more information.
 @meta.experimental
 final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -31,7 +31,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -46,7 +46,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   @meta.experimental
@@ -61,7 +61,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 
   /// Returns the locale-specific display name of a locale.
   ///
-  /// See the [Rust documentation for `of`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+  /// See the [Rust documentation for `of`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/multi/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
   @meta.experimental
   String of(Locale locale) {
     final write = _Write();

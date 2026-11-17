@@ -10,7 +10,7 @@ final class _ZonedTimeFfi extends ffi.Struct {
 
 /// An ICU4X `ZonedTime` object capable of containing a ISO-8601 time, and zone.
 ///
-/// See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html) for more information.
+/// See the [Rust documentation for `ZonedTime`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedTime.html) for more information.
 @meta.experimental
 final class ZonedTime {
   // ignore: public_member_api_docs
@@ -38,7 +38,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
+  /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedTime.html#method.try_strict_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   @meta.experimental
@@ -53,7 +53,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from a location-only IXDTF string.
   ///
-  /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
+  /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedTime.html#method.try_location_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   @meta.experimental
@@ -68,7 +68,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from an offset-only IXDTF string.
   ///
-  /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
+  /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedTime.html#method.try_offset_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   @meta.experimental
@@ -83,7 +83,7 @@ final class ZonedTime {
 
   /// Creates a new [ZonedTime] from an IXDTF string, without requiring the offset.
   ///
-  /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
+  /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedTime.html#method.try_lenient_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   @meta.experimental

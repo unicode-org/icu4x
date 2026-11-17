@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 icu_provider::data_marker!(
-    /// `CurrencyPatternsNoCurrencyV1`
+    /// Provides standard and accounting currency patterns with no currency symbol placeholder.
     CurrencyPatternsNoCurrencyV1,
     CurrencyPatternsNoCurrency<'static>,
 );

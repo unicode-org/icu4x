@@ -46,7 +46,12 @@ impl AbstractFormatter for DecimalFormatter {
     type FormattedUnsigned<'a> = FormattedUnsignedDecimal<'a>;
 
     fn format_unsigned<'a>(&'a self, value: UnsignedDecimal) -> Self::FormattedUnsigned<'a> {
-        self.format_unsigned(crate::Cow::Owned(value))
+        FormattedUnsignedDecimal {
+            value: crate::Cow::Owned(value),
+            options: &self.options,
+            symbols: self.symbols.get(),
+            digits: self.digits.get(),
+        }
     }
 
     fn format_sign<'a, W: Writeable>(

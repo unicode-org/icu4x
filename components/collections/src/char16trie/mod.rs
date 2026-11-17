@@ -40,8 +40,12 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#[cfg(feature = "alloc")]
+mod builder;
 mod trie;
 
+#[cfg(feature = "alloc")]
+pub use builder::Char16TrieBuilder;
 pub use trie::Char16Trie;
 pub use trie::Char16TrieCursor;
 #[allow(deprecated)]

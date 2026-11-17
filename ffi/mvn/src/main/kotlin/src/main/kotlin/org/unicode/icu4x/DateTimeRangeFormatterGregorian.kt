@@ -24,7 +24,7 @@ internal interface DateTimeRangeFormatterGregorianLib: Library {
     fun icu4x_DateTimeRangeFormatterGregorian_format_iso_mv1(handle: Pointer, startIsoDate: Pointer, startTime: Pointer, endIsoDate: Pointer, endTime: Pointer, write: Pointer): Unit
 }
 /**
- * See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
+ * See the [Rust documentation for `FixedCalendarDateRangeFormatter`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html) for more information.
  *
  * 🚧 This API is unstable and may experience breaking changes outside major releases.
  */
@@ -57,11 +57,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
+         * See the [Rust documentation for `DT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -81,11 +81,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `DT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html) for more information.
+         * See the [Rust documentation for `DT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DT.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DT.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -105,11 +105,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
+         * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -129,11 +129,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html) for more information.
+         * See the [Rust documentation for `MDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDT.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -153,11 +153,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+         * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -177,11 +177,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+         * See the [Rust documentation for `YMDT`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDT.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -201,11 +201,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
+         * See the [Rust documentation for `DET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -225,11 +225,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `DET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html) for more information.
+         * See the [Rust documentation for `DET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.DET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.DET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -249,11 +249,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
+         * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -273,11 +273,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html) for more information.
+         * See the [Rust documentation for `MDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.MDET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -297,11 +297,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+         * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -321,11 +321,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+         * See the [Rust documentation for `YMDET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.YMDET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -345,11 +345,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
+         * See the [Rust documentation for `ET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -369,11 +369,11 @@ class DateTimeRangeFormatterGregorian internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `ET`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html) for more information.
+         * See the [Rust documentation for `ET`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.ET.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.ET.html#method.for_length)
          *
          * 🚧 This API is unstable and may experience breaking changes outside major releases.
          */
@@ -393,7 +393,7 @@ class DateTimeRangeFormatterGregorian internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/range/struct.FixedCalendarDateRangeFormatter.html#method.format) for more information.
      *
      * 🚧 This API is unstable and may experience breaking changes outside major releases.
      */

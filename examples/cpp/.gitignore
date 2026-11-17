@@ -3,7 +3,9 @@ casemapping
 collator
 datetime
 decimal
+duration
 locale
+normalizer
 pluralrules
 properties
 segmenter

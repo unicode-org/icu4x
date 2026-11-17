@@ -4,7 +4,7 @@
 
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::collections::char16trie::Char16Trie;
+use alloc::collections::BTreeMap;
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::segmenter::provider::DictionaryBreakData;
 use icu::segmenter::provider::SegmenterDictionaryAutoV2;
@@ -13,35 +13,42 @@ use icu_provider::prelude::*;
 use itertools::Itertools;
 use std::collections::HashSet;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::ZeroVec;
-
-#[derive(serde::Deserialize, Debug)]
-struct SegmenterDictionaryData {
-    trie_data: Vec<u16>,
-}
 
 impl SourceDataProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
     ) -> Result<DictionaryBreakData<'static>, DataError> {
-        // TODO: Read {}.txt instead
-        let dict = Char16Trie::new(
-            ZeroVec::from_slice_or_alloc(
-                &self
-                    .icuexport()?
-                    .read_and_parse_toml::<SegmenterDictionaryData>(&format!(
-                        "segmenter/dictionary/{}.toml",
-                        req.id.marker_attributes as &str
-                    ))?
-                    .trie_data,
-            )
-            .into_owned(),
-        );
+        let dict = &self.icuexport()?.read_and_parse(
+            &format!(
+                "segmenter/dictionary/{}.txt",
+                req.id.marker_attributes as &str
+            ),
+            |dict| {
+                let dict =
+                    String::from_utf8(dict.into_vec()).map_err(|_| DataError::custom("UTF-8"))?;
+
+                let dict = dict.strip_prefix('\u{FEFF}').unwrap_or(&dict);
+
+                Ok(dict
+                    .lines()
+                    .filter_map(|line| {
+                        let line = line.split_once('#').unwrap_or((line, "")).0.trim();
+                        if line.is_empty() {
+                            return None;
+                        }
+                        let mut parts = line.split_ascii_whitespace();
+                        let word = parts.next().unwrap();
+                        let value = parts.next().unwrap_or("0").parse::<i32>().unwrap();
+                        Some((word.to_string(), value))
+                    })
+                    .collect::<BTreeMap<_, _>>())
+            },
+        )?;
 
         let mut alphabet_builder = CodePointInversionListBuilder::new();
 
-        for (word, _) in dict.iter2() {
+        for word in dict.keys() {
             for c in word.chars() {
                 alphabet_builder.add_char(c);
             }
@@ -82,8 +89,8 @@ impl SourceDataProvider {
             DictionaryBreakData::ZeroTrie {
                 trie: ZeroTrieSimpleAscii::try_from_btree_map_str(
                     &dict
-                        .iter2()
-                        .map(|(k, v)| {
+                        .iter()
+                        .map(|(k, &v)| {
                             (
                                 k.chars()
                                     .map(|c| alphabet.position(c).unwrap() as u8 as char)
@@ -98,7 +105,7 @@ impl SourceDataProvider {
                 alphabet,
             }
         } else {
-            DictionaryBreakData::Char16Trie(dict)
+            DictionaryBreakData::Char16Trie(dict.iter().map(|(k, &v)| (k, v)).collect())
         };
 
         Ok(trie)

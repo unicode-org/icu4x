@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Style`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.Style.html) for more information.
+/// See the [Rust documentation for `Style`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/enum.Style.html) for more information.
 @meta.experimental
 enum DisplayNamesStyle {
   // ignore: public_member_api_docs

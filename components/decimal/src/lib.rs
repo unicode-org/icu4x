@@ -147,4 +147,5 @@ pub mod input {
     #[cfg(feature = "ryu")]
     pub use fixed_decimal::FloatPrecision;
     pub use fixed_decimal::SignDisplay;
+    pub use fixed_decimal::UnsignedDecimal;
 }

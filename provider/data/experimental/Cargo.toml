@@ -8,7 +8,7 @@ description = "Data for the icu_experimental crate"
 categories.workspace = true
 keywords = ["data", "unicode"]
 license = "Unicode-3.0"
-version = "0.6.0"
+version = "0.7.0"
 
 authors.workspace = true
 edition.workspace = true
@@ -18,7 +18,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [package.metadata.sources]
-cldr = { tagged = "49.0.0-BETA4" }
+cldr = { tagged = "49.0.0" }
 unicode = { tagged = "18.0.0" }
 segmenter_lstm = { tagged = "v0.1.0" }
 

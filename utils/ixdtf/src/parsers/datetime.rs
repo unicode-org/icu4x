@@ -9,7 +9,7 @@ use crate::{
     encoding::EncodingType,
     parsers::{
         annotations,
-        grammar::{is_annotation_open, is_date_time_separator, is_hyphen, is_utc_designator},
+        grammar::{is_date_time_separator, is_hyphen},
         time::parse_time_record,
         timezone, Cursor, IxdtfParseRecord,
     },
@@ -43,23 +43,7 @@ pub(crate) fn parse_annotated_date_time<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let date_time = parse_date_time(cursor)?;
-
-    // Peek Annotation presence
-    // Throw error if annotation does not exist and zoned is true, else return.
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-
-        return Ok(IxdtfParseRecord {
-            date: date_time.date,
-            time: date_time.time,
-            offset: date_time.time_zone,
-            tz: None,
-            calendar: None,
-        });
-    }
-
     let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
-
     cursor.close()?;
 
     Ok(IxdtfParseRecord {
@@ -76,7 +60,7 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
     let date = parse_date(cursor)?;
 
     // If there is no `DateTimeSeparator`, return date early.
-    if !cursor.check_or(false, is_date_time_separator)? {
+    if cursor.next_if(is_date_time_separator)?.is_none() {
         return Ok(DateTimeRecord {
             date: Some(date),
             time: None,
@@ -84,15 +68,9 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
         });
     }
 
-    cursor.advance();
-
     let time = parse_time_record(cursor)?;
 
-    let time_zone = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch))? {
-        Some(timezone::parse_date_time_utc_offset(cursor)?)
-    } else {
-        None
-    };
+    let time_zone = timezone::parse_date_time_utc_offset(cursor)?;
 
     Ok(DateTimeRecord {
         date: Some(date),
@@ -104,17 +82,12 @@ fn parse_date_time<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<Date
 /// Parses `Date` record.
 fn parse_date<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
-    let hyphenated = cursor
-        .check(is_hyphen)?
-        .ok_or(ParseError::AbruptEnd { location: "Date" })?;
-
-    cursor.advance_if(hyphenated);
+    let hyphenated = cursor.next_if(is_hyphen)?.is_some();
 
     let month = parse_date_month(cursor)?;
 
-    let second_hyphen = cursor.check_or(false, is_hyphen)?;
+    let second_hyphen = cursor.next_if(is_hyphen)?.is_some();
     assert_syntax!(hyphenated == second_hyphen, DateSeparator);
-    cursor.advance_if(second_hyphen);
 
     let day = parse_date_day(cursor)?;
 
@@ -131,18 +104,6 @@ pub(crate) fn parse_annotated_year_month<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let year_month = parse_year_month(cursor)?;
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-
-        return Ok(IxdtfParseRecord {
-            date: Some(year_month),
-            time: None,
-            offset: None,
-            tz: None,
-            calendar: None,
-        });
-    }
-
     let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
     cursor.close()?;
 
@@ -159,7 +120,7 @@ pub(crate) fn parse_year_month<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
-    cursor.advance_if(cursor.check_or(false, is_hyphen)?);
+    cursor.next_if(is_hyphen)?;
     let month = parse_date_month(cursor)?;
 
     Ok(DateRecord {
@@ -177,19 +138,6 @@ pub(crate) fn parse_annotated_month_day<'a, T: EncodingType>(
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let date = parse_month_day(cursor)?;
-
-    if !cursor.check_or(false, is_annotation_open)? {
-        cursor.close()?;
-
-        return Ok(IxdtfParseRecord {
-            date: Some(date),
-            time: None,
-            offset: None,
-            tz: None,
-            calendar: None,
-        });
-    }
-
     let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
     cursor.close()?;
 
@@ -204,23 +152,16 @@ pub(crate) fn parse_annotated_month_day<'a, T: EncodingType>(
 
 /// Parses a `DateSpecMonthDay`
 pub(crate) fn parse_month_day<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<DateRecord> {
-    let hyphenated = cursor.check(is_hyphen)?.ok_or(ParseError::AbruptEnd {
-        location: "MonthDay",
-    })?;
-    cursor.advance_if(hyphenated);
-    let balanced_hyphens = hyphenated
-        && cursor.check(is_hyphen)?.ok_or(ParseError::AbruptEnd {
+    if cursor.next_if(is_hyphen)?.is_some() {
+        let next = cursor.next_or(ParseError::AbruptEnd {
             location: "MonthDay",
         })?;
-    cursor.advance_if(balanced_hyphens);
-
-    if hyphenated && !balanced_hyphens {
-        return Err(ParseError::MonthDayHyphen);
+        assert_syntax!(is_hyphen(next), MonthDayHyphen);
     }
 
     let month = parse_date_month(cursor)?;
 
-    cursor.advance_if(cursor.check_or(false, is_hyphen)?);
+    cursor.next_if(is_hyphen)?;
 
     let day = parse_date_day(cursor)?;
 
@@ -247,12 +188,8 @@ fn is_valid_month_day(month: u8, day: u8) -> bool {
 
 #[inline]
 fn parse_date_year<T: EncodingType>(cursor: &mut Cursor<T>) -> ParserResult<i32> {
-    if cursor.check_or(false, is_ascii_sign)? {
-        let sign = if cursor.next_or(ParseError::ImplAssert)? == b'+' {
-            1
-        } else {
-            -1
-        };
+    if let Some(sign_ch) = cursor.next_if(is_ascii_sign)? {
+        let sign = if sign_ch == b'+' { 1 } else { -1 };
 
         let first = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 100_000;
         let second = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 10_000;

@@ -9,12 +9,14 @@
 use icu_plurals::provider::PluralElementsPackedCow;
 
 icu_provider::data_marker!(
-    /// Extended currency data needed for currency formatting. For example, currency display names.
+    /// Provides plural display names for currencies.
+    ///
+    /// This data is keyed by both locale and currency, with a currency code marker attribute.
     CurrencyExtendedDataV1,
     CurrencyExtendedData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "currency",
 );
 
-/// Currency extended data struct.
+/// Plural currency display names data struct.
 pub type CurrencyExtendedData<'data> = PluralElementsPackedCow<'data, str>;

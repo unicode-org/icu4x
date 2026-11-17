@@ -10,6 +10,18 @@
 ภาษา
 # #8243 (contains U+2060 WORD JOINER)
 ก⁠รุ⁠ง
+# #8599: breaks must not be inside grapheme clusters. These match ICU4C (ICU 79).
+ตาม|ที่|กล่าว|มา|แล้ว
+ตาม|ที่|ระบุ
+ทั้ง|ที่|รู้|ว่า
+ทุก|ที่|ทุก|เวลา
+บาง|ที่
+แล้ว|ก็|ไป
+แล้ว|กัน|นะ
+มา|นี้|ก่อน
+เพื่อ|นั้น
+เสีย|ว่า
+นิ|รัน|ดร์
 
 # Myanmar
 # "Burmese Language" in Burmese

@@ -72,7 +72,7 @@ internal class OptionZonedDateTimeNative constructor(): Structure(), Structure.B
 /**
  * An ICU4X `DateTime` object capable of containing a date, time, and zone for any calendar.
  *
- * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html) for more information.
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedDateTime.html) for more information.
  */
 class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
     companion object {
@@ -94,7 +94,7 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         /**
          * Creates a new [ZonedIsoDateTime] from an IXDTF string.
          *
-         * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
+         * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
          */
         fun strictFromString(v: String, calendar: Calendar, ianaParser: IanaParser): Result<ZonedDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -117,7 +117,7 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         /**
          * Creates a new [ZonedDateTime] from an IXDTF string.
          *
-         * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+         * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
          */
         fun fullFromString(v: String, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): Result<ZonedDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -140,7 +140,7 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         /**
          * Creates a new [ZonedDateTime] from a location-only IXDTF string.
          *
-         * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
+         * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
          */
         fun locationOnlyFromString(v: String, calendar: Calendar, ianaParser: IanaParser): Result<ZonedDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -163,7 +163,7 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         /**
          * Creates a new [ZonedDateTime] from an offset-only IXDTF string.
          *
-         * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
+         * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
          */
         fun offsetOnlyFromString(v: String, calendar: Calendar): Result<ZonedDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)
@@ -186,7 +186,7 @@ class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
         /**
          * Creates a new [ZonedDateTime] from an IXDTF string, without requiring the offset.
          *
-         * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.3.1/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
+         * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.4.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
          */
         fun lenientFromString(v: String, calendar: Calendar, ianaParser: IanaParser): Result<ZonedDateTime> {
             val vSliceMemory = PrimitiveArrayTools.borrowUtf8(v)

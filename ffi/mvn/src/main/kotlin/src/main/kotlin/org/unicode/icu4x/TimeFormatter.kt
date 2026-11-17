@@ -12,7 +12,7 @@ internal interface TimeFormatterLib: Library {
     fun icu4x_TimeFormatter_format_mv1(handle: Pointer, time: Pointer, write: Pointer): Unit
 }
 /**
- * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/2.3.1/icu/datetime/type.NoCalendarFormatter.html) for more information.
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/2.4.0/icu/datetime/type.NoCalendarFormatter.html) for more information.
  */
 class TimeFormatter internal constructor (
     internal val handle: Pointer,
@@ -43,11 +43,11 @@ class TimeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
+         * See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
          */
         fun create(locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<TimeFormatter> {
             
@@ -65,11 +65,11 @@ class TimeFormatter internal constructor (
         @JvmStatic
         
         /**
-         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.3.1/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
+         * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
          *
-         * See the [Rust documentation for `T`](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html) for more information.
+         * See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.
          *
-         * Additional information: [1](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.3.1/icu/datetime/fieldsets/struct.T.html#method.for_length)
+         * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
          */
         fun createWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength?, timePrecision: TimePrecision?, alignment: DateTimeAlignment?): Result<TimeFormatter> {
             
@@ -87,7 +87,7 @@ class TimeFormatter internal constructor (
     }
     
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.3.1/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
      */
     fun format(time: Time): String {
         val write = DW.lib.diplomat_buffer_write_create(0)

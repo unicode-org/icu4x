@@ -87,6 +87,14 @@ part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
 part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
+part 'Duration.g.dart';
+part 'DurationBaseStyle.g.dart';
+part 'DurationFieldDisplay.g.dart';
+part 'DurationFormatter.g.dart';
+part 'DurationFormatterError.g.dart';
+part 'DurationFormatterOptions.g.dart';
+part 'DurationSign.g.dart';
+part 'DurationUnitStyle.g.dart';
 part 'EastAsianWidth.g.dart';
 part 'EmojiSetData.g.dart';
 part 'ExemplarCharacters.g.dart';
@@ -1148,6 +1156,22 @@ final class _Write {
         throw const core.OutOfMemoryError();
       }
       return const Utf8Decoder().convert(buf.asTypedList(_diplomat_buffer_write_len(_ffi)));
+    } finally {
+      _diplomat_buffer_write_destroy(_ffi);
+    }
+  }
+
+  String finalize16() {
+    try {
+      final buf = _diplomat_buffer_write_get_bytes(_ffi);
+      if (buf == ffi.Pointer.fromAddress(0)) {
+        throw const core.OutOfMemoryError();
+      }
+      final len = _diplomat_buffer_write_len(_ffi) ~/ 2;
+      if (len == 0) {
+        return '';
+      }
+      return String.fromCharCodes(buf.cast<ffi.Uint16>().asTypedList(len));
     } finally {
       _diplomat_buffer_write_destroy(_ffi);
     }

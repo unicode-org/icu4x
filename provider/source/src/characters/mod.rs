@@ -234,9 +234,11 @@ fn insert_chars_from_string(set: &mut HashSet<String>, input: &str) {
 /// set of strings representing each code point or string represented by the CLDR JSON
 /// serialized form.
 fn parse_exemplar_char_string(s: &str) -> HashSet<String> {
-    debug_assert!(s.starts_with('['));
-    debug_assert!(s.ends_with(']'));
-    let mut transformed_input = s.split_at(1).1.split_at(s.len() - 2).0.to_string();
+    let Some(inner) = s.strip_prefix('[').and_then(|t| t.strip_suffix(']')) else {
+        debug_assert!(false, "exemplar characters should be in brackets: {s}");
+        return HashSet::new();
+    };
+    let mut transformed_input = inner.to_string();
 
     if transformed_input.is_empty() {
         return HashSet::new();

@@ -9,11 +9,14 @@
 use zerovec::VarZeroCow;
 
 icu_provider::data_marker!(
-    /// Currency display name data.
+    /// Provides display names for the currencies.
+    ///
+    /// This data is keyed by both locale and currency, with a currency code marker attribute.
     CurrencyDisplaynameV1,
     CurrencyDisplayname<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "currency",
 );
 
+/// Currency display name data struct.
 pub type CurrencyDisplayname<'data> = VarZeroCow<'data, str>;

@@ -5,7 +5,7 @@
 [package]
 name = "icu_experimental"
 description = "ICU4X pre-release components under active development; all code in this crate is unstable."
-version = "0.6.0"
+version = "0.7.0"
 categories.workspace = true
 keywords = ["unicode", "internationalization", "localization", "i18n"]
 
@@ -59,6 +59,7 @@ num-rational = { workspace = true, features = ["num-bigint"]}
 num-traits = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 smallvec = { workspace = true, features = ["const_generics"] }
+utf8_iter = { workspace = true }
 
 icu_experimental_data = { workspace = true, optional = true }
 

@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.3.1/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
+/// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.4.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
 @meta.experimental
 enum LanguageDisplay {
   // ignore: public_member_api_docs
