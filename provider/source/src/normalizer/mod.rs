@@ -910,6 +910,10 @@ fn canonical_compositions_v2(
     //
     // `default_value` decodes to a linear16 slice.
     assert!(linear16.len() < usize::from(default_value >> 4) + usize::from(default_value & 0b1111));
+    // Values with bit 15 set are first looked up in linear16 without
+    // masking off bit 15, which makes their linear16 start index at
+    // least 0x800.
+    assert!(linear16.len() <= 0x800);
     // `lv_marker` decodes to an empty linear24 slice. (Hangul lead
     // jamo values decode to linear24 slices that start even later.)
     assert!(linear24.len() < usize::from((lv_marker >> 4) & 0b1_11111_11111));
