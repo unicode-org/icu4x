@@ -1,0 +1,35 @@
+{
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " фут"
+      }
+    ]
+  ],
+  "many": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " футов"
+      }
+    ]
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " фута"
+      }
+    ]
+  ]
+}

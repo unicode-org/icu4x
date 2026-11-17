@@ -1,0 +1,35 @@
+{
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " метар"
+      }
+    ]
+  ],
+  "few": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " метра"
+      }
+    ]
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " метара"
+      }
+    ]
+  ]
+}

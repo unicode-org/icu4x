@@ -1,0 +1,24 @@
+{
+  "one": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄛𑄅𑄪𑄚𑄳𑄓𑄴"
+      }
+    ]
+  ],
+  "other": [
+    0,
+    [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " lb"
+      }
+    ]
+  ]
+}
