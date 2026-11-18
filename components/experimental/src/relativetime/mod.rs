@@ -15,3 +15,10 @@ pub use options::RelativeTimeFormatterOptions;
 pub use relativetime::RelativeTimeFormatter;
 pub use relativetime::RelativeTimeFormatterPreferences;
 pub use relativetime::preferences;
+
+/// Types that can be fed to [`RelativeTimeFormatter`] and their utilities.
+///
+/// This module contains re-exports from the [`fixed_decimal`] crate.
+pub mod input {
+    pub use fixed_decimal::Decimal;
+}
