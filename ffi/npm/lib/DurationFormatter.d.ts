@@ -39,6 +39,15 @@ export class DurationFormatter {
     format(duration: Duration_obj): string;
 
     /**
+     * Gets the resolved numbering system identifier of this formatter.
+     *
+     * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html#method.numbering_system) for more information.
+     *
+     * @experimental
+     */
+    get numberingSystem(): string;
+
+    /**
      * Creates a new {@link DurationFormatter} from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html#method.try_new) for more information.

@@ -34,6 +34,8 @@ namespace capi {
 
     void icu4x_DecimalFormatter_format_mv1(const icu4x::capi::DecimalFormatter* self, const icu4x::capi::Decimal* value, icu4x::diplomat::capi::DiplomatWrite* write);
 
+    void icu4x_DecimalFormatter_numbering_system_mv1(const icu4x::capi::DecimalFormatter* self, icu4x::diplomat::capi::DiplomatWrite* write);
+
     void icu4x_DecimalFormatter_destroy_mv1(DecimalFormatter* self);
 
     } // extern "C"
@@ -81,6 +83,20 @@ inline void icu4x::DecimalFormatter::format_write(const icu4x::Decimal& value, W
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
     icu4x::capi::icu4x_DecimalFormatter_format_mv1(this->AsFFI(),
         value.AsFFI(),
+        &write);
+}
+
+inline std::string icu4x::DecimalFormatter::numbering_system() const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    icu4x::capi::icu4x_DecimalFormatter_numbering_system_mv1(this->AsFFI(),
+        &write);
+    return output;
+}
+template<typename W>
+inline void icu4x::DecimalFormatter::numbering_system_write(W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::capi::icu4x_DecimalFormatter_numbering_system_mv1(this->AsFFI(),
         &write);
 }
 

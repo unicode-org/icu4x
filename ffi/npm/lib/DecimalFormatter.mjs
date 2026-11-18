@@ -159,6 +159,28 @@ export class DecimalFormatter {
         }
     }
 
+    /**
+     * Gets the resolved numbering system identifier of this formatter.
+     *
+     * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/decimal/struct.DecimalFormatter.html#method.numbering_system) for more information.
+     *
+     * @experimental
+     */
+    get numberingSystem() {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+    wasm.icu4x_DecimalFormatter_numbering_system_mv1(this.ffiValue, write.buffer);
+
+        try {
+            return write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }

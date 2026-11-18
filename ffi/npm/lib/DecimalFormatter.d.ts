@@ -47,4 +47,13 @@ export class DecimalFormatter {
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.4.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
      */
     format(value: Decimal): string;
+
+    /**
+     * Gets the resolved numbering system identifier of this formatter.
+     *
+     * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/decimal/struct.DecimalFormatter.html#method.numbering_system) for more information.
+     *
+     * @experimental
+     */
+    get numberingSystem(): string;
 }

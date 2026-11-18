@@ -31,6 +31,8 @@ icu4x_DecimalFormatter_create_with_manual_data_mv1_result icu4x_DecimalFormatter
 
 void icu4x_DecimalFormatter_format_mv1(const DecimalFormatter* self, const Decimal* value, DiplomatWrite* write);
 
+void icu4x_DecimalFormatter_numbering_system_mv1(const DecimalFormatter* self, DiplomatWrite* write);
+
 void icu4x_DecimalFormatter_destroy_mv1(DecimalFormatter* self);
 
 

@@ -11,6 +11,7 @@ internal interface DecimalFormatterLib: Library {
     fun icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(provider: Pointer, locale: Pointer, groupingStrategy: OptionInt): ResultPointerInt
     fun icu4x_DecimalFormatter_create_with_manual_data_mv1(plusSignPrefix: Slice, plusSignSuffix: Slice, minusSignPrefix: Slice, minusSignSuffix: Slice, decimalSeparator: Slice, groupingSeparator: Slice, primaryGroupSize: FFIUint8, secondaryGroupSize: FFIUint8, minGroupSize: FFIUint8, digits: Slice, groupingStrategy: OptionInt): ResultPointerInt
     fun icu4x_DecimalFormatter_format_mv1(handle: Pointer, value: Pointer, write: Pointer): Unit
+    fun icu4x_DecimalFormatter_numbering_system_mv1(handle: Pointer, write: Pointer): Unit
 }
 /**
  * An ICU4X Decimal Format object, capable of formatting a [Decimal] as a string.
@@ -130,6 +131,21 @@ class DecimalFormatter internal constructor (
     fun format(value: Decimal): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_DecimalFormatter_format_mv1(handle, value.handle, write);
+        
+        val returnString = DW.writeToString(write)
+        return returnString
+    }
+    
+    /**
+     * Gets the resolved numbering system identifier of this formatter.
+     *
+     * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/decimal/struct.DecimalFormatter.html#method.numbering_system) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     */
+    fun numberingSystem(): String {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_DecimalFormatter_numbering_system_mv1(handle, write);
         
         val returnString = DW.writeToString(write)
         return returnString
