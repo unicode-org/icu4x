@@ -1159,6 +1159,12 @@ fn test_numbering_system_latn() {
     let formatter_bn_latn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
     assert_writeable_eq!(formatter_bn.format(55.into()), "৫৫ দিনের মধ্যে");
     assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
+    assert_eq!(formatter_bn.numbering_system(), "beng");
+    assert_eq!(formatter_bn_latn.numbering_system(), "latn");
+
+    let formatter_en_thai =
+        RelativeTimeFormatter::try_new_long_day(locale!("en-u-nu-thai").into(), options).unwrap();
+    assert_eq!(formatter_en_thai.numbering_system(), "thai");
 }
 #[test]
 fn test_options_and_grouping_strategy() {

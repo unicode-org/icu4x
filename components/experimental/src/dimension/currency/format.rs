@@ -366,6 +366,29 @@ mod tests {
             fmt_latn_name.format_fixed_decimal(&value),
             "12,345.67 جنيه مصري"
         );
+
+        assert_eq!(fmt_arab_symbol.numbering_system(), "arab");
+        assert_eq!(fmt_latn_symbol.numbering_system(), "latn");
+        assert_eq!(fmt_arab_symbol_narrow.numbering_system(), "arab");
+        assert_eq!(fmt_latn_symbol_narrow.numbering_system(), "latn");
+        assert_eq!(fmt_arab_name.numbering_system(), "arab");
+        assert_eq!(fmt_latn_name.numbering_system(), "latn");
+
+        let fmt_en_thai = CurrencyFormatter::try_new_symbol(
+            locale!("en-u-nu-thai").into(),
+            currency_code,
+            Default::default(),
+        )
+        .unwrap();
+        assert_eq!(fmt_en_thai.numbering_system(), "thai");
+
+        let fmt_compact_thai = CurrencyFormatter::try_new_compact_symbol(
+            locale!("en-u-nu-thai").into(),
+            currency_code,
+            Default::default(),
+        )
+        .unwrap();
+        assert_eq!(fmt_compact_thai.numbering_system(), "thai");
     }
 
     #[test]

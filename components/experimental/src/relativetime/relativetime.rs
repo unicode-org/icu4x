@@ -376,4 +376,32 @@ impl RelativeTimeFormatter {
             is_negative,
         }
     }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::experimental::relativetime::{
+    ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
+    /// };
+    /// use icu::locale::locale;
+    ///
+    /// let fmt_bn = RelativeTimeFormatter::try_new_long_day(
+    ///     locale!("bn").into(),
+    ///     RelativeTimeFormatterOptions::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_bn.numbering_system(), "beng");
+    ///
+    /// let fmt_bn_latn = RelativeTimeFormatter::try_new_long_day(
+    ///     locale!("bn-u-nu-latn").into(),
+    ///     RelativeTimeFormatterOptions::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_bn_latn.numbering_system(), "latn");
+    /// ```
+    pub fn numbering_system(&self) -> &str {
+        self.decimal_formatter.numbering_system()
+    }
 }

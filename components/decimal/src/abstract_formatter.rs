@@ -39,6 +39,9 @@ pub trait AbstractFormatter: core::fmt::Debug + Sealed {
 
     #[doc(hidden)]
     fn plural_operands(value: &Self::FormattedUnsigned<'_>) -> PluralOperands;
+
+    #[doc(hidden)]
+    fn numbering_system(&self) -> &str;
 }
 
 impl Sealed for DecimalFormatter {}
@@ -65,6 +68,10 @@ impl AbstractFormatter for DecimalFormatter {
     fn plural_operands(value: &Self::FormattedUnsigned<'_>) -> PluralOperands {
         value.plural_operands()
     }
+
+    fn numbering_system(&self) -> &str {
+        self.numbering_system()
+    }
 }
 
 impl Sealed for CompactDecimalFormatter {}
@@ -85,5 +92,9 @@ impl AbstractFormatter for CompactDecimalFormatter {
 
     fn plural_operands(value: &Self::FormattedUnsigned<'_>) -> PluralOperands {
         value.plural_operands()
+    }
+
+    fn numbering_system(&self) -> &str {
+        self.numbering_system()
     }
 }

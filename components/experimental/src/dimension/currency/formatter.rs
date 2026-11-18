@@ -1548,6 +1548,35 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             sign,
         )
     }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
+    /// use icu::locale::locale;
+    /// use icu::locale::preferences::extensions::unicode::keywords::currency;
+    ///
+    /// let fmt_ar = CurrencyFormatter::try_new_symbol(
+    ///     locale!("ar-EG").into(),
+    ///     currency!("EGP"),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_ar.numbering_system(), "arab");
+    ///
+    /// let fmt_compact_thai = CurrencyFormatter::try_new_compact_symbol(
+    ///     locale!("en-u-nu-thai").into(),
+    ///     currency!("USD"),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_compact_thai.numbering_system(), "thai");
+    /// ```
+    pub fn numbering_system(&self) -> &str {
+        self.value_formatter.numbering_system()
+    }
 }
 
 /// Selects the pattern for no-currency formatting for the given sign.

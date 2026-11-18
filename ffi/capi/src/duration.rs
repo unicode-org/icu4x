@@ -215,6 +215,16 @@ pub mod ffi {
             let rust_duration = icu_experimental::duration::Duration::from(duration);
             let _infallible = self.0.format(&rust_duration).write_to(write);
         }
+
+        /// Gets the resolved numbering system identifier of this formatter.
+        #[diplomat::rust_link(
+            icu::experimental::duration::DurationFormatter::numbering_system,
+            FnInStruct
+        )]
+        #[diplomat::attr(auto, getter)]
+        pub fn numbering_system(&self, write: &mut DiplomatWrite) {
+            let _infallible = self.0.numbering_system().write_to(write);
+        }
     }
 }
 

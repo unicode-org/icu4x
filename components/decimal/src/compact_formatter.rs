@@ -602,6 +602,32 @@ impl CompactDecimalFormatter {
             .map(|t| t.sized - t.variable.get_default().0.get())
             .unwrap_or_default()
     }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::decimal::CompactDecimalFormatter;
+    /// use icu::locale::locale;
+    ///
+    /// let fmt_lo = CompactDecimalFormatter::try_new_short(
+    ///     locale!("lo").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_lo.numbering_system(), "latn");
+    ///
+    /// let fmt_laoo = CompactDecimalFormatter::try_new_short(
+    ///     locale!("lo-u-nu-laoo").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_laoo.numbering_system(), "laoo");
+    /// ```
+    pub fn numbering_system(&self) -> &str {
+        self.decimal_formatter.numbering_system()
+    }
 }
 
 #[doc(hidden)] // TODO(#3647): should be private
@@ -756,5 +782,7 @@ mod tests {
         // numbering system (they differ by a NBSP)
         assert_writeable_eq!(default.format(&12345.into()), "12 ພັນ");
         assert_writeable_eq!(lao.format(&12345.into()), "໑໒ພັນ");
+        assert_eq!(default.numbering_system(), "latn");
+        assert_eq!(lao.numbering_system(), "laoo");
     }
 }

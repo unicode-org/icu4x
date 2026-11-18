@@ -17,8 +17,9 @@ define_preferences!(
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
         ///
-        /// To get the resolved numbering system, you can inspect the data provider.
-        /// See the [`provider`] module for an example.
+        /// To get the resolved numbering system, call `DecimalFormatter::numbering_system`
+        /// (enabled with the `unstable` Cargo feature), or inspect the data provider
+        /// as shown in the [`provider`](crate::provider) module.
         numbering_system: NumberingSystem
     }
 );

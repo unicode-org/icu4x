@@ -197,5 +197,13 @@ pub mod ffi {
         pub fn format(&self, value: &Decimal, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
+
+        /// Gets the resolved numbering system identifier of this formatter.
+        #[cfg(feature = "unstable")]
+        #[diplomat::rust_link(icu::decimal::DecimalFormatter::numbering_system, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn numbering_system(&self, write: &mut diplomat_runtime::DiplomatWrite) {
+            let _infallible = self.0.numbering_system().write_to(write);
+        }
     }
 }

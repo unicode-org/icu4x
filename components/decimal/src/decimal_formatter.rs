@@ -18,11 +18,12 @@ use crate::size_test_macro::size_test;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 use fixed_decimal::{Sign, UnsignedDecimal};
+use icu_locale_core::subtags::Subtag;
 use icu_provider::prelude::*;
 use writeable::PartsWrite;
 use writeable::Writeable;
 
-size_test!(DecimalFormatter, decimal_formatter_size, 96);
+size_test!(DecimalFormatter, decimal_formatter_size, 104);
 
 /// A formatter for [`Decimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -37,6 +38,8 @@ size_test!(DecimalFormatter, decimal_formatter_size, 96);
 #[derive(Debug, Clone)]
 pub struct DecimalFormatter {
     pub(crate) options: DecimalFormatterOptions,
+    #[cfg_attr(not(feature = "unstable"), allow(dead_code))]
+    pub(crate) digits_numsys: Option<Subtag>,
     pub(crate) symbols: DataPayload<DecimalSymbolsV1>,
     pub(crate) digits: DataPayload<DecimalDigitsV1>,
 }
@@ -98,18 +101,102 @@ impl DecimalFormatter {
             DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
         );
 
-        let digits = load_with_fallback(
-            provider,
-            // fall back to the resolved numbering system
-            prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
-        )?
-        .payload;
+        let (digits, digits_numsys) = match prefs.numbering_system {
+            Some(nu) if nu.as_str() != symbols.get().numsys() => {
+                let nu_id = DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic(nu.as_str()),
+                );
+                if let Some(response) = provider
+                    .load(DataRequest {
+                        id: nu_id,
+                        metadata: {
+                            let mut m = DataRequestMetadata::default();
+                            m.silent = true;
+                            m
+                        },
+                    })
+                    .allow_identifier_not_found()?
+                {
+                    (response.payload, Some(*nu))
+                } else {
+                    (
+                        provider
+                            .load(DataRequest {
+                                id: resolved_nu_id,
+                                metadata: DataRequestMetadata::default(),
+                            })?
+                            .payload,
+                        None,
+                    )
+                }
+            }
+            _ => (
+                provider
+                    .load(DataRequest {
+                        id: resolved_nu_id,
+                        metadata: DataRequestMetadata::default(),
+                    })?
+                    .payload,
+                None,
+            ),
+        };
 
         Ok(Self {
             options,
+            digits_numsys,
             symbols,
             digits,
         })
+    }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this method unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #5868](https://github.com/unicode-org/icu4x/issues/5868).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::decimal::DecimalFormatter;
+    /// use icu::locale::locale;
+    ///
+    /// let fmt_en =
+    ///     DecimalFormatter::try_new(locale!("en").into(), Default::default())
+    ///         .unwrap();
+    /// assert_eq!(fmt_en.numbering_system(), "latn");
+    ///
+    /// let fmt_bn =
+    ///     DecimalFormatter::try_new(locale!("bn").into(), Default::default())
+    ///         .unwrap();
+    /// assert_eq!(fmt_bn.numbering_system(), "beng");
+    ///
+    /// let fmt_en_thai = DecimalFormatter::try_new(
+    ///     locale!("en-u-nu-thai").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_en_thai.numbering_system(), "thai");
+    ///
+    /// // Unknown numbering systems fall back to the locale's default:
+    /// let fmt_fallback = DecimalFormatter::try_new(
+    ///     locale!("ar-EG-u-nu-wxyz").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_fallback.numbering_system(), "arab");
+    /// ```
+    #[cfg(feature = "unstable")]
+    pub fn numbering_system(&self) -> &str {
+        match &self.digits_numsys {
+            Some(nu) => nu.as_str(),
+            None => self.symbols.get().numsys(),
+        }
     }
 
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
@@ -280,7 +367,11 @@ writeable::impl_display_with_writeable!(FormattedSign<'_, T>, #[cfg(feature = "a
 #[test]
 fn test_numbering_resolution_fallback() {
     use icu_locale_core::locale;
-    fn test_locale(locale: icu_locale_core::Locale, expected_format: &str) {
+    fn test_locale(
+        locale: icu_locale_core::Locale,
+        expected_format: &str,
+        #[cfg_attr(not(feature = "unstable"), allow(unused_variables))] expected_numsys: &str,
+    ) {
         let formatter =
             DecimalFormatter::try_new((&locale).into(), Default::default()).expect("Must load");
         let fd = 1234.into();
@@ -289,21 +380,66 @@ fn test_numbering_resolution_fallback() {
             expected_format,
             "Correct format for {locale}"
         );
+        #[cfg(feature = "unstable")]
+        assert_eq!(
+            formatter.numbering_system(),
+            expected_numsys,
+            "Correct numbering_system() for {locale}"
+        );
     }
 
     // Loading en with default latn numsys
-    test_locale(locale!("en"), "1,234");
+    test_locale(locale!("en"), "1,234", "latn");
     // Loading en with arab numsys not present in symbols data will mix en symbols with arab digits
-    test_locale(locale!("en-u-nu-arab"), "١,٢٣٤");
+    test_locale(locale!("en-u-nu-arab"), "١,٢٣٤", "arab");
     // Loading ar-EG with default (arab) numsys
-    test_locale(locale!("ar-EG"), "١٬٢٣٤");
+    test_locale(locale!("ar-EG"), "١٬٢٣٤", "arab");
     // Loading ar-EG with overridden latn numsys, present in symbols data, uses ar-EG-u-nu-latn symbols data
-    test_locale(locale!("ar-EG-u-nu-latn"), "1,234");
+    test_locale(locale!("ar-EG-u-nu-latn"), "1,234", "latn");
     // Loading ar-EG with overridden thai numsys, not present in symbols data, uses ar-EG symbols data + thai digits
-    test_locale(locale!("ar-EG-u-nu-thai"), "๑٬๒๓๔");
+    test_locale(locale!("ar-EG-u-nu-thai"), "๑٬๒๓๔", "thai");
+    // 7-char numbering system override
+    test_locale(locale!("en-u-nu-hanidec"), "一,二三四", "hanidec");
     // Loading with nonexistant numbering systems falls back to default
-    test_locale(locale!("en-u-nu-wxyz"), "1,234");
-    test_locale(locale!("ar-EG-u-nu-wxyz"), "١٬٢٣٤");
+    test_locale(locale!("en-u-nu-wxyz"), "1,234", "latn");
+    test_locale(locale!("ar-EG-u-nu-wxyz"), "١٬٢٣٤", "arab");
+}
+
+#[cfg(feature = "unstable")]
+#[test]
+fn test_8_char_numbering_system() {
+    use icu_locale_core::locale;
+
+    struct MathboldProvider;
+    impl DataProvider<DecimalSymbolsV1> for MathboldProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
+            Baked.load(req)
+        }
+    }
+    impl DataProvider<DecimalDigitsV1> for MathboldProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalDigitsV1>, DataError> {
+            if req.id.marker_attributes.as_str() == "mathbold" {
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned([
+                        '𝟎', '𝟏', '𝟐', '𝟑', '𝟒', '𝟓', '𝟔', '𝟕', '𝟖', '𝟗',
+                    ]),
+                })
+            } else {
+                Baked.load(req)
+            }
+        }
+    }
+
+    let formatter = DecimalFormatter::try_new_unstable(
+        &MathboldProvider,
+        locale!("en-u-nu-mathbold").into(),
+        Default::default(),
+    )
+    .unwrap();
+    assert_eq!(formatter.numbering_system(), "mathbold");
+    let fd = 1234.into();
+    writeable::assert_writeable_eq!(formatter.format(&fd), "𝟏,𝟐𝟑𝟒");
 }
 
 #[test]

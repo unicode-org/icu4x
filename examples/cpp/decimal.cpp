@@ -22,6 +22,10 @@ int main() {
     // Create a formatter object with the appropriate settings
     std::unique_ptr<DecimalFormatter> formatter = DecimalFormatter::create_with_grouping_strategy(
         *locale.get(), DecimalGroupingStrategy::Auto).ok().value();
+    if (formatter->numbering_system() != "beng") {
+        std::cout << "Unexpected numbering system for bn: " << formatter->numbering_system() << std::endl;
+        return 1;
+    }
 
     // Create a decimal representing the number 1,000,007
     std::unique_ptr<Decimal> decimal = Decimal::from(1000007);
@@ -116,6 +120,18 @@ int main() {
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
     formatter = DecimalFormatter::create_with_grouping_strategy(
         *locale.get(), DecimalGroupingStrategy::Auto).ok().value();
+    if (formatter->numbering_system() != "thai") {
+        std::cout << "Unexpected numbering system for th-u-nu-thai: " << formatter->numbering_system() << std::endl;
+        return 1;
+    }
+
+    std::unique_ptr<Locale> en_arab_locale = Locale::from_string("en-u-nu-arab").ok().value();
+    std::unique_ptr<DecimalFormatter> en_arab_formatter = DecimalFormatter::create_with_grouping_strategy(
+        *en_arab_locale.get(), DecimalGroupingStrategy::Auto).ok().value();
+    if (en_arab_formatter->numbering_system() != "arab") {
+        std::cout << "Unexpected numbering system for en-u-nu-arab: " << en_arab_formatter->numbering_system() << std::endl;
+        return 1;
+    }
 
     decimal = Decimal::from_double_with_round_trip_precision(123456.8901).ok().value();
     out = formatter->format(*decimal.get());
