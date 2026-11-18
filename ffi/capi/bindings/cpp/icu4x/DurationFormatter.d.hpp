@@ -68,6 +68,17 @@ public:
   template<typename W>
   inline void format_write(icu4x::Duration duration, W& writeable_output) const;
 
+  /**
+   * Gets the resolved numbering system identifier of this formatter.
+   *
+   * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html#method.numbering_system) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline std::string numbering_system() const;
+  template<typename W>
+  inline void numbering_system_write(W& writeable_output) const;
+
     inline const icu4x::capi::DurationFormatter* AsFFI() const;
     inline icu4x::capi::DurationFormatter* AsFFI();
     inline static const icu4x::DurationFormatter* FromFFI(const icu4x::capi::DurationFormatter* ptr);

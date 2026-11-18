@@ -134,6 +134,28 @@ export class DurationFormatter {
     }
 
     /**
+     * Gets the resolved numbering system identifier of this formatter.
+     *
+     * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html#method.numbering_system) for more information.
+     *
+     * @experimental
+     */
+    get numberingSystem() {
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+
+    wasm.icu4x_DurationFormatter_numbering_system_mv1(this.ffiValue, write.buffer);
+
+        try {
+            return write.readString8();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            write.free();
+        }
+    }
+
+    /**
      * Creates a new {@link DurationFormatter} from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html#method.try_new) for more information.

@@ -143,6 +143,11 @@ mod tests {
         .unwrap();
         let formatted_percent = explicit_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "+12,345.67%");
+
+        assert_eq!(default_fmt.numbering_system(), "latn");
+        let thai_fmt =
+            PercentFormatter::try_new(locale!("en-u-nu-thai").into(), Default::default()).unwrap();
+        assert_eq!(thai_fmt.numbering_system(), "thai");
     }
 
     #[test]

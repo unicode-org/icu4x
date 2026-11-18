@@ -304,4 +304,32 @@ impl DurationFormatter {
             duration,
         }
     }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::experimental::duration::{
+    ///     DurationFormatter, ValidatedDurationFormatterOptions,
+    /// };
+    /// use icu::locale::locale;
+    ///
+    /// let options =
+    ///     ValidatedDurationFormatterOptions::validate(Default::default())
+    ///         .unwrap();
+    /// let fmt_ar =
+    ///     DurationFormatter::try_new(locale!("ar-EG").into(), options).unwrap();
+    /// assert_eq!(fmt_ar.numbering_system(), "arab");
+    ///
+    /// let fmt_en_thai = DurationFormatter::try_new(
+    ///     locale!("en-u-nu-thai").into(),
+    ///     options,
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_en_thai.numbering_system(), "thai");
+    /// ```
+    pub fn numbering_system(&self) -> &str {
+        self.fdf.numbering_system()
+    }
 }

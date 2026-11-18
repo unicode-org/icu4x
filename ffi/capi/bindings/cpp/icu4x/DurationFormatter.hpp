@@ -31,6 +31,8 @@ namespace capi {
 
     void icu4x_DurationFormatter_format_mv1(const icu4x::capi::DurationFormatter* self, icu4x::capi::Duration duration, icu4x::diplomat::capi::DiplomatWrite* write);
 
+    void icu4x_DurationFormatter_numbering_system_mv1(const icu4x::capi::DurationFormatter* self, icu4x::diplomat::capi::DiplomatWrite* write);
+
     void icu4x_DurationFormatter_destroy_mv1(DurationFormatter* self);
 
     } // extern "C"
@@ -63,6 +65,20 @@ inline void icu4x::DurationFormatter::format_write(icu4x::Duration duration, W& 
     icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
     icu4x::capi::icu4x_DurationFormatter_format_mv1(this->AsFFI(),
         duration.AsFFI(),
+        &write);
+}
+
+inline std::string icu4x::DurationFormatter::numbering_system() const {
+    std::string output;
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
+    icu4x::capi::icu4x_DurationFormatter_numbering_system_mv1(this->AsFFI(),
+        &write);
+    return output;
+}
+template<typename W>
+inline void icu4x::DurationFormatter::numbering_system_write(W& writeable) const {
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::capi::icu4x_DurationFormatter_numbering_system_mv1(this->AsFFI(),
         &write);
 }
 

@@ -848,4 +848,18 @@ mod tests {
             "9,007,199,254,740,991,999,999.999 microseconds"
         );
     }
+
+    #[test]
+    fn test_numbering_system() {
+        let options = ValidatedDurationFormatterOptions::validate(Default::default()).unwrap();
+        let fmt_en = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
+        assert_eq!(fmt_en.numbering_system(), "latn");
+
+        let fmt_ar = DurationFormatter::try_new(locale!("ar-EG").into(), options).unwrap();
+        assert_eq!(fmt_ar.numbering_system(), "arab");
+
+        let fmt_en_thai =
+            DurationFormatter::try_new(locale!("en-u-nu-thai").into(), options).unwrap();
+        assert_eq!(fmt_en_thai.numbering_system(), "thai");
+    }
 }

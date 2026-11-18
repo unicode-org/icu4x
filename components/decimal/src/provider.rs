@@ -16,8 +16,11 @@
 //!
 //! ## Get the resolved numbering system
 //!
-//! In a constructor call, the _last_ request for [`DecimalDigitsV1`]
-//! contains the resolved numbering system as its attribute:
+//! With the `unstable` Cargo feature enabled, call `DecimalFormatter::numbering_system`
+//! directly on the formatter to retrieve the resolved numbering system.
+//!
+//! Without the `unstable` feature, in a constructor call, the _last_ request for
+//! [`DecimalDigitsV1`] contains the resolved numbering system as its attribute:
 //!
 //! ```
 //! use icu::decimal::DecimalFormatter;

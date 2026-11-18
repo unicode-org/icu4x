@@ -430,6 +430,35 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             plural_rules: &self.plural_rules,
         }
     }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::experimental::dimension::units::categorized_formatter::CategorizedFormatter;
+    /// use icu::experimental::measure::category::Area;
+    /// use icu::locale::locale;
+    ///
+    /// let fmt_ar = CategorizedFormatter::<Area>::try_new_core(
+    ///     locale!("ar-EG").into(),
+    ///     Area::square_meter(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_ar.numbering_system(), "arab");
+    ///
+    /// let fmt_en_thai = CategorizedFormatter::<Area>::try_new_core(
+    ///     locale!("en-u-nu-thai").into(),
+    ///     Area::square_meter(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_en_thai.numbering_system(), "thai");
+    /// ```
+    pub fn numbering_system(&self) -> &str {
+        self.decimal_formatter.numbering_system()
+    }
 }
 
 #[cfg(feature = "compiled_data")]
@@ -674,5 +703,21 @@ mod tests {
             let formatted = formatter.format_fixed_decimal(&signed_decimal);
             assert_writeable_eq!(formatted, expected);
         }
+
+        let fmt_ar = CategorizedFormatter::<Duration>::try_new_core(
+            locale!("ar-EG").into(),
+            Duration::second(),
+            UnitsFormatterOptions::default(),
+        )
+        .unwrap();
+        assert_eq!(fmt_ar.numbering_system(), "arab");
+
+        let fmt_en_thai = CategorizedFormatter::<Duration>::try_new_core(
+            locale!("en-u-nu-thai").into(),
+            Duration::second(),
+            UnitsFormatterOptions::default(),
+        )
+        .unwrap();
+        assert_eq!(fmt_en_thai.numbering_system(), "thai");
     }
 }

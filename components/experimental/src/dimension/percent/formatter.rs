@@ -177,4 +177,28 @@ where
             decimal_formatter,
         })
     }
+
+    /// Gets the resolved numbering system identifier of this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::experimental::dimension::percent::formatter::PercentFormatter;
+    /// use icu::locale::locale;
+    ///
+    /// let fmt_en =
+    ///     PercentFormatter::try_new(locale!("en-US").into(), Default::default())
+    ///         .unwrap();
+    /// assert_eq!(fmt_en.numbering_system(), "latn");
+    ///
+    /// let fmt_en_thai = PercentFormatter::try_new(
+    ///     locale!("en-u-nu-thai").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    /// assert_eq!(fmt_en_thai.numbering_system(), "thai");
+    /// ```
+    pub fn numbering_system(&self) -> &str {
+        self.decimal_formatter.as_ref().numbering_system()
+    }
 }

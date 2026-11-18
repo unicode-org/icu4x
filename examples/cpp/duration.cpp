@@ -50,6 +50,18 @@ int main() {
             std::cout << "Output does not match expected output" << std::endl;
             return 1;
         }
+        if (formatter->numbering_system() != "latn") {
+            std::cout << "Unexpected numbering system for en: " << formatter->numbering_system() << std::endl;
+            return 1;
+        }
+
+        std::unique_ptr<Locale> thai_locale = Locale::from_string("en-u-nu-thai").ok().value();
+        std::unique_ptr<DurationFormatter> thai_formatter =
+            DurationFormatter::create_v1(*thai_locale.get(), options).ok().value();
+        if (thai_formatter->numbering_system() != "thai") {
+            std::cout << "Unexpected numbering system for en-u-nu-thai: " << thai_formatter->numbering_system() << std::endl;
+            return 1;
+        }
     }
 
     // 2. Digital style with negative sign, always-visible years, and fractional subseconds

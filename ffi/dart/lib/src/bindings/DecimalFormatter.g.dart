@@ -79,6 +79,16 @@ final class DecimalFormatter implements ffi.Finalizable {
     return write.finalize();
   }
 
+  /// Gets the resolved numbering system identifier of this formatter.
+  ///
+  /// See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/decimal/struct.DecimalFormatter.html#method.numbering_system) for more information.
+  @meta.experimental
+  String get numberingSystem {
+    final write = _Write();
+    _icu4x_DecimalFormatter_numbering_system_mv1(_ffi, write._ffi);
+    return write.finalize();
+  }
+
 }
 
 // ignore: experimental_member_use
@@ -110,5 +120,11 @@ external _ResultOpaqueInt32 _icu4x_DecimalFormatter_create_with_manual_data_mv1(
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_format_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_DecimalFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DecimalFormatter_numbering_system_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_DecimalFormatter_numbering_system_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 // dart format on

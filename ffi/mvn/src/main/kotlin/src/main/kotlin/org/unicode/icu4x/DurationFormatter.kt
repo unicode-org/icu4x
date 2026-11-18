@@ -10,6 +10,7 @@ internal interface DurationFormatterLib: Library {
     fun icu4x_DurationFormatter_create_v1_mv1(locale: Pointer, options: DurationFormatterOptionsNative): ResultPointerInt
     fun icu4x_DurationFormatter_create_v1_with_provider_mv1(provider: Pointer, locale: Pointer, options: DurationFormatterOptionsNative): ResultPointerInt
     fun icu4x_DurationFormatter_format_mv1(handle: Pointer, duration: DurationNative, write: Pointer): Unit
+    fun icu4x_DurationFormatter_numbering_system_mv1(handle: Pointer, write: Pointer): Unit
 }
 /**
  * See the [Rust documentation for `DurationFormatter`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html) for more information.
@@ -98,6 +99,21 @@ class DurationFormatter internal constructor (
     fun format(duration: Duration): String {
         val write = DW.lib.diplomat_buffer_write_create(0)
         val returnVal = lib.icu4x_DurationFormatter_format_mv1(handle, duration.toNative(), write);
+        
+        val returnString = DW.writeToString(write)
+        return returnString
+    }
+    
+    /**
+     * Gets the resolved numbering system identifier of this formatter.
+     *
+     * See the [Rust documentation for `numbering_system`](https://docs.rs/icu/2.4.0/icu/experimental/duration/struct.DurationFormatter.html#method.numbering_system) for more information.
+     *
+     * 🚧 This API is unstable and may experience breaking changes outside major releases.
+     */
+    fun numberingSystem(): String {
+        val write = DW.lib.diplomat_buffer_write_create(0)
+        val returnVal = lib.icu4x_DurationFormatter_numbering_system_mv1(handle, write);
         
         val returnString = DW.writeToString(write)
         return returnString

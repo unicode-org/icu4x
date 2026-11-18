@@ -1542,6 +1542,29 @@ let termini = Object.assign({
         ]
     },
 
+    "DecimalFormatter.numberingSystem": {
+        func: (selfLocaleName, selfGroupingStrategy) => icu.DecimalFormatter.createWithGroupingStrategy(icu.Locale.fromString(selfLocaleName), selfGroupingStrategy).numberingSystem,
+        // For avoiding webpacking minifying issues:
+        funcName: "DecimalFormatter.numberingSystem",
+        expr: (selfLocaleName, selfGroupingStrategy) => "icu.DecimalFormatter.createWithGroupingStrategy(icu.Locale.fromString(selfLocaleName), selfGroupingStrategy).numberingSystem".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfGroupingStrategy([,\) \n])/, '$1' + selfGroupingStrategy + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_groupingStrategy",
+                type: "DecimalGroupingStrategy",
+                typeUse: "enumerator",
+                values: ["Auto", "Never", "Always", "Min2"]
+            }
+            
+        ]
+    },
+
     "DurationFormatter.format": {
         func: (selfLocaleName, selfOptionsBase, selfOptionsYear, selfOptionsYearVisibility, selfOptionsMonth, selfOptionsMonthVisibility, selfOptionsWeek, selfOptionsWeekVisibility, selfOptionsDay, selfOptionsDayVisibility, selfOptionsHour, selfOptionsHourVisibility, selfOptionsMinute, selfOptionsMinuteVisibility, selfOptionsSecond, selfOptionsSecondVisibility, selfOptionsMillisecond, selfOptionsMillisecondVisibility, selfOptionsMicrosecond, selfOptionsMicrosecondVisibility, selfOptionsNanosecond, selfOptionsNanosecondVisibility, selfOptionsFractionalDigits, durationSign, durationYears, durationMonths, durationWeeks, durationDays, durationHours, durationMinutes, durationSeconds, durationMilliseconds, durationMicroseconds, durationNanoseconds) => new icu.DurationFormatter(icu.Locale.fromString(selfLocaleName), icu.DurationFormatterOptions.fromFields({
             base: selfOptionsBase,
@@ -1808,6 +1831,198 @@ let termini = Object.assign({
                 name: "duration_nanoseconds",
                 type: "bigint",
                 typeUse: "bigint"
+            }
+            
+        ]
+    },
+
+    "DurationFormatter.numberingSystem": {
+        func: (selfLocaleName, selfOptionsBase, selfOptionsYear, selfOptionsYearVisibility, selfOptionsMonth, selfOptionsMonthVisibility, selfOptionsWeek, selfOptionsWeekVisibility, selfOptionsDay, selfOptionsDayVisibility, selfOptionsHour, selfOptionsHourVisibility, selfOptionsMinute, selfOptionsMinuteVisibility, selfOptionsSecond, selfOptionsSecondVisibility, selfOptionsMillisecond, selfOptionsMillisecondVisibility, selfOptionsMicrosecond, selfOptionsMicrosecondVisibility, selfOptionsNanosecond, selfOptionsNanosecondVisibility, selfOptionsFractionalDigits) => new icu.DurationFormatter(icu.Locale.fromString(selfLocaleName), icu.DurationFormatterOptions.fromFields({
+            base: selfOptionsBase,
+            year: selfOptionsYear,
+            yearVisibility: selfOptionsYearVisibility,
+            month: selfOptionsMonth,
+            monthVisibility: selfOptionsMonthVisibility,
+            week: selfOptionsWeek,
+            weekVisibility: selfOptionsWeekVisibility,
+            day: selfOptionsDay,
+            dayVisibility: selfOptionsDayVisibility,
+            hour: selfOptionsHour,
+            hourVisibility: selfOptionsHourVisibility,
+            minute: selfOptionsMinute,
+            minuteVisibility: selfOptionsMinuteVisibility,
+            second: selfOptionsSecond,
+            secondVisibility: selfOptionsSecondVisibility,
+            millisecond: selfOptionsMillisecond,
+            millisecondVisibility: selfOptionsMillisecondVisibility,
+            microsecond: selfOptionsMicrosecond,
+            microsecondVisibility: selfOptionsMicrosecondVisibility,
+            nanosecond: selfOptionsNanosecond,
+            nanosecondVisibility: selfOptionsNanosecondVisibility,
+            fractionalDigits: selfOptionsFractionalDigits
+        })).numberingSystem,
+        // For avoiding webpacking minifying issues:
+        funcName: "DurationFormatter.numberingSystem",
+        expr: (selfLocaleName, selfOptionsBase, selfOptionsYear, selfOptionsYearVisibility, selfOptionsMonth, selfOptionsMonthVisibility, selfOptionsWeek, selfOptionsWeekVisibility, selfOptionsDay, selfOptionsDayVisibility, selfOptionsHour, selfOptionsHourVisibility, selfOptionsMinute, selfOptionsMinuteVisibility, selfOptionsSecond, selfOptionsSecondVisibility, selfOptionsMillisecond, selfOptionsMillisecondVisibility, selfOptionsMicrosecond, selfOptionsMicrosecondVisibility, selfOptionsNanosecond, selfOptionsNanosecondVisibility, selfOptionsFractionalDigits) => "new icu.DurationFormatter(icu.Locale.fromString(selfLocaleName), icu.DurationFormatterOptions.fromFields({\n    base: selfOptionsBase,\n    year: selfOptionsYear,\n    yearVisibility: selfOptionsYearVisibility,\n    month: selfOptionsMonth,\n    monthVisibility: selfOptionsMonthVisibility,\n    week: selfOptionsWeek,\n    weekVisibility: selfOptionsWeekVisibility,\n    day: selfOptionsDay,\n    dayVisibility: selfOptionsDayVisibility,\n    hour: selfOptionsHour,\n    hourVisibility: selfOptionsHourVisibility,\n    minute: selfOptionsMinute,\n    minuteVisibility: selfOptionsMinuteVisibility,\n    second: selfOptionsSecond,\n    secondVisibility: selfOptionsSecondVisibility,\n    millisecond: selfOptionsMillisecond,\n    millisecondVisibility: selfOptionsMillisecondVisibility,\n    microsecond: selfOptionsMicrosecond,\n    microsecondVisibility: selfOptionsMicrosecondVisibility,\n    nanosecond: selfOptionsNanosecond,\n    nanosecondVisibility: selfOptionsNanosecondVisibility,\n    fractionalDigits: selfOptionsFractionalDigits\n})).numberingSystem".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfOptionsBase([,\) \n])/, '$1' + selfOptionsBase + '$2').replace(/([\( ])selfOptionsYear([,\) \n])/, '$1' + selfOptionsYear + '$2').replace(/([\( ])selfOptionsYearVisibility([,\) \n])/, '$1' + selfOptionsYearVisibility + '$2').replace(/([\( ])selfOptionsMonth([,\) \n])/, '$1' + selfOptionsMonth + '$2').replace(/([\( ])selfOptionsMonthVisibility([,\) \n])/, '$1' + selfOptionsMonthVisibility + '$2').replace(/([\( ])selfOptionsWeek([,\) \n])/, '$1' + selfOptionsWeek + '$2').replace(/([\( ])selfOptionsWeekVisibility([,\) \n])/, '$1' + selfOptionsWeekVisibility + '$2').replace(/([\( ])selfOptionsDay([,\) \n])/, '$1' + selfOptionsDay + '$2').replace(/([\( ])selfOptionsDayVisibility([,\) \n])/, '$1' + selfOptionsDayVisibility + '$2').replace(/([\( ])selfOptionsHour([,\) \n])/, '$1' + selfOptionsHour + '$2').replace(/([\( ])selfOptionsHourVisibility([,\) \n])/, '$1' + selfOptionsHourVisibility + '$2').replace(/([\( ])selfOptionsMinute([,\) \n])/, '$1' + selfOptionsMinute + '$2').replace(/([\( ])selfOptionsMinuteVisibility([,\) \n])/, '$1' + selfOptionsMinuteVisibility + '$2').replace(/([\( ])selfOptionsSecond([,\) \n])/, '$1' + selfOptionsSecond + '$2').replace(/([\( ])selfOptionsSecondVisibility([,\) \n])/, '$1' + selfOptionsSecondVisibility + '$2').replace(/([\( ])selfOptionsMillisecond([,\) \n])/, '$1' + selfOptionsMillisecond + '$2').replace(/([\( ])selfOptionsMillisecondVisibility([,\) \n])/, '$1' + selfOptionsMillisecondVisibility + '$2').replace(/([\( ])selfOptionsMicrosecond([,\) \n])/, '$1' + selfOptionsMicrosecond + '$2').replace(/([\( ])selfOptionsMicrosecondVisibility([,\) \n])/, '$1' + selfOptionsMicrosecondVisibility + '$2').replace(/([\( ])selfOptionsNanosecond([,\) \n])/, '$1' + selfOptionsNanosecond + '$2').replace(/([\( ])selfOptionsNanosecondVisibility([,\) \n])/, '$1' + selfOptionsNanosecondVisibility + '$2').replace(/([\( ])selfOptionsFractionalDigits([,\) \n])/, '$1' + selfOptionsFractionalDigits + '$2'),
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_options_base",
+                type: "DurationBaseStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "Digital"]
+            },
+            
+            {
+                name: "self_options_year",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_yearVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_month",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_monthVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_week",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_weekVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_day",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_dayVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_hour",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_hourVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_minute",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_minuteVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_second",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_secondVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_millisecond",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_millisecondVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_microsecond",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_microsecondVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_nanosecond",
+                type: "DurationUnitStyle",
+                typeUse: "enumerator",
+                values: ["Narrow", "Short", "Long", "TwoDigit", "Numeric", "Fractional"]
+            },
+            
+            {
+                name: "self_options_nanosecondVisibility",
+                type: "DurationFieldDisplay",
+                typeUse: "enumerator",
+                values: ["Auto", "Always"]
+            },
+            
+            {
+                name: "self_options_fractionalDigits",
+                type: "number",
+                typeUse: "number"
             }
             
         ]

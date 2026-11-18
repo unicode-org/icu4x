@@ -28,6 +28,8 @@ icu4x_DurationFormatter_create_v1_with_provider_mv1_result icu4x_DurationFormatt
 
 void icu4x_DurationFormatter_format_mv1(const DurationFormatter* self, Duration duration, DiplomatWrite* write);
 
+void icu4x_DurationFormatter_numbering_system_mv1(const DurationFormatter* self, DiplomatWrite* write);
+
 void icu4x_DurationFormatter_destroy_mv1(DurationFormatter* self);
 
 
