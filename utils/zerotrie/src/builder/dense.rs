@@ -83,7 +83,11 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
             .collect::<ZeroTrieSimpleAscii<Vec<u8>>>();
-        if sub_trie.byte_len() > self.suffixes.len() * size_of::<DenseType>() {
+        // An encodable empty suffix must stay dense: prefix + delimiter is
+        // reserved for the row offset, so it cannot also store a sparse value.
+        if dense_or_sparse.contains_key("")
+            || sub_trie.byte_len() > self.suffixes.len() * size_of::<DenseType>()
+        {
             // Create a dense prefix
             let offsets = self
                 .suffixes
@@ -179,20 +183,22 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             delimiter,
             ..Default::default()
         };
-        // TODO(#7302): Prune low-frequency suffixes.
-        // For now, build with all suffixes.
-        builder.suffixes = entries
-            .values()
-            .flat_map(|inner| inner.keys())
-            .copied()
-            .map(|s| {
-                if s.contains(delimiter as char) {
-                    Err(ZeroTrieBuildError::IllegalDelimiter)
-                } else {
-                    Ok(s)
-                }
+        let mut suffix_frequencies = BTreeMap::new();
+        for suffix in entries.values().flat_map(|inner| inner.keys()).copied() {
+            if suffix.contains(delimiter as char) {
+                return Err(ZeroTrieBuildError::IllegalDelimiter);
+            }
+            *suffix_frequencies.entry(suffix).or_insert(0) += 1;
+        }
+        // Keep empty suffixes eligible for dense storage. Other suffixes must
+        // occur in at least 2% of rows, and at least two rows.
+        let min_frequency = entries.len().div_ceil(50).max(2);
+        builder.suffixes = suffix_frequencies
+            .into_iter()
+            .filter_map(|(suffix, frequency)| {
+                (suffix.is_empty() || frequency >= min_frequency).then_some(suffix)
             })
-            .collect::<Result<_, ZeroTrieBuildError>>()?;
+            .collect();
         for (prefix, values) in entries.iter() {
             if prefix.contains(delimiter as char) {
                 return Err(ZeroTrieBuildError::IllegalDelimiter);
@@ -200,5 +206,52 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             builder.add_prefix(prefix, values);
         }
         builder.build()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use alloc::format;
+
+    #[test]
+    fn test_suffix_frequency_threshold() {
+        for (row_count, suffix_count) in [(100, 3), (101, 2)] {
+            let prefixes = (0..row_count).map(|i| format!("p{i}")).collect::<Vec<_>>();
+            let entries = prefixes
+                .iter()
+                .enumerate()
+                .map(|(i, prefix)| {
+                    let mut values = BTreeMap::from([("common", i * 10)]);
+                    if i < 3 {
+                        values.insert("three_rows", i * 10 + 1);
+                    }
+                    if i < 2 {
+                        values.insert("two_rows", i * 10 + 2);
+                    }
+                    if i == 0 {
+                        values.insert("single_row", i * 10 + 3);
+                    }
+                    (prefix.as_str(), values)
+                })
+                .collect::<BTreeMap<_, _>>();
+            let trie =
+                ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&entries, b'/').unwrap();
+            assert_eq!(trie.suffix_count, suffix_count);
+            assert!(!trie.dense.is_empty());
+            assert_eq!(trie.suffixes.get("single_row"), None);
+            assert_eq!(trie.primary.get("p0/single_row"), Some(3));
+            if row_count == 101 {
+                assert_eq!(trie.suffixes.get("two_rows"), None);
+                assert_eq!(trie.primary.get("p1/two_rows"), Some(12));
+            }
+            for (prefix, values) in &entries {
+                for (suffix, value) in values {
+                    assert_eq!(trie.as_borrowed().get(prefix, suffix), Some(*value));
+                }
+            }
+            assert_eq!(trie.as_borrowed().get("p1", "single_row"), None);
+            assert_eq!(trie.as_borrowed().get("p99", "two_rows"), None);
+        }
     }
 }
