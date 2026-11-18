@@ -195,10 +195,8 @@ impl ConverterFactory {
                     Some(items) => {
                         insert_base_units(items.basic_units(), single_unit.power as i16, sign, map)
                     }
-                    None => {
-                        debug_assert!(false, "Failed to get convert info");
-                        return Err(InvalidConversionError);
-                    }
+                    // Units with a special conversion, such as beaufort, have no conversion data.
+                    None => return Err(InvalidConversionError),
                 }
             }
 
@@ -281,6 +279,8 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
+    ///    It also returns an error for units that CLDR converts with a special function
+    ///    instead of a factor, such as "beaufort".
     pub fn converter<T: Convertible>(
         &self,
         input_unit: &MeasureUnit,
