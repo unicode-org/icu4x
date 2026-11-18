@@ -86,9 +86,33 @@ fn test_basic() {
     let non_existent_data_as_map = strings_to_2d_btreemap(NON_EXISTENT_BASIC_DATA, "/");
     check_data(&non_existent_data_as_map, dense.as_borrowed(), false);
     let byte_len = check_encoding(dense.as_borrowed());
-    assert_eq!(byte_len, 106);
+    assert_eq!(byte_len, 82);
     let simple_trie = make_simple_ascii_trie(&data_as_map);
     assert_eq!(simple_trie.byte_len(), 71);
+}
+
+#[test]
+fn test_low_frequency_empty_suffix() {
+    for data in [
+        BTreeMap::from([
+            ("p0", BTreeMap::from([("", 11), ("common", 10)])),
+            ("p1", BTreeMap::from([("common", 12)])),
+        ]),
+        BTreeMap::from([
+            ("p0", BTreeMap::from([("", 11), ("longrare", 10)])),
+            ("p1", BTreeMap::from([("common", 12)])),
+        ]),
+    ] {
+        let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+        check_data(&data, trie.as_borrowed(), true);
+        let encoded = VarZeroCow::<ZeroAsciiDenseSparse2dTrieVarULE>::from_encodeable(
+            &trie.as_borrowed().as_encodeable(),
+        );
+        let decoded = ZeroAsciiDenseSparse2dTrieBorrowed::from(&*encoded);
+        assert_eq!(decoded.get("p1", ""), None);
+        assert_eq!(decoded.get("missing", ""), None);
+        check_data(&data, decoded, true);
+    }
 }
 
 #[test]
@@ -162,7 +186,9 @@ fn test_dense_sparse_window_selection() {
     inner.insert("low2", far_low);
 
     let mut data = BTreeMap::new();
-    data.insert("p", inner);
+    // Keep the suffixes frequent enough to exercise dense window selection.
+    data.insert("p", inner.clone());
+    data.insert("q", inner);
 
     // Build the 2d trie.
     let dense = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
@@ -170,15 +196,15 @@ fn test_dense_sparse_window_selection() {
 
     assert_eq!(
         format!("{:?}", trie),
-        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 128, 47, 144, 36, 195, 97, 104, 108, 2, 8, 144, 34, 105, 103, 104, 147, 241, 5, 111, 119, 128, 50, 128] }, suffixes: ZeroTrieSimpleAscii { store: [201, 97, 98, 99, 100, 101, 102, 103, 104, 108, 1, 2, 9, 10, 11, 12, 13, 18, 128, 129, 130, 194, 50, 51, 1, 131, 132, 133, 134, 135, 136, 137, 105, 103, 104, 138, 111, 119, 139, 50, 140] }, dense: ZeroVec([65535, 0, 1, 1, 1, 65530, 65531, 65532, 65533, 65534, 65535, 65535, 65535]), suffix_count: 13, delimiter: 47 }"
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [194, 112, 113, 23, 128, 47, 144, 36, 195, 97, 104, 108, 2, 8, 144, 34, 105, 103, 104, 147, 241, 5, 111, 119, 128, 50, 128, 129, 47, 144, 36, 195, 97, 104, 108, 2, 8, 144, 34, 105, 103, 104, 147, 241, 5, 111, 119, 128, 50, 128] }, suffixes: ZeroTrieSimpleAscii { store: [201, 97, 98, 99, 100, 101, 102, 103, 104, 108, 1, 2, 9, 10, 11, 12, 13, 18, 128, 129, 130, 194, 50, 51, 1, 131, 132, 133, 134, 135, 136, 137, 105, 103, 104, 138, 111, 119, 139, 50, 140] }, dense: ZeroVec([65535, 0, 1, 1, 1, 65530, 65531, 65532, 65533, 65534, 65535, 65535, 65535, 65535, 0, 1, 1, 1, 65530, 65531, 65532, 65533, 65534, 65535, 65535, 65535]), suffix_count: 13, delimiter: 47 }"
     );
 
     check_data(&data, trie, true);
 
     let byte_len = check_encoding(dense.as_borrowed());
-    assert_eq!(byte_len, 102);
+    assert_eq!(byte_len, 154);
     let simple_trie = make_simple_ascii_trie(&data);
-    assert_eq!(simple_trie.byte_len(), 60);
+    assert_eq!(simple_trie.byte_len(), 122);
 }
 
 #[test]
@@ -212,10 +238,12 @@ fn test_dense_suffix_count_with_low_frequency_suffixes() {
 
     assert_eq!(
         format!("{:?}", trie.as_borrowed()),
-        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 100, 101, 102, 22, 61, 101, 47, 196, 65, 67, 68, 114, 2, 4, 6, 84, 136, 72, 137, 69, 135, 97, 114, 101, 51, 144, 86, 194, 110, 115, 21, 47, 196, 67, 71, 85, 114, 2, 4, 6, 65, 131, 66, 130, 83, 129, 97, 114, 101, 49, 144, 84, 47, 194, 69, 114, 3, 83, 144, 88, 97, 114, 101, 52, 144, 87, 114, 47, 196, 66, 67, 70, 114, 2, 4, 6, 69, 134, 65, 133, 82, 132, 97, 114, 101, 50, 144, 85] }, suffixes: ZeroTrieSimpleAscii { store: [201, 65, 66, 67, 68, 69, 70, 71, 85, 114, 2, 4, 10, 12, 14, 16, 18, 20, 84, 128, 69, 129, 194, 65, 72, 1, 130, 131, 69, 132, 83, 133, 82, 134, 66, 135, 83, 136, 97, 114, 101, 196, 49, 50, 51, 52, 1, 2, 3, 137, 138, 139, 140] }, dense: ZeroVec([]), suffix_count: 13, delimiter: 47 }"
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 100, 101, 102, 22, 59, 101, 47, 196, 65, 67, 68, 114, 2, 4, 6, 84, 136, 72, 137, 69, 135, 97, 114, 101, 51, 144, 86, 194, 110, 115, 19, 128, 47, 129, 195, 71, 85, 114, 2, 4, 66, 130, 83, 129, 97, 114, 101, 49, 144, 84, 47, 194, 69, 114, 3, 83, 144, 88, 97, 114, 101, 52, 144, 87, 114, 129, 47, 132, 195, 66, 70, 114, 2, 4, 69, 134, 82, 132, 97, 114, 101, 50, 144, 85] }, suffixes: ZeroTrieSimpleAscii { store: [67, 65, 128] }, dense: ZeroVec([2, 1]), suffix_count: 1, delimiter: 47 }"
     );
 
     check_data(&data, trie.as_borrowed(), true);
+
+    let _ = check_encoding(trie.as_borrowed());
 
     // Non-existent lookups
     let mut non_existent: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
@@ -243,10 +271,12 @@ fn test_empty_dense_when_no_suffix_meets_threshold() {
 
     assert_eq!(
         format!("{:?}", trie.as_borrowed()),
-        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 97, 98, 99, 4, 8, 47, 115, 49, 129, 47, 115, 50, 130, 47, 115, 51, 131] }, suffixes: ZeroTrieSimpleAscii { store: [115, 195, 49, 50, 51, 1, 2, 128, 129, 130] }, dense: ZeroVec([]), suffix_count: 3, delimiter: 47 }"
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 97, 98, 99, 4, 8, 47, 115, 49, 129, 47, 115, 50, 130, 47, 115, 51, 131] }, suffixes: ZeroTrieSimpleAscii { store: [] }, dense: ZeroVec([]), suffix_count: 0, delimiter: 47 }"
     );
 
     check_data(&data, trie.as_borrowed(), true);
+
+    let _ = check_encoding(trie.as_borrowed());
 
     // Non-existent
     let mut non_existent: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
@@ -285,10 +315,12 @@ fn test_lookup_semantics_remain_correct() {
 
     assert_eq!(
         format!("{:?}", trie.as_borrowed()),
-        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 202, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 4, 8, 12, 16, 20, 24, 28, 32, 36, 128, 47, 144, 84, 129, 47, 144, 85, 130, 47, 144, 86, 131, 47, 144, 87, 132, 47, 144, 88, 133, 47, 144, 89, 134, 47, 144, 90, 135, 47, 144, 91, 136, 47, 144, 92, 137, 47, 144, 93] }, suffixes: ZeroTrieSimpleAscii { store: [194, 99, 114, 6, 111, 109, 109, 111, 110, 128, 97, 114, 101, 129] }, dense: ZeroVec([0, 899, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535]), suffix_count: 2, delimiter: 47 }"
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 202, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 10, 14, 18, 22, 26, 30, 34, 38, 42, 128, 47, 144, 84, 114, 97, 114, 101, 151, 87, 129, 47, 144, 85, 130, 47, 144, 86, 131, 47, 144, 87, 132, 47, 144, 88, 133, 47, 144, 89, 134, 47, 144, 90, 135, 47, 144, 91, 136, 47, 144, 92, 137, 47, 144, 93] }, suffixes: ZeroTrieSimpleAscii { store: [99, 111, 109, 109, 111, 110, 128] }, dense: ZeroVec([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), suffix_count: 1, delimiter: 47 }"
     );
 
     check_data(&data, trie.as_borrowed(), true);
+
+    let _ = check_encoding(trie.as_borrowed());
 
     // Non-existent combinations
     let mut non_existent: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
