@@ -150,8 +150,10 @@ final class FetchMode extends BuildMode {
       'https://github.com/unicode-org/icu4x/releases/'
       'download/$version/icu4x-2-$libraryType-$rustTarget',
     );
-    final request = await httpClient.getUrl(dylibRemoteUri);
-    final response = await request.close();
+    final response = await _getFollowingHttpsRedirects(
+      httpClient,
+      dylibRemoteUri,
+    );
     if (response.statusCode != 200) {
       throw ArgumentError('The request to $dylibRemoteUri failed');
     }
@@ -364,4 +366,35 @@ Future<void> runProcess(
     print('Not running, as --dry-run is set.');
   }
   print('==========');
+}
+
+/// Sends a GET request for [url] with [client] and follows redirects, such as
+/// GitHub's to its release asset storage, only to `https` URLs, so that the
+/// request never leaves TLS, unlike [HttpClient]'s own redirect handling,
+/// which also follows redirects to `http` URLs.
+Future<HttpClientResponse> _getFollowingHttpsRedirects(
+  HttpClient client,
+  Uri url,
+) async {
+  const maxRedirects = 5;
+  var currentUrl = url;
+  for (var redirects = 0; ; redirects++) {
+    final request = await client.getUrl(currentUrl);
+    request.followRedirects = false;
+    final response = await request.close();
+    final location = response.headers.value(HttpHeaders.locationHeader);
+    if (!response.isRedirect || location == null) return response;
+    await response.drain<void>();
+    final nextUrl = currentUrl.resolve(location);
+    if (nextUrl.scheme != 'https') {
+      throw ArgumentError(
+        'Refusing to follow the redirect from $currentUrl to $nextUrl, which '
+        'is not an https URL, while downloading $url',
+      );
+    }
+    if (redirects == maxRedirects) {
+      throw ArgumentError('Too many redirects while downloading $url');
+    }
+    currentUrl = nextUrl;
+  }
 }
