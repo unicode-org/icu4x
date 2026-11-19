@@ -912,12 +912,7 @@ impl<'data> CollatorBorrowed<'data> {
     /// `head_chars` is an iterator _backward_ over the identical
     /// prefix and `left_chars` and `right_chars` are iterators
     /// _forward_ over the parts after the identical prefix.
-    fn compare_impl<L, R, H, T>(
-        &self,
-        left_chars: L,
-        right_chars: R,
-        mut head_chars: H,
-    ) -> Ordering
+    fn compare_impl<L, R, H, T>(&self, left_chars: L, right_chars: R, mut head_chars: H) -> Ordering
     where
         L: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
         R: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
@@ -1790,11 +1785,7 @@ impl<'data> CollatorBorrowed<'data> {
         self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
     }
 
-    fn write_sort_key_impl<I, T, S>(
-        &self,
-        iter: I,
-        sink: &mut S,
-    ) -> Result<S::Output, S::Error>
+    fn write_sort_key_impl<I, T, S>(&self, iter: I, sink: &mut S) -> Result<S::Output, S::Error>
     where
         I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + Clone + 'data,
         T: AbstractCodePointTrie<'data, u32> + 'data,
