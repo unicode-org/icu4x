@@ -504,7 +504,8 @@ where
     ///
     /// Public but hidden in order to be able to use this from the
     /// collator.
-    #[doc(hidden)] // used in collator
+    #[doc(hidden)] // used in older versions of collator
+    #[deprecated = "Use `new_decomposition()` instead"]
     pub fn new(
         delegate: I,
         decompositions: &'data DecompositionData,
@@ -534,6 +535,24 @@ where
     fn next(&mut self) -> Option<char> {
         self.inner.next()
     }
+}
+
+/// Constructs a decomposing iterator adapter from a delegate
+/// iterator that also carries the NFD trie.
+///
+/// The trie carried by `delegate` must be the NFD trie that goes
+/// with `tables`.
+#[doc(hidden)] // used in collator
+#[inline(always)]
+pub fn new_decomposition<'data, I, T>(
+    delegate: I,
+    tables: &'data DecompositionTables,
+) -> impl Iterator<Item = char> + 'data
+where
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+    T: AbstractCodePointTrie<'data, u32> + 'data,
+{
+    DecompositionInner::<'data, I, T, Uax15Policy>::new_with_supplements(delegate, tables, None)
 }
 
 #[derive(Debug)]

@@ -18,8 +18,9 @@
 //! This module also declares various constants that are also used
 //! by the `comparison` module.
 
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::DecompositionData;
+use core::marker::PhantomData;
+use icu_collections::codepointtrie::AbstractCodePointTrie;
+use icu_collections::codepointtrie::iter::WithTrie;
 use icu_normalizer::provider::DecompositionTables;
 use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
@@ -818,14 +819,17 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrie<u32>) {
+    pub fn set_ccc_from_trie_if_not_already_set<'data, T: AbstractCodePointTrie<'data, u32>>(
+        &mut self,
+        trie: &T,
+    ) {
         if self.0 >> 24 != 0xFF {
             return;
         }
-        let scalar = self.0 & 0xFF_FFFF;
+        let scalar = self.character();
         // Safety invariant upheld here: The first half doesn't affect the lower 24 bits,
         // and the second half was taken from the old `self` which had these invariants upheld already.
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.scalar(scalar)).0 as u32) << 24) | u32::from(scalar);
     }
 }
 
@@ -844,10 +848,12 @@ impl CharacterAndClass {
 ///    `prepend_upcoming_before_init`.
 /// 3. `init`.
 /// 4. Some number of calls to `next`.
-pub(crate) struct CollationElements<'data, I>
+pub(crate) struct CollationElements<'data, I, T>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
+    T: AbstractCodePointTrie<'data, u32>,
 {
+    /// See components/normalizer/trie-value-format.md for the trie wrapped in `iter`.
     iter: I,
     /// Already computed but not yet returned `CollationElement`s.
     pending: SmallVec<[CollationElement; PENDING_CE_BUFFER_SIZE]>, // TODO(#2005): Figure out good length
@@ -891,10 +897,6 @@ where
     jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data ZeroSlice<u16>,
-    /// NFD main trie.
-    ///
-    /// See components/normalizer/trie-value-format.md
-    trie: &'data CodePointTrie<'data, u32>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes
@@ -912,11 +914,13 @@ where
     #[cfg(debug_assertions)]
     /// Whether `init` has been called
     initialized: bool,
+    _phantom: PhantomData<T>,
 }
 
-impl<'data, I> CollationElements<'data, I>
+impl<'data, I, T> CollationElements<'data, I, T>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+    T: AbstractCodePointTrie<'data, u32> + 'data,
 {
     #[expect(clippy::too_many_arguments)]
     pub fn new(
@@ -925,12 +929,11 @@ where
         tailoring: &'data CollationData,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data ZeroSlice<u16>,
-        decompositions: &'data DecompositionData,
         tables: &'data DecompositionTables,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
     ) -> Self {
-        CollationElements::<I> {
+        CollationElements::<I, T> {
             iter: delegate,
             pending: SmallVec::new(),
             pending_pos: 0,
@@ -940,7 +943,6 @@ where
             tailoring,
             jamo,
             diacritics,
-            trie: &decompositions.trie,
             scalars16: &tables.scalars16,
             scalars32: &tables.scalars24,
             numeric_primary,
@@ -950,6 +952,7 @@ where
             iter_exhausted: false,
             #[cfg(debug_assertions)]
             initialized: false,
+            _phantom: PhantomData,
         }
     }
 
@@ -1035,8 +1038,7 @@ where
     }
 
     fn iter_next(&mut self) -> Option<CharacterAndClassAndTrieValue> {
-        let c = self.iter.next()?;
-        let trie_val = self.trie.get(c);
+        let (c, trie_val) = self.iter.next()?;
         Some(CharacterAndClassAndTrieValue::new_with_trie_val(
             c, trie_val,
         ))
@@ -1287,7 +1289,7 @@ where
                 let low_c = char_from_u32((decomposition >> 15) & 0x7FFF);
                 self.upcoming
                     .push(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(starter));
-                let trie_value = self.trie.get(low_c);
+                let trie_value = self.iter.trie().bmp(low_c as u16);
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
                         low_c, trie_value,
@@ -1331,7 +1333,7 @@ where
                     .iter()
                     {
                         let ch = char_from_u16(u);
-                        let trie_value = self.trie.get(ch);
+                        let trie_value = self.iter.trie().bmp(u);
                         self.upcoming
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
@@ -1344,7 +1346,7 @@ where
                     )
                     .iter()
                     {
-                        let trie_value = self.trie.get(ch);
+                        let trie_value = self.iter.trie().scalar(ch);
                         self.upcoming
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
@@ -1741,7 +1743,7 @@ where
                         if only_non_starters_in_trail {
                             for u in tail.iter() {
                                 let char_from_u = char_from_u16(u);
-                                let trie_value = self.trie.get(char_from_u);
+                                let trie_value = self.iter.trie().bmp(u);
                                 let ccc = ccc_from_trie_value(trie_value);
                                 combining_characters.push(CharacterAndClass::new(char_from_u, ccc));
                             }
@@ -1749,7 +1751,7 @@ where
                             let mut it = tail.iter();
                             while let Some(u) = it.next() {
                                 let ch = char_from_u16(u);
-                                let ccc = ccc_from_trie_value(self.trie.get(ch));
+                                let ccc = ccc_from_trie_value(self.iter.trie().bmp(u));
                                 if ccc != CanonicalCombiningClass::NotReordered {
                                     // As of Unicode 14, this branch is never taken.
                                     // It exist for forward compatibility.
@@ -1766,7 +1768,7 @@ where
 
                                 while let Some(u) = it.next_back() {
                                     let tail_char = char_from_u16(u);
-                                    let trie_value = self.trie.get(tail_char);
+                                    let trie_value = self.iter.trie().bmp(u);
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                 }
                                 self.prepend_and_sort_non_starter_prefix_of_suffix(
@@ -1793,14 +1795,14 @@ where
                         c = starter;
                         if only_non_starters_in_trail {
                             for ch in tail.iter() {
-                                let trie_value = self.trie.get(ch);
+                                let trie_value = self.iter.trie().scalar(ch);
                                 let ccc = ccc_from_trie_value(trie_value);
                                 combining_characters.push(CharacterAndClass::new(ch, ccc));
                             }
                         } else {
                             let mut it = tail.iter();
                             while let Some(ch) = it.next() {
-                                let ccc = ccc_from_trie_value(self.trie.get(ch));
+                                let ccc = ccc_from_trie_value(self.iter.trie().scalar(ch));
                                 if ccc != CanonicalCombiningClass::NotReordered {
                                     // As of Unicode 14, this branch is never taken.
                                     // It exist for forward compatibility.
@@ -1815,7 +1817,7 @@ where
                                 self.maybe_gather_combining();
 
                                 while let Some(tail_char) = it.next_back() {
-                                    let trie_value = self.trie.get(tail_char);
+                                    let trie_value = self.iter.trie().scalar(tail_char);
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                 }
                                 self.prepend_and_sort_non_starter_prefix_of_suffix(
@@ -2467,7 +2469,7 @@ where
             // an item more than once.
             combining_characters
                 .iter_mut()
-                .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(self.trie));
+                .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(self.iter.trie()));
             combining_characters.sort_by_key(|cc| cc.ccc());
         }
     }
