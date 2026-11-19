@@ -423,6 +423,7 @@ impl<'a, T: AsULE> Iterator for ZeroSliceIter<'a, T> {
     where
         F: FnMut(B, Self::Item) -> B,
     {
+        // Delegate to the slice iterator's fold to benefit from its optimizations.
         self.0.copied().map(T::from_unaligned).fold(init, f)
     }
 }
