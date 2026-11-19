@@ -418,6 +418,14 @@ impl<'a, T: AsULE> Iterator for ZeroSliceIter<'a, T> {
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
     }
+
+    fn fold<B, F>(self, init: B, f: F) -> B
+    where
+        F: FnMut(B, Self::Item) -> B,
+    {
+        // Delegate to the slice iterator's fold to benefit from its optimizations.
+        self.0.copied().map(T::from_unaligned).fold(init, f)
+    }
 }
 
 impl<'a, T: AsULE> ExactSizeIterator for ZeroSliceIter<'a, T> {
@@ -629,6 +637,34 @@ where
 mod test {
     use super::*;
     use crate::zeroslice;
+
+    #[test]
+    fn test_iter_fold() {
+        const DATA: &ZeroSlice<u32> =
+            zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4]);
+
+        assert_eq!(DATA.iter().fold(9, |acc, n| acc * 10 + n), 91234);
+        assert_eq!(DATA.iter().rev().fold(9, |acc, n| acc * 10 + n), 94321);
+        assert_eq!(
+            ZeroSlice::<u32>::new_empty()
+                .iter()
+                .fold(9, |acc, n| acc * 10 + n),
+            9
+        );
+
+        let mut iter = DATA.iter();
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next_back(), Some(4));
+        let mut calls = 0;
+        assert_eq!(
+            iter.fold(9, |acc, n| {
+                calls += 1;
+                acc * 10 + n
+            }),
+            923
+        );
+        assert_eq!(calls, 2);
+    }
 
     #[test]
     fn test_split_first() {
