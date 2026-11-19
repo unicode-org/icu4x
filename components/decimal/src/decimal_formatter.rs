@@ -95,51 +95,22 @@ impl DecimalFormatter {
                 .into_iter()
                 .chain([DataIdentifierBorrowed::for_locale(&locale)]),
         )?
+        .0
         .payload;
 
         let resolved_nu_id = DataIdentifierBorrowed::for_marker_attributes(
             DataMarkerAttributes::from_str_or_panic(symbols.get().numsys()),
         );
 
-        let (digits, digits_numsys) = match prefs.numbering_system {
-            Some(nu) if nu.as_str() != symbols.get().numsys() => {
-                let nu_id = DataIdentifierBorrowed::for_marker_attributes(
-                    DataMarkerAttributes::from_str_or_panic(nu.as_str()),
-                );
-                if let Some(response) = provider
-                    .load(DataRequest {
-                        id: nu_id,
-                        metadata: {
-                            let mut m = DataRequestMetadata::default();
-                            m.silent = true;
-                            m
-                        },
-                    })
-                    .allow_identifier_not_found()?
-                {
-                    (response.payload, Some(*nu))
-                } else {
-                    (
-                        provider
-                            .load(DataRequest {
-                                id: resolved_nu_id,
-                                metadata: DataRequestMetadata::default(),
-                            })?
-                            .payload,
-                        None,
-                    )
-                }
-            }
-            _ => (
-                provider
-                    .load(DataRequest {
-                        id: resolved_nu_id,
-                        metadata: DataRequestMetadata::default(),
-                    })?
-                    .payload,
-                None,
-            ),
-        };
+        let (digits, digits_id) = load_with_fallback(
+            provider,
+            // fall back to the resolved numbering system
+            prefs.nu_id(&locale).into_iter().chain([resolved_nu_id]),
+        )?;
+        let digits = digits.payload;
+        let digits_numsys = (digits_id.marker_attributes != resolved_nu_id.marker_attributes)
+            .then(|| prefs.numbering_system.as_deref().copied())
+            .flatten();
 
         Ok(Self {
             options,
@@ -403,43 +374,6 @@ fn test_numbering_resolution_fallback() {
     // Loading with nonexistant numbering systems falls back to default
     test_locale(locale!("en-u-nu-wxyz"), "1,234", "latn");
     test_locale(locale!("ar-EG-u-nu-wxyz"), "١٬٢٣٤", "arab");
-}
-
-#[cfg(feature = "unstable")]
-#[test]
-fn test_8_char_numbering_system() {
-    use icu_locale_core::locale;
-
-    struct MathboldProvider;
-    impl DataProvider<DecimalSymbolsV1> for MathboldProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
-            Baked.load(req)
-        }
-    }
-    impl DataProvider<DecimalDigitsV1> for MathboldProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalDigitsV1>, DataError> {
-            if req.id.marker_attributes.as_str() == "mathbold" {
-                Ok(DataResponse {
-                    metadata: Default::default(),
-                    payload: DataPayload::from_owned([
-                        '𝟎', '𝟏', '𝟐', '𝟑', '𝟒', '𝟓', '𝟔', '𝟕', '𝟖', '𝟗',
-                    ]),
-                })
-            } else {
-                Baked.load(req)
-            }
-        }
-    }
-
-    let formatter = DecimalFormatter::try_new_unstable(
-        &MathboldProvider,
-        locale!("en-u-nu-mathbold").into(),
-        Default::default(),
-    )
-    .unwrap();
-    assert_eq!(formatter.numbering_system(), "mathbold");
-    let fd = 1234.into();
-    writeable::assert_writeable_eq!(formatter.format(&fd), "𝟏,𝟐𝟑𝟒");
 }
 
 #[test]

@@ -511,7 +511,7 @@ impl<P: PatternBackend> CompactPatterns<'static, P> {
 pub(crate) fn load_with_fallback<'a, M: DataMarker>(
     provider: &(impl DataProvider<M> + ?Sized),
     ids: impl Iterator<Item = DataIdentifierBorrowed<'a>>,
-) -> Result<DataResponse<M>, DataError> {
+) -> Result<(DataResponse<M>, DataIdentifierBorrowed<'a>), DataError> {
     let mut ids = ids.peekable();
 
     while let Some(id) = ids.next() {
@@ -527,13 +527,16 @@ pub(crate) fn load_with_fallback<'a, M: DataMarker>(
                 })
                 .allow_identifier_not_found()?
             {
-                return Ok(r);
+                return Ok((r, id));
             }
         } else {
-            return provider.load(DataRequest {
+            return Ok((
+                provider.load(DataRequest {
+                    id,
+                    metadata: DataRequestMetadata::default(),
+                })?,
                 id,
-                metadata: DataRequestMetadata::default(),
-            });
+            ));
         }
     }
 

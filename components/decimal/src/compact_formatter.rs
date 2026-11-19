@@ -119,6 +119,7 @@ impl CompactDecimalFormatter {
                     .into_iter()
                     .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
+            .0
             .payload
             .cast(),
         })
@@ -162,6 +163,7 @@ impl CompactDecimalFormatter {
                     .into_iter()
                     .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
+            .0
             .payload
             .cast(),
         })
@@ -204,6 +206,7 @@ impl CompactDecimalFormatter {
                     .into_iter()
                     .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
+            .0
             .payload
             .cast(),
         })
@@ -247,6 +250,7 @@ impl CompactDecimalFormatter {
                     .into_iter()
                     .chain([DataIdentifierBorrowed::for_locale(&locale)]),
             )?
+            .0
             .payload
             .cast(),
         })
