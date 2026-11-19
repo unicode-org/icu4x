@@ -1674,7 +1674,7 @@ where
                             if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                                 let ce_for_combining =
                                     CollationElement::new_from_secondary(secondary);
-                                self.pending.push(ce_for_combining);
+                                self.push_pending(ce_for_combining);
                                 self.mark_prefix_unmatchable();
                                 return ce;
                             }
@@ -1695,7 +1695,7 @@ where
                                 } else if let Some(ce) = default.to_ce_simple_or_long_primary() {
                                     let ce_for_combining =
                                         CollationElement::new_from_secondary(secondary);
-                                    self.pending.push(ce_for_combining);
+                                    self.push_pending(ce_for_combining);
                                     self.mark_prefix_unmatchable();
                                     return ce;
                                 }
@@ -1722,14 +1722,14 @@ where
                             // TODO(#1941): Assuming self-contained CE32s is OK for the root,
                             // but not currently OK for search collation, which at this time
                             // do not support tailored Hangul.
-                            self.pending.push(
+                            self.push_pending(
                                 CollationElement32::new_from_ule(
                                     self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
                                 )
                                 .to_ce_self_contained_or_gigo(),
                             );
                             if t != 0 {
-                                self.pending.push(
+                                self.push_pending(
                                     CollationElement32::new_from_ule(
                                         self.jamo[(HANGUL_T_BASE - HANGUL_L_BASE + t) as usize],
                                     )
@@ -1748,7 +1748,7 @@ where
                         // Indexing OK, because indices in range by construction
                         #[expect(clippy::indexing_slicing)]
                         if t != 0 {
-                            self.pending.push(
+                            self.push_pending(
                                 CollationElement32::new_from_ule(
                                     self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
                                 )
@@ -1824,7 +1824,7 @@ where
                                 let char_from_u = char_from_u16(u);
                                 let trie_value = self.iter.trie().bmp(u);
                                 let ccc = ccc_from_trie_value(trie_value);
-                                combining_characters.push(CharacterAndClass::new(char_from_u, ccc));
+                                Self::push_combining(&mut combining_characters, char_from_u, ccc);
                             }
                         } else {
                             let mut it = tail.iter();
@@ -1834,7 +1834,7 @@ where
                                 if ccc != CanonicalCombiningClass::NotReordered {
                                     // As of Unicode 14, this branch is never taken.
                                     // It exist for forward compatibility.
-                                    combining_characters.push(CharacterAndClass::new(ch, ccc));
+                                    Self::push_combining(&mut combining_characters, ch, ccc);
                                     continue;
                                 }
 
@@ -1876,7 +1876,7 @@ where
                             for ch in tail.iter() {
                                 let trie_value = self.iter.trie().scalar(ch);
                                 let ccc = ccc_from_trie_value(trie_value);
-                                combining_characters.push(CharacterAndClass::new(ch, ccc));
+                                Self::push_combining(&mut combining_characters, ch, ccc);
                             }
                         } else {
                             let mut it = tail.iter();
@@ -1885,7 +1885,7 @@ where
                                 if ccc != CanonicalCombiningClass::NotReordered {
                                     // As of Unicode 14, this branch is never taken.
                                     // It exist for forward compatibility.
-                                    combining_characters.push(CharacterAndClass::new(ch, ccc));
+                                    Self::push_combining(&mut combining_characters, ch, ccc);
                                     continue;
                                 }
                                 // At this point, we might have a single newly-read
@@ -1930,14 +1930,14 @@ where
                     // TODO(#2002): Ensure that the CE32 flavors in this loop are checked in the optimal
                     // order given their frequency in real workloads.
                     if let Some(ce) = ce32.to_ce_self_contained() {
-                        self.pending.push(ce);
+                        self.push_pending(ce);
                         break 'ce32loop;
                     } else {
                         match ce32.tag() {
                             Tag::Expansion32 => {
                                 let ce32s = data.get_ce32s(ce32.index(), ce32.len());
                                 for u in ce32s.iter() {
-                                    self.pending.push(
+                                    self.push_pending(
                                         CollationElement32::new(u).to_ce_self_contained_or_gigo(),
                                     );
                                 }
@@ -1946,7 +1946,7 @@ where
                             Tag::Expansion => {
                                 let ces = data.get_ces(ce32.index(), ce32.len());
                                 for u in ces.iter() {
-                                    self.pending.push(CollationElement::new(u));
+                                    self.push_pending(CollationElement::new(u));
                                 }
                                 break 'ce32loop;
                             }
@@ -2213,7 +2213,7 @@ where
                                             let mut first_byte = 2u32;
                                             let mut num_bytes = 74u32;
                                             if value < num_bytes {
-                                                self.pending.push(
+                                                self.push_pending(
                                                     CollationElement::new_from_primary(
                                                         numeric_primary
                                                             | ((first_byte + value) << 16),
@@ -2226,7 +2226,7 @@ where
                                             num_bytes = 40;
                                             if value < num_bytes * 254 {
                                                 // Three-byte primary for 74..10233=74+40*254-1, good for year numbers and more.
-                                                self.pending.push(
+                                                self.push_pending(
                                                     CollationElement::new_from_primary(
                                                         numeric_primary
                                                             | ((first_byte + value / 254) << 16)
@@ -2246,7 +2246,7 @@ where
                                                 primary |= (2 + value % 254) << 8;
                                                 value /= 254;
                                                 primary |= (first_byte + value % 254) << 16;
-                                                self.pending.push(
+                                                self.push_pending(
                                                     CollationElement::new_from_primary(primary),
                                                 );
                                                 continue;
@@ -2299,7 +2299,7 @@ where
                                         {
                                             if shift == 0 {
                                                 primary |= pair;
-                                                self.pending.push(
+                                                self.push_pending(
                                                     CollationElement::new_from_primary(primary),
                                                 );
                                                 primary = numeric_primary;
@@ -2312,8 +2312,9 @@ where
                                                 11 + 2 * (u32::from(left) * 10 + u32::from(right));
                                         }
                                         primary |= (pair - 1) << shift;
-                                        self.pending
-                                            .push(CollationElement::new_from_primary(primary));
+                                        self.push_pending(CollationElement::new_from_primary(
+                                            primary,
+                                        ));
                                     }
                                     break 'ce32loop;
                                 }
@@ -2321,12 +2322,11 @@ where
                                 continue 'ce32loop;
                             }
                             Tag::Offset => {
-                                self.pending.push(data.ce_from_offset_ce32(c, ce32));
+                                self.push_pending(data.ce_from_offset_ce32(c, ce32));
                                 break 'ce32loop;
                             }
                             Tag::Implicit => {
-                                self.pending
-                                    .push(CollationElement::new_implicit_from_char(c));
+                                self.push_pending(CollationElement::new_implicit_from_char(c));
                                 break 'ce32loop;
                             }
                             Tag::Fallback
@@ -2340,7 +2340,7 @@ where
                             | Tag::Hangul => {
                                 debug_assert!(false);
                                 // GIGO case
-                                self.pending.push(FFFD_CE);
+                                self.push_pending(FFFD_CE);
                                 break 'ce32loop;
                             }
                         }
@@ -2372,8 +2372,7 @@ where
                                 i += 1;
                                 continue 'combining;
                             }
-                            self.pending
-                                .push(CollationElement::new_from_secondary(secondary));
+                            self.push_pending(CollationElement::new_from_secondary(secondary));
                             self.mark_prefix_unmatchable();
                             i += 1;
                             continue 'combining;
@@ -2469,68 +2468,79 @@ where
                 match combining_c {
                     '\u{0340}' => {
                         // COMBINING GRAVE TONE MARK
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0300}',
                             CanonicalCombiningClass::Above,
-                        ));
+                        );
                     }
                     '\u{0341}' => {
                         // COMBINING ACUTE TONE MARK
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0301}',
                             CanonicalCombiningClass::Above,
-                        ));
+                        );
                     }
                     '\u{0343}' => {
                         // COMBINING GREEK KORONIS
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0313}',
                             CanonicalCombiningClass::Above,
-                        ));
+                        );
                     }
                     '\u{0344}' => {
                         // COMBINING GREEK DIALYTIKA TONOS
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0308}',
                             CanonicalCombiningClass::Above,
-                        ));
-                        combining_characters.push(CharacterAndClass::new(
+                        );
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0301}',
                             CanonicalCombiningClass::Above,
-                        ));
+                        );
                     }
                     '\u{0F73}' => {
                         // TIBETAN VOWEL SIGN II
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0F71}',
                             CanonicalCombiningClass::CCC129,
-                        ));
-                        combining_characters.push(CharacterAndClass::new(
+                        );
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0F72}',
                             CanonicalCombiningClass::CCC130,
-                        ));
+                        );
                     }
                     '\u{0F75}' => {
                         // TIBETAN VOWEL SIGN UU
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0F71}',
                             CanonicalCombiningClass::CCC129,
-                        ));
-                        combining_characters.push(CharacterAndClass::new(
+                        );
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0F74}',
                             CanonicalCombiningClass::CCC132,
-                        ));
+                        );
                     }
                     '\u{0F81}' => {
                         // TIBETAN VOWEL SIGN REVERSED II
-                        combining_characters.push(CharacterAndClass::new(
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0F71}',
                             CanonicalCombiningClass::CCC129,
-                        ));
-                        combining_characters.push(CharacterAndClass::new(
+                        );
+                        Self::push_combining(
+                            combining_characters,
                             '\u{0F80}',
                             CanonicalCombiningClass::CCC130,
-                        ));
+                        );
                     }
                     _ => {
                         combining_characters.push(combining);
@@ -2551,6 +2561,20 @@ where
                 .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(self.iter.trie()));
             sort_by_ccc(combining_characters);
         }
+    }
+
+    #[inline(always)]
+    fn push_pending(&mut self, ce: CollationElement) {
+        self.pending.push(ce);
+    }
+
+    #[inline(always)]
+    fn push_combining(
+        combining_characters: &mut SmallVec<[CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE]>,
+        c: char,
+        ccc: CanonicalCombiningClass,
+    ) {
+        combining_characters.push(CharacterAndClass::new(c, ccc));
     }
 }
 
