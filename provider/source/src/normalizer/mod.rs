@@ -798,8 +798,8 @@ fn bmp(mappings: &[(char, char, u64)]) -> bool {
     true
 }
 
-/// Builds the new-format canonical compositions from `(starter, second, composite)` triples.
-fn canonical_compositions_v2(
+/// Builds the canonical compositions from `(starter, second, composite)` triples.
+fn canonical_compositions(
     compositions: &[(char, char, char)],
 ) -> Result<CanonicalCompositionsV2<'static>, DataError> {
     let rankings: HashMap<char, u64> =
@@ -949,8 +949,7 @@ pub(crate) struct NormalizerData {
     uts46: DecompositionTrieValues,
     nfd_tables: DecompositionTables<'static>,
     nfkd_tables: DecompositionTables<'static>,
-    canonical_compositions: CanonicalCompositions<'static>,
-    canonical_compositions_v2: CanonicalCompositionsV2<'static>,
+    canonical_compositions: CanonicalCompositionsV2<'static>,
     non_recursive: NonRecursiveValues,
 }
 
@@ -1072,7 +1071,7 @@ impl NormalizerData {
                     Some(&[starter, second]) if !full_composition_exclusion.contains(composite) => {
                         compositions.push((starter, second, composite));
 
-                        // `canonical_compositions_v2` stores pairs whose first
+                        // `canonical_compositions` stores pairs whose first
                         // character is an ASCII vowel under the second character,
                         // but `compose_starter` doesn't swap, so it would miss
                         // starter + starter compositions with an ASCII vowel first.
@@ -1091,9 +1090,7 @@ impl NormalizerData {
                 }
             };
         }
-        let canonical_compositions =
-            CanonicalCompositions::from_compositions(compositions.iter().copied());
-        let canonical_compositions_v2 = canonical_compositions_v2(&compositions)?;
+        let canonical_compositions = canonical_compositions(&compositions)?;
         let backward_combining_starters = backward_combining_starters.build();
 
         // The characters that don't trivially decompose to themselves in each flavor:
@@ -1118,7 +1115,7 @@ impl NormalizerData {
             ccc,
             &backward_combining_starters,
             &nfd_candidates,
-            &canonical_compositions_v2,
+            &canonical_compositions,
         )?;
         let nfc = nfc.as_borrowed();
         let classifier = Classifier {
@@ -1180,7 +1177,6 @@ impl NormalizerData {
             // in the NFD or NFKD tables.
             nfkd_tables: tables.supplementary,
             canonical_compositions,
-            canonical_compositions_v2,
             non_recursive: NonRecursiveValues::new(&nfd, &nfd_mapping, ccc)?,
         })
     }
@@ -1301,11 +1297,8 @@ normalization_provider!(NormalizerUts46DataV1, |p, data| data
 normalization_provider!(NormalizerNfdTablesV1, |_p, data| data.nfd_tables.clone());
 // No UTS 46 tables, because that data is also in the NFKD tables.
 normalization_provider!(NormalizerNfkdTablesV1, |_p, data| data.nfkd_tables.clone());
-normalization_provider!(NormalizerNfcV1, |_p, data| data
-    .canonical_compositions
-    .clone());
 normalization_provider!(NormalizerNfcV2, |_p, data| data
-    .canonical_compositions_v2
+    .canonical_compositions
     .clone());
 normalization_provider!(NormalizerNfdSupplementV1, |p, data| data
     .non_recursive
