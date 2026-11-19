@@ -532,6 +532,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "composition_freq"
+version = "0.0.0"
+dependencies = [
+ "icu_normalizer",
+ "serde_json",
+ "tinystr",
+]
+
+[[package]]
 name = "console"
 version = "0.16.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1743,6 +1752,7 @@ dependencies = [
  "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
+ "icu_provider_blob",
  "serde",
  "smallvec",
  "utf16_iter",

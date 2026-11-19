@@ -19,6 +19,7 @@ use crate::TrieType;
 use crate::properties::ucd_helpers;
 use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 use icu::collections::codepointtrie::CodePointTrieBuilder;
+use icu::collections::codepointtrie::FastCodePointTrie;
 use icu::normalizer::provider::*;
 use icu::normalizer::{ComposingNormalizer, ComposingNormalizerBorrowed};
 use icu::properties::props::{CanonicalCombiningClass, FullCompositionExclusion};
@@ -32,6 +33,8 @@ use zerovec::ZeroVec;
 const HANGUL_S_BASE: u32 = 0xAC00;
 /// Lead jamo base
 const HANGUL_L_BASE: u32 = 0x1100;
+/// Lead jamo count
+const HANGUL_L_COUNT: u32 = 19;
 /// Vowel jamo base
 const HANGUL_V_BASE: u32 = 0x1161;
 /// Trail jamo base (deliberately off by one to account for the absence of a trail)
@@ -40,6 +43,10 @@ const HANGUL_T_BASE: u32 = 0x11A7;
 const HANGUL_T_COUNT: u32 = 28;
 /// Vowel jamo count times trail jamo count
 const HANGUL_N_COUNT: u32 = 588;
+/// Syllable count
+const HANGUL_S_COUNT: u32 = 11172;
+/// Trie value base corresponding for L
+const HANGUL_L_TRIE_VAL_BASE: u16 = 0xD6A7;
 /// Hangul syllables
 const HANGUL_SYLLABLES: std::ops::RangeInclusive<u32> = 0xAC00..=0xD7A3;
 
@@ -743,6 +750,198 @@ impl NonRecursiveValues {
     }
 }
 
+// This is just for memory locality within `linear`.
+// Probably not worthwhile to put more effort into
+// this.
+fn rank_primary(primary: char) -> u32 {
+    match primary {
+        '\u{0300}'..='\u{036F}' => 0,
+        'a'..='z' => 1,
+        'A'..='Z' => 2,
+        'à'..='ÿ' => 3,
+        'À'..='Ý' => 4,
+        '\u{0100}'..='\u{02FF}' => 5,
+        '\u{1E00}'..='\u{1EFF}' => 6,
+        '\u{0370}'..='\u{03FF}' => 7,
+        '\u{1F00}'..='\u{1FFF}' => 8,
+        _ => u32::MAX,
+    }
+}
+
+// Fallback when there is no frequency data
+fn rank_secondary(secondary: char) -> u8 {
+    match secondary {
+        'e' => 0,
+        'a' => 1,
+        'o' => 2,
+        'i' => 3,
+        'u' => 4,
+        'E' => 5,
+        'A' => 6,
+        'O' => 7,
+        'I' => 8,
+        'U' => 9,
+        '\u{0301}' => 10,
+        _ => u8::MAX,
+    }
+}
+
+fn bmp(mappings: &[(char, char, u64)]) -> bool {
+    for (secondary, composed, _) in mappings {
+        if *secondary > '\u{FFFF}' {
+            return false;
+        }
+        if *composed > '\u{FFFF}' {
+            return false;
+        }
+    }
+    true
+}
+
+/// Builds the new-format canonical compositions from `(starter, second, composite)` triples.
+fn canonical_compositions_v2(
+    compositions: &[(char, char, char)],
+) -> Result<CanonicalCompositionsV2<'static>, DataError> {
+    let rankings: HashMap<char, u64> =
+        serde_json::from_str(include_str!("../../data/nfc_statistics.json"))
+            .map_err(|e| DataError::custom("JSON deserialize").with_display_context(&e))?;
+
+    let mut hash: HashMap<char, Vec<(char, char, u64)>> = HashMap::new();
+    for &(first, second, c) in compositions {
+        let (primary, secondary) = match first {
+            'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U' => {
+                // This special case balances out the max length of entries
+                // in `linear` so that no entry exceeds 10 items as of Unicode 17.
+                (second, first)
+            }
+            _ => (first, second),
+        };
+        let entry = hash.entry(primary).or_default();
+        entry.push((secondary, c, u64::MAX - *rankings.get(&c).unwrap_or(&0)));
+    }
+    let mut keys: Vec<char> = hash.keys().copied().collect();
+    // The sort order can be changed freely here without
+    // changing the lookup code or affecting correctness.
+    // However, the order chosen here affects the memory
+    // locality of accesses to `linear`.
+    keys.sort_by_key(|&primary| (rank_primary(primary), primary));
+
+    let default_value = 0b11111_11111_11111; // 15 bits set
+    let error_value = 0b11111_11111_11111;
+
+    let mut builder = CodePointTrieBuilder::new(
+        default_value,
+        error_value,
+        icu::collections::codepointtrie::TrieType::Fast,
+    );
+
+    let mut linear16: Vec<(u16, u16)> = Vec::new();
+    let mut linear24: Vec<(char, char)> = Vec::new();
+
+    // Could be at most 0xD6A6, but let's have a nice binary-round number for more obvious debugging
+    // and perhaps compressibility.
+    let lv_marker = 0xD600u16;
+
+    for primary in keys.into_iter() {
+        let v = hash.get_mut(&primary).unwrap();
+        // The sort order can be changed freely here without
+        // changing the lookup code or affecting correctness.
+        // However, the order chosen here affects how quickly
+        // the linear search terminates when a match exists,
+        // so considering the relative frequences of the possible
+        // `secondary` values _given_ `primary`, the possible
+        // `secondary` values should be sorted from most frequent
+        // to least frequent.
+        v.sort_by_key(|(secondary, _, rank)| (*rank, rank_secondary(*secondary), *secondary));
+
+        // Trie value format:
+        //
+        // HANGUL_L_TRIE_VAL_BASE through and inclusive 0xFFFF mark Hangul
+        // lead jamo such that the value is
+        // `((c - `HANGUL_L_BASE`) * HANGUL_N_COUNT) + HANGUL_L_TRIE_VAL_BASE`.
+        // (Only every 588th value is used. The above always have
+        // the most-significant bit set.)
+        //
+        // Otherwise:
+        // Bit 15 is 1 if lookup is from linear24 and 0 if from
+        // linear16.
+        //
+        // Bits 0..3 are slice length. (We need to be able to encode 10,
+        // and this allows us to encode 15. No need to spend one
+        // instruction upon decode to account for never having to
+        // encode 0.)
+        //
+        // The other bits (4..14) are the start index.
+        //
+        // Any trie value that has bit 15 set but the index bits
+        // are out of bounds for linear24 is considered to mark
+        // a Hangul LV syllable.
+        let (supplementary, start, len) = if bmp(v) {
+            let start = linear16.len();
+            for (secondary, composed, _) in v {
+                linear16.push((*secondary as u16, *composed as u16));
+            }
+            let len = linear16.len() - start;
+            (false, start, len)
+        } else {
+            let start = linear24.len();
+            for (secondary, composed, _) in v {
+                linear24.push((*secondary, *composed));
+            }
+            let len = linear24.len() - start;
+            (true, start, len)
+        };
+        assert!(len < 16);
+        let start_and_len = start << 4 | len;
+        assert!(start_and_len < default_value as usize);
+        if supplementary {
+            let tagged_start_and_len = start_and_len | (1 << 15);
+            assert!(tagged_start_and_len < lv_marker as usize);
+            builder.set_value(u32::from(primary), tagged_start_and_len as u16);
+        } else {
+            builder.set_value(u32::from(primary), start_and_len as u16);
+        }
+    }
+
+    // The lookup code distinguishes the special trie values from
+    // real entries by the special values decoding to slices that
+    // are out of bounds. Check that the arrays don't grow long enough
+    // to make those slices in bounds.
+    //
+    // `default_value` decodes to a linear16 slice.
+    assert!(linear16.len() < usize::from(default_value >> 4) + usize::from(default_value & 0b1111));
+    // Values with bit 15 set are first looked up in linear16 without
+    // masking off bit 15, which makes their linear16 start index at
+    // least 0x800.
+    assert!(linear16.len() <= 0x800);
+    // `lv_marker` decodes to an empty linear24 slice. (Hangul lead
+    // jamo values decode to linear24 slices that start even later.)
+    assert!(linear24.len() < usize::from((lv_marker >> 4) & 0b1_11111_11111));
+
+    for l in 0..HANGUL_L_COUNT {
+        builder.set_value(
+            HANGUL_L_BASE + l,
+            HANGUL_L_TRIE_VAL_BASE + (l * HANGUL_N_COUNT) as u16,
+        );
+    }
+
+    // According to databake, the cost of marking the lv syllables vs. marking
+    // the full syllable range is 96 bytes. It seems well worthwhile to pay
+    // 96 bytes in size in order to avoid costlier math at normalization time.
+    let mut lv = HANGUL_S_BASE;
+    while lv < HANGUL_S_BASE + HANGUL_S_COUNT {
+        builder.set_value(lv, lv_marker);
+        lv += HANGUL_T_COUNT;
+    }
+
+    Ok(CanonicalCompositionsV2 {
+        trie: FastCodePointTrie::try_from(builder.build())
+            .map_err(|_| DataError::custom("expected fast trie"))?,
+        linear16: ZeroVec::alloc_from_slice(&linear16),
+        linear24: ZeroVec::alloc_from_slice(&linear24),
+    })
+}
+
 #[derive(Debug)]
 pub(crate) struct NormalizerData {
     nfd: DecompositionTrieValues,
@@ -751,6 +950,7 @@ pub(crate) struct NormalizerData {
     nfd_tables: DecompositionTables<'static>,
     nfkd_tables: DecompositionTables<'static>,
     canonical_compositions: CanonicalCompositions<'static>,
+    canonical_compositions_v2: CanonicalCompositionsV2<'static>,
     non_recursive: NonRecursiveValues,
 }
 
@@ -872,6 +1072,17 @@ impl NormalizerData {
                     Some(&[starter, second]) if !full_composition_exclusion.contains(composite) => {
                         compositions.push((starter, second, composite));
 
+                        // `canonical_compositions_v2` stores pairs whose first
+                        // character is an ASCII vowel under the second character,
+                        // but `compose_starter` doesn't swap, so it would miss
+                        // starter + starter compositions with an ASCII vowel first.
+                        if matches!(
+                            starter,
+                            'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U'
+                        ) {
+                            assert_ne!(ccc.get(second), CanonicalCombiningClass::NotReordered);
+                        }
+
                         if ccc.get(second) == CanonicalCombiningClass::NotReordered {
                             backward_combining_starters.add_char(second);
                         }
@@ -880,7 +1091,9 @@ impl NormalizerData {
                 }
             };
         }
-        let canonical_compositions = CanonicalCompositions::from_compositions(compositions);
+        let canonical_compositions =
+            CanonicalCompositions::from_compositions(compositions.iter().copied());
+        let canonical_compositions_v2 = canonical_compositions_v2(&compositions)?;
         let backward_combining_starters = backward_combining_starters.build();
 
         // The characters that don't trivially decompose to themselves in each flavor:
@@ -905,7 +1118,7 @@ impl NormalizerData {
             ccc,
             &backward_combining_starters,
             &nfd_candidates,
-            &canonical_compositions,
+            &canonical_compositions_v2,
         )?;
         let nfc = nfc.as_borrowed();
         let classifier = Classifier {
@@ -967,6 +1180,7 @@ impl NormalizerData {
             // in the NFD or NFKD tables.
             nfkd_tables: tables.supplementary,
             canonical_compositions,
+            canonical_compositions_v2,
             non_recursive: NonRecursiveValues::new(&nfd, &nfd_mapping, ccc)?,
         })
     }
@@ -978,7 +1192,7 @@ impl NormalizerData {
         ccc: CodePointMapDataBorrowed<CanonicalCombiningClass>,
         backward_combining_starters: &CodePointInversionList,
         candidates: &CodePointInversionList,
-        canonical_compositions: &CanonicalCompositions<'static>,
+        canonical_compositions: &CanonicalCompositionsV2<'static>,
     ) -> Result<ComposingNormalizer, DataError> {
         let nfd = Classifier {
             ccc,
@@ -994,7 +1208,7 @@ impl NormalizerData {
         struct BootstrapProvider {
             data: DecompositionData<'static>,
             tables: DecompositionTables<'static>,
-            canonical_compositions: CanonicalCompositions<'static>,
+            canonical_compositions: CanonicalCompositionsV2<'static>,
         }
 
         impl DataProvider<NormalizerNfdDataV1> for BootstrapProvider {
@@ -1018,8 +1232,8 @@ impl NormalizerData {
             }
         }
 
-        impl DataProvider<NormalizerNfcV1> for BootstrapProvider {
-            fn load(&self, _: DataRequest) -> Result<DataResponse<NormalizerNfcV1>, DataError> {
+        impl DataProvider<NormalizerNfcV2> for BootstrapProvider {
+            fn load(&self, _: DataRequest) -> Result<DataResponse<NormalizerNfcV2>, DataError> {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(self.canonical_compositions.clone()),
@@ -1089,6 +1303,9 @@ normalization_provider!(NormalizerNfdTablesV1, |_p, data| data.nfd_tables.clone(
 normalization_provider!(NormalizerNfkdTablesV1, |_p, data| data.nfkd_tables.clone());
 normalization_provider!(NormalizerNfcV1, |_p, data| data
     .canonical_compositions
+    .clone());
+normalization_provider!(NormalizerNfcV2, |_p, data| data
+    .canonical_compositions_v2
     .clone());
 normalization_provider!(NormalizerNfdSupplementV1, |p, data| data
     .non_recursive
