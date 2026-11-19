@@ -784,20 +784,22 @@ jobs:
 
     # The release job publishes the attestation bundles with the binaries, so
     # that copies of them, such as on a mirror, can be verified offline with
-    # `gh attestation verify <file> --repo unicode-org/icu4x --bundle provenance.intoto.jsonl`.
+    # `gh attestation verify <file> --repo unicode-org/icu4x
+    # --bundle provenance.intoto.jsonl`. The job index keeps the names of the
+    # bundles of the matrix jobs apart.
     - name: Name the provenance attestation bundle
       shell: bash
       env:
         BUNDLE: ${{ steps.attest.outputs.bundle-path }}
-        NAME: ffi-${{matrix.os}}-${{ matrix.compiletype }}${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}
+        INDEX: ${{ strategy.job-index }}
       run: |
         mkdir -p "$RUNNER_TEMP/provenance"
-        cp "$BUNDLE" "$RUNNER_TEMP/provenance/$NAME.intoto.jsonl"
+        cp "$BUNDLE" "$RUNNER_TEMP/provenance/$INDEX.intoto.jsonl"
 
     - name: Upload the provenance attestation bundle
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
-        name: provenance-ffi-${{matrix.os}}-${{ matrix.compiletype }}${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}
+        name: provenance-ffi-${{ strategy.job-index }}
         path: ${{ runner.temp }}/provenance/*
         if-no-files-found: error
 

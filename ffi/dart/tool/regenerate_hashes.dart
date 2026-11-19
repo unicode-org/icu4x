@@ -14,7 +14,9 @@ const _artifactsWorkflow = '.github/workflows/artifacts-build.yml';
 /// Pins the SHA-256 hashes of the pre-built binaries of the GitHub release
 /// `<github tag>` in lib/src/hook_helpers/hashes.dart.
 ///
-/// Usage: `dart tool/regenerate_hashes.dart [--no-verify-attestations] <github tag>`
+/// Usage:
+///
+///     dart tool/regenerate_hashes.dart [--no-verify-attestations] <github tag>
 ///
 /// Unless `--no-verify-attestations` is passed, first checks with the GitHub
 /// CLI (`gh attestation verify`) that each binary has a provenance attestation
