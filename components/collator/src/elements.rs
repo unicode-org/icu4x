@@ -972,42 +972,66 @@ where
             self.initialized = true;
         }
 
-        // Ensure the last item is a starter (unless)
-        // iter exhausted.
-        if let Some(last) = self.upcoming.last()
-            && last.decomposition_starts_with_non_starter()
-        {
-            // Not using `while let` to be able to set `iter_exhausted`
-            loop {
+        loop {
+            // Ensure the last item is a starter (unless the
+            // iterator has been exhausted).
+            if let Some(last) = self.upcoming.last() {
+                if last.decomposition_starts_with_non_starter() {
+                    // Not using `while let` to be able to set `iter_exhausted`
+                    loop {
+                        if let Some(ch) = self.iter_next() {
+                            let starter = !ch.decomposition_starts_with_non_starter();
+                            self.upcoming.push(ch);
+                            if starter {
+                                break;
+                            }
+                        } else {
+                            #[cfg(debug_assertions)]
+                            {
+                                self.iter_exhausted = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if let Some(first) = self.upcoming.first()
+                    && !first.decomposition_starts_with_non_starter()
+                {
+                    return;
+                }
+            } else {
+                // Ensure that `upcoming` starts with a starter in the case where
+                // we get here with an empty `upcoming` due to the identical prefix
+                // code exiting right away, because the very first code units differ.
                 if let Some(ch) = self.iter_next() {
                     let starter = !ch.decomposition_starts_with_non_starter();
                     self.upcoming.push(ch);
                     if starter {
-                        break;
+                        return;
                     }
+                    // Loop back to uphold the invariant that `upcoming` ends with
+                    // a character whose decomposition starts with a starter unless
+                    // the iterator has been exhausted.
+                    continue;
                 } else {
                     #[cfg(debug_assertions)]
                     {
                         self.iter_exhausted = true;
                     }
-                    break;
+                    return;
                 }
             }
+            break;
         }
 
-        let mut starts_with_starter = false;
-        if let Some(first) = self.upcoming.first()
-            && !first.decomposition_starts_with_non_starter()
-        {
-            starts_with_starter = true;
-        }
-        if !starts_with_starter {
-            self.upcoming.insert(
-                0,
-                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{FFFF}'),
-            ); // Make sure the process always begins with a starter
-            let _ = self.next(); // Remove the placeholder starter
-        }
+        // The case where upcoming does not start with a starter.
+        // Ideally, we'd have something more specialized here that would extract
+        // the code path that `self.next()` runs after dealing with the U+0000.
+        self.upcoming.insert(
+            0,
+            CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{0}'),
+        ); // Make sure the process always begins with a starter
+        let _ = self.next(); // Remove the placeholder starter
     }
 
     fn iter_next(&mut self) -> Option<CharacterAndClassAndTrieValue> {
