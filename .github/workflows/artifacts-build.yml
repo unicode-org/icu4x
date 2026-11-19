@@ -828,17 +828,14 @@ jobs:
           path: provenance
           merge-multiple: true
 
-      # SHA256SUMS.txt lists the hashes of the binaries, and
       # provenance.intoto.jsonl has one attestation bundle per line, which
       # `gh attestation verify --bundle` accepts as is.
-      - name: Add the checksums and provenance attestations
+      - name: Combine the provenance attestation bundles
         working-directory: bin
         run: |
-          sha256sum -- * > SHA256SUMS.txt
           for bundle in ../provenance/*.intoto.jsonl; do
             jq -c . "$bundle"
           done > provenance.intoto.jsonl
-          cat SHA256SUMS.txt
 
       - name: Display structure of downloaded files
         run: ls -R
