@@ -6,10 +6,32 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart' show sha256;
 
+const _repository = 'unicode-org/icu4x';
+
+/// The workflow that builds, attests, and uploads the pre-built binaries.
+const _artifactsWorkflow = '.github/workflows/artifacts-build.yml';
+
+/// Pins the SHA-256 hashes of the pre-built binaries of the GitHub release
+/// `<github tag>` in lib/src/hook_helpers/hashes.dart.
+///
+/// Usage:
+///
+///     dart tool/regenerate_hashes.dart [--no-verify-attestations] <github tag>
+///
+/// Unless `--no-verify-attestations` is passed, first checks with the GitHub
+/// CLI (`gh attestation verify`) that each binary has a provenance attestation
+/// from [_artifactsWorkflow] of [_repository], run on a GitHub-hosted runner,
+/// and fails without writing anything otherwise. Releases from before
+/// [_artifactsWorkflow] attested the binaries need `--no-verify-attestations`.
 Future<void> main(List<String> args) async {
-  final version = args[0];
+  final verifyAttestations = !args.contains('--no-verify-attestations');
+  final version = args.where((arg) => !arg.startsWith('--')).single;
 
   final httpClient = HttpClient();
+  // Holds the downloaded binaries while their attestations are verified.
+  final downloadDir = verifyAttestations
+      ? await Directory.systemTemp.createTemp('icu4x_release_assets_')
+      : null;
 
   print('Checking hashes for $version');
   final fileHashes = <(String, String), String>{};
@@ -54,11 +76,19 @@ Future<void> main(List<String> args) async {
       }
       final bytes = await response.fold<List<int>>([], (a, b) => a..addAll(b));
       final fileHash = sha256.convert(bytes).toString();
+      if (downloadDir != null) {
+        final file = File.fromUri(
+          downloadDir.uri.resolve('icu4x-2-$libraryType-$rustTarget'),
+        );
+        await file.writeAsBytes(bytes);
+        await _verifyAttestation(file);
+      }
       fileHashes[(rustTarget, libraryType)] = fileHash;
       print('Hash is $fileHash');
     }
   }
   httpClient.close(force: true);
+  await downloadDir?.delete(recursive: true);
 
   await File('lib/src/hook_helpers/hashes.dart').writeAsString('''
 // This file is part of ICU4X. For terms of use, please see the file
@@ -78,4 +108,39 @@ const fileHashes = <(String, String), String>{
 ${fileHashes.map((key, value) => MapEntry(("'${key.$1}'", "'${key.$2}'"), "'$value'")).entries.map((e) => '  ${e.key}:\n      ${e.value},').join('\n')}
 };
 ''');
+}
+
+/// Checks with `gh attestation verify` that [file] has a provenance
+/// attestation from [_artifactsWorkflow] of [_repository], run on a
+/// GitHub-hosted runner, or exits.
+Future<void> _verifyAttestation(File file) async {
+  final ProcessResult result;
+  try {
+    result = await Process.run('gh', [
+      'attestation',
+      'verify',
+      file.path,
+      '--repo',
+      _repository,
+      '--signer-workflow',
+      '$_repository/$_artifactsWorkflow',
+      '--deny-self-hosted-runners',
+    ]);
+  } on ProcessException catch (e) {
+    stderr.writeln(
+      'Failed to run the GitHub CLI to verify the provenance attestations: '
+      '$e\nInstall it (https://cli.github.com), or pass '
+      '--no-verify-attestations.',
+    );
+    exit(1);
+  }
+  if (result.exitCode != 0) {
+    stderr.writeln(
+      'Failed to verify that ${file.uri.pathSegments.last} was built by '
+      '$_artifactsWorkflow of $_repository, so not updating the hashes:\n'
+      '${result.stdout}${result.stderr}',
+    );
+    exit(1);
+  }
+  print('Verified the provenance attestation');
 }
