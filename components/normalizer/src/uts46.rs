@@ -12,7 +12,7 @@ use crate::ComposingNormalizer;
 use crate::ComposingNormalizerBorrowed;
 use crate::IgnorableBehavior;
 use crate::IteratorPolicy;
-use crate::NormalizerNfcV1;
+use crate::NormalizerNfcV2;
 use crate::NormalizerNfdTablesV1;
 use crate::NormalizerNfkdTablesV1;
 use crate::NormalizerUts46DataV1;
@@ -20,6 +20,8 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::iter::CharIterWithTrie;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
+#[cfg(feature = "serde")]
+use icu_provider::buf::BufferProvider;
 
 type Trie46<'trie> = CodePointTrie<'trie, u32>;
 
@@ -203,7 +205,23 @@ impl Uts46Mapper {
         Uts46MapperBorrowed::new()
     }
 
+    /// Construct with buffer provider.
+    ///
+    /// Unlike [`Self::try_new`], this constructor also accepts data that
+    /// has `NormalizerNfcV1` instead of `NormalizerNfcV2`.
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        let normalizer = ComposingNormalizer::try_new_uts46_with_buffer_provider(provider)?;
+
+        Ok(Uts46Mapper { normalizer })
+    }
+
     /// Construct with provider.
+    ///
+    /// Note: This constructor should have been named `try_new_unstable`.
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
@@ -211,7 +229,7 @@ impl Uts46Mapper {
             + DataProvider<NormalizerNfdTablesV1>
             + DataProvider<NormalizerNfkdTablesV1>
             // UTS 46 tables merged into NormalizerNfkdTablesV1
-            + DataProvider<NormalizerNfcV1>
+            + DataProvider<NormalizerNfcV2>
             + ?Sized,
     {
         let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;

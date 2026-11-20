@@ -19,6 +19,7 @@
 use alloc::vec::Vec;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::FastCodePointTrie;
 #[cfg(feature = "serde")]
 use icu_collections::codepointtrie::{CodePointTrieBuilder, TrieType, Typed};
 use icu_provider::prelude::*;
@@ -44,7 +45,7 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_normalizer_nfc_v1!(Baked);
+    impl_normalizer_nfc_v2!(Baked);
     impl_normalizer_nfd_data_v1!(Baked);
     impl_normalizer_nfd_supplement_v1!(Baked);
     impl_normalizer_nfd_tables_v1!(Baked);
@@ -96,6 +97,13 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// Marker for data for composition.
+    NormalizerNfcV2,
+    "normalizer/nfc/v2",
+    CanonicalCompositionsV2<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// Marker for additional data for non-recusrsive composition.
     NormalizerNfdSupplementV1,
     "normalizer/nfd/supplement/v1",
@@ -106,7 +114,7 @@ icu_provider::data_marker!(
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    NormalizerNfcV1::INFO,
+    NormalizerNfcV2::INFO,
     NormalizerNfdDataV1::INFO,
     NormalizerNfdTablesV1::INFO,
     NormalizerNfkdDataV1::INFO,
@@ -376,6 +384,7 @@ where
     if matches!(data.trie.as_typed_ref(), Typed::Fast(_)) {
         return payload;
     }
+    // TODO (#8696) Remove this in ICU4X 3.0
     let mut builder = CodePointTrieBuilder::new(
         data.trie.null_value(),
         data.trie.error_value(),
@@ -423,7 +432,9 @@ impl DecompositionTables<'_> {
     pub const MAX_COMBINED_LEN: usize = 0xFFF;
 }
 
-/// Non-Hangul canonical compositions
+// TODO (#8709): Remove this struct in ICU4X 3.0.
+//
+/// Non-Hangul canonical compositions, old format
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -464,6 +475,41 @@ impl CanonicalCompositions<'_> {
         }
     }
 }
+
+/// Non-Hangul canonical compositions, new format
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct CanonicalCompositionsV2<'data> {
+    /// Trie from primary character to index into `linear`.
+    ///
+    /// If the first character of the pair is
+    /// `'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U'`,
+    /// the primary character is the second item in the pair. Otherwise,
+    /// the primary character is the first item in the pair.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub trie: FastCodePointTrie<'data, u16>,
+
+    /// Compositions that are fully within the BMP
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub linear16: ZeroVec<'data, (u16, u16)>,
+    /// Compositions with at least one character outside
+    /// the BMP
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub linear24: ZeroVec<'data, (char, char)>,
+}
+
+icu_provider::data_struct!(
+    CanonicalCompositionsV2<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// Non-recursive canonical decompositions that differ from
 /// `DecompositionData`.

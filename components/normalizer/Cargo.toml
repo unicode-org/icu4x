@@ -31,7 +31,7 @@ icu_provider = { workspace = true }
 smallvec = { workspace = true } # alloc
 utf16_iter = { workspace = true, optional = true }
 utf8_iter = { workspace = true, optional = true }
-write16 = { workspace = true, features = ["alloc"], optional = true }
+write16 = { workspace = true, optional = true }
 zerovec = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true }
@@ -43,6 +43,7 @@ icu_normalizer_data = { workspace = true, optional = true }
 atoi = { workspace = true }
 detone = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
+icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 write16 = { workspace = true, features = ["arrayvec", "smallvec"] }
 zerovec = { workspace = true, features = ["alloc"] }
 
@@ -58,10 +59,11 @@ datagen = ["serde", "dep:databake", "icu_properties", "icu_collections/databake"
 compiled_data = ["dep:icu_normalizer_data", "icu_properties?/compiled_data", "icu_provider/baked"]
 icu_properties = ["dep:icu_properties"]
 # For dealing with UTF16 strings
-utf16_iter = ["dep:utf16_iter", "dep:write16"]
+utf16_iter = ["dep:utf16_iter", "dep:write16", "write16?/alloc"]
 # For dealing with potentially ill-formed UTF8 strings
 utf8_iter = ["dep:utf8_iter"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
+latin1 = ["dep:write16"]
 
 # added by accident
 write16 = []

@@ -27,6 +27,9 @@ property. These operations are primarily meant for [HarfBuzz](https://harfbuzz.g
 and [`CanonicalCombiningClassMap`](properties::CanonicalCombiningClassMap) implement the [`harfbuzz_traits`] if
 the `harfbuzz_traits` Cargo feature is enabled.
 
+The `latin1` module provides fast paths for normalizing Latin1 input into UTF-16 and for finding the
+normalized prefix of Latin1 input. It is available if the `latin1` Cargo feature is enabled.
+
 Notably, this normalizer does _not_ provide the normalization “quick check” that can result in “maybe” in
 addition to “yes” and “no”. The normalization checks provided by this crate always give a definitive
 non-“maybe” answer.
