@@ -23,8 +23,9 @@ use writeable::Writeable;
 ///
 /// This struct is convertible back and forth to a UTS #35 skeleton string via [`Writeable`]
 /// (and [`Display`](fmt::Display)) and [`FromStr`] (or [`Self::try_from_skeleton`]), which serves
-/// as its lossless string interchange format. However, it only implements the subset of skeleton
-/// string functionality required by ECMA-402 and ICU4X.
+/// as its lossless string interchange format (except that standalone `hour_kind` without `hour`
+/// is omitted, as UTS #35 encodes clock kind on the hour symbol). However, it only implements the
+/// subset of skeleton string functionality required by ECMA-402 and ICU4X.
 ///
 /// An all-`None` [`DateTimeFieldBag::default()`] is an incomplete intermediate state for building
 /// a request; if converted directly to a field set without setting any fields, it defaults to
@@ -194,8 +195,8 @@ impl DateTimeFieldBag {
     ///   (for example, year + day becomes `YMD`, and standalone seconds promote to
     ///   [`TimePrecision::Second`](crate::options::TimePrecision::Second)).
     /// - Per-field text widths (`Short`, `Long`, `Narrow`) collapse into a single
-    ///   [`Length`](crate::options::Length), and 2-digit numeric widths map to
-    ///   [`Alignment::Column`](crate::options::Alignment::Column).
+    ///   [`Length`](crate::options::Length), and two-digit numeric `month`, `day`, or `hour`
+    ///   widths map to [`Alignment::Column`](crate::options::Alignment::Column).
     /// - Standalone `day_period` without `hour` promotes to hour precision, while
     ///   standalone `hour_kind` without `hour` is ignored.
     /// - An all-`None` empty bag defaults to `YMD`.
