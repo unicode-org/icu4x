@@ -30,6 +30,7 @@ icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
 icu_provider = { workspace = true }
 smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] } # alloc
+tinystr = { workspace = true, optional = true }
 zerovec = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
@@ -55,7 +56,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/s
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake", "icu_provider/export"]
 compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locale_fallback", "icu_locale_fallback?/compiled_data", "icu_provider/baked"]
 latin1 = []
-unstable = []
+unstable = ["dep:tinystr"]
 
 [[bench]]
 name = "bench"
