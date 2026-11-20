@@ -509,10 +509,15 @@ impl Patterns {
 }
 
 impl Supplemental {
-    /// Helper function to check if a target unit matches any unit in the set,
-    /// including as a subunit in compound units (e.g., "foot" matches "foot-and-inch")
+    /// Helper function to check if a target unit is in the set, either as a whole unit
+    /// or as one part of a mixed unit (e.g., "foot" matches "foot-and-inch").
+    ///
+    /// The full unit name must match: "mile" does not match "mile-scandinavian",
+    /// and "ton" does not match "tonne".
     fn unit_matches_any(target_unit: &str, units: &HashSet<String>) -> bool {
-        units.iter().any(|u| u.contains(target_unit))
+        units
+            .iter()
+            .any(|u| u.split("-and-").any(|part| part == target_unit))
     }
 
     /// Returns a map from each category (e.g., "length", "mass", "duration") to a map from each region to a set of units.
@@ -555,7 +560,8 @@ impl Supplemental {
     ///
     /// If the specific region is not found, falls back to region "001" (world/default region).
     ///
-    /// The matching includes subunit matching: a unit like "foot" will match compound units like "foot-and-inch".
+    /// A unit matches a preference by its full name, or as one part of a mixed unit:
+    /// "foot" matches "foot-and-inch", but "mile" does not match "mile-scandinavian".
     pub(crate) fn unit_type(
         category: &str,
         unit: &str,
@@ -584,4 +590,75 @@ impl Supplemental {
             UnitType::Heavy
         }
     }
+}
+
+#[test]
+fn test_unit_matches_any() {
+    let set = |units: &[&str]| units.iter().map(|u| u.to_string()).collect::<HashSet<_>>();
+
+    // The full name of a unit matches.
+    assert!(Supplemental::unit_matches_any("foot", &set(&["foot"])));
+    // Each part of a mixed unit matches.
+    assert!(Supplemental::unit_matches_any(
+        "foot",
+        &set(&["foot-and-inch"])
+    ));
+    assert!(Supplemental::unit_matches_any(
+        "inch",
+        &set(&["foot-and-inch"])
+    ));
+    assert!(Supplemental::unit_matches_any(
+        "mile",
+        &set(&["mile-and-foot"])
+    ));
+    // A unit does not match another unit whose name contains it.
+    assert!(!Supplemental::unit_matches_any(
+        "mile",
+        &set(&["mile-scandinavian"])
+    ));
+    assert!(!Supplemental::unit_matches_any("ton", &set(&["tonne"])));
+    assert!(!Supplemental::unit_matches_any(
+        "ton",
+        &set(&["stone-and-pound"])
+    ));
+    assert!(!Supplemental::unit_matches_any(
+        "meter",
+        &set(&["kilometer"])
+    ));
+}
+
+#[test]
+fn test_unit_type_matches_full_unit_names() {
+    use crate::SourceDataProvider;
+    use crate::cldr_serde::units::preferences::Resource;
+
+    let provider = SourceDataProvider::new_testing();
+    let preferences: &Resource = provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse("supplemental/unitPreferenceData.json")
+        .unwrap();
+    let units_list = preferences.supplemental.categorized_units_list();
+    let unit_type =
+        |category, unit, region| Supplemental::unit_type(category, unit, region, &units_list);
+
+    // Canada lists "foot-and-inch", and not "foot".
+    assert_eq!(unit_type("length", "foot", "CA"), UnitType::Tiny);
+    assert_eq!(unit_type("length", "inch", "CA"), UnitType::Tiny);
+
+    // Sweden lists "mile-scandinavian", and only other regions list "mile".
+    assert_eq!(
+        unit_type("length", "mile-scandinavian", "SE"),
+        UnitType::Tiny
+    );
+    assert_eq!(unit_type("length", "mile", "SE"), UnitType::Light);
+
+    // France uses the units of "001", which lists "tonne". Only other regions list "ton".
+    assert_eq!(unit_type("mass", "tonne", "FR"), UnitType::Tiny);
+    assert_eq!(unit_type("mass", "ton", "FR"), UnitType::Light);
+
+    // Great Britain lists "gallon-imperial", and only other regions list "gallon".
+    assert_eq!(unit_type("volume", "gallon-imperial", "GB"), UnitType::Tiny);
+    assert_eq!(unit_type("volume", "gallon", "GB"), UnitType::Light);
 }

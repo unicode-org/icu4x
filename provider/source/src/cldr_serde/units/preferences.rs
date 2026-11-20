@@ -50,7 +50,7 @@ pub(crate) struct Resource {
 }
 
 /// Determines the type of unit
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum UnitType {
     Tiny,
     Light,
