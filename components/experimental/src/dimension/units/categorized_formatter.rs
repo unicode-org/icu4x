@@ -442,7 +442,7 @@ mod tests {
 
     use crate::dimension::units::categorized_formatter::CategorizedFormatter;
     use crate::dimension::units::options::{UnitsFormatterOptions, Width};
-    use crate::measure::category::{Area, Duration};
+    use crate::measure::category::{Area, CategorizedMeasureUnit, Duration, Length};
 
     #[test]
     fn test_area_categorized_tiny_formatter() {
@@ -673,6 +673,70 @@ mod tests {
             let signed_decimal = Decimal::from_str(value_str).unwrap();
             let formatted = formatter.format_fixed_decimal(&signed_decimal);
             assert_writeable_eq!(formatted, expected);
+        }
+    }
+
+    /// The essential units are in the tiny data of every locale,
+    /// also when the unit preferences of the locale's region don't use them.
+    #[test]
+    fn test_essential_units_tiny_formatter() {
+        let value = Decimal::from_str("1000").unwrap();
+        let long = UnitsFormatterOptions::from(Width::Long);
+
+        // The unit preferences of the United States don't list `meter`.
+        let formatter = CategorizedFormatter::<Length>::try_new_tiny(
+            locale!("en-US").into(),
+            Length::meter(),
+            long,
+        )
+        .unwrap();
+        assert_writeable_eq!(formatter.format_fixed_decimal(&value), "1,000 meters");
+
+        // The unit preferences don't list `week`,
+        // and they list `year` and `month` in the `year-duration` category.
+        let test_cases = [
+            (Duration::week(), "1,000 weeks"),
+            (Duration::month(), "1,000 months"),
+            (Duration::year(), "1,000 years"),
+        ];
+        for (unit, expected) in test_cases {
+            let formatter =
+                CategorizedFormatter::<Duration>::try_new_tiny(locale!("en-US").into(), unit, long)
+                    .unwrap();
+            assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
+        }
+
+        // Every unit of the duration formatter loads from the tiny data alone.
+        let duration_units: [fn() -> CategorizedMeasureUnit<Duration>; 10] = [
+            Duration::year,
+            Duration::month,
+            Duration::week,
+            Duration::day,
+            Duration::hour,
+            Duration::minute,
+            Duration::second,
+            Duration::millisecond,
+            Duration::microsecond,
+            Duration::nanosecond,
+        ];
+        for locale in [
+            locale!("en-US"),
+            locale!("fr-FR"),
+            locale!("ar-EG"),
+            locale!("ja"),
+        ] {
+            for width in [Width::Long, Width::Short, Width::Narrow] {
+                for unit in duration_units {
+                    let unit = unit();
+                    let cldr_id = unit.cldr_id().to_string();
+                    let formatter = CategorizedFormatter::<Duration>::try_new_tiny(
+                        locale.clone().into(),
+                        unit,
+                        width.into(),
+                    );
+                    assert!(formatter.is_ok(), "{locale} {width:?} {cldr_id}");
+                }
+            }
         }
     }
 }

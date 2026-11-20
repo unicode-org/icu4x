@@ -508,6 +508,27 @@ impl Patterns {
     }
 }
 
+/// The units that are in the tiny tier for every locale.
+///
+/// The tiny tier also has the units that the unit preferences use in the locale's region.
+/// The essential units are there even when the preferences don't use them,
+/// so a formatter that needs only these units can load the tiny tier alone.
+const ESSENTIAL_UNITS: &[&str] = &[
+    // The units of the duration formatter.
+    "year",
+    "month",
+    "week",
+    "day",
+    "hour",
+    "minute",
+    "second",
+    "millisecond",
+    "microsecond",
+    "nanosecond",
+    // Length.
+    "meter",
+];
+
 impl Supplemental {
     /// Helper function to check if a target unit is in the set, either as a whole unit
     /// or as one part of a mixed unit (e.g., "foot" matches "foot-and-inch").
@@ -554,6 +575,7 @@ impl Supplemental {
     }
 
     /// Determines the type of unit based on the region and category.
+    /// If the unit is one of the [`ESSENTIAL_UNITS`], it is a tiny unit in every region.
     /// If the unit is present in the unit preferences and the region is present in the unit preferences, it is a tiny unit.
     /// If the unit is present in the unit preferences but not in the region preferences, it is a light unit.
     /// If the unit is not present in the unit preferences, it is a heavy unit.
@@ -568,6 +590,10 @@ impl Supplemental {
         region: &str,
         categorized_units_list: &CategorizedUnitsList,
     ) -> UnitType {
+        if ESSENTIAL_UNITS.contains(&unit) {
+            return UnitType::Tiny;
+        }
+
         let region_units = match categorized_units_list.get(category) {
             Some(units) => units,
             None => return UnitType::Heavy,
@@ -661,4 +687,45 @@ fn test_unit_type_matches_full_unit_names() {
     // Great Britain lists "gallon-imperial", and only other regions list "gallon".
     assert_eq!(unit_type("volume", "gallon-imperial", "GB"), UnitType::Tiny);
     assert_eq!(unit_type("volume", "gallon", "GB"), UnitType::Light);
+}
+
+#[test]
+fn test_unit_type_essential_units() {
+    use crate::SourceDataProvider;
+    use crate::cldr_serde::units::preferences::Resource;
+
+    let provider = SourceDataProvider::new_testing();
+    let preferences: &Resource = provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse("supplemental/unitPreferenceData.json")
+        .unwrap();
+    let units_list = preferences.supplemental.categorized_units_list();
+    let unit_type =
+        |category, unit, region| Supplemental::unit_type(category, unit, region, &units_list);
+
+    // The units of the duration formatter. The preferences don't list "week",
+    // and they list "year" and "month" in the "year-duration" category.
+    for unit in [
+        "year",
+        "month",
+        "week",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "millisecond",
+        "microsecond",
+        "nanosecond",
+    ] {
+        assert_eq!(unit_type("duration", unit, "US"), UnitType::Tiny, "{unit}");
+    }
+
+    // The United States doesn't list "meter".
+    assert_eq!(unit_type("length", "meter", "US"), UnitType::Tiny);
+
+    // The other units keep the tier that the preferences give them.
+    assert_eq!(unit_type("length", "kilometer", "US"), UnitType::Light);
+    assert_eq!(unit_type("duration", "century", "US"), UnitType::Heavy);
 }
