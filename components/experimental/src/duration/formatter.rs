@@ -5,12 +5,15 @@
 use core::marker::PhantomData;
 
 use crate::dimension::provider::units::categorized_display_names::{
-    UnitsNamesDurationHeavyV1, UnitsNamesDurationLightV1, UnitsNamesDurationTinyV1,
+    UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongTinyV1,
+    UnitsNamesDurationNarrowHeavyV1, UnitsNamesDurationNarrowLightV1,
+    UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationShortHeavyV1, UnitsNamesDurationShortLightV1,
+    UnitsNamesDurationShortTinyV1,
 };
 use crate::dimension::units::categorized_formatter::{
     CategorizedFormatter, CategorizedUnitsFormatterPreferences,
 };
-use crate::dimension::units::options::{UnitsFormatterOptions, Width};
+use crate::dimension::units::options::Width;
 use crate::duration::options::FieldStyle;
 use crate::measure::category::CategorizedMeasureUnit;
 use crate::measure::measureunit::MeasureUnit;
@@ -125,25 +128,30 @@ impl DurationUnitFormatter {
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let get_unit_formatter = |unit: Unit, style| {
-            let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
-            let options = UnitsFormatterOptions { width: w };
+            let categorized_unit = match unit {
+                Unit::Year => crate::measure::category::Duration::year(),
+                Unit::Month => crate::measure::category::Duration::month(),
+                Unit::Week => crate::measure::category::Duration::week(),
+                Unit::Day => crate::measure::category::Duration::day(),
+                Unit::Hour => crate::measure::category::Duration::hour(),
+                Unit::Minute => crate::measure::category::Duration::minute(),
+                Unit::Second => crate::measure::category::Duration::second(),
+                Unit::Millisecond => crate::measure::category::Duration::millisecond(),
+                Unit::Microsecond => crate::measure::category::Duration::microsecond(),
+                Unit::Nanosecond => crate::measure::category::Duration::nanosecond(),
+            };
 
-            CategorizedFormatter::<crate::measure::category::Duration>::try_new_heavy(
-                (&prefs).into(),
-                match unit {
-                    Unit::Year => crate::measure::category::Duration::year(),
-                    Unit::Month => crate::measure::category::Duration::month(),
-                    Unit::Week => crate::measure::category::Duration::week(),
-                    Unit::Day => crate::measure::category::Duration::day(),
-                    Unit::Hour => crate::measure::category::Duration::hour(),
-                    Unit::Minute => crate::measure::category::Duration::minute(),
-                    Unit::Second => crate::measure::category::Duration::second(),
-                    Unit::Millisecond => crate::measure::category::Duration::millisecond(),
-                    Unit::Microsecond => crate::measure::category::Duration::microsecond(),
-                    Unit::Nanosecond => crate::measure::category::Duration::nanosecond(),
-                },
-                options,
-            )
+            match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
+                Width::Long => {
+                    CategorizedFormatter::try_new_long_heavy((&prefs).into(), categorized_unit)
+                }
+                Width::Short => {
+                    CategorizedFormatter::try_new_short_heavy((&prefs).into(), categorized_unit)
+                }
+                Width::Narrow => {
+                    CategorizedFormatter::try_new_narrow_heavy((&prefs).into(), categorized_unit)
+                }
+            }
         };
 
         Ok(DurationUnitFormatter {
@@ -162,9 +170,15 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsNamesDurationTinyV1>
-            + DataProvider<UnitsNamesDurationLightV1>
-            + DataProvider<UnitsNamesDurationHeavyV1>
+            + DataProvider<UnitsNamesDurationLongTinyV1>
+            + DataProvider<UnitsNamesDurationLongLightV1>
+            + DataProvider<UnitsNamesDurationLongHeavyV1>
+            + DataProvider<UnitsNamesDurationShortTinyV1>
+            + DataProvider<UnitsNamesDurationShortLightV1>
+            + DataProvider<UnitsNamesDurationShortHeavyV1>
+            + DataProvider<UnitsNamesDurationNarrowTinyV1>
+            + DataProvider<UnitsNamesDurationNarrowLightV1>
+            + DataProvider<UnitsNamesDurationNarrowHeavyV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -174,18 +188,28 @@ impl DurationUnitFormatter {
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let get_unit_formatter = |unit: Unit, style| {
-            let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
-            let options = UnitsFormatterOptions { width: w };
+            let categorized_unit = CategorizedMeasureUnit {
+                _category: PhantomData,
+                unit: MeasureUnit::try_from_str(unit.as_unit_formatter_name()).unwrap(),
+            };
 
-            CategorizedFormatter::<crate::measure::category::Duration>::try_new_heavy_unstable(
-                provider,
-                (&prefs).into(),
-                CategorizedMeasureUnit {
-                    _category: PhantomData,
-                    unit: MeasureUnit::try_from_str(unit.as_unit_formatter_name()).unwrap(),
-                },
-                options,
-            )
+            match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
+                Width::Long => CategorizedFormatter::try_new_long_heavy_unstable(
+                    provider,
+                    (&prefs).into(),
+                    categorized_unit,
+                ),
+                Width::Short => CategorizedFormatter::try_new_short_heavy_unstable(
+                    provider,
+                    (&prefs).into(),
+                    categorized_unit,
+                ),
+                Width::Narrow => CategorizedFormatter::try_new_narrow_heavy_unstable(
+                    provider,
+                    (&prefs).into(),
+                    categorized_unit,
+                ),
+            }
         };
 
         Ok(DurationUnitFormatter {
@@ -263,9 +287,15 @@ impl DurationFormatter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::UnitsDurationDigitalV1>
-            + DataProvider<UnitsNamesDurationTinyV1>
-            + DataProvider<UnitsNamesDurationLightV1>
-            + DataProvider<UnitsNamesDurationHeavyV1>
+            + DataProvider<UnitsNamesDurationLongTinyV1>
+            + DataProvider<UnitsNamesDurationLongLightV1>
+            + DataProvider<UnitsNamesDurationLongHeavyV1>
+            + DataProvider<UnitsNamesDurationShortTinyV1>
+            + DataProvider<UnitsNamesDurationShortLightV1>
+            + DataProvider<UnitsNamesDurationShortHeavyV1>
+            + DataProvider<UnitsNamesDurationNarrowTinyV1>
+            + DataProvider<UnitsNamesDurationNarrowLightV1>
+            + DataProvider<UnitsNamesDurationNarrowHeavyV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
