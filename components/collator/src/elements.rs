@@ -152,13 +152,13 @@ fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
 }
 
 // These constants originate from page 143 of Unicode 14.0
-const HANGUL_S_BASE: u32 = 0xAC00;
-const HANGUL_L_BASE: u32 = 0x1100;
-const HANGUL_V_BASE: u32 = 0x1161;
-const HANGUL_T_BASE: u32 = 0x11A7;
-const HANGUL_T_COUNT: u32 = 28;
-const HANGUL_N_COUNT: u32 = 588;
-const HANGUL_S_COUNT: u32 = 11172;
+pub(crate) const HANGUL_S_BASE: u32 = 0xAC00;
+pub(crate) const HANGUL_L_BASE: u32 = 0x1100;
+pub(crate) const HANGUL_V_BASE: u32 = 0x1161;
+pub(crate) const HANGUL_T_BASE: u32 = 0x11A7;
+pub(crate) const HANGUL_T_COUNT: u32 = 28;
+pub(crate) const HANGUL_N_COUNT: u32 = 588;
+pub(crate) const HANGUL_S_COUNT: u32 = 11172;
 
 pub(crate) const JAMO_COUNT: usize = 256; // 0x1200 - 0x1100
 
@@ -171,16 +171,31 @@ pub(crate) const CASE_MASK: u16 = 0xC000;
 pub(crate) const TERTIARY_MASK: u16 = 0x3F3F; // ONLY_TERTIARY_MASK in ICU4C
 pub(crate) const QUATERNARY_MASK: u16 = 0xC0;
 
-// A CE32 is special if its low byte is this or greater.
-// Impossible case bits 11 mark special CE32s.
-// This value itself is used to indicate a fallback to the root collation.
-const SPECIAL_CE32_LOW_BYTE: u8 = 0xC0;
+/// A CE32 is special if its low byte is this or greater.
+/// Impossible case bits 11 mark special CE32s.
+pub const SPECIAL_CE32_LOW_BYTE: u8 = 0xC0;
+/// This value itself is used to indicate a fallback to the root collation.
 pub(crate) const FALLBACK_CE32: CollationElement32 =
     CollationElement32(SPECIAL_CE32_LOW_BYTE as u32);
 const LONG_PRIMARY_CE32_LOW_BYTE: u8 = 0xC1; // SPECIAL_CE32_LOW_BYTE | LONG_PRIMARY_TAG
+/// Like `LONG_PRIMARY_CE32_LOW_BYTE` but for reorderables.
+pub const LONG_PRIMARY_FOR_REORDERABLE_CE32_LOW_BYTE: u8 = 0xCB; // SPECIAL_CE32_LOW_BYTE | LONG_PRIMARY_FOR_REORDERABLE_TAG
+/// Used only as a placeholder on the identical prefix path.
+/// The requirement is that this CE32 fails the quick mapping to a primary,
+/// which it does, because the tag byte is higher than
+/// `LONG_PRIMARY_CE32_LOW_BYTE`.
+pub(crate) const IDENTICAL_PREFIX_HANGUL_MARKER_CE32: CollationElement32 = CollationElement32(0xC2);
 const COMMON_SECONDARY_CE: u64 = 0x05000000;
 const COMMON_TERTIARY_CE: u64 = 0x0500;
 const COMMON_SEC_AND_TER_CE: u64 = COMMON_SECONDARY_CE | COMMON_TERTIARY_CE;
+
+/// The ce32 packing of `COMMON_SEC_AND_TER_CE`.
+#[cfg(feature = "serde")]
+pub const COMMON_SEC_AND_TER_CE32: u16 = 0x0505;
+
+/// Largest index that can be represented in expansion(32)s.
+#[cfg(feature = "serde")]
+pub const MAX_INDEX: usize = 0x7FFFF;
 
 const UNASSIGNED_IMPLICIT_BYTE: u8 = 0xFE;
 
@@ -210,7 +225,7 @@ const NO_CE_VALUE: u64 =
     ((NO_CE_PRIMARY as u64) << 32) | ((NO_CE_SECONDARY as u64) << 16) | (NO_CE_TERTIARY as u64); // 0x101000100
 
 // See ICU4C collation.h and https://www.unicode.org/reports/tr10/#Trailing_Weights
-const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
+pub(crate) const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
 pub(crate) const FFFD_CE_VALUE: u64 = ((FFFD_PRIMARY as u64) << 32) | COMMON_SEC_AND_TER_CE;
 pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
 pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
@@ -263,12 +278,19 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 #[derive(Eq, PartialEq, Debug)]
 #[allow(dead_code)]
 #[repr(u8)] // This repr is necessary for transmute safety
-pub(crate) enum Tag {
+#[allow(clippy::exhaustive_enums)] // All 16 values of the 4-bit tag are assigned
+pub enum Tag {
     /// Fall back to the base collator.
     /// This is the tag value in [`SPECIAL_CE32_LOW_BYTE`] and [`FALLBACK_CE32`].
     /// Bits 31..8: Unused, 0.
     Fallback = 0,
     /// Long-primary CE with [`COMMON_SEC_AND_TER_CE`].
+    ///
+    /// When this occurs directly in the trie (not behind a further lookup like
+    /// `Expansion32`) and we know we haven't loaded old-format data, this further
+    /// signals that the canonical combining class of the character is zero.
+    /// See also [`LongPrimaryForReorderable`].
+    ///
     /// Bits 31..8: Three-byte primary.
     LongPrimary = 1,
     /// Long-secondary CE with zero primary.
@@ -291,6 +313,12 @@ pub(crate) enum Tag {
     /// Bits 12.. 8: Length=1..31.
     Expansion32 = 5,
     /// Points to one or more 64-bit CEs.
+    ///
+    /// When this occurs directly in the trie (not behind an further lookup like
+    /// `Expansion32`) and we know we haven't loaded old-format data, this further
+    /// signals that the canonical combining class of the character is zero.
+    /// See also [`ExpansionForReorderable`].
+    ///
     /// Bits 31..13: Index into CE table.
     /// Bits 12.. 8: Length=1..31.
     Expansion = 6,
@@ -321,24 +349,27 @@ pub(crate) enum Tag {
     /// Bit      12: Unused, 0.
     /// Bits 11.. 8: Digit value 0..9.
     Digit = 10,
+    /// The same as `LongPrimary` but if ccc!=0.
+    ///
+    /// In ICU4C, this is `U0000_TAG`, which is not used by ICU4X:
     /// Tag for U+0000, for moving the NUL-termination handling
     /// from the regular fastpath into specials-handling code.
     /// Bits 31..8: Unused, 0.
-    /// Not used by ICU4X.
-    U0000 = 11,
+    LongPrimaryForReorderable = 11,
     /// Tag for a Hangul syllable.
     /// Bits 31..9: Unused, 0.
     /// Bit      8: `HANGUL_NO_SPECIAL_JAMO` flag.
     /// Not used by ICU4X, may get reused for compressing Hanja expansions.
     Hangul = 12,
-    /// Tag for a lead surrogate code unit.
+    /// The same as `Expansion` but if ccc!=0.
+    ///
+    /// In ICU4C, this is `LEAD_SURROGATE_TAG`, which is not used by ICU4X:
     /// Optional optimization for UTF-16 string processing.
     /// Bits 31..10: Unused, 0.
     ///       9.. 8: =0: All associated supplementary code points are unassigned-implicit.
     ///              =1: All associated supplementary code points fall back to the base data.
     ///              else: (Normally 2) Look up the data for the supplementary code point.
-    /// Not used by ICU4X.
-    LeadSurrogate = 13,
+    ExpansionForReorderable = 13,
     /// Tag for CEs with primary weights in code point order.
     /// Bits 31..13: Index into CE table, for one data "CE".
     /// Bits 12.. 8: Unused, 0.
@@ -382,14 +413,22 @@ pub(crate) enum Tag {
 pub(crate) struct CollationElement32(u32);
 
 impl CollationElement32 {
+    /// Wrap a `u32` in the newtype.
     #[inline(always)]
-    pub fn new(bits: u32) -> Self {
+    pub(crate) fn new(bits: u32) -> Self {
         CollationElement32(bits)
     }
 
     #[inline(always)]
-    pub fn new_from_ule(ule: RawBytesULE<4>) -> Self {
+    pub(crate) fn new_from_ule(ule: RawBytesULE<4>) -> Self {
         CollationElement32(u32::from_unaligned(ule))
+    }
+
+    /// Extract the wrapped `u32`.
+    #[cfg(feature = "serde")]
+    #[inline(always)]
+    pub(crate) fn bits(self) -> u32 {
+        self.0
     }
 
     #[inline(always)]
@@ -397,6 +436,7 @@ impl CollationElement32 {
         self.0 as u8
     }
 
+    /// Return the tag in `Some` if special or `None` if not special.
     #[inline(always)]
     pub(crate) fn tag_checked(self) -> Option<Tag> {
         let t = self.low_byte();
@@ -422,10 +462,90 @@ impl CollationElement32 {
         unsafe { core::mem::transmute::<u8, Tag>(self.low_byte() & 0xF) }
     }
 
+    /// Simplest possible check for the Latin1 fast path.
+    ///
+    /// A return value of zero means no primary.
+    #[cfg(feature = "latin1")]
+    #[inline(always)]
+    pub(crate) fn to_primary_simple(self) -> u32 {
+        let t = self.low_byte();
+        if t < SPECIAL_CE32_LOW_BYTE {
+            // Not special
+            self.0 & 0xFFFF0000
+        } else {
+            0
+        }
+    }
+
+    /// Extract only the first primary in the quick check without identical
+    /// prefix.
+    ///
+    /// A return value of zero means no primary.
+    #[inline(always)]
+    pub(crate) fn to_primary_in_quick_check(self, data: &CollationData) -> u32 {
+        let t = self.low_byte();
+        if t < SPECIAL_CE32_LOW_BYTE {
+            // Not special
+            self.0 & 0xFFFF0000
+        } else if t == LONG_PRIMARY_CE32_LOW_BYTE {
+            self.0 - u32::from(t)
+        } else {
+            let tag = self.tag();
+            if tag == Tag::Expansion {
+                // Hiragana in `ja` tailoring
+                data.get_primary_from_ces(self.index())
+            } else {
+                0
+            }
+            // Do not add support for additional tag types here
+            // without ensuring in datagen that reorderable characters
+            // don't end up with CE32s with tags that are handled here.
+        }
+    }
+
+    /// Extract only the first primary in the quick check after the identical
+    /// prefix. Unlike `to_primary_in_quick_check`, this method variant can
+    /// handle `Tag::Digit` if the numeric mode is not enabled. (The numeric
+    /// mode requires looking ahead.)
+    ///
+    /// A return value of zero means no primary.
+    #[inline(always)]
+    pub(crate) fn to_primary_in_quick_check_numeric(
+        self,
+        data: &CollationData,
+        numeric: bool,
+    ) -> u32 {
+        let mut ce32 = self;
+        loop {
+            let t = ce32.low_byte();
+            if t < SPECIAL_CE32_LOW_BYTE {
+                // Not special
+                return ce32.0 & 0xFFFF0000;
+            }
+            if t == LONG_PRIMARY_CE32_LOW_BYTE {
+                return ce32.0 - u32::from(t);
+            }
+            let tag = ce32.tag();
+            if tag == Tag::Expansion {
+                // Hiragana in `ja` tailoring
+                return data.get_primary_from_ces(ce32.index());
+            }
+            // Digit case for JetStream 3; see https://github.com/WebKit/JetStream/issues/294
+            if tag == Tag::Digit && !numeric {
+                ce32 = data.get_ce32(ce32.index());
+                continue;
+            }
+            return 0;
+            // Do not add support for additional tag types here
+            // without ensuring in datagen that reorderable characters
+            // don't end up with CE32s with tags that are handled here.
+        }
+    }
+
     /// Expands to 64 bits if the expansion is to a single 64-bit collation
     /// element and is not a long-secondary expansion.
     #[inline(always)]
-    pub fn to_ce_simple_or_long_primary(self) -> Option<CollationElement> {
+    pub(crate) fn to_ce_simple_or_long_primary(self) -> Option<CollationElement> {
         let t = self.low_byte();
         if t < SPECIAL_CE32_LOW_BYTE {
             // Not special
@@ -433,7 +553,8 @@ impl CollationElement32 {
             Some(CollationElement::new(
                 ((as64 & 0xFFFF0000) << 32) | ((as64 & 0xFF00) << 16) | (u64::from(t) << 8),
             ))
-        } else if t == LONG_PRIMARY_CE32_LOW_BYTE {
+        } else if t == LONG_PRIMARY_CE32_LOW_BYTE || t == LONG_PRIMARY_FOR_REORDERABLE_CE32_LOW_BYTE
+        {
             let as64 = u64::from(self.0);
             Some(CollationElement::new(
                 ((as64 - u64::from(t)) << 32) | COMMON_SEC_AND_TER_CE,
@@ -448,7 +569,7 @@ impl CollationElement32 {
     /// Expands to 64 bits if the expansion is to a single 64-bit collation
     /// element.
     #[inline(always)]
-    pub fn to_ce_self_contained(self) -> Option<CollationElement> {
+    pub(crate) fn to_ce_self_contained(self) -> Option<CollationElement> {
         if let Some(ce) = self.to_ce_simple_or_long_primary() {
             return Some(ce);
         }
@@ -462,7 +583,7 @@ impl CollationElement32 {
     /// Expands to 64 bits if the expansion is to a single 64-bit collation
     /// element or otherwise returns the collation element for U+FFFD.
     #[inline(always)]
-    pub fn to_ce_self_contained_or_gigo(self) -> CollationElement {
+    pub(crate) fn to_ce_self_contained_or_gigo(self) -> CollationElement {
         unwrap_or_gigo(self.to_ce_self_contained(), FFFD_CE)
     }
 
@@ -472,8 +593,12 @@ impl CollationElement32 {
     ///
     /// In debug builds if this element doesn't have a length.
     #[inline(always)]
-    pub fn len(self) -> usize {
-        debug_assert!(self.tag() == Tag::Expansion32 || self.tag() == Tag::Expansion);
+    pub(crate) fn len(self) -> usize {
+        debug_assert!(
+            self.tag() == Tag::Expansion32
+                || self.tag() == Tag::Expansion
+                || self.tag() == Tag::ExpansionForReorderable
+        );
         ((self.0 >> 8) & 31) as usize
     }
 
@@ -483,10 +608,11 @@ impl CollationElement32 {
     ///
     /// In debug builds if this element doesn't have an index.
     #[inline(always)]
-    pub fn index(self) -> usize {
+    pub(crate) fn index(self) -> usize {
         debug_assert!(
             self.tag() == Tag::Expansion32
                 || self.tag() == Tag::Expansion
+                || self.tag() == Tag::ExpansionForReorderable
                 || self.tag() == Tag::Contraction
                 || self.tag() == Tag::Digit
                 || self.tag() == Tag::Prefix
@@ -496,23 +622,23 @@ impl CollationElement32 {
     }
 
     #[inline(always)]
-    pub fn digit(self) -> u8 {
+    pub(crate) fn digit(self) -> u8 {
         debug_assert!(self.tag() == Tag::Digit);
         ((self.0 >> 8) & 0xF) as u8
     }
 
     #[inline(always)]
-    pub fn every_suffix_starts_with_combining(self) -> bool {
+    pub(crate) fn every_suffix_starts_with_combining(self) -> bool {
         debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_NEXT_CCC) != 0
     }
     #[inline(always)]
-    pub fn at_least_one_suffix_contains_starter(self) -> bool {
+    pub(crate) fn at_least_one_suffix_contains_starter(self) -> bool {
         debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_HAS_STARTER) != 0
     }
     #[inline(always)]
-    pub fn at_least_one_suffix_ends_with_non_starter(self) -> bool {
+    pub(crate) fn at_least_one_suffix_ends_with_non_starter(self) -> bool {
         debug_assert!(self.tag() == Tag::Contraction);
         (self.0 & CONTRACT_TRAILING_CCC) != 0
     }
@@ -1571,8 +1697,6 @@ where
                     // We need to set data to root, because archaic jamo refer to
                     // the root.
                     data = self.root;
-                    // Index in range by construction above. Not using `get` with
-                    // `if let` in order to put the likely branch first.
                     ce32 = CollationElement32::new_from_ule(jamo);
                 } else {
                     // Note: It might seem like a good idea to reuse the CE32s
@@ -1895,7 +2019,7 @@ where
                                 }
                                 break 'ce32loop;
                             }
-                            Tag::Expansion => {
+                            Tag::Expansion | Tag::ExpansionForReorderable => {
                                 let ces = data.get_ces(ce32.index(), ce32.len());
                                 for u in ces.iter() {
                                     self.pending.push(CollationElement::new(u));
@@ -2284,11 +2408,10 @@ where
                             Tag::Fallback
                             | Tag::Reserved3
                             | Tag::LongPrimary
+                            | Tag::LongPrimaryForReorderable
                             | Tag::LongSecondary
                             | Tag::BuilderData
-                            | Tag::LeadSurrogate
                             | Tag::LatinExpansion
-                            | Tag::U0000
                             | Tag::Hangul => {
                                 debug_assert!(false);
                                 // GIGO case

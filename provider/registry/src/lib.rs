@@ -41,6 +41,8 @@ macro_rules! registry(
             icu::casemap::provider::CaseMapUnfoldV1: CaseMapUnfoldV1,
             icu::collator::provider::CollationRootV1: CollationRootV1,
             icu::collator::provider::CollationTailoringV1: CollationTailoringV1,
+            icu::collator::provider::CollationRootV2: CollationRootV2,
+            icu::collator::provider::CollationTailoringV2: CollationTailoringV2,
             icu::collator::provider::CollationDiacriticsV1: CollationDiacriticsV1,
             icu::collator::provider::CollationJamoV1: CollationJamoV1,
             icu::collator::provider::CollationMetadataV1: CollationMetadataV1,

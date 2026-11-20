@@ -28,16 +28,35 @@ use zerovec::{ZeroSlice, zeroslice};
 
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
+use crate::elements::Tag;
+
+#[cfg(feature = "serde")]
+use crate::elements::{
+    COMMON_SEC_AND_TER_CE32, LONG_PRIMARY_FOR_REORDERABLE_CE32_LOW_BYTE, MAX_INDEX,
+    SPECIAL_CE32_LOW_BYTE,
+};
+
 use crate::elements::EMPTY_U16;
 use crate::elements::FFFD_CE;
 use crate::elements::FFFD_CE_VALUE;
 use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
+use crate::elements::FFFD_PRIMARY;
 use crate::elements::NO_CE_PRIMARY;
-use crate::elements::Tag;
 use crate::preferences::CollationCaseFirst;
 
 use crate::options::MaxVariable;
+
+// For `upgrade_v1_to_v2`, which is used by datagen and the serde
+// constructors. (`datagen` implies `serde`.)
+#[cfg(feature = "serde")]
+use crate::elements::{HANGUL_S_BASE, HANGUL_S_COUNT};
+#[cfg(feature = "serde")]
+use alloc::vec::Vec;
+#[cfg(feature = "serde")]
+use icu_collections::codepointtrie::{CodePointTrieBuilder, TrieType};
+#[cfg(feature = "serde")]
+use icu_normalizer::properties::CanonicalCombiningClassMapBorrowed;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -59,8 +78,8 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_collation_root_v1!(Baked);
-    impl_collation_tailoring_v1!(Baked);
+    impl_collation_root_v2!(Baked);
+    impl_collation_tailoring_v2!(Baked);
     impl_collation_diacritics_v1!(Baked);
     impl_collation_jamo_v1!(Baked);
     impl_collation_metadata_v1!(Baked);
@@ -85,6 +104,30 @@ icu_provider::data_marker!(
     /// Data marker for collation tailorings.
     CollationTailoringV1,
     "collation/tailoring/v1",
+    CollationData<'static>,
+    fallback_config = SCRIPT_FALLBACK,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "collator",
+);
+icu_provider::data_marker!(
+    /// Data marker for singleton root collation data, v2.
+    ///
+    /// Compared to v1, the struct is the same, but v2 has the additional
+    /// invariant that characters that have a non-zero canonical combining
+    /// class don't pass the quick primary check.
+    CollationRootV2,
+    "collation/root/v2",
+    CollationData<'static>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for collation tailorings, v2.
+    ///
+    /// Compared to v1, the struct is the same, but v2 has the additional
+    /// invariant that characters that have a non-zero canonical combining
+    /// class don't pass the quick primary check.
+    CollationTailoringV2,
+    "collation/tailoring/v2",
     CollationData<'static>,
     fallback_config = SCRIPT_FALLBACK,
     #[cfg(feature = "datagen")]
@@ -139,8 +182,8 @@ icu_provider::data_marker!(
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CollationRootV1::INFO,
-    CollationTailoringV1::INFO,
+    CollationRootV2::INFO,
+    CollationTailoringV2::INFO,
     CollationDiacriticsV1::INFO,
     CollationJamoV1::INFO,
     CollationMetadataV1::INFO,
@@ -261,6 +304,15 @@ impl<'data> CollationData<'data> {
         debug_assert!(false);
         SINGLE_U64
     }
+    pub(crate) fn get_primary_from_ces(&'data self, index: usize) -> u32 {
+        if let Some(ce) = self.ces.get(index) {
+            (ce >> 32) as u32
+        } else {
+            // GIGO case
+            debug_assert!(false);
+            FFFD_PRIMARY
+        }
+    }
     fn get_default_and_trie_impl(
         &'data self,
         index: usize,
@@ -307,6 +359,148 @@ impl<'data> CollationData<'data> {
             FFFD_CE
         }
     }
+
+    /// Upgrade v1 data to v2 data. The struct looks the same, but
+    /// v2 has the additional invariant that characters that have
+    /// a non-zero canonical combining class (according to the
+    /// normalization data passed as an argument), are not allowed
+    /// to return non-zero from the `to_primary_in_quick_check`
+    /// method of their `CollationElement32` (with this struct
+    /// as the argument to that method).
+    #[cfg(feature = "serde")]
+    pub fn upgrade_v1_to_v2(
+        &self,
+        ccc: &CanonicalCombiningClassMapBorrowed<'_>,
+    ) -> Result<Self, DataError> {
+        // Note: `self.trie.as_untyped_ref().null_value()` as `default_value` would
+        // happen to work at the time of writing, but the builder mechanics don't
+        // guarantee it. Therefore, read the trie value for U+10FFFF, a noncharacter
+        // that is assumed never to be mapped explicitly by the data, so that it has
+        // the value of unmapped code points both for root and tailorings.
+        let default_value = self.trie.get('\u{10FFFF}');
+        let mut augmented_ce32s = self.ce32s.to_vec();
+        let mut builder = CodePointTrieBuilder::new(
+            default_value,
+            self.trie.as_untyped_ref().error_value(),
+            TrieType::Small,
+        );
+        // We don't want non-default values for surrogates.
+        for c in '\u{0}'..='\u{10FFFF}' {
+            let cp = u32::from(c);
+            // We don't want non-default values for Hangul syllables.
+            if cp.wrapping_sub(HANGUL_S_BASE) < HANGUL_S_COUNT {
+                continue;
+            }
+            let ce32 = self.trie.get(c);
+            if ce32 == default_value {
+                continue;
+            }
+            builder.set_value(
+                cp,
+                rewrite_reorderable(cp, ce32, &mut augmented_ce32s, ccc)?,
+            );
+        }
+        Ok(Self {
+            trie: SmallCodePointTrie::try_from(builder.build())
+                .map_err(|_| DataError::custom("Built trie is not a small trie"))?,
+            ces: self.ces.clone(),
+            ce32s: ZeroVec::alloc_from_slice(&augmented_ce32s),
+            contexts: self.contexts.clone(),
+        })
+    }
+}
+
+#[cfg(feature = "serde")]
+fn rewrite_reorderable(
+    c: u32,
+    ce32: u32,
+    ce32s: &mut Vec<u32>,
+    ccc: &CanonicalCombiningClassMapBorrowed<'_>,
+) -> Result<u32, DataError> {
+    let ce32 = CollationElement32::new(ce32);
+    let tag = ce32.tag_checked();
+    if let Some(ref t) = tag {
+        match t {
+            Tag::LongPrimaryForReorderable | Tag::ExpansionForReorderable => {
+                return Err(DataError::custom(
+                    "Trying to upgrade already-upgraded collation data",
+                ));
+            }
+            Tag::Reserved3 => {
+                return Err(DataError::custom("Collation data contains Reserved3"));
+            }
+            Tag::BuilderData => {
+                return Err(DataError::custom("Collation data contains BuilderData"));
+            }
+            Tag::LatinExpansion => {
+                return Err(DataError::custom("Collation data contains LatinExpansion"));
+            }
+            Tag::Hangul => {
+                return Err(DataError::custom("Collation data contains Hangul"));
+            }
+            _ => {}
+        }
+    }
+    if ccc.get32_u8(c) == 0 {
+        // Not reorderable.
+        return Ok(ce32.bits());
+    }
+    if let Some(ref t) = tag {
+        match t {
+            Tag::LongPrimary => {
+                // Replace the tag.
+                return Ok((ce32.bits() & 0xFFFF_FFF0) | (Tag::LongPrimaryForReorderable as u32));
+            }
+            Tag::Expansion => {
+                // Replace the tag.
+                return Ok((ce32.bits() & 0xFFFF_FFF0) | (Tag::ExpansionForReorderable as u32));
+            }
+            Tag::Digit => {
+                return Err(DataError::custom(
+                    "Digit ce32 not allowed for reorderable characters.",
+                ));
+            }
+            _ => {
+                // The primary quick-check does not examine this ce32 type.
+                return Ok(ce32.bits());
+            }
+        }
+    }
+    // Simple
+    if (ce32.bits() & 0xFFFF_0000) == 0 {
+        // No primary. We don't need to hide this, because the primary quick-check
+        // compares primaries.
+        return Ok(ce32.bits());
+    }
+    if ce32.bits() as u16 == COMMON_SEC_AND_TER_CE32 {
+        // `LongPrimaryForReorderable` implies common
+        // secondary and tertiary weights, so we can rewrite this.
+        return Ok(
+            (ce32.bits() & 0xFFFF_0000) | (LONG_PRIMARY_FOR_REORDERABLE_CE32_LOW_BYTE as u32)
+        );
+    }
+    // There is no tag to swap. The low byte needs to be preserved, so we
+    // can't add a tag. We need to hide this ce32 behind indirection.
+    // As of Unicode 17, there should be 34 of these across the collations,
+    // so the data size increase is acceptable.
+    // Notably, combining Latin and Cyrillic letters above are here.
+    // Characters that have an `Expansion32`-typed ce32 to begin with
+    // tend to be compatibility characters and symbols, so there isn't
+    // performance pressure to handle `Expansion32` in the quick primary
+    // check.
+    let len = 1; // We store one item.
+    let index = ce32s.len();
+    if index > MAX_INDEX {
+        return Err(DataError::custom(
+            "Index too large to fit in an Expansion32",
+        ));
+    }
+    ce32s.push(ce32.bits());
+    // See `makeCE32FromTagIndexAndLength` in ICU4C.
+    Ok(((index as u32) << 13)
+        | (len << 8)
+        | u32::from(SPECIAL_CE32_LOW_BYTE)
+        | (Tag::Expansion32 as u32))
 }
 
 /// Secondary weights for the start of the Combining Diacritics block.

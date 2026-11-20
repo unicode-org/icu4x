@@ -584,6 +584,15 @@ impl CanonicalCombiningClassMapBorrowed<'static> {
     }
 }
 
+impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
+    /// Constructs a map backed by already-loaded NFD data (the data
+    /// of [`NormalizerNfdDataV1`]).
+    #[doc(hidden)] // used by the collator
+    pub const fn new_with_nfd_data(decompositions: &'a DecompositionData<'a>) -> Self {
+        CanonicalCombiningClassMapBorrowed { decompositions }
+    }
+}
+
 impl CanonicalCombiningClassMapBorrowed<'_> {
     #[inline(always)]
     fn get_internal(&self, c: char) -> CanonicalCombiningClass {

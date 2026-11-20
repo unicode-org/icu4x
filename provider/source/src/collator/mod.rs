@@ -17,6 +17,8 @@ use icu::locale::{
     data_locale,
     subtags::{language, script},
 };
+use icu::normalizer::properties::CanonicalCombiningClassMapBorrowed;
+use icu::normalizer::provider::NormalizerNfdDataV1;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::ops::Range;
@@ -118,6 +120,42 @@ impl SourceDataProvider {
                 )
             },
         )
+    }
+
+    /// Returns the v1 data for the tailoring identified by `id`.
+    fn converted_collation_tailoring(
+        &self,
+        id: DataIdentifierBorrowed,
+    ) -> Result<&CollationData<'static>, DataError> {
+        let root_trie: &SmallCodePointTrie<u32> = &self.converted_collation_root()?.trie;
+        // The conversion depends on the identifier (not just the file it maps
+        // to) and on the root Han setting, so key the cache by both.
+        self.icuexport()?.get_or_compute(
+            &format!(
+                "collation/{}/{}/{} (converted)",
+                self.collation_root_han(),
+                id.locale,
+                id.marker_attributes.as_str()
+            ),
+            || {
+                convert_data_from_serde(
+                    self.load_toml::<collator_serde::CollationData>(id, "_data")?,
+                    Some((&id, root_trie)),
+                )
+            },
+        )
+    }
+
+    /// Upgrades v1 data to v2 using the canonical combining classes from
+    /// the NFD data.
+    fn upgrade_collation_data(
+        &self,
+        v1: &CollationData<'static>,
+    ) -> Result<CollationData<'static>, DataError> {
+        let nfd: DataResponse<NormalizerNfdDataV1> = self.load(Default::default())?;
+        v1.upgrade_v1_to_v2(&CanonicalCombiningClassMapBorrowed::new_with_nfd_data(
+            nfd.payload.get(),
+        ))
     }
 
     fn load_toml<T>(&self, id: DataIdentifierBorrowed, suffix: &str) -> Result<&T, DataError>
@@ -256,6 +294,8 @@ test_fallback_overrides!(
     CollationSpecialPrimariesV1,
     CollationRootV1,
     CollationTailoringV1,
+    CollationRootV2,
+    CollationTailoringV2,
 );
 
 impl DataProvider<CollationRootV1> for SourceDataProvider {
@@ -281,16 +321,12 @@ impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
 impl DataProvider<CollationTailoringV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV1>, DataError> {
         self.check_req::<CollationTailoringV1>(req)?;
-        let root_trie: &SmallCodePointTrie<u32> = &self
-            .converted_collation_root()
-            .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?
-            .trie;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                self.load_toml::<collator_serde::CollationData>(req.id, "_data")
-                    .and_then(|d| convert_data_from_serde(d, Some((&req.id, root_trie))))
-                    .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?,
+                self.converted_collation_tailoring(req.id)
+                    .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?
+                    .clone(),
             ),
         })
     }
@@ -299,6 +335,46 @@ impl DataProvider<CollationTailoringV1> for SourceDataProvider {
 impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.list_ids("_data")
+    }
+}
+
+impl DataProvider<CollationRootV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationRootV2>, DataError> {
+        self.check_req::<CollationRootV2>(req)?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.converted_collation_root()
+                    .and_then(|v1| self.upgrade_collation_data(v1))
+                    .map_err(|e| e.with_req(CollationRootV2::INFO, req))?,
+            ),
+        })
+    }
+}
+
+impl IterableDataProviderCached<CollationRootV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        IterableDataProviderCached::<CollationRootV1>::iter_ids_cached(self)
+    }
+}
+
+impl DataProvider<CollationTailoringV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV2>, DataError> {
+        self.check_req::<CollationTailoringV2>(req)?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.converted_collation_tailoring(req.id)
+                    .and_then(|v1| self.upgrade_collation_data(v1))
+                    .map_err(|e| e.with_req(CollationTailoringV2::INFO, req))?,
+            ),
+        })
+    }
+}
+
+impl IterableDataProviderCached<CollationTailoringV2> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        IterableDataProviderCached::<CollationTailoringV1>::iter_ids_cached(self)
     }
 }
 
