@@ -7,7 +7,7 @@
 use core::fmt;
 use core::ops::Range;
 use utf8_iter::ErrorReportingUtf8Chars;
-use writeable::Writeable;
+use writeable::{LengthHint, Writeable};
 
 /// A part of a message.
 ///
@@ -64,6 +64,11 @@ impl Writeable for Literal<'_> {
             rest = chars.as_str();
         }
         sink.write_str(rest)
+    }
+
+    fn writeable_length_hint(&self) -> LengthHint {
+        // An escape sequence is two bytes of the source and one byte of the value.
+        LengthHint::between(self.raw.len().div_ceil(2), self.raw.len())
     }
 
     fn writeable_borrow(&self) -> Option<&str> {
@@ -761,6 +766,15 @@ mod tests {
     }
 
     #[test]
+    fn quoted_literal_keeps_bidi_marks() {
+        // Unlike around a name, bidi marks inside the `|` are part of the value.
+        assert_eq!(
+            parse("{|\u{200E}a\u{200F}|}"),
+            Ok(expression(lit("\u{200E}a\u{200F}"), 9))
+        );
+    }
+
+    #[test]
     fn quoted_literal_with_escapes_keeps_its_source() {
         assert_eq!(
             parse("{|a\\\\b\\|c\\{d\\}|}"),
@@ -778,6 +792,12 @@ mod tests {
         );
         assert_writeable_eq!(Literal { raw: "\\\\\\\\" }, "\\\\");
         assert_writeable_eq!(Literal { raw: "\\|" }, "|");
+    }
+
+    #[test]
+    fn literal_value_with_multi_byte_text_and_escapes() {
+        assert_writeable_eq!(Literal { raw: "名前\\|a" }, "名前|a");
+        assert_writeable_eq!(Literal { raw: "\\{名\\}" }, "{名}");
     }
 
     #[test]
