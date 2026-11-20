@@ -937,6 +937,7 @@ where
             iter: delegate,
             pending: SmallVec::new(),
             pending_pos: 0,
+            // Deliberately not `['\u{FFFF}'; 2]`; see https://bugzilla.mozilla.org/show_bug.cgi?id=2062662
             prefix: ['\u{FFFF}', '\u{FFFF}'],
             upcoming: SmallVec::new(),
             root,
@@ -969,6 +970,7 @@ where
     }
 
     pub fn init(&mut self) {
+        // TODO: Consider removing the invariant that this method upholds.
         #[cfg(debug_assertions)]
         {
             debug_assert!(!self.initialized);
@@ -1048,6 +1050,7 @@ where
         if self.upcoming.is_empty() {
             return None;
         }
+        // TODO: something more efficient here.
         let ret = self.upcoming.remove(0);
         if self.upcoming.is_empty() {
             if let Some(c) = self.iter_next() {
@@ -1528,6 +1531,8 @@ where
             let mut c = c_c_tv.character();
             let mut ce32;
             let mut data: &CollationData = self.tailoring;
+            // TODO: Should this be a reusable buffer on the struct instead of
+            // getting re-created on the stack every time?
             let mut combining_characters: SmallVec<
                 [CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE],
             > = SmallVec::new(); // TODO(#2005): Figure out good length
@@ -1537,12 +1542,18 @@ where
             // fast in a way that offsets the lack of the canonical closure.
             // The wall of code before the "Slow path" is an attempt to
             // optimize based on that bet.
+
             // See components/normalizer/trie-value-format.md
             let decomposition = c_c_tv.trie_val;
             if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                 // The character is its own decomposition
+
+                // TODO: This is a bad idea. Make sure the jamo are in the root trie and then
+                // remove this special case.
                 let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
                 if let Some(&jamo) = self.jamo.get(jamo_index) {
+                    // TODO: Mark this branch cold.
+
                     // The purpose of reading the CE32 from the jamo table instead
                     // of the trie even in this case is to make it unnecessary
                     // for all search collation tries to carry a copy of the Hangul
@@ -1564,6 +1575,9 @@ where
                     // `if let` in order to put the likely branch first.
                     ce32 = CollationElement32::new_from_ule(jamo);
                 } else {
+                    // Note: It might seem like a good idea to reuse the CE32s
+                    // from the identical prefix check here, but the logistics
+                    // actually make everything slower.
                     ce32 = data.ce32_for_char(c);
                     if ce32 == FALLBACK_CE32 {
                         data = self.root;
