@@ -84,9 +84,9 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             options: super::options::UnitsFormatterOptions
         ) -> error: DataError,
         functions: [
-            try_new_core: skip,
-            try_new_core_with_buffer_provider,
-            try_new_core_unstable,
+            try_new_tiny: skip,
+            try_new_tiny_with_buffer_provider,
+            try_new_tiny_unstable,
             Self
         ]
     );
@@ -98,9 +98,9 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             options: super::options::UnitsFormatterOptions
         ) -> error: DataError,
         functions: [
-            try_new_extended: skip,
-            try_new_extended_with_buffer_provider,
-            try_new_extended_unstable,
+            try_new_light: skip,
+            try_new_light_with_buffer_provider,
+            try_new_light_unstable,
             Self
         ]
     );
@@ -114,7 +114,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<FormattingInfo, DataError> {
-        let locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
+        let locale = C::DataMarkerTiny::make_locale(prefs.locale_preferences);
         let decimal_formatter: DecimalFormatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
@@ -141,7 +141,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
+        let locale = C::DataMarkerTiny::make_locale(prefs.locale_preferences);
         let decimal_formatter: DecimalFormatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
@@ -162,13 +162,13 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_core(
+    pub fn try_new_tiny(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        crate::provider::Baked: DataProvider<C::DataMarkerCore>,
+        crate::provider::Baked: DataProvider<C::DataMarkerTiny>,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_formatting_info(prefs, categorized_unit, options)?;
@@ -194,8 +194,8 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_core)]
-    pub fn try_new_core_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_tiny)]
+    pub fn try_new_tiny_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
@@ -203,7 +203,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<C::DataMarkerCore>
+            + DataProvider<C::DataMarkerTiny>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -214,7 +214,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
-        let display_name = DataProvider::<C::DataMarkerCore>::load(
+        let display_name = DataProvider::<C::DataMarkerTiny>::load(
             provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -235,20 +235,20 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         })
     }
 
-    /// Creates a new [`CategorizedFormatter`] from compiled locale data with core and extended markers and an options bag.
+    /// Creates a new [`CategorizedFormatter`] from compiled locale data with tiny and light markers and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_extended(
+    pub fn try_new_light(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        crate::provider::Baked: DataProvider<C::DataMarkerCore>,
-        crate::provider::Baked: DataProvider<C::DataMarkerExtended>,
+        crate::provider::Baked: DataProvider<C::DataMarkerTiny>,
+        crate::provider::Baked: DataProvider<C::DataMarkerLight>,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_formatting_info(prefs, categorized_unit, options)?;
@@ -260,13 +260,13 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
-        let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerCore>>::load(
+        let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
             &crate::provider::Baked,
             req,
         )
         .map(|r| r.payload.cast())
         .or_else(|_| {
-            <crate::provider::Baked as DataProvider<C::DataMarkerExtended>>::load(
+            <crate::provider::Baked as DataProvider<C::DataMarkerLight>>::load(
                 &crate::provider::Baked,
                 req,
             )
@@ -281,8 +281,8 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
-    pub fn try_new_extended_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_light)]
+    pub fn try_new_light_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
@@ -290,8 +290,8 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<C::DataMarkerCore>
-            + DataProvider<C::DataMarkerExtended>
+            + DataProvider<C::DataMarkerTiny>
+            + DataProvider<C::DataMarkerLight>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -307,11 +307,11 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
-        // TODO(#8125): this might return a short display name from core, even if there would be a long one in extended.
-        let display_name = DataProvider::<C::DataMarkerCore>::load(provider, req)
+        // TODO(#8125): this might return a short display name from tiny, even if there would be a long one in light.
+        let display_name = DataProvider::<C::DataMarkerTiny>::load(provider, req)
             .map(|r| r.payload.cast())
             .or_else(|_| {
-                DataProvider::<C::DataMarkerExtended>::load(provider, req).map(|r| r.payload.cast())
+                DataProvider::<C::DataMarkerLight>::load(provider, req).map(|r| r.payload.cast())
             })?;
 
         Ok(Self {
@@ -322,21 +322,21 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         })
     }
 
-    /// Creates a new [`CategorizedFormatter`] from compiled locale data with core, extended and outlier markers and an options bag.
+    /// Creates a new [`CategorizedFormatter`] from compiled locale data with tiny, light and heavy markers and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_outlier(
+    pub fn try_new_heavy(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        crate::provider::Baked: DataProvider<C::DataMarkerCore>,
-        crate::provider::Baked: DataProvider<C::DataMarkerExtended>,
-        crate::provider::Baked: DataProvider<C::DataMarkerOutlier>,
+        crate::provider::Baked: DataProvider<C::DataMarkerTiny>,
+        crate::provider::Baked: DataProvider<C::DataMarkerLight>,
+        crate::provider::Baked: DataProvider<C::DataMarkerHeavy>,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_formatting_info(prefs, categorized_unit, options)?;
@@ -348,21 +348,21 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
-        // TODO(#8125): this might return a short display name from core or extended, even if there would be a long one in outlier.
-        let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerCore>>::load(
+        // TODO(#8125): this might return a short display name from tiny or light, even if there would be a long one in heavy.
+        let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
             &crate::provider::Baked,
             req,
         )
         .map(|r| r.payload.cast())
         .or_else(|_| {
-            <crate::provider::Baked as DataProvider<C::DataMarkerExtended>>::load(
+            <crate::provider::Baked as DataProvider<C::DataMarkerLight>>::load(
                 &crate::provider::Baked,
                 req,
             )
             .map(|r| r.payload.cast())
         })
         .or_else(|_| {
-            <crate::provider::Baked as DataProvider<C::DataMarkerOutlier>>::load(
+            <crate::provider::Baked as DataProvider<C::DataMarkerHeavy>>::load(
                 &crate::provider::Baked,
                 req,
             )
@@ -377,8 +377,8 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_outlier)]
-    pub fn try_new_outlier_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_heavy)]
+    pub fn try_new_heavy_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
@@ -386,9 +386,9 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<C::DataMarkerCore>
-            + DataProvider<C::DataMarkerExtended>
-            + DataProvider<C::DataMarkerOutlier>
+            + DataProvider<C::DataMarkerTiny>
+            + DataProvider<C::DataMarkerLight>
+            + DataProvider<C::DataMarkerHeavy>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -404,13 +404,13 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             ..Default::default()
         };
 
-        let display_name = DataProvider::<C::DataMarkerCore>::load(provider, req)
+        let display_name = DataProvider::<C::DataMarkerTiny>::load(provider, req)
             .map(|r| r.payload.cast())
             .or_else(|_| {
-                DataProvider::<C::DataMarkerExtended>::load(provider, req).map(|r| r.payload.cast())
+                DataProvider::<C::DataMarkerLight>::load(provider, req).map(|r| r.payload.cast())
             })
             .or_else(|_| {
-                DataProvider::<C::DataMarkerOutlier>::load(provider, req).map(|r| r.payload.cast())
+                DataProvider::<C::DataMarkerHeavy>::load(provider, req).map(|r| r.payload.cast())
             })?;
 
         Ok(Self {
@@ -445,7 +445,7 @@ mod tests {
     use crate::measure::category::{Area, Duration};
 
     #[test]
-    fn test_area_categorized_core_formatter() {
+    fn test_area_categorized_tiny_formatter() {
         let test_cases = vec![
             (
                 locale!("en-US"),
@@ -487,7 +487,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Area>::try_new_core(
+            let formatter = CategorizedFormatter::<Area>::try_new_tiny(
                 locale.clone().into(),
                 categorized_unit,
                 options,
@@ -502,7 +502,7 @@ mod tests {
     }
 
     #[test]
-    fn test_area_categorized_extended_formatter() {
+    fn test_area_categorized_light_formatter() {
         let test_cases = vec![
             (
                 locale!("en-US"),
@@ -544,7 +544,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Area>::try_new_extended(
+            let formatter = CategorizedFormatter::<Area>::try_new_light(
                 locale.clone().into(),
                 categorized_unit,
                 options,
@@ -558,7 +558,7 @@ mod tests {
     }
 
     #[test]
-    fn test_area_categorized_outlier_formatter() {
+    fn test_area_categorized_heavy_formatter() {
         let test_cases = vec![
             // TODO: Uncomment this test case once we have danum units in the Area category.
             //    (
@@ -608,7 +608,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Area>::try_new_outlier(
+            let formatter = CategorizedFormatter::<Area>::try_new_heavy(
                 locale.clone().into(),
                 categorized_unit,
                 options,
@@ -622,7 +622,7 @@ mod tests {
     }
 
     #[test]
-    fn test_duration_categorized_core_formatter() {
+    fn test_duration_categorized_tiny_formatter() {
         let test_cases = vec![
             (
                 locale!("en-US"),
@@ -664,7 +664,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Duration>::try_new_core(
+            let formatter = CategorizedFormatter::<Duration>::try_new_tiny(
                 locale.into(),
                 categorized_unit,
                 options,

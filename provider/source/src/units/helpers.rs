@@ -549,9 +549,9 @@ impl Supplemental {
     }
 
     /// Determines the type of unit based on the region and category.
-    /// If the unit is present in the unit preferences and the region is present in the unit preferences, it is a core unit.
-    /// If the unit is present in the unit preferences but not in the region preferences, it is an extended unit.
-    /// If the unit is not present in the unit preferences, it is an outlier unit.
+    /// If the unit is present in the unit preferences and the region is present in the unit preferences, it is a tiny unit.
+    /// If the unit is present in the unit preferences but not in the region preferences, it is a light unit.
+    /// If the unit is not present in the unit preferences, it is a heavy unit.
     ///
     /// If the specific region is not found, falls back to region "001" (world/default region).
     ///
@@ -564,7 +564,7 @@ impl Supplemental {
     ) -> UnitType {
         let region_units = match categorized_units_list.get(category) {
             Some(units) => units,
-            None => return UnitType::Outlier,
+            None => return UnitType::Heavy,
         };
 
         let found_in_region = region_units
@@ -577,11 +577,11 @@ impl Supplemental {
             .any(|units| Self::unit_matches_any(unit, units));
 
         if found_in_region {
-            UnitType::Core
+            UnitType::Tiny
         } else if found_anywhere {
-            UnitType::Extended
+            UnitType::Light
         } else {
-            UnitType::Outlier
+            UnitType::Heavy
         }
     }
 }

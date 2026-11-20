@@ -5,7 +5,7 @@
 use core::marker::PhantomData;
 
 use crate::dimension::provider::units::categorized_display_names::{
-    UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
+    UnitsNamesDurationHeavyV1, UnitsNamesDurationLightV1, UnitsNamesDurationTinyV1,
 };
 use crate::dimension::units::categorized_formatter::{
     CategorizedFormatter, CategorizedUnitsFormatterPreferences,
@@ -128,7 +128,7 @@ impl DurationUnitFormatter {
             let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
-            CategorizedFormatter::<crate::measure::category::Duration>::try_new_outlier(
+            CategorizedFormatter::<crate::measure::category::Duration>::try_new_heavy(
                 (&prefs).into(),
                 match unit {
                     Unit::Year => crate::measure::category::Duration::year(),
@@ -162,9 +162,9 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsNamesDurationCoreV1>
-            + DataProvider<UnitsNamesDurationExtendedV1>
-            + DataProvider<UnitsNamesDurationOutlierV1>
+            + DataProvider<UnitsNamesDurationTinyV1>
+            + DataProvider<UnitsNamesDurationLightV1>
+            + DataProvider<UnitsNamesDurationHeavyV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -177,7 +177,7 @@ impl DurationUnitFormatter {
             let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
-            CategorizedFormatter::<crate::measure::category::Duration>::try_new_outlier_unstable(
+            CategorizedFormatter::<crate::measure::category::Duration>::try_new_heavy_unstable(
                 provider,
                 (&prefs).into(),
                 CategorizedMeasureUnit {
@@ -263,9 +263,9 @@ impl DurationFormatter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::UnitsDurationDigitalV1>
-            + DataProvider<UnitsNamesDurationCoreV1>
-            + DataProvider<UnitsNamesDurationExtendedV1>
-            + DataProvider<UnitsNamesDurationOutlierV1>
+            + DataProvider<UnitsNamesDurationTinyV1>
+            + DataProvider<UnitsNamesDurationLightV1>
+            + DataProvider<UnitsNamesDurationHeavyV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
