@@ -8,6 +8,7 @@ use crate::data::posix::{
 };
 use crate::data::time::{Hours, Minutes, Seconds};
 use combine::parser::byte::{byte, digit};
+use combine::parser::error::unexpected_any;
 use combine::{between, choice, many, many1, optional, satisfy, value, ParseError, Parser, Stream};
 
 /// Parses a byte that not a digit, a comma, a plus nor a minus signs.
@@ -95,20 +96,22 @@ where
     many1(digit())
 }
 
-/// Parses a natural number as an i64.
+/// Parses a natural number as an i64. Fails if the number does not fit.
 fn natural<Input>() -> impl Parser<Input, Output = i64>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    digits().map(|digits| {
-        digits
-            .into_iter()
-            .map(|digit| i64::from(digit - b'0'))
-            .rev()
-            .zip(0u32..)
-            .map(|(digit, n)| digit * 10i64.pow(n))
-            .sum::<i64>()
+    digits().then(|digits| {
+        let natural = digits.into_iter().try_fold(0i64, |natural, digit| {
+            natural
+                .checked_mul(10)?
+                .checked_add(i64::from(digit - b'0'))
+        });
+        match natural {
+            Some(natural) => value(natural).left(),
+            None => unexpected_any("natural number should fit in an i64").right(),
+        }
     })
 }
 
@@ -496,6 +499,14 @@ mod test {
         assert_parse_eq!(natural(), "0543-21", 543);
         assert_parse_eq!(natural(), "0543+21", 543);
         assert_parse_eq!(natural(), "12345abc", 12345);
+        assert_parse_eq!(natural(), "9223372036854775807", i64::MAX);
+        assert_parse_eq!(natural(), "00000000000000000000000000000042", 42);
+
+        // does not fit in an i64
+        assert_parse_err!(natural(), "9223372036854775808");
+        assert_parse_err!(natural(), "18446744073709551621");
+        assert_parse_err!(natural(), "100000000000000000000000000000000");
+        assert_parse_err!(bounded_natural(0, 9), "18446744073709551621");
     }
 
     #[test]
@@ -551,6 +562,8 @@ mod test {
         assert_parse_err!(hours(2), "3");
         assert_parse_err!(hours(2), "-4");
         assert_parse_err!(hours(2), "-3");
+        assert_parse_err!(hours(24), "18446744073709551621");
+        assert_parse_err!(hours(24), "-18446744073709551621");
 
         // within bounds [-2, 2]
         assert_parse_eq!(hours(2), "2", Hours(2));
@@ -860,6 +873,13 @@ mod test {
                     },
                 })
             }
+        );
+
+        // 2^64 + 5 and 2^64 + 2, which wrap around to valid hours
+        assert_parse_err!(posix_tz_string(), "EST18446744073709551621");
+        assert_parse_err!(
+            posix_tz_string(),
+            "EST5EDT,M3.2.0/18446744073709551618,M11.1.0"
         );
     }
 }
