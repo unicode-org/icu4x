@@ -860,7 +860,7 @@ where
         decompositions: &'data DecompositionData,
         tables: &'data DecompositionTables,
     ) -> Self {
-        Self {
+        let mut ret = Self {
             inner: DecompositionInner::new_with_supplements(
                 CharIterWithTrie::new(
                     delegate,
@@ -870,7 +870,9 @@ where
                 tables,
                 None,
             ),
-        }
+        };
+        ret.inner.init(); // Discard the U+0000.
+        ret
     }
 }
 
@@ -891,6 +893,9 @@ where
 ///
 /// The trie carried by `delegate` must be the NFD trie that goes
 /// with `tables`.
+///
+/// The iterator first yields an extra U+0000 and then
+/// the sequence actually corresponding to the input.
 #[doc(hidden)] // used in collator
 #[inline(always)]
 pub fn new_decomposition<'data, I, T>(
@@ -940,18 +945,25 @@ where
     /// Constructs a decomposing iterator adapter from a delegate
     /// iterator and references to the necessary data, including
     /// supplementary data.
+    ///
+    /// The iterator first yields a U+0000 and only then the sequence
+    /// corresponding to the input. Unfortunately, due to the way
+    /// stack placement of structs works in Rust, the caller is responsible
+    /// for dealing with the initial U+0000. Callers within this crate
+    /// can (and should) do so by calling `init()`.
+    #[inline(always)]
     fn new_with_supplements(
         delegate: I,
         tables: &'data DecompositionTables,
         supplementary_tables: Option<&'data DecompositionTables>,
     ) -> Self {
-        let mut ret = DecompositionInner::<I, T, P> {
+        DecompositionInner::<I, T, P> {
             delegate,
             buffer: SmallVec::new(), // Normalized
             buffer_pos: 0,
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
-            pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
+            pending: Some(CharacterAndTrieValue::new('\u{0}', 0)),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -966,9 +978,13 @@ where
             },
             _phantom_p: PhantomData,
             _phantom_t: PhantomData,
-        };
-        let _ = ret.next(); // Remove the U+FFFF placeholder
-        ret
+        }
+    }
+
+    /// Simplified alternative to calling `next()` and discarding the value after constructing this struct.
+    fn init(&mut self) {
+        self.pending = None;
+        self.gather_and_sort_combining(0);
     }
 
     fn push_decomposition16(
@@ -1354,6 +1370,7 @@ where
 {
     type Item = char;
 
+    #[inline]
     fn next(&mut self) -> Option<char> {
         if let Some(ret) = self.buffer.get(self.buffer_pos).map(|c| c.character()) {
             self.buffer_pos += 1;
@@ -1449,6 +1466,7 @@ where
     T: AbstractCodePointTrie<'data, u32>,
     P: IteratorPolicy,
 {
+    #[inline(always)]
     fn new(
         decomposition: DecompositionInner<'data, I, T, P>,
         canonical_compositions: CanonicalCompositionsRef<'data>,
@@ -1715,6 +1733,8 @@ macro_rules! composing_normalize_to {
         ) -> core::fmt::Result {
             $prolog
             let mut $composition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie(self.trie()));
+            $composition.decomposition.init(); // Discard the U+0000.
+
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
@@ -1899,6 +1919,7 @@ macro_rules! decomposing_normalize_to {
             $prolog
 
             let mut $decomposition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie(self.trie()));
+            $decomposition.init(); // Discard the U+0000.
 
             // Try to get the compiler to hoist the bound to a register.
             let $decomposition_passthrough_bound = u32::from(self.decomposition_passthrough_bound);
@@ -2256,12 +2277,17 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
 
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
+    #[inline]
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<'data, I> {
-        Decomposition {
+        let mut ret = Decomposition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
-        }
+        };
+        ret.inner.init(); // Discard the U+0000.
+        ret
     }
 
+    /// There's an extra U+0000 at the start. The caller must deal with it.
+    #[inline(always)]
     fn normalize_iter_private<
         I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
         T: AbstractCodePointTrie<'data, u32> + 'data,
@@ -2961,12 +2987,17 @@ impl ComposingNormalizerBorrowed<'static> {
 impl<'data> ComposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
+    #[inline]
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<'data, I> {
-        Composition {
+        let mut ret = Composition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
-        }
+        };
+        ret.inner.decomposition.init(); // Discard the U+0000.
+        ret
     }
 
+    /// There's an extra U+0000 at the start. The caller must deal with it.
+    #[inline(always)]
     fn normalize_iter_private<
         I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
         T: AbstractCodePointTrie<'data, u32> + 'data,
