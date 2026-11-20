@@ -6,9 +6,8 @@ use core::marker::PhantomData;
 
 use crate::dimension::provider::units::categorized_display_names::{
     UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongTinyV1,
-    UnitsNamesDurationNarrowHeavyV1, UnitsNamesDurationNarrowLightV1,
-    UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationShortHeavyV1, UnitsNamesDurationShortLightV1,
-    UnitsNamesDurationShortTinyV1,
+    UnitsNamesDurationShortNarrowHeavyV1, UnitsNamesDurationShortNarrowLightV1,
+    UnitsNamesDurationShortNarrowTinyV1,
 };
 use crate::dimension::units::categorized_formatter::{
     CategorizedFormatter, CategorizedUnitsFormatterPreferences,
@@ -173,12 +172,9 @@ impl DurationUnitFormatter {
             + DataProvider<UnitsNamesDurationLongTinyV1>
             + DataProvider<UnitsNamesDurationLongLightV1>
             + DataProvider<UnitsNamesDurationLongHeavyV1>
-            + DataProvider<UnitsNamesDurationShortTinyV1>
-            + DataProvider<UnitsNamesDurationShortLightV1>
-            + DataProvider<UnitsNamesDurationShortHeavyV1>
-            + DataProvider<UnitsNamesDurationNarrowTinyV1>
-            + DataProvider<UnitsNamesDurationNarrowLightV1>
-            + DataProvider<UnitsNamesDurationNarrowHeavyV1>
+            + DataProvider<UnitsNamesDurationShortNarrowTinyV1>
+            + DataProvider<UnitsNamesDurationShortNarrowLightV1>
+            + DataProvider<UnitsNamesDurationShortNarrowHeavyV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -290,12 +286,9 @@ impl DurationFormatter {
             + DataProvider<UnitsNamesDurationLongTinyV1>
             + DataProvider<UnitsNamesDurationLongLightV1>
             + DataProvider<UnitsNamesDurationLongHeavyV1>
-            + DataProvider<UnitsNamesDurationShortTinyV1>
-            + DataProvider<UnitsNamesDurationShortLightV1>
-            + DataProvider<UnitsNamesDurationShortHeavyV1>
-            + DataProvider<UnitsNamesDurationNarrowTinyV1>
-            + DataProvider<UnitsNamesDurationNarrowLightV1>
-            + DataProvider<UnitsNamesDurationNarrowHeavyV1>
+            + DataProvider<UnitsNamesDurationShortNarrowTinyV1>
+            + DataProvider<UnitsNamesDurationShortNarrowLightV1>
+            + DataProvider<UnitsNamesDurationShortNarrowHeavyV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
