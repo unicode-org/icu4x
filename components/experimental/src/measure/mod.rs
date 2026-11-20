@@ -7,5 +7,6 @@
 pub mod category;
 pub mod measureunit;
 pub mod parser;
+pub mod prebuilt_ids;
 pub mod provider;
 pub mod single_unit_vec;

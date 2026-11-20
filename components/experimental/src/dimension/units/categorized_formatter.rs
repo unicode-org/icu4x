@@ -7,6 +7,7 @@ use crate::dimension::units::format::FormattedUnit;
 use crate::dimension::units::options::Width;
 use crate::measure::category::CategorizedMeasureUnit;
 use crate::measure::category::MeasureUnitCategory;
+use crate::measure::prebuilt_ids::prebuilt_unit_id;
 use core::marker::PhantomData;
 use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
@@ -64,17 +65,29 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
 
 impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     // TODO: Remove this function once we have separate markers for different widths.
+    /// Returns the data marker attribute for a width and a unit: the first letter of the
+    /// width, then the unit's fixed ID, such as `l85` for `meter`.
     #[inline]
-    fn attribute(width: Width, unit: &str) -> SmallVec<[u8; 32]> {
+    fn attribute(width: Width, unit: &str) -> Result<SmallVec<[u8; 32]>, DataError> {
+        let unit_id = prebuilt_unit_id(unit)
+            .ok_or_else(|| DataError::custom("The unit has no pre-built unit ID"))?;
         let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
         let length = match width {
-            Width::Short => "short-",
-            Width::Narrow => "narrow-",
-            Width::Long => "long-",
+            Width::Short => "s",
+            Width::Narrow => "n",
+            Width::Long => "l",
         };
         buffer.extend_from_slice(length.as_bytes());
-        buffer.extend_from_slice(unit.as_bytes());
-        buffer
+        // Writes the ID in decimal, without leading zeros.
+        let mut started = false;
+        for divisor in [10_000, 1_000, 100, 10, 1] {
+            let digit = (unit_id / divisor) % 10;
+            if digit != 0 || started || divisor == 1 {
+                buffer.push(b'0' + digit as u8);
+                started = true;
+            }
+        }
+        Ok(buffer)
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -121,7 +134,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
-        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
+        let attribute = Self::attribute(options.width, categorized_unit.cldr_id())?;
 
         Ok((locale, decimal_formatter, plural_rules, attribute))
     }
@@ -151,7 +164,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
-        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
+        let attribute = Self::attribute(options.width, categorized_unit.cldr_id())?;
 
         Ok((locale, decimal_formatter, plural_rules, attribute))
     }
