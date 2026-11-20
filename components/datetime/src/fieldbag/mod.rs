@@ -134,6 +134,8 @@ impl DateTimeFieldBag {
     /// ```
     /// use icu::datetime::fieldbag::DateTimeFieldBag;
     /// use icu::datetime::fieldbag::field::{Month, Year};
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use writeable::assert_writeable_eq;
     ///
     /// const YEAR_MONTH: DateTimeFieldBag = {
@@ -144,7 +146,15 @@ impl DateTimeFieldBag {
     /// };
     ///
     /// assert_writeable_eq!(YEAR_MONTH, "yMMMM");
-    /// assert_eq!(DateTimeFieldBag::new(), DateTimeFieldBag::default());
+    ///
+    /// // An empty bag defaults to a YMD field set when converted:
+    /// assert_eq!(
+    ///     DateTimeFieldBag::new()
+    ///         .to_field_set_builder()
+    ///         .build_date()
+    ///         .unwrap(),
+    ///     DateFieldSet::YMD(fieldsets::YMD::medium())
+    /// );
     /// ```
     pub const fn new() -> Self {
         Self {
