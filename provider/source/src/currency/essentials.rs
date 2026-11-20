@@ -202,6 +202,10 @@ fn test_essentials() {
 
     let provider = SourceDataProvider::new_testing();
 
+    // `$` has no letters; an ISO code like `USD` is all letters.
+    let dollar = SymbolLetters::Neither;
+    let usd = SymbolLetters::Both;
+
     let en: DataPayload<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&data_locale!("en")),
@@ -210,37 +214,34 @@ fn test_essentials() {
         .unwrap()
         .payload;
 
-    assert_writeable_eq!(
-        en.get().get_positive(false, false).interpolate((3, "$")),
-        "$3"
-    );
+    assert_writeable_eq!(en.get().get_positive(dollar).interpolate((3, "$")), "$3");
 
     assert_writeable_eq!(
-        en.get().get_positive(true, true).interpolate((3, "USD")),
+        en.get().get_positive(usd).interpolate((3, "USD")),
         "USD\u{a0}3"
     );
     assert_writeable_eq!(
         en.get()
-            .get_positive_accounting(false, false)
+            .get_positive_accounting(dollar)
             .interpolate((3, "$")),
         "$3"
     );
     assert_writeable_eq!(
         en.get()
-            .get_negative_accounting(false, false)
+            .get_negative_accounting(dollar)
             .unwrap()
             .interpolate((3, "$")),
         "($3)"
     );
     assert_writeable_eq!(
         en.get()
-            .get_positive_accounting(true, true)
+            .get_positive_accounting(usd)
             .interpolate((3, "USD")),
         "USD\u{a0}3"
     );
     assert_writeable_eq!(
         en.get()
-            .get_negative_accounting(true, true)
+            .get_negative_accounting(usd)
             .unwrap()
             .interpolate((3, "USD")),
         "(USD\u{a0}3)"
@@ -255,7 +256,7 @@ fn test_essentials() {
         .payload;
 
     assert_writeable_eq!(
-        ar_eg.get().get_positive(false, false).interpolate((3, "$")),
+        ar_eg.get().get_positive(dollar).interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
 
@@ -276,7 +277,7 @@ fn test_essentials() {
     assert_writeable_eq!(
         ar_eg_latn
             .get()
-            .get_negative(false, false)
+            .get_negative(dollar)
             .unwrap()
             .interpolate((3, "$")),
         "\u{200f}\u{200e}-3\u{a0}$"
@@ -284,5 +285,5 @@ fn test_essentials() {
 
     // `en` has no explicit standard negative subpattern, so `get_negative` is `None`
     // and the formatter falls back to the positive pattern, applying the sign itself.
-    assert!(en.get().get_negative(false, false).is_none());
+    assert!(en.get().get_negative(dollar).is_none());
 }
