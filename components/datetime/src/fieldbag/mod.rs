@@ -47,7 +47,7 @@ use writeable::Writeable;
 /// .unwrap();
 /// assert_writeable_eq!(formatter.format(&input), "2026 н. е.");
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
 pub struct DateTimeFieldBag {
     /// The representation of the era.
@@ -121,6 +121,58 @@ pub struct DateTimeFieldBag {
 }
 
 impl DateTimeFieldBag {
+    /// Creates an empty [`DateTimeFieldBag`] with all fields set to `None`.
+    ///
+    /// Usable in `const` contexts as the starting point for setting individual fields.
+    ///
+    /// Note: An all-`None` bag is an incomplete intermediate state; if converted directly to
+    /// a field set without setting any fields, it defaults to formatting the year, month, and
+    /// day (`YMD`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::{Month, Year};
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::enums::DateFieldSet;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// const YEAR_MONTH: DateTimeFieldBag = {
+    ///     let mut bag = DateTimeFieldBag::new();
+    ///     bag.year = Some(Year::Numeric);
+    ///     bag.month = Some(Month::Long);
+    ///     bag
+    /// };
+    ///
+    /// assert_writeable_eq!(YEAR_MONTH, "yMMMM");
+    ///
+    /// // An empty bag defaults to a YMD field set when converted:
+    /// assert_eq!(
+    ///     DateTimeFieldBag::new()
+    ///         .to_field_set_builder()
+    ///         .build_date()
+    ///         .unwrap(),
+    ///     DateFieldSet::YMD(fieldsets::YMD::medium())
+    /// );
+    /// ```
+    pub const fn new() -> Self {
+        Self {
+            era: None,
+            year: None,
+            month: None,
+            day: None,
+            weekday: None,
+            day_period: None,
+            hour_kind: None,
+            hour: None,
+            minute: None,
+            second: None,
+            fractional_second_digits: None,
+            time_zone_name: None,
+        }
+    }
+
     /// Creates a [`DateTimeFieldBag`] from a skeleton string.
     ///
     /// This function rejects strings with duplicate fields, unknown fields, non-field

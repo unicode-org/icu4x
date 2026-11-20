@@ -5,7 +5,7 @@
 //! Individual field enums for a [`DateTimeFieldBag`](super::DateTimeFieldBag).
 
 /// Options for the era length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Era {
     /// Example: AD
@@ -70,7 +70,7 @@ impl Era {
 }
 
 /// Options for the year length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Year {
     /// Example: 2003
@@ -117,7 +117,7 @@ impl Year {
 }
 
 /// Options for the month length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Month {
     /// Example: 3
@@ -228,7 +228,7 @@ impl Month {
 }
 
 /// Options for the day of month length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Day {
     /// Example: 8
@@ -275,7 +275,7 @@ impl Day {
 }
 
 /// Options for the weekday length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Weekday {
     /// Example: Thu
@@ -344,7 +344,7 @@ impl Weekday {
 }
 
 /// Options for the day period length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum DayPeriod {
     /// Example: in the evening
@@ -413,7 +413,7 @@ impl DayPeriod {
 }
 
 /// Options for the kind of hour symbol, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum HourKind {
     /// Example: 4
@@ -468,7 +468,7 @@ impl HourKind {
 }
 
 /// Options for the hour length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Hour {
     /// Example: 6
@@ -515,7 +515,7 @@ impl Hour {
 }
 
 /// Options for the minute length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Minute {
     /// Example: 5
@@ -562,7 +562,7 @@ impl Minute {
 }
 
 /// Options for the second length, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Second {
     /// Example: 2
@@ -609,7 +609,7 @@ impl Second {
 }
 
 /// Options for the fractional second digits, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum FractionalSecondDigits {
     /// One fraction digit for seconds.
@@ -674,7 +674,7 @@ impl FractionalSecondDigits {
 }
 
 /// Options for the time zone name, corresponding to ECMA-402 widths and UTS#35 skeletons.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum TimeZoneName {
     /// Short localized form (example: PST, GMT-8).

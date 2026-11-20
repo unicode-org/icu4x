@@ -15,7 +15,7 @@ use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenize
 /// or widths, or unknown fields. For lenient parsing that recovers from these conditions, use
 /// [`DateTimeFieldBag::from_skeleton`].
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, displaydoc::Display)]
 #[ignore_extra_doc_attributes]
 pub enum DateTimeFieldBagParseError {
     /// A field category was specified more than once in the skeleton.
