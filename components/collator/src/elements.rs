@@ -937,6 +937,7 @@ where
             iter: delegate,
             pending: SmallVec::new(),
             pending_pos: 0,
+            // Deliberately not `['\u{FFFF}'; 2]`; see https://bugzilla.mozilla.org/show_bug.cgi?id=2062662
             prefix: ['\u{FFFF}', '\u{FFFF}'],
             upcoming: SmallVec::new(),
             root,
@@ -969,6 +970,7 @@ where
     }
 
     pub fn init(&mut self) {
+        // TODO: Consider removing the invariant that this method upholds.
         #[cfg(debug_assertions)]
         {
             debug_assert!(!self.initialized);
@@ -1048,6 +1050,7 @@ where
         if self.upcoming.is_empty() {
             return None;
         }
+        // TODO: something more efficient here.
         let ret = self.upcoming.remove(0);
         if self.upcoming.is_empty() {
             if let Some(c) = self.iter_next() {
@@ -1063,19 +1066,36 @@ where
     }
 
     fn maybe_gather_combining(&mut self) {
-        if self.upcoming.len() != 1 {
+        let Some(first) = self.upcoming.first().cloned() else {
+            return;
+        };
+        if !first.decomposition_starts_with_non_starter() {
             return;
         }
-        // index has to be in range due to the check above.
-        // rewriting with `get()` would result in two checks.
-        #[expect(clippy::indexing_slicing)]
-        if !self.upcoming[0].decomposition_starts_with_non_starter() {
+        if self.upcoming.len() == 1 {
+            // We now have a single character that decomposes to start with
+            // a non-starter. Decompose it and assign the real canonical combining class.
+            self.upcoming.clear();
+            // We just cleared `upcoming`, so we can no longer be in the exceptional
+            // state tracked by `self.upcoming_normalized` being `false`.
+            self.upcoming_normalized = true;
+            self.push_decomposed_combining(first);
+        } else {
+            // We end up sorting more times than minimally necessary.
+            self.ensure_upcoming_normalized();
+            #[cfg(debug_assertions)]
+            {
+                if !self.iter_exhausted {
+                    // `last()` must be `Some`, because len() must be > 1.
+                    debug_assert!(
+                        self.upcoming
+                            .last()
+                            .is_some_and(|last| !last.decomposition_starts_with_non_starter())
+                    );
+                }
+            }
             return;
         }
-        // We now have a single character that decomposes to start with
-        // a non-starter. Decompose it and assign the real canonical combining class.
-        let first = self.upcoming.remove(0);
-        self.push_decomposed_combining(first);
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter_next() {
@@ -1135,11 +1155,6 @@ where
 
         let mut unnormalized = core::mem::take(&mut self.upcoming);
         let last_index = unnormalized.len() - 1;
-        // Indexing is for debug assert only.
-        #[expect(clippy::indexing_slicing)]
-        {
-            debug_assert!(!unnormalized[0].decomposition_starts_with_non_starter());
-        }
         let mut start_combining = 0;
         for (i, c) in unnormalized.drain(..).enumerate() {
             if c.decomposition_starts_with_non_starter() {
@@ -1157,6 +1172,11 @@ where
                 start_combining = self.push_decomposed_starter(c);
             }
         }
+        // `init()` is responsible for collecting non-starters up to a
+        // starter or iterator exhausting into `upcoming`, so if we
+        // didn't take the early return in the `i == last_index` branch
+        // above, we are in the iterator exhausted case.
+        //
         // Make the assertion conditional to make CI happy.
         #[cfg(debug_assertions)]
         debug_assert!(self.iter_exhausted);
@@ -1511,6 +1531,8 @@ where
             let mut c = c_c_tv.character();
             let mut ce32;
             let mut data: &CollationData = self.tailoring;
+            // TODO: Should this be a reusable buffer on the struct instead of
+            // getting re-created on the stack every time?
             let mut combining_characters: SmallVec<
                 [CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE],
             > = SmallVec::new(); // TODO(#2005): Figure out good length
@@ -1520,12 +1542,18 @@ where
             // fast in a way that offsets the lack of the canonical closure.
             // The wall of code before the "Slow path" is an attempt to
             // optimize based on that bet.
+
             // See components/normalizer/trie-value-format.md
             let decomposition = c_c_tv.trie_val;
             if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
                 // The character is its own decomposition
+
+                // TODO: This is a bad idea. Make sure the jamo are in the root trie and then
+                // remove this special case.
                 let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
                 if let Some(&jamo) = self.jamo.get(jamo_index) {
+                    // TODO: Mark this branch cold.
+
                     // The purpose of reading the CE32 from the jamo table instead
                     // of the trie even in this case is to make it unnecessary
                     // for all search collation tries to carry a copy of the Hangul
@@ -1547,6 +1575,9 @@ where
                     // `if let` in order to put the likely branch first.
                     ce32 = CollationElement32::new_from_ule(jamo);
                 } else {
+                    // Note: It might seem like a good idea to reuse the CE32s
+                    // from the identical prefix check here, but the logistics
+                    // actually make everything slower.
                     ce32 = data.ce32_for_char(c);
                     if ce32 == FALLBACK_CE32 {
                         data = self.root;

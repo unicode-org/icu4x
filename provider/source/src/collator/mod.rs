@@ -124,6 +124,7 @@ impl SourceDataProvider {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
+            .filter(|name| !name.contains("POSIX")) // No known use cases
             // Root data should not be listed for tailorings
             .filter(|p| !p.ends_with("root_standard_data.toml"))
             .filter_map(|mut file_name| {

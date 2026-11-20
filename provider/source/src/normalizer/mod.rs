@@ -685,6 +685,18 @@ impl DecompositionTrieValues {
         for (&c, &value) in &self.values {
             builder.set_value(c as u32, value);
         }
+        for i in HANGUL_L_BASE..HANGUL_L_BASE + HANGUL_L_COUNT {
+            // Performance optimization to fall off the fast path
+            // more efficiently when composing. This is not a correctness
+            // break in either direction: New data works with old code
+            // and old data works with new code in terms of computing
+            // correct results.
+            let value = char::from_u32(i)
+                .and_then(|c| self.values.get(&c))
+                .copied()
+                .unwrap_or(0);
+            builder.set_value(i, DecompositionData::NON_ROUND_TRIP_MARKER | value);
+        }
         DecompositionData {
             trie: builder.build(),
             passthrough_cap: self.passthrough_cap,
