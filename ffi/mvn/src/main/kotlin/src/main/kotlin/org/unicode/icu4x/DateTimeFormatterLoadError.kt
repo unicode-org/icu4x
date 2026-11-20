@@ -17,6 +17,7 @@ enum class DateTimeFormatterLoadError(val inner: Int) {
     UnsupportedLength(2051),
     ConflictingField(2057),
     FormatterTooSpecific(2058),
+    InvalidSkeletonForFormatter(2059),
     DataMarkerNotFound(1),
     DataIdentifierNotFound(2),
     DataInvalidRequest(3),
@@ -41,6 +42,7 @@ enum class DateTimeFormatterLoadError(val inner: Int) {
                 2051 -> UnsupportedLength
                 2057 -> ConflictingField
                 2058 -> FormatterTooSpecific
+                2059 -> InvalidSkeletonForFormatter
                 1 -> DataMarkerNotFound
                 2 -> DataIdentifierNotFound
                 3 -> DataInvalidRequest

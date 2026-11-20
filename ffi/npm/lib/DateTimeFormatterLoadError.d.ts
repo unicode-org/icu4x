@@ -21,6 +21,7 @@ export class DateTimeFormatterLoadError {
     static UnsupportedLength : DateTimeFormatterLoadError;
     static ConflictingField : DateTimeFormatterLoadError;
     static FormatterTooSpecific : DateTimeFormatterLoadError;
+    static InvalidSkeletonForFormatter : DateTimeFormatterLoadError;
     static DataMarkerNotFound : DateTimeFormatterLoadError;
     static DataIdentifierNotFound : DateTimeFormatterLoadError;
     static DataInvalidRequest : DateTimeFormatterLoadError;

@@ -16,6 +16,8 @@ enum DateTimeFormatterLoadError implements core.Exception {
   // ignore: public_member_api_docs
   formatterTooSpecific,
   // ignore: public_member_api_docs
+  invalidSkeletonForFormatter,
+  // ignore: public_member_api_docs
   dataMarkerNotFound,
   // ignore: public_member_api_docs
   dataIdentifierNotFound,
@@ -44,6 +46,8 @@ enum DateTimeFormatterLoadError implements core.Exception {
         return 2057;
       case formatterTooSpecific:
         return 2058;
+      case invalidSkeletonForFormatter:
+        return 2059;
       case dataMarkerNotFound:
         return 1;
       case dataIdentifierNotFound:

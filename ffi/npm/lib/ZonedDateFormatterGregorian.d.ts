@@ -23,6 +23,24 @@ export class ZonedDateFormatterGregorian {
 
 
     /**
+     * Creates a zoned formatter from a UTS #35 skeleton string.
+     *
+     * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+     *
+     * @experimental
+     */
+    static createFromSkeleton(locale: Locale, skeleton: string): ZonedDateFormatterGregorian;
+
+    /**
+     * Creates a zoned formatter from a UTS #35 skeleton string.
+     *
+     * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+     *
+     * @experimental
+     */
+    static createFromSkeletonWithProvider(provider: DataProvider, locale: Locale, skeleton: string): ZonedDateFormatterGregorian;
+
+    /**
      * Creates a zoned formatter based on a non-zoned formatter.
      *
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
