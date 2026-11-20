@@ -266,7 +266,12 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                                 self.current_pos_data = previous_pos_data;
                                 return self.get_current_position();
                             }
-                            BreakState::Break => return self.get_current_position(),
+                            BreakState::Break => {
+                                // The property of the text before this break is the one kept with
+                                // the marker, e.g. ALetter for ALetter Extend* (WB4).
+                                self.boundary_property = previous_left_prop;
+                                return self.get_current_position();
+                            }
                             BreakState::Intermediate(i) => {
                                 index = i;
                                 if previous_break_state_is_cp_prop {
@@ -277,13 +282,15 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                                 previous_pos_data = self.current_pos_data;
                             }
                             BreakState::Index(i) => {
-                                index = i;
                                 if previous_break_state_is_cp_prop {
-                                    // Move marker
+                                    // Move marker. The text before it is in the state before this
+                                    // character, e.g. ALetter Extend* is ALetter (WB4), not the
+                                    // state this character starts, e.g. ALetter_MidNumLet.
                                     previous_iter = self.iter.clone();
                                     previous_pos_data = self.current_pos_data;
                                     previous_left_prop = index;
                                 }
+                                index = i;
                             }
                         }
                     }
