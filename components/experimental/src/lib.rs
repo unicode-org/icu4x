@@ -66,21 +66,21 @@ pub mod provider {
         impl_currency_extended_data_v1!(Baked);
         impl_currency_fractions_v1!(Baked);
         impl_currency_patterns_no_currency_v1!(Baked);
-        impl_units_names_area_core_v1!(Baked);
-        impl_units_names_area_extended_v1!(Baked);
-        impl_units_names_area_outlier_v1!(Baked);
-        impl_units_names_duration_core_v1!(Baked);
-        impl_units_names_duration_extended_v1!(Baked);
-        impl_units_names_duration_outlier_v1!(Baked);
-        impl_units_names_length_core_v1!(Baked);
-        impl_units_names_length_extended_v1!(Baked);
-        impl_units_names_length_outlier_v1!(Baked);
-        impl_units_names_mass_core_v1!(Baked);
-        impl_units_names_mass_extended_v1!(Baked);
-        impl_units_names_mass_outlier_v1!(Baked);
-        impl_units_names_volume_core_v1!(Baked);
-        impl_units_names_volume_extended_v1!(Baked);
-        impl_units_names_volume_outlier_v1!(Baked);
+        impl_units_names_area_tiny_v1!(Baked);
+        impl_units_names_area_light_v1!(Baked);
+        impl_units_names_area_heavy_v1!(Baked);
+        impl_units_names_duration_tiny_v1!(Baked);
+        impl_units_names_duration_light_v1!(Baked);
+        impl_units_names_duration_heavy_v1!(Baked);
+        impl_units_names_length_tiny_v1!(Baked);
+        impl_units_names_length_light_v1!(Baked);
+        impl_units_names_length_heavy_v1!(Baked);
+        impl_units_names_mass_tiny_v1!(Baked);
+        impl_units_names_mass_light_v1!(Baked);
+        impl_units_names_mass_heavy_v1!(Baked);
+        impl_units_names_volume_tiny_v1!(Baked);
+        impl_units_names_volume_light_v1!(Baked);
+        impl_units_names_volume_heavy_v1!(Baked);
         impl_units_essentials_v1!(Baked);
         impl_locale_names_language_v0!(Baked);
         impl_units_duration_digital_v1!(Baked);
@@ -135,21 +135,21 @@ pub mod provider {
         super::dimension::provider::currency::no_currency::CurrencyPatternsNoCurrencyV1::INFO,
         super::dimension::provider::percent::DecimalPercentV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesMassCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesMassExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesMassOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaTinyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaLightV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaHeavyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationTinyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationLightV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationHeavyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthTinyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthLightV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthHeavyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassTinyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassLightV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassHeavyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeTinyV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeLightV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeHeavyV1::INFO,
         super::displaynames::provider::LocaleNamesLanguageV0::INFO,
         super::duration::provider::UnitsDurationDigitalV1::INFO,
         super::displaynames::provider::LocaleNamesLocaleV0::INFO,

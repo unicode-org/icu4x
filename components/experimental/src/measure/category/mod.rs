@@ -9,11 +9,11 @@ use icu_provider::{DataMarker, DynamicDataMarker};
 use crate::{
     dimension::provider::units::{
         categorized_display_names::{
-            UnitsNamesAreaCoreV1, UnitsNamesAreaExtendedV1, UnitsNamesAreaOutlierV1,
-            UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
-            UnitsNamesLengthCoreV1, UnitsNamesLengthExtendedV1, UnitsNamesLengthOutlierV1,
-            UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
-            UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
+            UnitsNamesAreaHeavyV1, UnitsNamesAreaLightV1, UnitsNamesAreaTinyV1,
+            UnitsNamesDurationHeavyV1, UnitsNamesDurationLightV1, UnitsNamesDurationTinyV1,
+            UnitsNamesLengthHeavyV1, UnitsNamesLengthLightV1, UnitsNamesLengthTinyV1,
+            UnitsNamesMassHeavyV1, UnitsNamesMassLightV1, UnitsNamesMassTinyV1,
+            UnitsNamesVolumeHeavyV1, UnitsNamesVolumeLightV1, UnitsNamesVolumeTinyV1,
         },
         display_names::UnitsDisplayNames,
     },
@@ -27,9 +27,9 @@ pub mod mass;
 pub mod volume;
 
 pub trait MeasureUnitCategory {
-    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
-    type DataMarkerExtended: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
-    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
+    type DataMarkerTiny: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
+    type DataMarkerLight: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
+    type DataMarkerHeavy: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
 }
 
 /// A [`MeasureUnit`] that is related to a specific category.
@@ -78,27 +78,27 @@ pub struct Mass;
 pub struct Volume;
 
 impl MeasureUnitCategory for Area {
-    type DataMarkerCore = UnitsNamesAreaCoreV1;
-    type DataMarkerExtended = UnitsNamesAreaExtendedV1;
-    type DataMarkerOutlier = UnitsNamesAreaOutlierV1;
+    type DataMarkerTiny = UnitsNamesAreaTinyV1;
+    type DataMarkerLight = UnitsNamesAreaLightV1;
+    type DataMarkerHeavy = UnitsNamesAreaHeavyV1;
 }
 impl MeasureUnitCategory for Duration {
-    type DataMarkerCore = UnitsNamesDurationCoreV1;
-    type DataMarkerExtended = UnitsNamesDurationExtendedV1;
-    type DataMarkerOutlier = UnitsNamesDurationOutlierV1;
+    type DataMarkerTiny = UnitsNamesDurationTinyV1;
+    type DataMarkerLight = UnitsNamesDurationLightV1;
+    type DataMarkerHeavy = UnitsNamesDurationHeavyV1;
 }
 impl MeasureUnitCategory for Length {
-    type DataMarkerCore = UnitsNamesLengthCoreV1;
-    type DataMarkerExtended = UnitsNamesLengthExtendedV1;
-    type DataMarkerOutlier = UnitsNamesLengthOutlierV1;
+    type DataMarkerTiny = UnitsNamesLengthTinyV1;
+    type DataMarkerLight = UnitsNamesLengthLightV1;
+    type DataMarkerHeavy = UnitsNamesLengthHeavyV1;
 }
 impl MeasureUnitCategory for Mass {
-    type DataMarkerCore = UnitsNamesMassCoreV1;
-    type DataMarkerExtended = UnitsNamesMassExtendedV1;
-    type DataMarkerOutlier = UnitsNamesMassOutlierV1;
+    type DataMarkerTiny = UnitsNamesMassTinyV1;
+    type DataMarkerLight = UnitsNamesMassLightV1;
+    type DataMarkerHeavy = UnitsNamesMassHeavyV1;
 }
 impl MeasureUnitCategory for Volume {
-    type DataMarkerCore = UnitsNamesVolumeCoreV1;
-    type DataMarkerExtended = UnitsNamesVolumeExtendedV1;
-    type DataMarkerOutlier = UnitsNamesVolumeOutlierV1;
+    type DataMarkerTiny = UnitsNamesVolumeTinyV1;
+    type DataMarkerLight = UnitsNamesVolumeLightV1;
+    type DataMarkerHeavy = UnitsNamesVolumeHeavyV1;
 }
