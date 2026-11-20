@@ -3,10 +3,18 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
+/// Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/builder/enum.BuilderError.html), [3](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [5](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
 enum DateTimeFormatterLoadError implements core.Exception {
   // ignore: public_member_api_docs
   unknown,
+  // ignore: public_member_api_docs
+  missingDateFields,
+  // ignore: public_member_api_docs
+  missingTimePrecision,
+  // ignore: public_member_api_docs
+  missingZoneStyle,
+  // ignore: public_member_api_docs
+  superfluousOptions,
   // ignore: public_member_api_docs
   invalidDateFields,
   // ignore: public_member_api_docs
@@ -36,6 +44,14 @@ enum DateTimeFormatterLoadError implements core.Exception {
     switch (this) {
       case unknown:
         return 0;
+      case missingDateFields:
+        return 1025;
+      case missingTimePrecision:
+        return 1026;
+      case missingZoneStyle:
+        return 1027;
+      case superfluousOptions:
+        return 1029;
       case invalidDateFields:
         return 2049;
       case unsupportedLength:

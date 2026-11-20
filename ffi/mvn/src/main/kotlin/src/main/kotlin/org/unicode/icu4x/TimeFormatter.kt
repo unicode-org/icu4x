@@ -7,6 +7,8 @@ import com.sun.jna.Structure
 
 internal interface TimeFormatterLib: Library {
     fun icu4x_TimeFormatter_destroy_mv1(handle: Pointer)
+    fun icu4x_TimeFormatter_create_from_skeleton_mv1(locale: Pointer, skeleton: Slice): ResultPointerInt
+    fun icu4x_TimeFormatter_create_from_skeleton_with_provider_mv1(provider: Pointer, locale: Pointer, skeleton: Slice): ResultPointerInt
     fun icu4x_TimeFormatter_create_mv1(locale: Pointer, length: OptionInt, timePrecision: OptionInt, alignment: OptionInt): ResultPointerInt
     fun icu4x_TimeFormatter_create_with_provider_mv1(provider: Pointer, locale: Pointer, length: OptionInt, timePrecision: OptionInt, alignment: OptionInt): ResultPointerInt
     fun icu4x_TimeFormatter_format_mv1(handle: Pointer, time: Pointer, write: Pointer): Unit
@@ -40,6 +42,60 @@ class TimeFormatter internal constructor (
     companion object {
         internal val libClass: Class<TimeFormatterLib> = TimeFormatterLib::class.java
         internal val lib: TimeFormatterLib = Native.load("icu4x", libClass)
+        @JvmStatic
+        
+        /**
+         * Creates a formatter from a UTS #35 skeleton string.
+         *
+         * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
+         */
+        fun createFromSkeleton(locale: Locale, skeleton: String): Result<TimeFormatter> {
+            val skeletonSliceMemory = PrimitiveArrayTools.borrowUtf8(skeleton)
+            
+            val returnVal = lib.icu4x_TimeFormatter_create_from_skeleton_mv1(locale.handle, skeletonSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = TimeFormatter(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DateTimeFormatterLoadErrorError(DateTimeFormatterLoadError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                skeletonSliceMemory.close()
+            }
+        }
+        @JvmStatic
+        
+        /**
+         * Creates a formatter from a UTS #35 skeleton string.
+         *
+         * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
+         */
+        fun createFromSkeletonWithProvider(provider: DataProvider, locale: Locale, skeleton: String): Result<TimeFormatter> {
+            val skeletonSliceMemory = PrimitiveArrayTools.borrowUtf8(skeleton)
+            
+            val returnVal = lib.icu4x_TimeFormatter_create_from_skeleton_with_provider_mv1(provider.handle, locale.handle, skeletonSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = TimeFormatter(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DateTimeFormatterLoadErrorError(DateTimeFormatterLoadError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                skeletonSliceMemory.close()
+            }
+        }
         @JvmStatic
         
         /**

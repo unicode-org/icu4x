@@ -13,6 +13,10 @@
 
 typedef enum DateTimeFormatterLoadError {
   DateTimeFormatterLoadError_Unknown = 0,
+  DateTimeFormatterLoadError_MissingDateFields = 1025,
+  DateTimeFormatterLoadError_MissingTimePrecision = 1026,
+  DateTimeFormatterLoadError_MissingZoneStyle = 1027,
+  DateTimeFormatterLoadError_SuperfluousOptions = 1029,
   DateTimeFormatterLoadError_InvalidDateFields = 2049,
   DateTimeFormatterLoadError_UnsupportedLength = 2051,
   DateTimeFormatterLoadError_ConflictingField = 2057,

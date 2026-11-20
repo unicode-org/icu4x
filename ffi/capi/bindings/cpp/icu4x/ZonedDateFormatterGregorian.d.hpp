@@ -46,6 +46,24 @@ class ZonedDateFormatterGregorian {
 public:
 
   /**
+   * Creates a zoned formatter from a UTS #35 skeleton string.
+   *
+   * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ZonedDateFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_from_skeleton(const icu4x::Locale& locale, std::string_view skeleton);
+
+  /**
+   * Creates a zoned formatter from a UTS #35 skeleton string.
+   *
+   * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ZonedDateFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_from_skeleton_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view skeleton);
+
+  /**
    * Creates a zoned formatter based on a non-zoned formatter.
    *
    * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,

@@ -300,8 +300,6 @@ lazy_static::lazy_static! {
         // We should occasionally review these
         // =========================
 
-        "icu::datetime::fieldbag",
-
         "icu::decimal::CompactDecimalFormatter",
         "icu::decimal::error::CompactExponentError",
         "icu::decimal::options::CompactDecimalFormatterOptions",
@@ -444,6 +442,10 @@ lazy_static::lazy_static! {
         "icu::datetime::options::DateTimeFormatterOptions",
         "icu::datetime::options::length::Bag",
         "icu::decimal::options::DecimalFormatterOptions",
+        // Intermediate type; skeleton parsing is exposed directly via `from_skeleton`
+        // constructors on the datetime formatters (#8721), and ECMA-402 options bags
+        // will be handled in #8740.
+        "icu::datetime::fieldbag",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)

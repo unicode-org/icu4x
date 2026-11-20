@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
+ * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/builder/enum.BuilderError.html), [3](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [5](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
  */
 export class DateTimeFormatterLoadError {
 
@@ -17,6 +17,10 @@ export class DateTimeFormatterLoadError {
     get ffiValue(): number;
 
     static Unknown : DateTimeFormatterLoadError;
+    static MissingDateFields : DateTimeFormatterLoadError;
+    static MissingTimePrecision : DateTimeFormatterLoadError;
+    static MissingZoneStyle : DateTimeFormatterLoadError;
+    static SuperfluousOptions : DateTimeFormatterLoadError;
     static InvalidDateFields : DateTimeFormatterLoadError;
     static UnsupportedLength : DateTimeFormatterLoadError;
     static ConflictingField : DateTimeFormatterLoadError;

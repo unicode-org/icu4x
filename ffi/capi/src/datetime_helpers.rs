@@ -234,3 +234,138 @@ where
         crate::unstable::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian(formatter),
     ))
 }
+
+#[cfg(all(test, feature = "compiled_data", feature = "unstable"))]
+mod tests {
+    use crate::unstable::{
+        date::ffi::IsoDate,
+        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
+        errors::ffi::DateTimeFormatterLoadError,
+        iana_parser::ffi::IanaParser,
+        locale_core::ffi::Locale,
+        time::ffi::Time,
+        time_formatter::ffi::TimeFormatter,
+        timezone_formatter::ffi::TimeZoneFormatter,
+        zoned_date_formatter::ffi::{ZonedDateFormatter, ZonedDateFormatterGregorian},
+        zoned_date_time_formatter::ffi::{ZonedDateTimeFormatter, ZonedDateTimeFormatterGregorian},
+        zoned_datetime::ffi::ZonedIsoDateTime,
+        zoned_time_formatter::ffi::ZonedTimeFormatter,
+    };
+    use diplomat_runtime::rust_interop::RustWriteVec;
+
+    fn with_write(f: impl FnOnce(&mut diplomat_runtime::DiplomatWrite)) -> alloc::string::String {
+        let mut buf = RustWriteVec::with_capacity(0);
+        // SAFETY: `buf` is the only `DiplomatWrite` in scope.
+        f(unsafe { buf.borrow_mut() });
+        alloc::string::String::from_utf8(buf.borrow().as_bytes().to_vec()).unwrap()
+    }
+
+    #[test]
+    fn test_from_skeleton_formatters() {
+        let locale = Locale::from_string(b"en-US").unwrap();
+        let iso_date = IsoDate::create(2026, 9, 23).unwrap();
+        let time = Time::create(16, 5, 0, 0).unwrap();
+        let iana = IanaParser::create();
+        let zdt = ZonedIsoDateTime::strict_from_string(
+            b"2026-09-23T16:05:00-07:00[America/Los_Angeles]",
+            &iana,
+        )
+        .unwrap();
+
+        // DateFormatter: date skeleton ("yMd") and calendar period skeleton ("yMMM")
+        let df = DateFormatter::create_from_skeleton(&locale, b"yMd").unwrap();
+        assert_eq!(with_write(|w| df.format_iso(&iso_date, w)), "9/23/2026");
+
+        let df_ym = DateFormatter::create_from_skeleton(&locale, b"yMMM").unwrap();
+        assert_eq!(with_write(|w| df_ym.format_iso(&iso_date, w)), "Sep 2026");
+
+        let df_greg = DateFormatterGregorian::create_from_skeleton(&locale, b"y-MM-dd").unwrap();
+        assert_eq!(
+            with_write(|w| df_greg.format_iso(&iso_date, w)),
+            "09/23/2026"
+        );
+
+        // TimeFormatter
+        let tf = TimeFormatter::create_from_skeleton(&locale, b"jm").unwrap();
+        assert_eq!(with_write(|w| tf.format(&time, w)), "4:05\u{202f}PM");
+
+        // DateTimeFormatter & DateTimeFormatterGregorian
+        let dtf = DateTimeFormatter::create_from_skeleton(&locale, b"yMdjm").unwrap();
+        assert_eq!(
+            with_write(|w| dtf.format_iso(&iso_date, &time, w)),
+            "9/23/2026, 4:05\u{202f}PM"
+        );
+
+        let dtf_greg = DateTimeFormatterGregorian::create_from_skeleton(&locale, b"yMdjm").unwrap();
+        assert_eq!(
+            with_write(|w| dtf_greg.format_iso(&iso_date, &time, w)),
+            "9/23/2026, 4:05\u{202f}PM"
+        );
+
+        // TimeZoneFormatter
+        let tzf = TimeZoneFormatter::create_from_skeleton(&locale, b"vvvv").unwrap();
+        assert_eq!(
+            with_write(|w| tzf.format(&zdt.zone, w).unwrap()),
+            "Pacific Time"
+        );
+
+        // ZonedDateFormatter & ZonedDateFormatterGregorian
+        let zdf = ZonedDateFormatter::create_from_skeleton(&locale, b"yMdz").unwrap();
+        assert_eq!(
+            with_write(|w| zdf.format_iso(&zdt.date, &zdt.zone, w).unwrap()),
+            "9/23/2026 PDT"
+        );
+
+        let zdf_greg = ZonedDateFormatterGregorian::create_from_skeleton(&locale, b"yMdz").unwrap();
+        assert_eq!(
+            with_write(|w| zdf_greg.format_iso(&zdt.date, &zdt.zone, w).unwrap()),
+            "9/23/2026 PDT"
+        );
+
+        // ZonedTimeFormatter
+        let ztf = ZonedTimeFormatter::create_from_skeleton(&locale, b"jmz").unwrap();
+        assert_eq!(
+            with_write(|w| ztf.format(&zdt.time, &zdt.zone, w).unwrap()),
+            "4:05\u{202f}PM PDT"
+        );
+
+        // ZonedDateTimeFormatter & ZonedDateTimeFormatterGregorian
+        let zdtf = ZonedDateTimeFormatter::create_from_skeleton(&locale, b"yMdjmz").unwrap();
+        assert_eq!(
+            with_write(|w| zdtf.format_iso(&zdt.date, &zdt.time, &zdt.zone, w).unwrap()),
+            "9/23/2026, 4:05\u{202f}PM PDT"
+        );
+
+        let zdtf_greg =
+            ZonedDateTimeFormatterGregorian::create_from_skeleton(&locale, b"yMdjmz").unwrap();
+        assert_eq!(
+            with_write(|w| zdtf_greg
+                .format_iso(&zdt.date, &zdt.time, &zdt.zone, w)
+                .unwrap()),
+            "9/23/2026, 4:05\u{202f}PM PDT"
+        );
+
+        // Category validation errors
+        assert_eq!(
+            DateFormatter::create_from_skeleton(&locale, b"jm").err(),
+            Some(DateTimeFormatterLoadError::MissingDateFields)
+        );
+        assert_eq!(
+            TimeFormatter::create_from_skeleton(&locale, b"yMd").err(),
+            Some(DateTimeFormatterLoadError::MissingTimePrecision)
+        );
+        assert_eq!(
+            ZonedDateTimeFormatter::create_from_skeleton(&locale, b"yMdjm").err(),
+            Some(DateTimeFormatterLoadError::MissingZoneStyle)
+        );
+        assert_eq!(
+            DateFormatter::create_from_skeleton(&locale, b"yMdz").err(),
+            Some(DateTimeFormatterLoadError::SuperfluousOptions)
+        );
+        assert_eq!(
+            DateFormatter::create_from_skeleton(&locale, b"\xff").err(),
+            Some(DateTimeFormatterLoadError::Unknown)
+        );
+    }
+}

@@ -57,6 +57,71 @@ pub mod ffi {
     );
 
     impl {{ ffi_type }} {
+        {%- for ctor in ConstructorType::VALUES %}
+        /// Creates a formatter from a UTS #35 skeleton string.
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_skeleton{{ ctor.suffix_ffi() }}")]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::to_field_set_builder, FnInStruct, hidden)]
+        #[cfg(all(feature = "{{ ctor.cargo_feature() }}", feature = "unstable"))]
+        pub fn create_from_skeleton{{ ctor.suffix_ffi() }}(
+            {%- if ctor.is_with_provider() %}
+            provider: &DataProvider,
+            {%- endif %}
+            locale: &Locale,
+            skeleton: &DiplomatStr,
+        ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            {%- if ctor.is_with_provider() %}
+            let provider = provider.get()?;
+            {%- endif %}
+            let prefs = (&locale.0).into();
+            let skeleton = core::str::from_utf8(skeleton).map_err(|_| DateTimeFormatterLoadError::Unknown)?;
+            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton(skeleton)
+                .to_field_set_builder();
+            {%- if flavor.is_date_only() %}
+            if builder.date_fields.is_some_and(|df| df.is_calendar_period()) {
+                let options = builder.build_calendar_period()?;
+                Ok(Box::new(Self(
+                    icu_datetime
+                        ::{{ formatter_kind.rust_type() }}
+                        ::try_new{{ ctor.suffix_rust() }}(
+                            {%- if ctor.is_with_provider() %}
+                            provider,
+                            {%- endif %}
+                            prefs,
+                            options
+                        )?
+                    .cast_into_fset(),
+                )))
+            } else {
+                let options = builder.build_date()?;
+                Ok(Box::new(Self(
+                    icu_datetime
+                        ::{{ formatter_kind.rust_type() }}
+                        ::try_new{{ ctor.suffix_rust() }}(
+                            {%- if ctor.is_with_provider() %}
+                            provider,
+                            {%- endif %}
+                            prefs,
+                            options
+                        )?,
+                )))
+            }
+            {%- else %}
+            let options = builder.build_{{ flavor.builder_fn() }}()?;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::{{ formatter_kind.rust_type() }}
+                    ::try_new{{ ctor.suffix_rust() }}(
+                        {%- if ctor.is_with_provider() %}
+                        provider,
+                        {%- endif %}
+                        prefs,
+                        options
+                    )?,
+            )))
+            {%- endif %}
+        }
+        {% endfor %}
         {%- for variant in variants %}
         {%- for ctor in ConstructorType::VALUES %}
         {%- decl named_constructor %}

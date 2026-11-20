@@ -27,6 +27,10 @@ inline icu4x::capi::DateTimeFormatterLoadError icu4x::DateTimeFormatterLoadError
 inline icu4x::DateTimeFormatterLoadError icu4x::DateTimeFormatterLoadError::FromFFI(icu4x::capi::DateTimeFormatterLoadError c_enum) {
     switch (c_enum) {
         case icu4x::capi::DateTimeFormatterLoadError_Unknown:
+        case icu4x::capi::DateTimeFormatterLoadError_MissingDateFields:
+        case icu4x::capi::DateTimeFormatterLoadError_MissingTimePrecision:
+        case icu4x::capi::DateTimeFormatterLoadError_MissingZoneStyle:
+        case icu4x::capi::DateTimeFormatterLoadError_SuperfluousOptions:
         case icu4x::capi::DateTimeFormatterLoadError_InvalidDateFields:
         case icu4x::capi::DateTimeFormatterLoadError_UnsupportedLength:
         case icu4x::capi::DateTimeFormatterLoadError_ConflictingField:
