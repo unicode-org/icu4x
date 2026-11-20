@@ -2082,6 +2082,20 @@ fn test_fffe_issue_6811() {
 }
 
 #[test]
+fn test_sorting_by_ccc() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare(
+            "\u{F57}\u{F4D}\u{F73}\u{F39}\u{F9F}\u{F75}\u{F4B}",
+            "\u{F57}\u{F4D}\u{F73}\u{F39}\u{F9F}\u{F75}\u{F4B}\u{F47}\u{F0D}\u{F73}\u{F69}\u{F8F}"
+        ),
+        Ordering::Less
+    );
+}
+
+#[test]
 fn test_burmese() {
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Tertiary);
