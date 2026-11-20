@@ -60,7 +60,9 @@ pub mod ffi {
         {%- for ctor in ConstructorType::VALUES %}
         /// Creates a formatter from a UTS #35 skeleton string.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_skeleton{{ ctor.suffix_ffi() }}")]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::to_field_set_builder, FnInStruct, hidden)]
         #[cfg(all(feature = "{{ ctor.cargo_feature() }}", feature = "unstable"))]
         pub fn create_from_skeleton{{ ctor.suffix_ffi() }}(
@@ -74,12 +76,13 @@ pub mod ffi {
             let provider = provider.get()?;
             {%- endif %}
             let prefs = (&locale.0).into();
-            let skeleton = core::str::from_utf8(skeleton).map_err(|_| DateTimeFormatterLoadError::Unknown)?;
-            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton(skeleton)
+            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8(skeleton)
                 .to_field_set_builder();
             {%- if flavor.is_date_only() %}
             if builder.date_fields.is_some_and(|df| df.is_calendar_period()) {
-                let options = builder.build_calendar_period()?;
+                let options = builder
+                    .build_calendar_period()
+                    .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
                 Ok(Box::new(Self(
                     icu_datetime
                         ::{{ formatter_kind.rust_type() }}
@@ -93,7 +96,9 @@ pub mod ffi {
                     .cast_into_fset(),
                 )))
             } else {
-                let options = builder.build_date()?;
+                let options = builder
+                    .build_date()
+                    .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
                 Ok(Box::new(Self(
                     icu_datetime
                         ::{{ formatter_kind.rust_type() }}
@@ -107,7 +112,9 @@ pub mod ffi {
                 )))
             }
             {%- else %}
-            let options = builder.build_{{ flavor.builder_fn() }}()?;
+            let options = builder
+                .build_{{ flavor.builder_fn() }}()
+                .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::{{ formatter_kind.rust_type() }}

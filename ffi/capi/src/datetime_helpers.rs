@@ -349,23 +349,26 @@ mod tests {
         // Category validation errors
         assert_eq!(
             DateFormatter::create_from_skeleton(&locale, b"jm").err(),
-            Some(DateTimeFormatterLoadError::MissingDateFields)
+            Some(DateTimeFormatterLoadError::InvalidSkeletonForFormatter)
         );
         assert_eq!(
             TimeFormatter::create_from_skeleton(&locale, b"yMd").err(),
-            Some(DateTimeFormatterLoadError::MissingTimePrecision)
+            Some(DateTimeFormatterLoadError::InvalidSkeletonForFormatter)
         );
         assert_eq!(
             ZonedDateTimeFormatter::create_from_skeleton(&locale, b"yMdjm").err(),
-            Some(DateTimeFormatterLoadError::MissingZoneStyle)
+            Some(DateTimeFormatterLoadError::InvalidSkeletonForFormatter)
         );
         assert_eq!(
             DateFormatter::create_from_skeleton(&locale, b"yMdz").err(),
-            Some(DateTimeFormatterLoadError::SuperfluousOptions)
+            Some(DateTimeFormatterLoadError::InvalidSkeletonForFormatter)
         );
+
+        // Invalid UTF-8 bytes are leniently ignored just like other non-field characters
+        let df_lenient_utf8 = DateFormatter::create_from_skeleton(&locale, b"y\xffMd").unwrap();
         assert_eq!(
-            DateFormatter::create_from_skeleton(&locale, b"\xff").err(),
-            Some(DateTimeFormatterLoadError::Unknown)
+            with_write(|w| df_lenient_utf8.format_iso(&iso_date, w)),
+            "9/23/2026"
         );
     }
 }

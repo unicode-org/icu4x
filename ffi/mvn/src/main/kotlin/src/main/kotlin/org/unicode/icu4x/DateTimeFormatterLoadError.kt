@@ -9,18 +9,15 @@ import com.sun.jna.Structure
 internal interface DateTimeFormatterLoadErrorLib: Library {
 }
 /**
- * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/builder/enum.BuilderError.html), [3](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [5](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
+ * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
 */
 enum class DateTimeFormatterLoadError(val inner: Int) {
     Unknown(0),
-    MissingDateFields(1025),
-    MissingTimePrecision(1026),
-    MissingZoneStyle(1027),
-    SuperfluousOptions(1029),
     InvalidDateFields(2049),
     UnsupportedLength(2051),
     ConflictingField(2057),
     FormatterTooSpecific(2058),
+    InvalidSkeletonForFormatter(2059),
     DataMarkerNotFound(1),
     DataIdentifierNotFound(2),
     DataInvalidRequest(3),
@@ -41,14 +38,11 @@ enum class DateTimeFormatterLoadError(val inner: Int) {
         fun fromNative(native: Int): DateTimeFormatterLoadError {
             return when (native) {
                 0 -> Unknown
-                1025 -> MissingDateFields
-                1026 -> MissingTimePrecision
-                1027 -> MissingZoneStyle
-                1029 -> SuperfluousOptions
                 2049 -> InvalidDateFields
                 2051 -> UnsupportedLength
                 2057 -> ConflictingField
                 2058 -> FormatterTooSpecific
+                2059 -> InvalidSkeletonForFormatter
                 1 -> DataMarkerNotFound
                 2 -> DataIdentifierNotFound
                 3 -> DataInvalidRequest

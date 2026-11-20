@@ -16,14 +16,11 @@ namespace icu4x {
 namespace capi {
     enum DateTimeFormatterLoadError {
       DateTimeFormatterLoadError_Unknown = 0,
-      DateTimeFormatterLoadError_MissingDateFields = 1025,
-      DateTimeFormatterLoadError_MissingTimePrecision = 1026,
-      DateTimeFormatterLoadError_MissingZoneStyle = 1027,
-      DateTimeFormatterLoadError_SuperfluousOptions = 1029,
       DateTimeFormatterLoadError_InvalidDateFields = 2049,
       DateTimeFormatterLoadError_UnsupportedLength = 2051,
       DateTimeFormatterLoadError_ConflictingField = 2057,
       DateTimeFormatterLoadError_FormatterTooSpecific = 2058,
+      DateTimeFormatterLoadError_InvalidSkeletonForFormatter = 2059,
       DateTimeFormatterLoadError_DataMarkerNotFound = 1,
       DateTimeFormatterLoadError_DataIdentifierNotFound = 2,
       DateTimeFormatterLoadError_DataInvalidRequest = 3,
@@ -40,20 +37,17 @@ namespace capi {
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/builder/enum.BuilderError.html), [3](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [5](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
+ * Additional information: [1](https://docs.rs/icu/2.4.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.4.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.4.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.4.0/icu_provider/enum.DataErrorKind.html)
  */
 class DateTimeFormatterLoadError {
 public:
     enum Value {
         Unknown = 0,
-        MissingDateFields = 1025,
-        MissingTimePrecision = 1026,
-        MissingZoneStyle = 1027,
-        SuperfluousOptions = 1029,
         InvalidDateFields = 2049,
         UnsupportedLength = 2051,
         ConflictingField = 2057,
         FormatterTooSpecific = 2058,
+        InvalidSkeletonForFormatter = 2059,
         DataMarkerNotFound = 1,
         DataIdentifierNotFound = 2,
         DataInvalidRequest = 3,

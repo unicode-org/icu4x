@@ -159,7 +159,6 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatterLoadError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::fieldsets::builder::BuilderError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
@@ -168,15 +167,11 @@ pub mod ffi {
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
-        MissingDateFields = 0x4_01,
-        MissingTimePrecision = 0x4_02,
-        MissingZoneStyle = 0x4_03,
-        SuperfluousOptions = 0x4_05,
-
         InvalidDateFields = 0x8_01,
         UnsupportedLength = 0x8_03,
         ConflictingField = 0x8_09,
         FormatterTooSpecific = 0x8_0A,
+        InvalidSkeletonForFormatter = 0x8_0B,
 
         DataMarkerNotFound = 0x01,
         DataIdentifierNotFound = 0x02,
@@ -354,21 +349,6 @@ impl From<icu_time::ParseError> for Rfc9557ParseError {
             icu_time::ParseError::Range(_) => Self::OutOfRange,
             icu_time::ParseError::UnknownCalendar => Self::UnknownCalendar,
             // TODO
-            _ => Self::Unknown,
-        }
-    }
-}
-
-#[cfg(feature = "datetime")]
-impl From<icu_datetime::fieldsets::builder::BuilderError> for DateTimeFormatterLoadError {
-    fn from(e: icu_datetime::fieldsets::builder::BuilderError) -> Self {
-        use icu_datetime::fieldsets::builder::BuilderError::*;
-        match e {
-            MissingDateFields => Self::MissingDateFields,
-            MissingTimePrecision => Self::MissingTimePrecision,
-            MissingZoneStyle => Self::MissingZoneStyle,
-            InvalidDateFields => Self::InvalidDateFields,
-            SuperfluousOptions(_) => Self::SuperfluousOptions,
             _ => Self::Unknown,
         }
     }

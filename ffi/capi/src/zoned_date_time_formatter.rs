@@ -43,7 +43,9 @@ pub mod ffi {
     impl ZonedDateTimeFormatter {
         /// Creates a zoned formatter from a UTS #35 skeleton string.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_skeleton")]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::to_field_set_builder, FnInStruct, hidden)]
         #[cfg(all(feature = "compiled_data", feature = "unstable"))]
         pub fn create_from_skeleton(
@@ -51,10 +53,11 @@ pub mod ffi {
             skeleton: &DiplomatStr,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let skeleton = core::str::from_utf8(skeleton).map_err(|_| DateTimeFormatterLoadError::Unknown)?;
-            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton(skeleton)
+            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8(skeleton)
                 .to_field_set_builder();
-            let options = builder.build_zoned_date_and_time()?;
+            let options = builder
+                .build_zoned_date_and_time()
+                .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -67,7 +70,9 @@ pub mod ffi {
         
         /// Creates a zoned formatter from a UTS #35 skeleton string.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_skeleton_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::to_field_set_builder, FnInStruct, hidden)]
         #[cfg(all(feature = "buffer_provider", feature = "unstable"))]
         pub fn create_from_skeleton_with_provider(
@@ -77,10 +82,11 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             let prefs = (&locale.0).into();
-            let skeleton = core::str::from_utf8(skeleton).map_err(|_| DateTimeFormatterLoadError::Unknown)?;
-            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton(skeleton)
+            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8(skeleton)
                 .to_field_set_builder();
-            let options = builder.build_zoned_date_and_time()?;
+            let options = builder
+                .build_zoned_date_and_time()
+                .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -704,7 +710,9 @@ pub mod ffi {
     impl ZonedDateTimeFormatterGregorian {
         /// Creates a zoned formatter from a UTS #35 skeleton string.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_skeleton")]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::to_field_set_builder, FnInStruct, hidden)]
         #[cfg(all(feature = "compiled_data", feature = "unstable"))]
         pub fn create_from_skeleton(
@@ -712,10 +720,11 @@ pub mod ffi {
             skeleton: &DiplomatStr,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let skeleton = core::str::from_utf8(skeleton).map_err(|_| DateTimeFormatterLoadError::Unknown)?;
-            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton(skeleton)
+            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8(skeleton)
                 .to_field_set_builder();
-            let options = builder.build_zoned_date_and_time()?;
+            let options = builder
+                .build_zoned_date_and_time()
+                .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -728,7 +737,9 @@ pub mod ffi {
         
         /// Creates a zoned formatter from a UTS #35 skeleton string.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_skeleton_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldbag::DateTimeFieldBag::to_field_set_builder, FnInStruct, hidden)]
         #[cfg(all(feature = "buffer_provider", feature = "unstable"))]
         pub fn create_from_skeleton_with_provider(
@@ -738,10 +749,11 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             let prefs = (&locale.0).into();
-            let skeleton = core::str::from_utf8(skeleton).map_err(|_| DateTimeFormatterLoadError::Unknown)?;
-            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton(skeleton)
+            let builder = icu_datetime::fieldbag::DateTimeFieldBag::from_skeleton_utf8(skeleton)
                 .to_field_set_builder();
-            let options = builder.build_zoned_date_and_time()?;
+            let options = builder
+                .build_zoned_date_and_time()
+                .map_err(|_| DateTimeFormatterLoadError::InvalidSkeletonForFormatter)?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
