@@ -10,13 +10,16 @@ use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::collections::codepointtrie::CodePointTrieBuilder;
+use icu::collections::codepointtrie::SmallCodePointTrie;
 use icu::collections::codepointtrie::Typed;
+use icu::collections::codepointtrie::TypedCodePointTrie;
 use icu::locale::{
     data_locale,
     subtags::{language, script},
 };
 use icu_provider::prelude::*;
 use std::collections::HashSet;
+use std::ops::Range;
 use zerovec::ZeroVec;
 
 mod collator_serde;
@@ -101,6 +104,22 @@ fn file_name_to_ids(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
 }
 
 impl SourceDataProvider {
+    /// Returns the root collation data that tailorings hoist values from.
+    fn converted_collation_root(&self) -> Result<&CollationData<'static>, DataError> {
+        // The converted root depends on the icuexport source and on the
+        // root Han setting, so cache it with the source under a key that
+        // includes the latter.
+        self.icuexport()?.get_or_compute(
+            &format!("collation/{}/root (converted)", self.collation_root_han()),
+            || {
+                convert_data_from_serde(
+                    self.load_toml::<collator_serde::CollationData>(Default::default(), "_data")?,
+                    None,
+                )
+            },
+        )
+    }
+
     fn load_toml<T>(&self, id: DataIdentifierBorrowed, suffix: &str) -> Result<&T, DataError>
     where
         for<'de> T: serde::Deserialize<'de> + 'static + Send + Sync,
@@ -162,7 +181,20 @@ macro_rules! collation_provider {
                 }
             }
         )+
+    };
+}
 
+collation_provider!(
+    (CollationDiacriticsV1, CollationDiacritics),
+    (CollationJamoV1, CollationJamo),
+    (CollationMetadataV1, CollationMetadata),
+    (CollationReorderingV1, CollationReordering),
+    (CollationSpecialPrimariesV1, CollationSpecialPrimaries),
+);
+
+#[cfg(test)]
+macro_rules! test_fallback_overrides {
+    ($($marker:ident),+ $(,)?) => {
         #[test]
         fn test_all_fallback_overrides_handled() {
             let provider = SourceDataProvider::new_testing();
@@ -215,56 +247,214 @@ macro_rules! collation_provider {
     };
 }
 
-collation_provider!(
-    (CollationDiacriticsV1, CollationDiacritics),
-    (CollationJamoV1, CollationJamo),
-    (CollationMetadataV1, CollationMetadata),
-    (CollationReorderingV1, CollationReordering),
-    (CollationSpecialPrimariesV1, CollationSpecialPrimaries),
-    (CollationRootV1, CollationData),
-    (CollationTailoringV1, CollationData),
+#[cfg(test)]
+test_fallback_overrides!(
+    CollationDiacriticsV1,
+    CollationJamoV1,
+    CollationMetadataV1,
+    CollationReorderingV1,
+    CollationSpecialPrimariesV1,
+    CollationRootV1,
+    CollationTailoringV1,
 );
 
-impl collator_serde::CollationData {
-    fn suffix() -> &'static str {
-        "_data"
-    }
-
-    fn convert(&self, _has_tailoring: bool) -> Result<CollationData<'static>, DataError> {
-        let trie = CodePointTrie::<u32>::try_from(&self.trie)
-            .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-
-        let mut builder = CodePointTrieBuilder::new(
-            trie.get('\u{10FFFF}'),
-            trie.get32(u32::MAX),
-            icu::collections::codepointtrie::TrieType::Small,
-        );
-
-        for i in 0..0xAC00 {
-            builder.set_value(i, trie.get32(i));
-        }
-        for _ in 0xAC00..0xD7A4 {
-            // Use the default value for Hangul syllables. We are not
-            // relying on the collation data to catch Hangul syllables.
-            // Furthermore, having non-default values in this range is
-            // bad for tailorings whose characters of interest are
-            // below the fast-access boundary for the small trie type.
-        }
-        for i in 0xD7A4..=(char::MAX as u32) {
-            builder.set_value(i, trie.get32(i));
-        }
-
-        let Typed::Small(trie) = builder.build().to_typed() else {
-            unreachable!("The builder was configured with `TrieType::Small`");
-        };
-
-        Ok(CollationData {
-            trie,
-            contexts: ZeroVec::alloc_from_slice(&self.contexts),
-            ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
-            ces: self.ces.iter().map(|i| *i as u64).collect(),
+impl DataProvider<CollationRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationRootV1>, DataError> {
+        self.check_req::<CollationRootV1>(req)?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.converted_collation_root()
+                    .map_err(|e| e.with_req(CollationRootV1::INFO, req))?
+                    .clone(),
+            ),
         })
     }
+}
+
+impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
+impl DataProvider<CollationTailoringV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV1>, DataError> {
+        self.check_req::<CollationTailoringV1>(req)?;
+        let root_trie: &SmallCodePointTrie<u32> = &self
+            .converted_collation_root()
+            .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?
+            .trie;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(
+                self.load_toml::<collator_serde::CollationData>(req.id, "_data")
+                    .and_then(|d| convert_data_from_serde(d, Some((&req.id, root_trie))))
+                    .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?,
+            ),
+        })
+    }
+}
+
+impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        self.list_ids("_data")
+    }
+}
+
+/// Per-script hoisting within the fast range: if any code point in the
+/// first range is tailored, hoist the self-contained root values for the
+/// second range.
+const SCRIPT_HOISTS: &[(&str, Range<u32>, Range<u32>)] = &[
+    ("Cyrillic base", 0x0400..0x0500, 0x0410..0x0450),
+    ("Armenian", 0x0531..0x0590, 0x0531..0x0590),
+    ("Hebrew base", 0x0591..0x05F5, 0x05D0..0x05EB),
+    // TODO: Should the Arabic hoisting be narrower?
+    ("Arabic", 0x0600..0x0700, 0x0600..0x0700),
+];
+
+/// Returns the root value for `c` if the tailoring's value `current` is the
+/// fallback to root (`default_value`) and the root value is self-contained.
+fn hoistable(
+    current: u32,
+    root: &SmallCodePointTrie<u32>,
+    c: u32,
+    default_value: u32,
+) -> Option<u32> {
+    if current != default_value {
+        return None;
+    }
+    let ce32 = root.get32(c);
+    is_self_contained(ce32).then_some(ce32)
+}
+
+/// `true` iff any code point in `range` has a tailored (non-fallback) value.
+fn is_tailored(fast: &[u32], default_value: u32, range: Range<u32>) -> bool {
+    fast[range.start as usize..range.end as usize]
+        .iter()
+        .any(|v| *v != default_value)
+}
+
+/// Hoists the self-contained root values for the code points in `range`
+/// that fall back to root in `fast`.
+fn hoist_into_fast(
+    fast: &mut [u32],
+    root: &SmallCodePointTrie<u32>,
+    default_value: u32,
+    range: Range<u32>,
+) {
+    for c in range {
+        if let Some(ce32) = hoistable(fast[c as usize], root, c, default_value) {
+            fast[c as usize] = ce32;
+        }
+    }
+}
+
+fn rebuild_data<'a>(
+    trie: CodePointTrie<'a, u32>,
+    id_and_root: Option<(&DataIdentifierBorrowed, &SmallCodePointTrie<u32>)>,
+) -> SmallCodePointTrie<'a, u32> {
+    let default_value = trie.get('\u{10FFFF}');
+    let mut rewritten_fast: Vec<u32> = Vec::new();
+    if let Some((id, root)) = id_and_root {
+        let collation_type: &str = id.marker_attributes;
+        // Only optimize the default collation and the three non-unihan Chinese collations
+        if collation_type.is_empty()
+            || collation_type == "pinyin"
+            || collation_type == "zhuyin"
+            || collation_type == "stroke"
+        {
+            let bound = 0x1000;
+            rewritten_fast = (0..bound).map(|i| trie.get32(i)).collect();
+            // Copy the ASCII range
+            hoist_into_fast(&mut rewritten_fast, root, default_value, 0..0x80);
+            for (script, detect, hoist) in SCRIPT_HOISTS {
+                if is_tailored(&rewritten_fast, default_value, detect.clone()) {
+                    log::info!("Hoist {script} for {id:?}");
+                    hoist_into_fast(&mut rewritten_fast, root, default_value, hoist.clone());
+                }
+            }
+
+            // We currently don't have tailorings using the Syriac, Thaana,
+            // N'Ko, Samaritan, or Mandaic scripts.
+
+            // Fill the 7-bit blocks for Brahmic scripts
+            for block in (0x0900..bound).step_by(0x80) {
+                let block = block..block + 0x80;
+                if is_tailored(&rewritten_fast, default_value, block.clone()) {
+                    log::info!("Hoist 7-bit block starting at {:X} for {id:?}", block.start);
+                    hoist_into_fast(&mut rewritten_fast, root, default_value, block);
+                }
+            }
+        }
+    }
+    let mut builder = CodePointTrieBuilder::new(
+        default_value,
+        trie.get32(u32::MAX),
+        icu::collections::codepointtrie::TrieType::Small,
+    );
+
+    // `rewritten_fast` is either empty or covers 0..0x1000.
+    for (i, trie_val) in (0u32..).zip(rewritten_fast.iter()) {
+        builder.set_value(i, *trie_val);
+    }
+    for i in (rewritten_fast.len() as u32)..0xAC00 {
+        builder.set_value(i, trie.get32(i));
+    }
+    // Skip 0xAC00..0xD7A4 so that Hangul syllables get the default value.
+    // We are not relying on the collation data to catch Hangul syllables.
+    // Furthermore, having non-default values in this range is
+    // bad for tailorings whose characters of interest are
+    // below the fast-access boundary for the small trie type.
+    for i in 0xD7A4..=(char::MAX as u32) {
+        builder.set_value(i, trie.get32(i));
+    }
+    if let Some((id, root)) = id_and_root {
+        let lang = id.locale.language;
+        let collation_type: &str = id.marker_attributes;
+        match collation_type {
+            "search" | "emoji" | "eor" | "unihan" => {}
+            _ => {
+                if lang == language!("ja") {
+                    // Hoist Hiragana
+                    log::info!("Hoist Hiragana for {:?}", id);
+                    for i in 0x3041..0x30A0 {
+                        if let Some(ce32) = hoistable(trie.get32(i), root, i, default_value) {
+                            builder.set_value(i, ce32);
+                        }
+                    }
+                }
+                // `und` means Chinese after we've excluded `search`, `emoji`, and `eor`.
+                if lang == language!("ja") || lang == language!("und") {
+                    log::info!("Hoist ideographic punctuation for {:?}", id);
+                    for i in 0x3000..0x3040 {
+                        if let Some(ce32) = hoistable(trie.get32(i), root, i, default_value) {
+                            builder.set_value(i, ce32);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let Typed::Small(t) = builder.build().to_typed() else {
+        unreachable!("The builder was configured with `TrieType::Small`");
+    };
+    t
+}
+
+fn convert_data_from_serde(
+    data: &collator_serde::CollationData,
+    id_and_root: Option<(&DataIdentifierBorrowed, &SmallCodePointTrie<u32>)>,
+) -> Result<CollationData<'static>, DataError> {
+    let trie = CodePointTrie::<u32>::try_from(&data.trie)
+        .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
+    let rebuilt_trie = rebuild_data(trie, id_and_root);
+    Ok(CollationData {
+        trie: rebuilt_trie,
+        contexts: ZeroVec::alloc_from_slice(&data.contexts),
+        ce32s: ZeroVec::alloc_from_slice(&data.ce32s),
+        ces: data.ces.iter().map(|i| *i as u64).collect(),
+    })
 }
 
 impl collator_serde::CollationDiacritics {
@@ -378,4 +568,35 @@ impl collator_serde::CollationSpecialPrimaries {
             compressible_bytes: packed_compressible_bytes.into_iter().collect(),
         })
     }
+}
+
+#[test]
+fn test_collation_root_not_shared_across_providers() {
+    let implicit = SourceDataProvider::new_testing();
+    let unihan = implicit
+        .clone()
+        .with_collation_root_han(crate::CollationRootHan::Unihan);
+    // The test data lacks the unihan root, so having loaded the implicit root
+    // must not make a unihan root available, and the unihan failure must not
+    // affect the implicit root.
+    assert!(implicit.converted_collation_root().is_ok());
+    assert!(unihan.converted_collation_root().is_err());
+    assert!(implicit.converted_collation_root().is_ok());
+}
+
+#[test]
+fn test_collation_ids_not_shared_across_root_han() {
+    let locale: DataLocale = icu::locale::langid!("ar").into();
+    let request = DataRequest {
+        id: DataIdentifierBorrowed::for_locale(&locale),
+        ..Default::default()
+    };
+    let implicit = SourceDataProvider::new_testing();
+    let unihan = implicit
+        .clone()
+        .with_collation_root_han(crate::CollationRootHan::Unihan);
+    // The test data lacks unihan collations, so listing them fails. That
+    // failure must not leak into the implicit provider.
+    assert!(DataProvider::<CollationTailoringV1>::load(&unihan, request).is_err());
+    assert!(DataProvider::<CollationTailoringV1>::load(&implicit, request).is_ok());
 }
