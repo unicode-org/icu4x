@@ -358,3 +358,29 @@ fn test_fieldset_formatter_and_builder() {
 
     assert_eq!(valid_builder_count, 24152);
 }
+
+#[test]
+fn test_const_new_and_hash() {
+    use icu_datetime::fieldbag::DateTimeFieldBagParseError;
+    use std::collections::HashSet;
+
+    const EMPTY: DateTimeFieldBag = DateTimeFieldBag::new();
+    const YM: DateTimeFieldBag = {
+        let mut bag = DateTimeFieldBag::new();
+        bag.year = Some(Year::Numeric);
+        bag.month = Some(Month::Short);
+        bag
+    };
+
+    assert_eq!(EMPTY, DateTimeFieldBag::default());
+
+    let mut bags = HashSet::new();
+    assert!(bags.insert(EMPTY));
+    assert!(bags.insert(YM));
+    assert!(!bags.insert(DateTimeFieldBag::from_skeleton("yMMM")));
+
+    let mut errors = HashSet::new();
+    assert!(errors.insert(DateTimeFieldBagParseError::DuplicateField));
+    assert!(errors.insert(DateTimeFieldBagParseError::UnknownField));
+    assert!(!errors.insert(DateTimeFieldBagParseError::DuplicateField));
+}
