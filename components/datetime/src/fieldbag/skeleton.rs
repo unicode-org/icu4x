@@ -5,8 +5,8 @@
 use core::fmt;
 
 use super::DateTimeFieldBag;
-use crate::provider::pattern::reference::tokenizer::Token;
-use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenizer;
+use crate::provider::pattern::reference::tokenizer::BytesToken as Token;
+use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternBytesTokenizer;
 
 /// An error returned when parsing a UTS #35 skeleton string into a [`DateTimeFieldBag`].
 ///
@@ -50,7 +50,7 @@ pub enum DateTimeFieldBagParseError {
     /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("y-MM-dd"), "yMMdd");
     /// ```
     UnexpectedLiteral,
-    /// The skeleton contained a syntax error, such as an unclosed quoted literal.
+    /// The skeleton contained a syntax error, such as an unclosed quoted literal or invalid UTF-8.
     ///
     /// # Examples
     ///
@@ -119,7 +119,7 @@ pub enum DateTimeFieldBagParseError {
 impl core::error::Error for DateTimeFieldBagParseError {}
 
 pub(crate) fn uts35_to_fieldbag(
-    skeleton: &str,
+    skeleton: &[u8],
 ) -> (DateTimeFieldBag, Option<DateTimeFieldBagParseError>) {
     use super::field::*;
     use DateTimeFieldBagParseError::*;
@@ -134,7 +134,7 @@ pub(crate) fn uts35_to_fieldbag(
         }};
     }
 
-    let mut tokenizer = Uts35DateTimePatternTokenizer(skeleton);
+    let mut tokenizer = Uts35DateTimePatternBytesTokenizer(skeleton);
     let mut bag = DateTimeFieldBag::default();
     let mut error = None;
     while let Some(token) = tokenizer.step() {
@@ -168,10 +168,6 @@ pub(crate) fn uts35_to_fieldbag(
                 'Z' | 'x' | 'X' => {
                     error.get_or_insert(NonCanonicalField);
                     'O'
-                }
-                'V' => {
-                    error.get_or_insert(NonCanonicalField);
-                    'v'
                 }
                 other => other,
             };
@@ -406,11 +402,29 @@ pub(crate) fn uts35_to_fieldbag(
                 );
                 error.get_or_insert(InvalidFieldLength);
             }
+            Token::Symbol('V', 3) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ExemplarCity
+                );
+            }
+            Token::Symbol('V', 4) => {
+                put_field!(&mut error, &mut bag.time_zone_name, TimeZoneName::Location);
+            }
+            Token::Symbol('V', _) => {
+                put_field!(&mut error, &mut bag.time_zone_name, TimeZoneName::Location);
+                error.get_or_insert(InvalidFieldLength);
+            }
             Token::Symbol(_, _) => {
                 error.get_or_insert(UnknownField);
             }
-            Token::Literal(_) => {
-                error.get_or_insert(UnexpectedLiteral);
+            Token::Literal(bytes) => {
+                if core::str::from_utf8(bytes).is_err() {
+                    error.get_or_insert(SyntaxError);
+                } else {
+                    error.get_or_insert(UnexpectedLiteral);
+                }
             }
             Token::UnclosedLiteral(_) => {
                 error.get_or_insert(SyntaxError);
@@ -508,6 +522,8 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
         Some(TimeZoneName::LongOffset) => sink.write_str("OOOO")?,
         Some(TimeZoneName::ShortGeneric) => sink.write_char('v')?,
         Some(TimeZoneName::LongGeneric) => sink.write_str("vvvv")?,
+        Some(TimeZoneName::Location) => sink.write_str("VVVV")?,
+        Some(TimeZoneName::ExemplarCity) => sink.write_str("VVV")?,
         None => (),
     }
     Ok(())
@@ -533,6 +549,13 @@ fn test_skeleton_parse_errors_and_lenient() {
         ("L", DateTimeFieldBagParseError::NonCanonicalField, "M"),
         ("K", DateTimeFieldBagParseError::NonCanonicalField, "h"),
         ("k", DateTimeFieldBagParseError::NonCanonicalField, "H"),
+        ("V", DateTimeFieldBagParseError::InvalidFieldLength, "VVVV"),
+        ("VV", DateTimeFieldBagParseError::InvalidFieldLength, "VVVV"),
+        (
+            "VVVVV",
+            DateTimeFieldBagParseError::InvalidFieldLength,
+            "VVVV",
+        ),
         ("Q", DateTimeFieldBagParseError::UnknownField, ""),
         ("yQw", DateTimeFieldBagParseError::UnknownField, "y"),
     ];
@@ -544,6 +567,33 @@ fn test_skeleton_parse_errors_and_lenient() {
         );
         assert_writeable_eq!(
             DateTimeFieldBag::from_skeleton(input),
+            expected_canonical,
+            "{input:?}"
+        );
+    }
+
+    let utf8_cases: &[(&[u8], DateTimeFieldBagParseError, &str)] = &[
+        (b"y\xffM", DateTimeFieldBagParseError::SyntaxError, "yM"),
+        (
+            b"y'foo\xff'M",
+            DateTimeFieldBagParseError::SyntaxError,
+            "yM",
+        ),
+        (b"y'foo\xff", DateTimeFieldBagParseError::SyntaxError, "y"),
+        (
+            "y😀M".as_bytes(),
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
+    ];
+    for &(input, expected_err, expected_canonical) in utf8_cases {
+        assert_eq!(
+            DateTimeFieldBag::try_from_skeleton_utf8(input),
+            Err(expected_err),
+            "{input:?}"
+        );
+        assert_writeable_eq!(
+            DateTimeFieldBag::from_skeleton_utf8(input),
             expected_canonical,
             "{input:?}"
         );
