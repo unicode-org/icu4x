@@ -6,52 +6,74 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_names::{
-    UnitsNamesAreaHeavyV1, UnitsNamesAreaLightV1, UnitsNamesAreaTinyV1, UnitsNamesDurationHeavyV1,
-    UnitsNamesDurationLightV1, UnitsNamesDurationTinyV1, UnitsNamesLengthHeavyV1,
-    UnitsNamesLengthLightV1, UnitsNamesLengthTinyV1, UnitsNamesMassHeavyV1, UnitsNamesMassLightV1,
-    UnitsNamesMassTinyV1, UnitsNamesVolumeHeavyV1, UnitsNamesVolumeLightV1, UnitsNamesVolumeTinyV1,
+    UnitsNamesAreaLongHeavyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongTinyV1,
+    UnitsNamesAreaShortNarrowHeavyV1, UnitsNamesAreaShortNarrowLightV1,
+    UnitsNamesAreaShortNarrowTinyV1, UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1,
+    UnitsNamesDurationLongTinyV1, UnitsNamesDurationShortNarrowHeavyV1,
+    UnitsNamesDurationShortNarrowLightV1, UnitsNamesDurationShortNarrowTinyV1,
+    UnitsNamesLengthLongHeavyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongTinyV1,
+    UnitsNamesLengthShortNarrowHeavyV1, UnitsNamesLengthShortNarrowLightV1,
+    UnitsNamesLengthShortNarrowTinyV1, UnitsNamesMassLongHeavyV1, UnitsNamesMassLongLightV1,
+    UnitsNamesMassLongTinyV1, UnitsNamesMassShortNarrowHeavyV1, UnitsNamesMassShortNarrowLightV1,
+    UnitsNamesMassShortNarrowTinyV1, UnitsNamesVolumeLongHeavyV1, UnitsNamesVolumeLongLightV1,
+    UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeShortNarrowHeavyV1,
+    UnitsNamesVolumeShortNarrowLightV1, UnitsNamesVolumeShortNarrowTinyV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
 use icu_provider::DataMarkerAttributes;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
+/// The widths of the unit names that a marker holds.
+#[derive(Clone, Copy)]
+enum Widths {
+    /// The long names. The key of a unit is the unit, such as `meter`.
+    Long,
+    /// The short and the narrow names. The key of a unit is the width and the unit,
+    /// such as `short-meter`.
+    ShortNarrow,
+}
+
+impl Widths {
+    /// Returns the data of each width of the marker, with the prefix of its keys.
+    fn select(
+        self,
+        units: &cldr_serde::units::data::UnitsData,
+    ) -> Vec<(&'static str, &cldr_serde::units::data::UnitsLengthData)> {
+        match self {
+            Self::Long => vec![("", &units.long)],
+            Self::ShortNarrow => vec![("short-", &units.short), ("narrow-", &units.narrow)],
+        }
+    }
+}
+
 impl SourceDataProvider {
-    fn get_display_name_payload<M>(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>
+    fn get_display_name_payload<M>(
+        &self,
+        req: DataRequest,
+        widths: Widths,
+    ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
-        let (length, unit) = req
-            .id
-            .marker_attributes
-            .split_once('-')
-            .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
+        let key = req.id.marker_attributes.as_str();
 
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
             .units()
             .read_and_parse(req.id.locale, "units.json")?;
 
-        let units_format_data = &units_format_data.main.value.units;
-
-        let unit_patterns = match length {
-            "long" => &units_format_data.long,
-            "short" => &units_format_data.short,
-            "narrow" => &units_format_data.narrow,
-            _ => {
-                return Err(DataErrorKind::InvalidRequest
-                    .with_req(M::INFO, req)
-                    .with_debug_context(length));
-            }
-        }
-        .categories
-        .iter()
-        .find_map(|(_, units_map)| units_map.get(unit))
-        .ok_or_else(|| {
-            DataErrorKind::IdentifierNotFound
-                .with_req(M::INFO, req)
-                .with_debug_context(length)
-        })?;
+        let unit_patterns = widths
+            .select(&units_format_data.main.value.units)
+            .into_iter()
+            .find_map(|(prefix, width_data)| {
+                let unit = key.strip_prefix(prefix)?;
+                width_data
+                    .categories
+                    .iter()
+                    .find_map(|(_, units_map)| units_map.get(unit))
+            })
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(M::INFO, req))?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -63,6 +85,7 @@ impl SourceDataProvider {
         &self,
         unit_type: UnitType,
         category: &str,
+        widths: Widths,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut data_locales = HashSet::new();
         let units = self.cldr()?.units();
@@ -78,21 +101,8 @@ impl SourceDataProvider {
 
             let units_format_data: &cldr_serde::units::data::Resource =
                 self.cldr()?.units().read_and_parse(&locale, "units.json")?;
-            let units_format_data = &units_format_data.main.value.units;
-
-            for length in &["long", "short", "narrow"] {
-                let length_patterns = match *length {
-                    "long" => &units_format_data.long,
-                    "short" => &units_format_data.short,
-                    "narrow" => &units_format_data.narrow,
-                    _ => {
-                        return Err(DataErrorKind::IdentifierNotFound
-                            .into_error()
-                            .with_debug_context(length));
-                    }
-                };
-
-                let units_map = length_patterns.categories.get(category).ok_or_else(|| {
+            for (prefix, width_data) in widths.select(&units_format_data.main.value.units) {
+                let units_map = width_data.categories.get(category).ok_or_else(|| {
                     DataErrorKind::InvalidRequest
                         .into_error()
                         .with_debug_context(category)
@@ -113,7 +123,7 @@ impl SourceDataProvider {
                     }
 
                     data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
+                        DataMarkerAttributes::try_from_string(format!("{prefix}{unit}")).map_err(
                             |_| {
                                 DataError::custom("Failed to parse the attribute")
                                     .with_debug_context(&unit)
@@ -130,46 +140,83 @@ impl SourceDataProvider {
 }
 
 macro_rules! impl_units_display_names_provider {
-    ($marker:ty, $unit_type:expr, $category:expr) => {
+    ($marker:ty, $unit_type:expr, $category:expr, $widths:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
-                self.get_display_name_payload::<$marker>(req)
+                self.get_display_name_payload::<$marker>(req, $widths)
             }
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.get_display_name_iter_ids_cached($unit_type, $category)
+                self.get_display_name_iter_ids_cached($unit_type, $category, $widths)
             }
         }
     };
 }
 
-// Area
-impl_units_display_names_provider!(UnitsNamesAreaTinyV1, UnitType::Tiny, "area");
-impl_units_display_names_provider!(UnitsNamesAreaLightV1, UnitType::Light, "area");
-impl_units_display_names_provider!(UnitsNamesAreaHeavyV1, UnitType::Heavy, "area");
+/// Implements the providers of the markers of one category: for each tier, one marker
+/// for the long names, and one for the short and the narrow names.
+macro_rules! impl_units_display_names_providers {
+    (
+        $category:expr,
+        long: [$long_tiny:ty, $long_light:ty, $long_heavy:ty],
+        short_narrow: [$short_narrow_tiny:ty, $short_narrow_light:ty, $short_narrow_heavy:ty] $(,)?
+    ) => {
+        impl_units_display_names_provider!($long_tiny, UnitType::Tiny, $category, Widths::Long);
+        impl_units_display_names_provider!($long_light, UnitType::Light, $category, Widths::Long);
+        impl_units_display_names_provider!($long_heavy, UnitType::Heavy, $category, Widths::Long);
+        impl_units_display_names_provider!(
+            $short_narrow_tiny,
+            UnitType::Tiny,
+            $category,
+            Widths::ShortNarrow
+        );
+        impl_units_display_names_provider!(
+            $short_narrow_light,
+            UnitType::Light,
+            $category,
+            Widths::ShortNarrow
+        );
+        impl_units_display_names_provider!(
+            $short_narrow_heavy,
+            UnitType::Heavy,
+            $category,
+            Widths::ShortNarrow
+        );
+    };
+}
 
-// Duration
-impl_units_display_names_provider!(UnitsNamesDurationTinyV1, UnitType::Tiny, "duration");
-impl_units_display_names_provider!(UnitsNamesDurationLightV1, UnitType::Light, "duration");
-impl_units_display_names_provider!(UnitsNamesDurationHeavyV1, UnitType::Heavy, "duration");
+impl_units_display_names_providers!(
+    "area",
+    long: [UnitsNamesAreaLongTinyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongHeavyV1],
+    short_narrow: [UnitsNamesAreaShortNarrowTinyV1, UnitsNamesAreaShortNarrowLightV1, UnitsNamesAreaShortNarrowHeavyV1],
+);
 
-// Length
-impl_units_display_names_provider!(UnitsNamesLengthTinyV1, UnitType::Tiny, "length");
-impl_units_display_names_provider!(UnitsNamesLengthLightV1, UnitType::Light, "length");
-impl_units_display_names_provider!(UnitsNamesLengthHeavyV1, UnitType::Heavy, "length");
+impl_units_display_names_providers!(
+    "duration",
+    long: [UnitsNamesDurationLongTinyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongHeavyV1],
+    short_narrow: [UnitsNamesDurationShortNarrowTinyV1, UnitsNamesDurationShortNarrowLightV1, UnitsNamesDurationShortNarrowHeavyV1],
+);
 
-// Mass
-impl_units_display_names_provider!(UnitsNamesMassTinyV1, UnitType::Tiny, "mass");
-impl_units_display_names_provider!(UnitsNamesMassLightV1, UnitType::Light, "mass");
-impl_units_display_names_provider!(UnitsNamesMassHeavyV1, UnitType::Heavy, "mass");
+impl_units_display_names_providers!(
+    "length",
+    long: [UnitsNamesLengthLongTinyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongHeavyV1],
+    short_narrow: [UnitsNamesLengthShortNarrowTinyV1, UnitsNamesLengthShortNarrowLightV1, UnitsNamesLengthShortNarrowHeavyV1],
+);
 
-// Volume
-impl_units_display_names_provider!(UnitsNamesVolumeTinyV1, UnitType::Tiny, "volume");
-impl_units_display_names_provider!(UnitsNamesVolumeLightV1, UnitType::Light, "volume");
-impl_units_display_names_provider!(UnitsNamesVolumeHeavyV1, UnitType::Heavy, "volume");
+impl_units_display_names_providers!(
+    "mass",
+    long: [UnitsNamesMassLongTinyV1, UnitsNamesMassLongLightV1, UnitsNamesMassLongHeavyV1],
+    short_narrow: [UnitsNamesMassShortNarrowTinyV1, UnitsNamesMassShortNarrowLightV1, UnitsNamesMassShortNarrowHeavyV1],
+);
+
+impl_units_display_names_providers!(
+    "volume",
+    long: [UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeLongLightV1, UnitsNamesVolumeLongHeavyV1],
+    short_narrow: [UnitsNamesVolumeShortNarrowTinyV1, UnitsNamesVolumeShortNarrowLightV1, UnitsNamesVolumeShortNarrowHeavyV1],
+);
 
 #[test]
 fn test_basic() {
@@ -180,10 +227,10 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsNamesLengthLongTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -198,7 +245,7 @@ fn test_basic() {
         .interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsNamesLengthShortNarrowTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
@@ -215,10 +262,10 @@ fn test_basic() {
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
-    let ar_eg_locale: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let ar_eg_locale: DataPayload<UnitsNamesLengthLongTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("ar-EG"),
             ),
             ..Default::default()
@@ -230,7 +277,7 @@ fn test_basic() {
     let long = ar_eg_locale.get().get(1.into(), &ar_rules).interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
-    let fr_locale: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let fr_locale: DataPayload<UnitsNamesLengthShortNarrowTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),

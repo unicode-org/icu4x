@@ -47,7 +47,12 @@ fn make_testdata() {
         "Thai_codepoints_exclusive_model4_heavy".into(),
     ])
     .with_marker_attributes_filter("units", |attrs| {
-        let (_length, unit) = attrs.as_str().split_once('-').unwrap();
+        // The key is the unit, after the width in the markers that hold two widths.
+        let key = attrs.as_str();
+        let unit = key
+            .strip_prefix("short-")
+            .or_else(|| key.strip_prefix("narrow-"))
+            .unwrap_or(key);
         matches!(
             unit,
             "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute" | "second"
