@@ -118,6 +118,83 @@ impl<'a> Uts35DateTimePatternTokenizer<'a> {
     }
 }
 
+/// Byte-slice variant of [`Uts35DateTimePatternTokenizer`] for potentially ill-formed UTF-8 inputs.
+#[cfg(any(test, feature = "unstable"))]
+#[derive(Clone)]
+pub(crate) struct Uts35DateTimePatternBytesTokenizer<'a>(pub &'a [u8]);
+
+#[cfg(any(test, feature = "unstable"))]
+#[cfg_attr(test, derive(Debug, PartialEq))]
+pub(crate) enum BytesToken<'a> {
+    Symbol(char, usize),
+    Literal(&'a [u8]),
+    #[cfg_attr(not(test), allow(unused))]
+    UnclosedLiteral(&'a [u8]),
+}
+
+#[cfg(any(test, feature = "unstable"))]
+impl<'a> Uts35DateTimePatternBytesTokenizer<'a> {
+    pub fn step(&mut self) -> Option<BytesToken<'a>> {
+        // Case 1: Quoted literal (`'...'`) or escaped quote (`''`)
+        if let Some(after_open) = self.0.strip_prefix(b"'") {
+            if let Some(after_escaped) = after_open.strip_prefix(b"'") {
+                self.0 = after_escaped;
+                return Some(BytesToken::Literal(b"'"));
+            }
+            let Some(quote_pos) = after_open.iter().position(|&b| b == b'\'') else {
+                self.0 = b"";
+                return Some(BytesToken::UnclosedLiteral(after_open));
+            };
+            let (Some(mut literal), Some(mut remainder)) =
+                (after_open.get(..quote_pos), after_open.get(quote_pos + 1..))
+            else {
+                return None;
+            };
+            let mut nested_quote_count = 0;
+            while let Some(s) = remainder.strip_prefix(b"''") {
+                nested_quote_count += 1;
+                remainder = s;
+            }
+            if remainder.starts_with(b"'") {
+                nested_quote_count += 1;
+            }
+            if nested_quote_count > 0 {
+                let Some(literal_with_apostrophes) =
+                    after_open.get(..literal.len() + nested_quote_count)
+                else {
+                    debug_assert!(
+                        false,
+                        "after_open ({after_open:?}) must have at least {} bytes",
+                        literal.len() + nested_quote_count
+                    );
+                    return None;
+                };
+                literal = literal_with_apostrophes;
+            }
+            self.0 = remainder;
+            return Some(BytesToken::Literal(literal));
+        }
+
+        // Case 2: Field symbol (run of identical ASCII letters, e.g. `yyyy`)
+        let &b = self.0.first()?;
+        if b.is_ascii_alphabetic() {
+            let byte_len = self.0.iter().take_while(|&&c| c == b).count();
+            self.0 = self.0.get(byte_len..)?;
+            return Some(BytesToken::Symbol(b as char, byte_len));
+        }
+
+        // Case 3: Unquoted literal (run of non-ASCII-alphabetic, non-quote bytes)
+        let byte_len = self
+            .0
+            .iter()
+            .take_while(|&&c| !c.is_ascii_alphabetic() && c != b'\'')
+            .count();
+        let (literal, remainder) = self.0.split_at_checked(byte_len)?;
+        self.0 = remainder;
+        Some(BytesToken::Literal(literal))
+    }
+}
+
 #[test]
 fn test_basic() {
     let mut tokenizer: Uts35DateTimePatternTokenizer<'_> =
@@ -170,5 +247,20 @@ fn test_quote_runs() {
     assert_eq!(tokenizer.step(), Some(Token::Literal(" ")));
     assert_eq!(tokenizer.step(), Some(Token::Literal("a''")));
     assert_eq!(tokenizer.step(), Some(Token::Literal("b")));
+    assert_eq!(tokenizer.step(), None);
+}
+
+#[test]
+fn test_bytes_tokenizer() {
+    let mut tokenizer = Uts35DateTimePatternBytesTokenizer(b"yy\xff'o''clock\xfe'M'unclosed\xff");
+    assert_eq!(tokenizer.step(), Some(BytesToken::Symbol('y', 2)));
+    assert_eq!(tokenizer.step(), Some(BytesToken::Literal(b"\xff")));
+    assert_eq!(tokenizer.step(), Some(BytesToken::Literal(b"o'")));
+    assert_eq!(tokenizer.step(), Some(BytesToken::Literal(b"clock\xfe")));
+    assert_eq!(tokenizer.step(), Some(BytesToken::Symbol('M', 1)));
+    assert_eq!(
+        tokenizer.step(),
+        Some(BytesToken::UnclosedLiteral(b"unclosed\xff"))
+    );
     assert_eq!(tokenizer.step(), None);
 }
