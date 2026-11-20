@@ -4,37 +4,56 @@
 
 use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 
-/// Defines the data markers of one category: one marker for each width and each tier.
+/// Defines the data markers of one category.
+///
+/// Each tier has one marker for the long names, and one marker for the short and the narrow
+/// names together. The short and the narrow names of a unit are often equal, and one marker
+/// stores equal names once.
 macro_rules! define_units_data_markers {
     (
         $category:literal,
         long: [$long_tiny:ident, $long_light:ident, $long_heavy:ident],
-        short: [$short_tiny:ident, $short_light:ident, $short_heavy:ident],
-        narrow: [$narrow_tiny:ident, $narrow_light:ident, $narrow_heavy:ident] $(,)?
+        short_narrow: [
+            $short_narrow_tiny:ident,
+            $short_narrow_light:ident,
+            $short_narrow_heavy:ident
+        ] $(,)?
     ) => {
-        define_units_data_markers!(@width $category, "Long", $long_tiny, $long_light, $long_heavy);
-        define_units_data_markers!(@width $category, "Short", $short_tiny, $short_light, $short_heavy);
-        define_units_data_markers!(@width $category, "Narrow", $narrow_tiny, $narrow_light, $narrow_heavy);
-    };
-    (@width $category:literal, $width:literal, $tiny:ident, $light:ident, $heavy:ident) => {
         define_units_data_markers!(
-            @marker $tiny, $category, $width,
+            @widths $category, "Long", "the unit", "meter",
+            $long_tiny, $long_light, $long_heavy
+        );
+        define_units_data_markers!(
+            @widths $category, "Short and narrow", "the width and the unit", "short-meter",
+            $short_narrow_tiny, $short_narrow_light, $short_narrow_heavy
+        );
+    };
+    (
+        @widths $category:literal, $widths:literal, $key:literal, $example:literal,
+        $tiny:ident, $light:ident, $heavy:ident
+    ) => {
+        define_units_data_markers!(
+            @marker $tiny, $category, $widths, $key, $example,
             "that are essential or defined by locale-specific preferences"
         );
         define_units_data_markers!(
-            @marker $light, $category, $width,
+            @marker $light, $category, $widths, $key, $example,
             "covering units from other locales' preferences"
         );
         define_units_data_markers!(
-            @marker $heavy, $category, $width,
+            @marker $heavy, $category, $widths, $key, $example,
             "not specified by any locale's preferences"
         );
     };
-    (@marker $marker:ident, $category:literal, $width:literal, $units:literal) => {
+    (
+        @marker $marker:ident, $category:literal, $widths:literal, $key:literal,
+        $example:literal, $units:literal
+    ) => {
         icu_provider::data_marker!(
             #[doc = concat!(
-                $width, " display names for ", $category, " units ", $units, ". ",
-                "Access requires specifying the unit in DataMarkerAttributes (e.g., meter)."
+                $widths, " display names for ", $category, " units ", $units, ". ",
+                "Access requires specifying ", $key, " in DataMarkerAttributes (e.g., ",
+                $example, ")."
             )]
             $marker,
             UnitsDisplayNames<'static>,
@@ -47,34 +66,49 @@ macro_rules! define_units_data_markers {
 define_units_data_markers!(
     "area",
     long: [UnitsNamesAreaLongTinyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongHeavyV1],
-    short: [UnitsNamesAreaShortTinyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortHeavyV1],
-    narrow: [UnitsNamesAreaNarrowTinyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowHeavyV1],
+    short_narrow: [
+        UnitsNamesAreaShortNarrowTinyV1,
+        UnitsNamesAreaShortNarrowLightV1,
+        UnitsNamesAreaShortNarrowHeavyV1
+    ],
 );
 
 define_units_data_markers!(
     "duration",
     long: [UnitsNamesDurationLongTinyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongHeavyV1],
-    short: [UnitsNamesDurationShortTinyV1, UnitsNamesDurationShortLightV1, UnitsNamesDurationShortHeavyV1],
-    narrow: [UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationNarrowLightV1, UnitsNamesDurationNarrowHeavyV1],
+    short_narrow: [
+        UnitsNamesDurationShortNarrowTinyV1,
+        UnitsNamesDurationShortNarrowLightV1,
+        UnitsNamesDurationShortNarrowHeavyV1
+    ],
 );
 
 define_units_data_markers!(
     "length",
     long: [UnitsNamesLengthLongTinyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongHeavyV1],
-    short: [UnitsNamesLengthShortTinyV1, UnitsNamesLengthShortLightV1, UnitsNamesLengthShortHeavyV1],
-    narrow: [UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthNarrowLightV1, UnitsNamesLengthNarrowHeavyV1],
+    short_narrow: [
+        UnitsNamesLengthShortNarrowTinyV1,
+        UnitsNamesLengthShortNarrowLightV1,
+        UnitsNamesLengthShortNarrowHeavyV1
+    ],
 );
 
 define_units_data_markers!(
     "mass",
     long: [UnitsNamesMassLongTinyV1, UnitsNamesMassLongLightV1, UnitsNamesMassLongHeavyV1],
-    short: [UnitsNamesMassShortTinyV1, UnitsNamesMassShortLightV1, UnitsNamesMassShortHeavyV1],
-    narrow: [UnitsNamesMassNarrowTinyV1, UnitsNamesMassNarrowLightV1, UnitsNamesMassNarrowHeavyV1],
+    short_narrow: [
+        UnitsNamesMassShortNarrowTinyV1,
+        UnitsNamesMassShortNarrowLightV1,
+        UnitsNamesMassShortNarrowHeavyV1
+    ],
 );
 
 define_units_data_markers!(
     "volume",
     long: [UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeLongLightV1, UnitsNamesVolumeLongHeavyV1],
-    short: [UnitsNamesVolumeShortTinyV1, UnitsNamesVolumeShortLightV1, UnitsNamesVolumeShortHeavyV1],
-    narrow: [UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeNarrowLightV1, UnitsNamesVolumeNarrowHeavyV1],
+    short_narrow: [
+        UnitsNamesVolumeShortNarrowTinyV1,
+        UnitsNamesVolumeShortNarrowLightV1,
+        UnitsNamesVolumeShortNarrowHeavyV1
+    ],
 );

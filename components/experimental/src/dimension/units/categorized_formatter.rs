@@ -21,6 +21,7 @@ use icu_provider::{
     DataIdentifierBorrowed, DataMarker, DataMarkerAttributes, DataPayload, DataProvider,
     DataRequest,
 };
+use smallvec::SmallVec;
 
 /// The names of one unit in one width, loaded from one of the unit names markers.
 type UnitNames = DataPayload<ErasedMarker<UnitsDisplayNames<'static>>>;
@@ -48,8 +49,9 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 /// This is useful for type inference and for ensuring that the correct units are used.
 ///
 /// There is one constructor for each width (long, short, narrow) and each tier of units
-/// (tiny, light, heavy), such as [`Self::try_new_long_tiny`]. A constructor needs only the
-/// data of its width.
+/// (tiny, light, heavy), such as [`Self::try_new_long_tiny`]. The long constructors need
+/// only the long data. The short and the narrow constructors share their data, because
+/// the short and the narrow names of a unit are often equal.
 #[derive(Debug)]
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
@@ -60,23 +62,31 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
 
 impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     /// Loads the names of the unit from the marker `M`.
+    ///
+    /// The key of the unit is `key_prefix` and then the unit. The prefix is empty for the
+    /// long markers, which hold one width. It is the width (`short-` or `narrow-`) for
+    /// the markers that hold the short and the narrow names.
     fn load_names<M, D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: &CategorizedMeasureUnit<C>,
+        key_prefix: &str,
     ) -> Result<UnitNames, DataError>
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
         D: ?Sized + DataProvider<M>,
     {
         let locale = M::make_locale(prefs.locale_preferences);
-        let unit = DataMarkerAttributes::try_from_str(categorized_unit.cldr_id())
+        let mut key: SmallVec<[u8; 32]> = SmallVec::new();
+        key.extend_from_slice(key_prefix.as_bytes());
+        key.extend_from_slice(categorized_unit.cldr_id().as_bytes());
+        let key = DataMarkerAttributes::try_from_utf8(&key)
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
         let response = DataProvider::<M>::load(
             provider,
             DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit, &locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(key, &locale),
                 ..Default::default()
             },
         )?;
@@ -140,9 +150,12 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
 ///
 /// Each tier has a constructor with compiled data and one with an unstable provider.
 /// The tiny and light tiers also have one with a buffer provider.
+///
+/// `key_prefix` is what comes before the unit in the key of the markers of this width.
 macro_rules! impl_constructors_for_width {
     (
         $width:literal,
+        key_prefix: $key_prefix:literal,
         markers: [$tiny:ident, $light:ident, $heavy:ident],
         tiny: [$new_tiny:ident, $new_tiny_buffer:ident, $new_tiny_unstable:ident],
         light: [$new_light:ident, $new_light_buffer:ident, $new_light_unstable:ident],
@@ -195,6 +208,7 @@ macro_rules! impl_constructors_for_width {
                     &crate::provider::Baked,
                     prefs,
                     &categorized_unit,
+                    $key_prefix,
                 )?;
 
                 Self::try_new_with_names(prefs, display_name)
@@ -214,7 +228,7 @@ macro_rules! impl_constructors_for_width {
                     + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
             {
                 let display_name =
-                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit)?;
+                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit, $key_prefix)?;
 
                 Self::try_new_with_names_unstable(provider, prefs, display_name)
             }
@@ -239,8 +253,8 @@ macro_rules! impl_constructors_for_width {
                 let provider = &crate::provider::Baked;
 
                 let display_name =
-                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit).or_else(
-                        |_| Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit),
+                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit, $key_prefix).or_else(
+                        |_| Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit, $key_prefix),
                     )?;
 
                 Self::try_new_with_names(prefs, display_name)
@@ -262,8 +276,8 @@ macro_rules! impl_constructors_for_width {
             {
                 // TODO(#8125): this might return the root locale's name from tiny, even if the locale has its own name in light.
                 let display_name =
-                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit).or_else(
-                        |_| Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit),
+                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit, $key_prefix).or_else(
+                        |_| Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit, $key_prefix),
                     )?;
 
                 Self::try_new_with_names_unstable(provider, prefs, display_name)
@@ -291,12 +305,12 @@ macro_rules! impl_constructors_for_width {
 
                 // TODO(#8125): this might return the root locale's name from tiny or light, even if the locale has its own name in heavy.
                 let display_name =
-                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit)
+                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit, $key_prefix)
                         .or_else(|_| {
-                            Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit)
+                            Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit, $key_prefix)
                         })
                         .or_else(|_| {
-                            Self::load_names::<C::$heavy, _>(provider, prefs, &categorized_unit)
+                            Self::load_names::<C::$heavy, _>(provider, prefs, &categorized_unit, $key_prefix)
                         })?;
 
                 Self::try_new_with_names(prefs, display_name)
@@ -318,12 +332,12 @@ macro_rules! impl_constructors_for_width {
                     + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
             {
                 let display_name =
-                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit)
+                    Self::load_names::<C::$tiny, _>(provider, prefs, &categorized_unit, $key_prefix)
                         .or_else(|_| {
-                            Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit)
+                            Self::load_names::<C::$light, _>(provider, prefs, &categorized_unit, $key_prefix)
                         })
                         .or_else(|_| {
-                            Self::load_names::<C::$heavy, _>(provider, prefs, &categorized_unit)
+                            Self::load_names::<C::$heavy, _>(provider, prefs, &categorized_unit, $key_prefix)
                         })?;
 
                 Self::try_new_with_names_unstable(provider, prefs, display_name)
@@ -334,6 +348,7 @@ macro_rules! impl_constructors_for_width {
 
 impl_constructors_for_width!(
     "long",
+    key_prefix: "",
     markers: [DataMarkerLongTiny, DataMarkerLongLight, DataMarkerLongHeavy],
     tiny: [
         try_new_long_tiny,
@@ -350,7 +365,12 @@ impl_constructors_for_width!(
 
 impl_constructors_for_width!(
     "short",
-    markers: [DataMarkerShortTiny, DataMarkerShortLight, DataMarkerShortHeavy],
+    key_prefix: "short-",
+    markers: [
+        DataMarkerShortNarrowTiny,
+        DataMarkerShortNarrowLight,
+        DataMarkerShortNarrowHeavy
+    ],
     tiny: [
         try_new_short_tiny,
         try_new_short_tiny_with_buffer_provider,
@@ -366,7 +386,12 @@ impl_constructors_for_width!(
 
 impl_constructors_for_width!(
     "narrow",
-    markers: [DataMarkerNarrowTiny, DataMarkerNarrowLight, DataMarkerNarrowHeavy],
+    key_prefix: "narrow-",
+    markers: [
+        DataMarkerShortNarrowTiny,
+        DataMarkerShortNarrowLight,
+        DataMarkerShortNarrowHeavy
+    ],
     tiny: [
         try_new_narrow_tiny,
         try_new_narrow_tiny_with_buffer_provider,
