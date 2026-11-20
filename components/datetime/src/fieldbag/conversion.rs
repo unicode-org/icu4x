@@ -177,68 +177,48 @@ fn fieldbag_to_date_fields(bag: &DateTimeFieldBag) -> Option<builder::DateFields
 
 #[test]
 fn test_fieldbag_to_date_fields_all_cases() {
-    use itertools::Itertools;
-    let all_inclusive = "GyMdE";
-    for chars in all_inclusive.chars().powerset() {
-        let mut bag = DateTimeFieldBag::default();
-        if chars.contains(&'G') {
-            bag.era = Some(Era::Short);
-        }
-        if chars.contains(&'y') {
-            bag.year = Some(Year::Numeric);
-        }
-        if chars.contains(&'M') {
-            bag.month = Some(Month::Short);
-        }
-        if chars.contains(&'d') {
-            bag.day = Some(Day::Numeric);
-        }
-        if chars.contains(&'E') {
-            bag.weekday = Some(Weekday::Short);
-        }
+    use builder::DateFields;
+
+    let cases = [
+        ("", None),
+        ("E", Some(DateFields::E)),
+        ("d", Some(DateFields::D)),
+        ("dE", Some(DateFields::DE)),
+        ("M", Some(DateFields::M)),
+        ("ME", Some(DateFields::MDE)), // implied d
+        ("Md", Some(DateFields::MD)),
+        ("MdE", Some(DateFields::MDE)),
+        ("y", Some(DateFields::Y)),
+        ("yE", Some(DateFields::YMDE)),  // implied M, d
+        ("yd", Some(DateFields::YMD)),   // implied M
+        ("ydE", Some(DateFields::YMDE)), // implied M
+        ("yM", Some(DateFields::YM)),
+        ("yME", Some(DateFields::YMDE)), // implied d
+        ("yMd", Some(DateFields::YMD)),
+        ("yMdE", Some(DateFields::YMDE)),
+        // Both G and y imply a Year field
+        ("G", Some(DateFields::Y)),
+        ("GE", Some(DateFields::YMDE)),  // implied M, d
+        ("Gd", Some(DateFields::YMD)),   // implied M
+        ("GdE", Some(DateFields::YMDE)), // implied M
+        ("GM", Some(DateFields::YM)),
+        ("GME", Some(DateFields::YMDE)), // implied d
+        ("GMd", Some(DateFields::YMD)),
+        ("GMdE", Some(DateFields::YMDE)),
+        ("Gy", Some(DateFields::Y)),
+        ("GyE", Some(DateFields::YMDE)),  // implied M, d
+        ("Gyd", Some(DateFields::YMD)),   // implied M
+        ("GydE", Some(DateFields::YMDE)), // implied M
+        ("GyM", Some(DateFields::YM)),
+        ("GyME", Some(DateFields::YMDE)), // implied d
+        ("GyMd", Some(DateFields::YMD)),
+        ("GyMdE", Some(DateFields::YMDE)),
+    ];
+
+    for (skeleton, expected) in cases {
+        let bag = DateTimeFieldBag::try_from_skeleton(skeleton).unwrap();
         let actual = fieldbag_to_date_fields(&bag);
-        let skeleton = chars.iter().collect::<String>();
-        let expected = match &*skeleton {
-            // TODO(agent): rewrite this test to use an array of test cases,
-            // where each case is a skeleton string and an expected DateFields,
-            // instead of Itertools::powerset() and this match statement, which
-            // is more brittle/error-prone
-            "" => None,
-            "E" => Some(builder::DateFields::E),
-            "d" => Some(builder::DateFields::D),
-            "dE" => Some(builder::DateFields::DE),
-            "M" => Some(builder::DateFields::M),
-            "ME" => Some(builder::DateFields::MDE), // implied
-            "Md" => Some(builder::DateFields::MD),
-            "MdE" => Some(builder::DateFields::MDE),
-            "y" => Some(builder::DateFields::Y),
-            "yE" => Some(builder::DateFields::YMDE), // implied
-            "yd" => Some(builder::DateFields::YMD),  // implied
-            "ydE" => Some(builder::DateFields::YMDE), // implied
-            "yM" => Some(builder::DateFields::YM),
-            "yME" => Some(builder::DateFields::YMDE), // implied
-            "yMd" => Some(builder::DateFields::YMD),
-            "yMdE" => Some(builder::DateFields::YMDE),
-            // Both G and y imply a Year field
-            "G" => Some(builder::DateFields::Y),
-            "GE" => Some(builder::DateFields::YMDE), // implied
-            "Gd" => Some(builder::DateFields::YMD),  // implied
-            "GdE" => Some(builder::DateFields::YMDE), // implied
-            "GM" => Some(builder::DateFields::YM),
-            "GME" => Some(builder::DateFields::YMDE), // implied
-            "GMd" => Some(builder::DateFields::YMD),
-            "GMdE" => Some(builder::DateFields::YMDE),
-            "Gy" => Some(builder::DateFields::Y),
-            "GyE" => Some(builder::DateFields::YMDE), // implied
-            "Gyd" => Some(builder::DateFields::YMD),  // implied
-            "GydE" => Some(builder::DateFields::YMDE),
-            "GyM" => Some(builder::DateFields::YM),
-            "GyME" => Some(builder::DateFields::YMDE), // implied
-            "GyMd" => Some(builder::DateFields::YMD),
-            "GyMdE" => Some(builder::DateFields::YMDE),
-            _ => unreachable!("{skeleton:?}"),
-        };
-        assert_eq!(actual, expected, "{skeleton:?} {bag:?}")
+        assert_eq!(actual, expected, "{skeleton:?} {bag:?}");
     }
 }
 
@@ -257,10 +237,10 @@ fn fieldbag_to_time_precision(bag: &DateTimeFieldBag) -> Option<options::TimePre
     } else if bag.minute.is_some() {
         Some(options::TimePrecision::Minute)
     } else if bag.hour.is_some() || bag.day_period.is_some() {
-        // TODO(#8434): ICU4X does not have a standalone day-period field set without an hour
-        // field. Promote standalone `day_period` (e.g. "B") to hour precision so it produces
-        // a valid time field set. Standalone `hour_kind` without `hour` is ignored, matching
-        // `DateTimeFieldBag` -> skeleton conversion.
+        // TODO(#487): ICU4X does not yet have a standalone day-period field set without an
+        // hour field. Promote standalone `day_period` (e.g. "B") to hour precision so it
+        // produces a valid time field set. Standalone `hour_kind` without `hour` is ignored,
+        // matching skeleton serialization and ECMA-402 `CreateDateTimeFormat`.
         Some(options::TimePrecision::Hour)
     } else {
         None
@@ -270,7 +250,7 @@ fn fieldbag_to_time_precision(bag: &DateTimeFieldBag) -> Option<options::TimePre
 fn fieldbag_to_zone_style(bag: &DateTimeFieldBag) -> Option<builder::ZoneStyle> {
     // The 6 ECMA-402 TimeZoneName styles map 1-to-1 to their corresponding ZoneStyle
     // variants. ZoneStyle::Location and ZoneStyle::ExemplarCity have no ECMA-402
-    // TimeZoneName equivalent and are not produced in this direction (see #8434).
+    // TimeZoneName equivalent and are not produced in this direction (see #8715).
     match bag.time_zone_name {
         Some(TimeZoneName::ShortSpecific) => Some(builder::ZoneStyle::SpecificShort),
         Some(TimeZoneName::LongSpecific) => Some(builder::ZoneStyle::SpecificLong),
@@ -336,11 +316,9 @@ pub(crate) fn fieldbag_to_fieldset(bag: &DateTimeFieldBag) -> builder::FieldSetB
             Some(builder::DateFields::YMD)
         }
         (None, None, None) => {
-            // TODO(#8434): When a DateTimeFieldBag is completely empty, FieldSetBuilder would
-            // otherwise have no date, time, or zone fields and fail `build_composite()` with
-            // `MissingDateFields`. Defaulting to `DateFields::YMD` matches ECMA-402's
-            // `Intl.DateTimeFormat` default when no date/time options are specified and ensures
-            // every DateTimeFieldBag produces a builder that builds a valid CompositeFieldSet.
+            // When a DateTimeFieldBag has no date, time, or zone fields, default to
+            // `DateFields::YMD` (matching ECMA-402's `Intl.DateTimeFormat` default and
+            // ensuring `build_composite()` succeeds consistently with `to_composite_field_set`).
             Some(builder::DateFields::YMD)
         }
         (df, _, _) => df,
@@ -396,7 +374,7 @@ pub(crate) fn fieldset_to_fieldbag(fieldset: &builder::FieldSetBuilder) -> DateT
         // TODO(#487): Flexible day periods (`B`) are not yet supported in fieldsets;
         // once supported, map the fieldset's day period option back to `DayPeriod`.
         day_period: None,
-        // TODO(#8434): FieldSetBuilder does not carry an hour-cycle preference (which lives on
+        // TODO(#8714): FieldSetBuilder does not carry an hour-cycle preference (which lives on
         // `DateTimeFormatterPreferences::hour_cycle`), so `hour_kind` is left as `None`
         // (locale default `j`).
         hour_kind: None,

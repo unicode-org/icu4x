@@ -21,8 +21,14 @@ use writeable::Writeable;
 /// This struct is designed to mirror the ECMA-402 `Intl.DateTimeFormat` options bag, with minor
 /// extensions to cover additional features implemented by ICU4X.
 ///
-/// This struct is convertible back and forth to a UTS #35 skeleton string. However, it only
-/// implements the subset of skeleton string functionality required by ECMA-402 and ICU4X.
+/// This struct is convertible back and forth to a UTS #35 skeleton string via [`Writeable`]
+/// (and [`Display`](fmt::Display)) and [`FromStr`] (or [`Self::try_from_skeleton`]), which serves
+/// as its lossless string interchange format. However, it only implements the subset of skeleton
+/// string functionality required by ECMA-402 and ICU4X.
+///
+/// An all-`None` [`DateTimeFieldBag::default()`] is an incomplete intermediate state for building
+/// a request; if converted directly to a field set without setting any fields, it defaults to
+/// formatting the year, month, and day (`YMD`).
 ///
 /// # Examples
 ///
@@ -133,7 +139,6 @@ impl DateTimeFieldBag {
     /// use icu::datetime::fieldbag::DateTimeFieldBag;
     /// use icu::datetime::fieldbag::field::Era;
     /// use icu::datetime::fieldbag::field::Year;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let bag = DateTimeFieldBag::try_from_skeleton("GGGGy").unwrap();
     ///
@@ -166,7 +171,6 @@ impl DateTimeFieldBag {
     /// use icu::datetime::fieldbag::DateTimeFieldBag;
     /// use icu::datetime::fieldbag::field::Era;
     /// use icu::datetime::fieldbag::field::Year;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let bag = DateTimeFieldBag::from_skeleton("GGGGy");
     ///
@@ -183,10 +187,22 @@ impl DateTimeFieldBag {
         skeleton::uts35_to_fieldbag(skeleton).0
     }
 
-    /// TODO: Docs
+    /// Converts this [`DateTimeFieldBag`] into a [`CompositeFieldSet`].
     ///
-    /// This function offers an infallible conversion to [`CompositeFieldSet`]. For smaller
-    /// data size and input types, use [`DateTimeFieldBag::to_field_set_builder`].
+    /// This conversion is infallible and best-effort:
+    /// - Missing intermediate fields are filled in when required by semantic skeletons
+    ///   (for example, year + day becomes `YMD`, and standalone seconds promote to
+    ///   [`TimePrecision::Second`](crate::options::TimePrecision::Second)).
+    /// - Per-field text widths (`Short`, `Long`, `Narrow`) collapse into a single
+    ///   [`Length`](crate::options::Length), and 2-digit numeric widths map to
+    ///   [`Alignment::Column`](crate::options::Alignment::Column).
+    /// - Standalone `day_period` without `hour` promotes to hour precision, while
+    ///   standalone `hour_kind` without `hour` is ignored.
+    /// - An all-`None` empty bag defaults to `YMD`.
+    /// - `hour_kind` is not carried on [`CompositeFieldSet`] (hour cycle is configured via
+    ///   [`DateTimeFormatterPreferences`](crate::DateTimeFormatterPreferences)).
+    ///
+    /// For smaller data size and narrower input types, use [`DateTimeFieldBag::to_field_set_builder`].
     ///
     /// # Examples
     ///
@@ -233,8 +249,6 @@ impl DateTimeFieldBag {
     /// ```
     ///
     /// [`CompositeFieldSet`]: fieldsets::enums::CompositeFieldSet
-    // TODO: Add more tests for this fn to make sure the debug assertion isn't hit
-    // TODO: Should this take self (since it is Copy) or &self (since it is big)?
     pub fn to_composite_field_set(self) -> fieldsets::enums::CompositeFieldSet {
         conversion::fieldbag_to_fieldset(&self)
             .build_composite()
@@ -250,10 +264,21 @@ impl DateTimeFieldBag {
             })
     }
 
-    /// TODO: Docs
+    /// Converts this [`DateTimeFieldBag`] into a [`FieldSetBuilder`](fieldsets::builder::FieldSetBuilder).
     ///
-    /// For an infallible conversion to a composite field set, use [`DateTimeFieldBag::to_composite_field_set`].
-    /// Use this function to select a different field set category for smaller data size and input types.
+    /// This conversion uses the same best-effort mapping rules as
+    /// [`DateTimeFieldBag::to_composite_field_set`] (including defaulting an all-`None` bag to
+    /// [`DateFields::YMD`](fieldsets::builder::DateFields::YMD)) so that calling
+    /// [`FieldSetBuilder::build_composite`](fieldsets::builder::FieldSetBuilder::build_composite)
+    /// on the returned builder always succeeds.
+    ///
+    /// Use this function to build a specific field set category (such as
+    /// [`build_date`](fieldsets::builder::FieldSetBuilder::build_date),
+    /// [`build_calendar_period`](fieldsets::builder::FieldSetBuilder::build_calendar_period),
+    /// [`build_time`](fieldsets::builder::FieldSetBuilder::build_time), or
+    /// [`build_zone`](fieldsets::builder::FieldSetBuilder::build_zone)) for smaller data size
+    /// and narrower input types. For a direct infallible conversion to a composite field set,
+    /// use [`DateTimeFieldBag::to_composite_field_set`].
     ///
     /// # Examples
     ///
@@ -292,12 +317,18 @@ impl DateTimeFieldBag {
     /// let input = icu::calendar::Date::try_new_iso(2026, 9, 23).unwrap();
     /// assert_writeable_eq!(formatter.format(&input), "sept. 2026 ap. J.-C.");
     /// ```
-    // TODO: Should this take self (since it is Copy) or &self (since it is big)?
     pub fn to_field_set_builder(self) -> fieldsets::builder::FieldSetBuilder {
         conversion::fieldbag_to_fieldset(&self)
     }
 
-    /// TODO: Docs
+    /// Reconstructs a representative [`DateTimeFieldBag`] from a
+    /// [`FieldSetBuilder`](fieldsets::builder::FieldSetBuilder).
+    ///
+    /// Because [`FieldSetBuilder`](fieldsets::builder::FieldSetBuilder) stores coarse
+    /// category-level options rather than individual field widths, this conversion expands
+    /// [`Length`](crate::options::Length), [`Alignment`](crate::options::Alignment), and
+    /// [`YearStyle`](crate::options::YearStyle) into canonical per-field widths (and leaves
+    /// `hour_kind` and `day_period` unset).
     ///
     /// # Examples
     ///
@@ -324,6 +355,11 @@ impl DateTimeFieldBag {
     pub fn from_field_set_builder(builder: &fieldsets::builder::FieldSetBuilder) -> Self {
         conversion::fieldset_to_fieldbag(builder)
     }
+}
+
+#[test]
+fn test_fieldbag_size() {
+    assert!(size_of::<DateTimeFieldBag>() <= 16);
 }
 
 impl FromStr for DateTimeFieldBag {
