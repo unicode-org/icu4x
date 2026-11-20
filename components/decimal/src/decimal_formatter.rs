@@ -36,9 +36,9 @@ size_test!(DecimalFormatter, decimal_formatter_size, 96);
 #[doc = decimal_formatter_size!()]
 #[derive(Debug, Clone)]
 pub struct DecimalFormatter {
-    options: DecimalFormatterOptions,
-    symbols: DataPayload<DecimalSymbolsV1>,
-    digits: DataPayload<DecimalDigitsV1>,
+    pub(crate) options: DecimalFormatterOptions,
+    pub(crate) symbols: DataPayload<DecimalSymbolsV1>,
+    pub(crate) digits: DataPayload<DecimalDigitsV1>,
 }
 
 impl AsRef<DecimalFormatter> for DecimalFormatter {
@@ -114,18 +114,45 @@ impl DecimalFormatter {
 
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
     pub fn format<'l>(&'l self, value: &'l Decimal) -> FormattedDecimal<'l> {
-        FormattedDecimal(self.format_sign(
-            value.sign,
-            self.format_unsigned(Cow::Borrowed(&value.absolute)),
-        ))
+        FormattedDecimal(self.format_sign(value.sign, self.format_unsigned(&value.absolute)))
     }
 
-    pub(crate) fn format_unsigned<'l>(
+    /// Formats an [`UnsignedDecimal`], returning a [`FormattedUnsignedDecimal`].
+    ///
+    /// Because [`Decimal`] implements [`Deref<Target = UnsignedDecimal>`](core::ops::Deref), a
+    /// `&Decimal` can also be passed to this method; its sign and any [`SignDisplay`](crate::input::SignDisplay)
+    /// applied to it will be ignored, and no sign will be output.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::decimal::DecimalFormatter;
+    /// use icu::decimal::input::{Decimal, SignDisplay, UnsignedDecimal};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter =
+    ///     DecimalFormatter::try_new(locale!("en").into(), Default::default())
+    ///         .expect("locale should be present");
+    ///
+    /// let unsigned_decimal = UnsignedDecimal::from(1000007u32);
+    /// assert_writeable_eq!(formatter.format_unsigned(&unsigned_decimal), "1,000,007");
+    ///
+    /// // A signed `Decimal` derefs to `&UnsignedDecimal`, ignoring its sign and `SignDisplay`:
+    /// let negative_decimal = Decimal::from(-1000007);
+    /// assert_writeable_eq!(formatter.format(&negative_decimal), "-1,000,007");
+    /// assert_writeable_eq!(formatter.format_unsigned(&negative_decimal), "1,000,007");
+    ///
+    /// let plus_decimal = Decimal::from(1000007).with_sign_display(SignDisplay::Always);
+    /// assert_writeable_eq!(formatter.format(&plus_decimal), "+1,000,007");
+    /// assert_writeable_eq!(formatter.format_unsigned(&plus_decimal), "1,000,007");
+    /// ```
+    pub fn format_unsigned<'l>(
         &'l self,
-        value: Cow<'l, UnsignedDecimal>,
+        value: &'l UnsignedDecimal,
     ) -> FormattedUnsignedDecimal<'l> {
         FormattedUnsignedDecimal {
-            value,
+            value: Cow::Borrowed(value),
             options: &self.options,
             symbols: self.symbols.get(),
             digits: self.digits.get(),
@@ -166,8 +193,8 @@ impl DecimalFormatter {
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedDecimal<'l>(pub(crate) FormattedSign<'l, FormattedUnsignedDecimal<'l>>);
 
-#[doc(hidden)] // TODO(#3647): should be private
-/// Building block for formatted numbers
+/// An intermediate structure returned by [`DecimalFormatter`](crate::DecimalFormatter).
+/// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedUnsignedDecimal<'l> {
     pub(crate) value: Cow<'l, UnsignedDecimal>,

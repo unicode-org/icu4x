@@ -29,7 +29,7 @@ const _: () = {
     impl_collation_special_primaries_v1!(TestingProvider);
     impl_collation_reordering_v1!(TestingProvider);
 
-    icu_normalizer_data::impl_normalizer_nfc_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfc_v2!(TestingProvider);
     icu_normalizer_data::impl_normalizer_nfd_data_v1!(TestingProvider);
     icu_normalizer_data::impl_normalizer_nfd_supplement_v1!(TestingProvider);
     icu_normalizer_data::impl_normalizer_nfd_tables_v1!(TestingProvider);

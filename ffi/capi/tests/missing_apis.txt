@@ -40,6 +40,12 @@ icu::locale::names::ScriptDisplayName::try_new_light#FnInStruct
 icu::locale::names::ScriptDisplayName::try_new_short_heavy#FnInStruct
 icu::locale::names::ScriptDisplayName::try_new_tiny#FnInStruct
 icu::locale::names::VariantDisplayName::try_new_heavy#FnInStruct
+icu::normalizer::latin1::normalize_nfd_to#Fn
+icu::normalizer::latin1::normalize_nfkc_to#Fn
+icu::normalizer::latin1::normalize_nfkd_to#Fn
+icu::normalizer::latin1::split_normalized_nfd#Fn
+icu::normalizer::latin1::split_normalized_nfkc#Fn
+icu::normalizer::latin1::split_normalized_nfkd#Fn
 icu::segmenter::GraphemeClusterSegmenter::new_neo#FnInStruct
 icu::segmenter::LineSegmenter::new_17_for_non_complex_scripts#FnInStruct
 icu::segmenter::LineSegmenter::new_neo_for_non_complex_scripts#FnInStruct

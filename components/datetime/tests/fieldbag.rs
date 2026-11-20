@@ -68,10 +68,10 @@ fn all_time_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
 }
 
 /// Yields a comprehensive set of `DateTimeFieldBag` combinations without taking the full
-/// 864 x 1,296 x 7 = 7,838,208 Cartesian product in debug builds:
-/// - All 864 date combinations x all 7 zone combinations (6,048 bags)
-/// - All 1,296 time combinations x all 7 zone combinations (9,072 bags)
-/// - All 864 date combinations x 14 representative time combinations x all 7 zone combinations
+/// 864 x 1,296 x 9 = 10,077,696 Cartesian product in debug builds:
+/// - All 864 date combinations x all 9 zone combinations (7,776 bags)
+/// - All 1,296 time combinations x all 9 zone combinations (11,664 bags)
+/// - All 864 date combinations x 14 representative time combinations x all 9 zone combinations
 fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     let date_and_zone = all_date_field_bags().flat_map(|date_bag| {
         with_none(TimeZoneName::VALUES).map(move |time_zone_name| {
@@ -90,7 +90,7 @@ fn representative_field_bags() -> impl Iterator<Item = DateTimeFieldBag> {
     });
 
     // Cross-product of all 864 date bags with a subset of time bags covering all time precisions,
-    // alignments, hour kinds, and day periods, across all 7 zone styles.
+    // alignments, hour kinds, and day periods, across all 9 zone combinations.
     let sample_time_bags = [
         "",
         "B",

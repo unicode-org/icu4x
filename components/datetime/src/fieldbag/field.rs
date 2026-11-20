@@ -789,6 +789,48 @@ pub enum TimeZoneName {
     /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
     /// ```
     LongGeneric,
+    /// Generic location format (example: Los Angeles time, Los Angeles Zeit).
+    ///
+    /// Skeleton: `VVVV`
+    ///
+    /// Note: This option does not have an equivalent in ECMA-402 `Intl.DateTimeFormat`
+    /// and will be omitted or approximated when converting to an ECMA-402 options bag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::TimeZoneName;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut bag = DateTimeFieldBag::default();
+    /// bag.time_zone_name = Some(TimeZoneName::Location);
+    ///
+    /// assert_writeable_eq!(bag, "VVVV");
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
+    /// ```
+    Location,
+    /// Exemplar city format (example: Los Angeles).
+    ///
+    /// Skeleton: `VVV`
+    ///
+    /// Note: This option does not have an equivalent in ECMA-402 `Intl.DateTimeFormat`
+    /// and will be omitted or approximated when converting to an ECMA-402 options bag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::field::TimeZoneName;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut bag = DateTimeFieldBag::default();
+    /// bag.time_zone_name = Some(TimeZoneName::ExemplarCity);
+    ///
+    /// assert_writeable_eq!(bag, "VVV");
+    /// assert_eq!(bag.to_string().parse::<DateTimeFieldBag>(), Ok(bag));
+    /// ```
+    ExemplarCity,
 }
 
 impl TimeZoneName {
@@ -800,5 +842,7 @@ impl TimeZoneName {
         Self::LongOffset,
         Self::ShortGeneric,
         Self::LongGeneric,
+        Self::Location,
+        Self::ExemplarCity,
     ];
 }

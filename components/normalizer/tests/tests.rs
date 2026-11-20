@@ -1786,6 +1786,27 @@ fn test_canonical_composition_owned() {
 }
 
 #[test]
+fn test_canonical_composition_reversed_vowel() {
+    // Pairs whose starter is an ASCII vowel are stored reversed in the data.
+    // Make sure that the reversed pair does not compose.
+    let comp = CanonicalCompositionBorrowed::new();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+
+    assert_eq!(comp.compose('a', '\u{0301}'), Some('á'));
+    assert_eq!(comp.compose('\u{0301}', 'a'), None);
+    assert_eq!(comp.compose('U', '\u{0308}'), Some('Ü'));
+    assert_eq!(comp.compose('\u{0308}', 'U'), None);
+    assert_eq!(nfc.normalize("\u{0301}a"), "\u{0301}a");
+
+    // No character composes with a following ASCII vowel.
+    for c in (0..=0x10FFFF).filter_map(char::from_u32) {
+        for vowel in ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'] {
+            assert_eq!(comp.compose(c, vowel), None, "{c:?} + {vowel:?}");
+        }
+    }
+}
+
+#[test]
 fn test_canonical_decomposition() {
     let decomp = CanonicalDecompositionBorrowed::new();
 
@@ -2314,10 +2335,139 @@ fn test_is_normalized_up_to() {
 }
 
 #[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_split_normalized_nfd() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfd(b"abc\xA8\xE4efg"),
+        (&b"abc\xA8"[..], &b"\xE4efg"[..])
+    );
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_split_normalized_nfkd() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfkd(b"abc\xA8\xE4efg"),
+        (&b"abc"[..], &b"\xA8\xE4efg"[..])
+    );
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_split_normalized_nfkc() {
+    assert_eq!(
+        icu_normalizer::latin1::split_normalized_nfkc(b"abc\xE4\xA8efg"),
+        (&b"abc\xE4"[..], &b"\xA8efg"[..])
+    );
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_split_normalized_nfd_all() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    for b in 0..=255u8 {
+        let text = [b'a', b'b', b'c', b, b'e', b'f', b'g'];
+        let text16: Vec<u16> = text.iter().map(|&c| u16::from(c)).collect();
+        let (head, tail) = icu_normalizer::latin1::split_normalized_nfd(&text);
+        let (head16, tail16) = nfd.split_normalized_utf16(&text16);
+        assert_eq!(head.len(), head16.len(), "byte {b:#04X}");
+        assert_eq!(tail.len(), tail16.len(), "byte {b:#04X}");
+    }
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_split_normalized_nfkd_all() {
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    for b in 0..=255u8 {
+        let text = [b'a', b'b', b'c', b, b'e', b'f', b'g'];
+        let text16: Vec<u16> = text.iter().map(|&c| u16::from(c)).collect();
+        let (head, tail) = icu_normalizer::latin1::split_normalized_nfkd(&text);
+        let (head16, tail16) = nfkd.split_normalized_utf16(&text16);
+        assert_eq!(head.len(), head16.len(), "byte {b:#04X}");
+        assert_eq!(tail.len(), tail16.len(), "byte {b:#04X}");
+    }
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_split_normalized_nfkc_all() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    for b in 0..=255u8 {
+        let text = [b'a', b'b', b'c', b, b'e', b'f', b'g'];
+        let text16: Vec<u16> = text.iter().map(|&c| u16::from(c)).collect();
+        let (head, tail) = icu_normalizer::latin1::split_normalized_nfkc(&text);
+        let (head16, tail16) = nfkc.split_normalized_utf16(&text16);
+        assert_eq!(head.len(), head16.len(), "byte {b:#04X}");
+        assert_eq!(tail.len(), tail16.len(), "byte {b:#04X}");
+    }
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_normalize_nfd_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfd_to(&text, &mut normalized).is_ok());
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfd.is_normalized_utf16(&normalized));
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_normalize_nfkd_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfkd_to(&text, &mut normalized).is_ok());
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfkd.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfkd.is_normalized_utf16(&normalized));
+}
+
+#[test]
+#[cfg(feature = "latin1")]
+fn test_latin1_normalize_nfkc_to() {
+    let mut text: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text.push(c);
+    }
+    let mut normalized: Vec<u16> = Vec::new();
+    assert!(icu_normalizer::latin1::normalize_nfkc_to(&text, &mut normalized).is_ok());
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    let mut text16: Vec<u16> = Vec::new();
+    for c in 0..=255u16 {
+        text16.push(c);
+    }
+    let mut normalized16: Vec<u16> = Vec::new();
+    assert!(nfkc.normalize_utf16_to(&text16, &mut normalized16).is_ok());
+    assert_eq!(&normalized[..], &normalized16[..]);
+    assert!(nfkc.is_normalized_utf16(&normalized));
+}
+
+#[test]
 fn test_reject_invalid_replacement_character_trie_value() {
     use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType};
     use icu_normalizer::provider::{
-        DecompositionData, NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdTablesV1,
+        DecompositionData, NormalizerNfcV2, NormalizerNfdDataV1, NormalizerNfdTablesV1,
         NormalizerNfkdDataV1, NormalizerNfkdTablesV1, NormalizerUts46DataV1,
     };
     use icu_provider::prelude::*;
@@ -2393,8 +2543,8 @@ fn test_reject_invalid_replacement_character_trie_value() {
         }
     }
 
-    impl DataProvider<NormalizerNfcV1> for BogusProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV1>, DataError> {
+    impl DataProvider<NormalizerNfcV2> for BogusProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV2>, DataError> {
             icu_normalizer::provider::Baked.load(req)
         }
     }

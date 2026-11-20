@@ -276,6 +276,8 @@ lazy_static::lazy_static! {
         "fixed_decimal::Decimal::new",
         "fixed_decimal::UnsignedDecimal",
         "fixed_decimal::UnsignedRoundingMode",
+        "icu::decimal::DecimalFormatter::format_unsigned",
+        "icu::decimal::FormattedUnsignedDecimal",
 
         // Not planned for 2.0
         // DateTimePattern and related low-level APIs

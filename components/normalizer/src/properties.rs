@@ -11,9 +11,9 @@
 //! want access to the raw canonical composition operation e.g. for use in a
 //! glyph-availability-guided custom normalizer.
 
-use crate::BACKWARD_COMBINING_MARKER;
 use crate::CanonicalCombiningClass;
-use crate::FDFA_MARKER;
+use crate::CanonicalCompositionsBorrowed;
+use crate::CanonicalCompositionsPayload;
 use crate::HANGUL_L_BASE;
 use crate::HANGUL_N_COUNT;
 use crate::HANGUL_S_BASE;
@@ -21,17 +21,13 @@ use crate::HANGUL_S_COUNT;
 use crate::HANGUL_T_BASE;
 use crate::HANGUL_T_COUNT;
 use crate::HANGUL_V_BASE;
-use crate::HIGH_ZEROS_MASK;
-use crate::LOW_ZEROS_MASK;
-use crate::NON_ROUND_TRIP_MARKER;
 use crate::char_from_u16;
 use crate::char_from_u32;
 use crate::in_inclusive_range;
-use crate::provider::CanonicalCompositions;
 use crate::provider::DecompositionData;
 use crate::provider::DecompositionTables;
 use crate::provider::NonRecursiveDecompositionSupplement;
-use crate::provider::NormalizerNfcV1;
+use crate::provider::NormalizerNfcV2;
 use crate::provider::NormalizerNfdDataV1;
 use crate::provider::NormalizerNfdSupplementV1;
 use crate::provider::NormalizerNfdTablesV1;
@@ -46,7 +42,7 @@ use icu_provider::prelude::*;
 /// glyph-availability-guided custom normalizer.
 #[derive(Debug, Copy, Clone)]
 pub struct CanonicalCompositionBorrowed<'a> {
-    canonical_compositions: &'a CanonicalCompositions<'a>,
+    canonical_compositions: CanonicalCompositionsBorrowed<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -63,7 +59,7 @@ impl CanonicalCompositionBorrowed<'static> {
     /// compile-time optimizations that are possible with [`CanonicalCompositionBorrowed`].
     pub const fn static_to_owned(self) -> CanonicalComposition {
         CanonicalComposition {
-            canonical_compositions: DataPayload::from_static_ref(self.canonical_compositions),
+            canonical_compositions: self.canonical_compositions.static_to_owned(),
         }
     }
 
@@ -75,7 +71,9 @@ impl CanonicalCompositionBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            canonical_compositions: crate::provider::Baked::SINGLETON_NORMALIZER_NFC_V1,
+            canonical_compositions: CanonicalCompositionsBorrowed::Current(
+                crate::provider::Baked::SINGLETON_NORMALIZER_NFC_V2,
+            ),
         }
     }
 }
@@ -100,11 +98,17 @@ impl CanonicalCompositionBorrowed<'_> {
     /// ```
     #[inline(always)]
     pub fn compose(self, starter: char, second: char) -> Option<char> {
-        crate::compose(
-            &self.canonical_compositions.canonical_compositions,
-            starter,
-            second,
-        )
+        match second {
+            'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U' => {
+                // Filter these out to avoid composing accent followed by vowel,
+                // since those pairs are reversed in the data.
+                None
+            }
+            _ => self
+                .canonical_compositions
+                .as_ref()
+                .compose(starter, second),
+        }
     }
 }
 
@@ -116,7 +120,7 @@ impl CanonicalCompositionBorrowed<'_> {
 /// glyph-availability-guided custom normalizer.
 #[derive(Debug)]
 pub struct CanonicalComposition {
-    canonical_compositions: DataPayload<NormalizerNfcV1>,
+    canonical_compositions: CanonicalCompositionsPayload,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -130,7 +134,7 @@ impl CanonicalComposition {
     /// Constructs a borrowed version of this type for more efficient querying.
     pub fn as_borrowed(&self) -> CanonicalCompositionBorrowed<'_> {
         CanonicalCompositionBorrowed {
-            canonical_compositions: self.canonical_compositions.get(),
+            canonical_compositions: self.canonical_compositions.as_borrowed(),
         }
     }
 
@@ -145,24 +149,27 @@ impl CanonicalComposition {
         CanonicalCompositionBorrowed::new()
     }
 
-    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-        ]
-    );
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        Ok(CanonicalComposition {
+            canonical_compositions: CanonicalCompositionsPayload::try_load_with_legacy_fallback(
+                &provider.as_deserializing(),
+            )?,
+        })
+    }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<NormalizerNfcV1> + ?Sized,
+        D: DataProvider<NormalizerNfcV2> + ?Sized,
     {
-        let canonical_compositions: DataPayload<NormalizerNfcV1> =
+        let canonical_compositions: DataPayload<NormalizerNfcV2> =
             provider.load(Default::default())?.payload;
         Ok(CanonicalComposition {
-            canonical_compositions,
+            canonical_compositions: CanonicalCompositionsPayload::Current(canonical_compositions),
         })
     }
 }
@@ -226,7 +233,7 @@ impl CanonicalDecompositionBorrowed<'static> {
                 + crate::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1
                     .scalars24
                     .const_len()
-                <= 0xFFF,
+                <= DecompositionTables::MAX_COMBINED_LEN,
             "future extension"
         );
 
@@ -292,25 +299,32 @@ impl CanonicalDecompositionBorrowed<'_> {
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
         let decomposition = self.decompositions.trie.get(c);
-        // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+        // The REPLACEMENT CHARACTER has `DecompositionData::NON_ROUND_TRIP_MARKER` set,
         // and that flag needs to be ignored here.
-        if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+        if (decomposition
+            & !(DecompositionData::BACKWARD_COMBINING_MARKER
+                | DecompositionData::NON_ROUND_TRIP_MARKER))
+            == 0
+        {
             return Decomposed::Default;
         }
         // The loop is only broken out of as goto forward
         #[expect(clippy::never_loop)]
         loop {
-            let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
-            let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+            let high_zeros = (decomposition & DecompositionData::HIGH_ZEROS_MASK) == 0;
+            let low_zeros = (decomposition & DecompositionData::LOW_ZEROS_MASK) == 0;
             if !high_zeros && !low_zeros {
                 // Decomposition into two BMP characters: starter and non-starter
-                if in_inclusive_range(c, '\u{1F71}', '\u{1FFB}') {
+                if NonRecursiveDecompositionSupplement::OXIA_RANGE.contains(&c) {
                     // Look in the other trie due to oxia singleton
                     // mappings to corresponding character with tonos.
                     break;
                 }
-                let starter = char_from_u32(decomposition & 0x7FFF);
-                let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                let starter = char_from_u32(decomposition & DecompositionData::PAIR_CHAR_MASK);
+                let combining = char_from_u32(
+                    (decomposition >> DecompositionData::PAIR_TRAIL_SHIFT)
+                        & DecompositionData::PAIR_CHAR_MASK,
+                );
                 return Decomposed::Expansion(starter, combining);
             }
             if high_zeros {
@@ -354,19 +368,24 @@ impl CanonicalDecompositionBorrowed<'_> {
                 }
                 let singleton = decomposition as u16;
                 debug_assert_ne!(
-                    singleton, FDFA_MARKER,
+                    singleton,
+                    DecompositionData::FDFA_MARKER,
                     "How come we got the U+FDFA NFKD marker here?"
                 );
                 return Decomposed::Singleton(char_from_u16(singleton));
             }
-            if c == '\u{212B}' {
+            if c == DecompositionData::ANGSTROM_SIGN {
                 // ANGSTROM SIGN
                 return Decomposed::Singleton('\u{00C5}');
             }
             // Only 12 of 14 bits used as of Unicode 16.
-            let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+            let offset = (((decomposition
+                & !(DecompositionData::NON_ROUND_TRIP_MARKER
+                    | DecompositionData::BACKWARD_COMBINING_MARKER))
+                >> DecompositionData::COMPLEX_OFFSET_SHIFT) as usize)
+                - 1;
             // Only 3 of 4 bits used as of Unicode 16.
-            let len_bits = decomposition & 0b1111;
+            let len_bits = decomposition & DecompositionData::COMPLEX_LENGTH_MASK;
             let tables = self.tables;
             if offset < tables.scalars16.len() {
                 if len_bits != 0 {
@@ -493,7 +512,9 @@ impl CanonicalDecomposition {
             provider.load(Default::default())?.payload;
         let tables: DataPayload<NormalizerNfdTablesV1> = provider.load(Default::default())?.payload;
 
-        if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
+        if tables.get().scalars16.len() + tables.get().scalars24.len()
+            > DecompositionTables::MAX_COMBINED_LEN
+        {
             // The data is from a future where there exists a normalization flavor whose
             // complex decompositions take more than 0xFFF but fewer than 0x1FFF code points
             // of space. If a good use case from such a decomposition flavor arises, we can
