@@ -8,6 +8,9 @@ use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
+use super::PatternPair;
+use crate::dimension::currency::options::CurrencyUsage;
+
 icu_provider::data_marker!(
     /// Provides standard and accounting currency patterns with no currency symbol placeholder.
     CurrencyPatternsNoCurrencyV1,
@@ -67,42 +70,20 @@ impl<'a> CurrencyPatternsNoCurrency<'a> {
     const PASS_THROUGH: &'static DoublePlaceholderPattern =
         DoublePlaceholderPattern::from_ref_store_unchecked("\u{2}\u{1}");
 
-    /// Gets the standard positive no-currency pattern.
-    pub fn get_positive(&'a self) -> &'a DoublePlaceholderPattern {
-        self.patterns
-            .get(self.indices.standard as usize)
-            .unwrap_or_else(|| {
-                debug_assert!(
-                    false,
-                    "Standard pattern index is out of bounds; data may be corrupt"
-                );
+    /// Returns the no-currency patterns for `usage`.
+    pub fn patterns(&'a self, usage: CurrencyUsage) -> PatternPair<'a> {
+        let i = self.indices;
+        let (positive, negative) = match usage {
+            CurrencyUsage::Standard => (i.standard, i.standard_negative),
+            CurrencyUsage::Accounting => (i.accounting_positive, i.accounting_negative),
+        };
+        PatternPair {
+            positive: self.patterns.get(positive as usize).unwrap_or_else(|| {
+                debug_assert!(false, "Pattern index is out of bounds; data may be corrupt");
                 Self::PASS_THROUGH
-            })
-    }
-
-    /// Gets the standard negative no-currency pattern.
-    pub fn get_negative(&'a self) -> Option<&'a DoublePlaceholderPattern> {
-        let idx = self.indices.standard_negative?;
-        self.patterns.get(idx as usize)
-    }
-
-    /// Gets the accounting positive no-currency pattern.
-    pub fn get_positive_accounting(&'a self) -> &'a DoublePlaceholderPattern {
-        self.patterns
-            .get(self.indices.accounting_positive as usize)
-            .unwrap_or_else(|| {
-                debug_assert!(
-                    false,
-                    "Accounting positive pattern index is out of bounds; data may be corrupt"
-                );
-                Self::PASS_THROUGH
-            })
-    }
-
-    /// Gets the accounting negative no-currency pattern.
-    pub fn get_negative_accounting(&'a self) -> Option<&'a DoublePlaceholderPattern> {
-        let idx = self.indices.accounting_negative?;
-        self.patterns.get(idx as usize)
+            }),
+            negative: negative.and_then(|i| self.patterns.get(i as usize)),
+        }
     }
 }
 
