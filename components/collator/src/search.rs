@@ -130,3 +130,163 @@ impl<'data> CollatorBorrowed<'data> {
         SearchCollationElements::new(self, iter)
     }
 }
+
+#[cfg(all(test, feature = "compiled_data"))]
+mod tests {
+    use super::*;
+    use crate::CollatorPreferences;
+    use crate::options::CollatorOptions;
+    use crate::preferences::CollationNumericOrdering;
+    use crate::spans::NoSpans;
+    use icu_locale_core::locale;
+
+    fn make_collator(
+        prefs: impl Into<CollatorPreferences>,
+        numeric: bool,
+    ) -> CollatorBorrowed<'static> {
+        let mut prefs = prefs.into();
+        if numeric {
+            prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+        }
+        CollatorBorrowed::try_new(prefs, CollatorOptions::default()).unwrap()
+    }
+
+    fn collect_and_verify<I>(
+        mut iter: SearchCollationElements<'static, I>,
+        mut baseline: CollationElements<'static, I, NormTrie<'static>, NoSpans>,
+        total_len: usize,
+    ) -> Vec<(CollationElement, SourceSpan)>
+    where
+        I: Iterator<Item = (char, u32)> + WithTrie<'static, NormTrie<'static>, u32> + RemainingLen,
+    {
+        baseline.init();
+        let mut out = Vec::new();
+        let mut prev_end = 0;
+
+        for (ce, span) in &mut iter {
+            let base_ce = baseline.next();
+            assert_ne!(base_ce, NO_CE, "baseline ended early");
+            assert_eq!(ce, base_ce);
+            assert_eq!(span.start, prev_end, "span gap/overlap at {span:?}");
+            assert!(span.end >= span.start, "backward span {span:?}");
+            assert!(span.end <= total_len, "span past end {span:?}");
+            prev_end = span.end;
+            out.push((ce, span));
+        }
+
+        assert_eq!(baseline.next(), NO_CE, "baseline had extra CEs");
+        assert_eq!(prev_end, total_len, "spans did not cover entire input");
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next(), None);
+        out
+    }
+
+    #[test]
+    fn test_forward_str_contractions_prefixes_and_reordering() {
+        let cases: &[(&str, icu_locale_core::Locale, bool)] = &[
+            ("", locale!("en"), false),
+            ("abc", locale!("en"), false),
+            ("c'h", locale!("br"), false),
+            ("cha", locale!("cs"), false),
+            ("baad", locale!("da"), false),
+            ("o\u{0323}\u{0308}", locale!("sv"), false),
+            ("xはゞyばゞ", locale!("ja"), false),
+            ("Straße", locale!("de"), false),
+            ("각", locale!("en"), false),
+            ("가\u{0301}", locale!("en"), false),
+            ("a42b", locale!("en"), true),
+            ("e\u{0301}\u{0323}", locale!("en"), false),
+            ("\u{0301}\u{0323}", locale!("en"), false),
+            ("i\u{0307}\u{0301}", locale!("lt"), false),
+            ("a😀b", locale!("en"), false),
+        ];
+
+        for &(input, ref loc, numeric) in cases {
+            let collator = make_collator(loc.clone(), numeric);
+            let iter = collator.search_elements(input);
+            let baseline = collator.collation_elements_with_spans(
+                CharsWithTrieDefaultForAscii::new(input, collator.norm_trie()),
+            );
+            let items = collect_and_verify(iter, baseline, input.len());
+            if input.is_empty() {
+                assert!(items.is_empty());
+            } else {
+                assert!(!items.is_empty());
+            }
+        }
+    }
+
+    #[test]
+    fn test_utf8_utf16_and_generic_iter() {
+        let collator_cs = make_collator(locale!("cs"), false);
+        let utf8 = b"a\xF0\x9Fb\x80\x80c\xCC\x81cha";
+        let utf8_items = collect_and_verify(
+            collator_cs.search_elements_utf8(utf8),
+            collator_cs.collation_elements_with_spans(Utf8CharsWithTrieDefaultForAscii::new(
+                utf8,
+                collator_cs.norm_trie(),
+            )),
+            utf8.len(),
+        );
+        assert!(!utf8_items.is_empty());
+
+        let utf16: &[u16] = &[
+            u16::from(b'a'),
+            0xD83D,
+            0xDE00,
+            0xD800,
+            u16::from(b'c'),
+            u16::from(b'h'),
+            u16::from(b'a'),
+        ];
+        let utf16_items = collect_and_verify(
+            collator_cs.search_elements_utf16(utf16),
+            collator_cs.collation_elements_with_spans(Utf16CharsWithTrie::new(
+                utf16,
+                collator_cs.norm_trie(),
+            )),
+            utf16.len(),
+        );
+        assert!(!utf16_items.is_empty());
+
+        let via_iter = collator_cs.search_elements_iter(CharsWithTrieDefaultForAscii::new(
+            "chacha",
+            collator_cs.norm_trie(),
+        ));
+        let via_str = collator_cs.search_elements("chacha");
+        assert_eq!(via_iter.collect::<Vec<_>>(), via_str.collect::<Vec<_>>());
+    }
+
+    #[cfg(feature = "latin1")]
+    #[test]
+    fn test_latin1_search_elements() {
+        let collator_fi = make_collator(locale!("fi"), false);
+        let latin1: &[u8] = &[b'a', 0xE9, b'y', 0xE4];
+        let items = collect_and_verify(
+            collator_fi.search_elements_latin1(latin1),
+            collator_fi.collation_elements_with_spans(Latin1CharsWithTrie::new(
+                latin1,
+                collator_fi.norm_trie(),
+            )),
+            latin1.len(),
+        );
+        assert!(!items.is_empty());
+    }
+
+    #[test]
+    fn test_non_static_haystack_lifetime_and_debug() {
+        let collator = make_collator(locale!("en"), false);
+        let owned = String::from("e\u{0301}x");
+        let iter = collator.search_elements(owned.as_str());
+        assert!(format!("{iter:?}").contains("SearchCollationElements"));
+        let collected: Vec<_> = iter.collect();
+        assert_eq!(
+            collected.iter().map(|&(_, s)| s).collect::<Vec<_>>(),
+            vec![
+                SourceSpan::new(0, 1),
+                SourceSpan::new(1, 3),
+                SourceSpan::new(3, 4),
+            ]
+        );
+    }
+}
