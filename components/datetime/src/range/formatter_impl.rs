@@ -140,8 +140,8 @@ impl<'a> RangeFormatterCore<'a> {
             ));
         }
 
-        let is_mixed = self.range_selection.date_range.payload.is_payload()
-            && self.range_selection.time_range.payload.is_payload();
+        let is_mixed = self.range_selection.date_range.is_present()
+            && self.range_selection.time_range.is_present();
 
         // Early fallback for mixed date-time formatter with date difference.
         // UTS 35: If date differs in a mixed skeleton, fall back to range fallback (Case 4).
@@ -218,7 +218,7 @@ impl<'a> RangeFormatterCore<'a> {
         use crate::fieldsets::builder::DateFields;
         use crate::options::TimePrecision;
 
-        let smallest_diff = if self.range_selection.time_range.payload.is_payload() {
+        let smallest_diff = if self.range_selection.time_range.is_present() {
             match self.selection.options.time_precision.unwrap_or_default() {
                 TimePrecision::Hour => Difference::Hour,
                 TimePrecision::Minute | TimePrecision::MinuteOptional => Difference::Minute,
