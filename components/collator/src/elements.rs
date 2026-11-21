@@ -28,6 +28,8 @@ use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::{ZeroSlice, zeroslice};
 
+use crate::spans::{CharWithTrieStream, NoSpans, SpanMode, Spanned};
+
 use crate::provider::CollationData;
 
 // Start `SmallVec` size constants.
@@ -884,6 +886,13 @@ impl HasCcc for CharacterAndClass {
     }
 }
 
+impl<T: HasCcc, Span> HasCcc for Spanned<T, Span> {
+    #[inline(always)]
+    fn ccc(&self) -> CanonicalCombiningClass {
+        self.value.ccc()
+    }
+}
+
 /// Iterator that transforms an iterator over `char` into an iterator
 /// over `CollationElement` with a tailoring.
 /// Not a real Rust iterator: Instead of `None` uses `NO_CE` to indicate
@@ -899,15 +908,16 @@ impl HasCcc for CharacterAndClass {
 ///    `prepend_upcoming_before_init`.
 /// 3. `init`.
 /// 4. Some number of calls to `next`.
-pub(crate) struct CollationElements<'data, I, T>
+pub(crate) struct CollationElements<'data, I, T, Mode = NoSpans>
 where
-    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
+    I: CharWithTrieStream<'data, T, Mode>,
     T: AbstractCodePointTrie<'data, u32>,
+    Mode: SpanMode,
 {
     /// See components/normalizer/trie-value-format.md for the trie wrapped in `iter`.
     iter: I,
     /// Already computed but not yet returned `CollationElement`s.
-    pending: SmallVec<[CollationElement; PENDING_CE_BUFFER_SIZE]>, // TODO(#2005): Figure out good length
+    pending: SmallVec<[Spanned<CollationElement, Mode::Span>; PENDING_CE_BUFFER_SIZE]>, // TODO(#2005): Figure out good length
     /// The index of the next item to be returned from `pending`. The purpose
     /// of this index is to avoid moving the rest of the items.
     pending_pos: usize,
@@ -937,7 +947,9 @@ where
     ///
     /// TODO: Reverse the order, since now `insert(0, x)` and `remove(0)`
     /// are used more often than `push()` and `pop()`.
-    upcoming: SmallVec<[CharacterAndClassAndTrieValue; UPCOMING_CHARACTER_BUFFER_SIZE]>,
+    upcoming: SmallVec<
+        [Spanned<CharacterAndClassAndTrieValue, Mode::Span>; UPCOMING_CHARACTER_BUFFER_SIZE],
+    >,
     /// The root collation data.
     root: &'data CollationData<'data>,
     /// Tailoring if applicable.
@@ -965,14 +977,15 @@ where
     #[cfg(debug_assertions)]
     /// Whether `init` has been called
     initialized: bool,
-    _phantom: PhantomData<T>,
+    _phantom: PhantomData<(T, Mode)>,
 }
 
-impl<'data, I, T> CollationElements<'data, I, T>
+impl<'data, I, T> CollationElements<'data, I, T, NoSpans>
 where
-    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32> + 'data,
 {
+    #[inline(always)]
     #[expect(clippy::too_many_arguments)]
     pub fn new(
         delegate: I,
@@ -984,7 +997,52 @@ where
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
     ) -> Self {
-        CollationElements::<I, T> {
+        Self::new_with_spans(
+            delegate,
+            root,
+            tailoring,
+            jamo,
+            diacritics,
+            tables,
+            numeric_primary,
+            lithuanian_dot_above,
+        )
+    }
+
+    #[inline(always)]
+    pub fn iter_next_before_init(&mut self) -> Option<CharacterAndClassAndTrieValue> {
+        #[cfg(debug_assertions)]
+        debug_assert!(!self.initialized);
+        self.iter_next().map(|spanned| spanned.value)
+    }
+
+    #[inline(always)]
+    pub fn prepend_upcoming_before_init(&mut self, c: CharacterAndClassAndTrieValue) {
+        #[cfg(debug_assertions)]
+        debug_assert!(!self.initialized);
+        self.upcoming.insert(0, Spanned::new(c, ()));
+    }
+}
+
+impl<'data, I, T, Mode> CollationElements<'data, I, T, Mode>
+where
+    I: CharWithTrieStream<'data, T, Mode>,
+    T: AbstractCodePointTrie<'data, u32> + 'data,
+    Mode: SpanMode,
+{
+    #[inline(always)]
+    #[expect(clippy::too_many_arguments)]
+    pub fn new_with_spans(
+        delegate: I,
+        root: &'data CollationData,
+        tailoring: &'data CollationData,
+        jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
+        diacritics: &'data ZeroSlice<u16>,
+        tables: &'data DecompositionTables,
+        numeric_primary: Option<u8>,
+        lithuanian_dot_above: bool,
+    ) -> Self {
+        CollationElements::<I, T, Mode> {
             iter: delegate,
             pending: SmallVec::new(),
             pending_pos: 0,
@@ -1006,18 +1064,6 @@ where
             initialized: false,
             _phantom: PhantomData,
         }
-    }
-
-    pub fn iter_next_before_init(&mut self) -> Option<CharacterAndClassAndTrieValue> {
-        #[cfg(debug_assertions)]
-        debug_assert!(!self.initialized);
-        self.iter_next()
-    }
-
-    pub fn prepend_upcoming_before_init(&mut self, c: CharacterAndClassAndTrieValue) {
-        #[cfg(debug_assertions)]
-        debug_assert!(!self.initialized);
-        self.upcoming.insert(0, c);
     }
 
     pub fn init(&mut self) {
@@ -1083,21 +1129,31 @@ where
         // The case where upcoming does not start with a starter.
         // Ideally, we'd have something more specialized here that would extract
         // the code path that `self.next()` runs after dealing with the U+0000.
+        let placeholder_span = self
+            .upcoming
+            .first()
+            .map(|first| Mode::before_span(first.span))
+            .unwrap_or_default();
         self.upcoming.insert(
             0,
-            CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{0}'),
+            Spanned::new(
+                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{0}'),
+                placeholder_span,
+            ),
         ); // Make sure the process always begins with a starter
         let _ = self.next(); // Remove the placeholder starter
     }
 
-    fn iter_next(&mut self) -> Option<CharacterAndClassAndTrieValue> {
-        let (c, trie_val) = self.iter.next()?;
-        Some(CharacterAndClassAndTrieValue::new_with_trie_val(
-            c, trie_val,
+    #[inline(always)]
+    fn iter_next(&mut self) -> Option<Spanned<CharacterAndClassAndTrieValue, Mode::Span>> {
+        let (c, trie_val, span) = self.iter.next_char_with_trie()?;
+        Some(Spanned::new(
+            CharacterAndClassAndTrieValue::new_with_trie_val(c, trie_val),
+            span,
         ))
     }
 
-    fn next_internal(&mut self) -> Option<CharacterAndClassAndTrieValue> {
+    fn next_internal(&mut self) -> Option<Spanned<CharacterAndClassAndTrieValue, Mode::Span>> {
         if self.upcoming.is_empty() {
             return None;
         }
@@ -1236,90 +1292,114 @@ where
         sort_by_ccc(&mut self.upcoming[start_combining..]);
     }
 
-    fn push_decomposed_combining(&mut self, c: CharacterAndClassAndTrieValue) {
+    fn push_decomposed_combining(&mut self, c: Spanned<CharacterAndClassAndTrieValue, Mode::Span>) {
         if !trie_value_indicates_special_non_starter_decomposition(c.trie_val) {
             debug_assert!(trie_value_has_ccc(c.trie_val));
             self.upcoming.push(c);
             return;
         }
 
+        let span = c.span;
+        let cont_span = Mode::continuation_span(span);
         // The Tibetan special cases are starters that decompose into non-starters.
         match c.character() {
             '\u{0340}' => {
                 // COMBINING GRAVE TONE MARK
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0300}',
                         CanonicalCombiningClass::Above,
-                    ));
+                    ),
+                    span,
+                ));
             }
             '\u{0341}' => {
                 // COMBINING ACUTE TONE MARK
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0301}',
                         CanonicalCombiningClass::Above,
-                    ));
+                    ),
+                    span,
+                ));
             }
             '\u{0343}' => {
                 // COMBINING GREEK KORONIS
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0313}',
                         CanonicalCombiningClass::Above,
-                    ));
+                    ),
+                    span,
+                ));
             }
             '\u{0344}' => {
                 // COMBINING GREEK DIALYTIKA TONOS
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0308}',
                         CanonicalCombiningClass::Above,
-                    ));
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                    ),
+                    span,
+                ));
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0301}',
                         CanonicalCombiningClass::Above,
-                    ));
+                    ),
+                    cont_span,
+                ));
             }
             '\u{0F73}' => {
                 // TIBETAN VOWEL SIGN II
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0F71}',
                         CanonicalCombiningClass::CCC129,
-                    ));
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                    ),
+                    span,
+                ));
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0F72}',
                         CanonicalCombiningClass::CCC130,
-                    ));
+                    ),
+                    cont_span,
+                ));
             }
             '\u{0F75}' => {
                 // TIBETAN VOWEL SIGN UU
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0F71}',
                         CanonicalCombiningClass::CCC129,
-                    ));
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                    ),
+                    span,
+                ));
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0F74}',
                         CanonicalCombiningClass::CCC132,
-                    ));
+                    ),
+                    cont_span,
+                ));
             }
             '\u{0F81}' => {
                 // TIBETAN VOWEL SIGN REVERSED II
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0F71}',
                         CanonicalCombiningClass::CCC129,
-                    ));
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
+                    ),
+                    span,
+                ));
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_zero_ccc(
                         '\u{0F80}',
                         CanonicalCombiningClass::CCC130,
-                    ));
+                    ),
+                    cont_span,
+                ));
             }
             _ => {
                 // GIGO case
@@ -1328,9 +1408,14 @@ where
         }
     }
 
-    fn push_decomposed_starter(&mut self, c: CharacterAndClassAndTrieValue) -> usize {
+    fn push_decomposed_starter(
+        &mut self,
+        c: Spanned<CharacterAndClassAndTrieValue, Mode::Span>,
+    ) -> usize {
         let mut search_start_combining = false;
         let old_len = self.upcoming.len();
+        let span = c.span;
+        let cont_span = Mode::continuation_span(span);
         // Not inserting early returns below to keep the same structure
         // as in the ce32 mapping code.
 
@@ -1358,14 +1443,17 @@ where
                 // Decomposition into two BMP characters: starter and non-starter
                 let starter = char_from_u32(decomposition & 0x7FFF);
                 let low_c = char_from_u32((decomposition >> 15) & 0x7FFF);
-                self.upcoming
-                    .push(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(starter));
+                self.upcoming.push(Spanned::new(
+                    CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(starter),
+                    span,
+                ));
                 let trie_value = self.iter.trie().bmp(low_c as u16);
-                self.upcoming.push(
+                self.upcoming.push(Spanned::new(
                     CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
                         low_c, trie_value,
                     ),
-                );
+                    cont_span,
+                ));
             } else if high_zeros {
                 let singleton = decomposition as u16;
                 debug_assert_ne!(
@@ -1382,11 +1470,12 @@ where
                     debug_assert!(self.iter_exhausted);
                 } else {
                     // Decomposition into one BMP character
-                    self.upcoming.push(
+                    self.upcoming.push(Spanned::new(
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
                             char_from_u16(singleton),
                         ),
-                    );
+                        span,
+                    ));
                 }
             } else {
                 debug_assert!(low_zeros);
@@ -1397,29 +1486,41 @@ where
                 let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
                 if offset < self.scalars16.len() {
                     let len = (len_bits + 2) as usize;
-                    for u in unwrap_or_gigo(
+                    for (idx, u) in unwrap_or_gigo(
                         self.scalars16.get_subslice(offset..offset + len),
                         SINGLE_REPLACEMENT_CHARACTER_U16, // single instead of empty for consistency with the other code path
                     )
                     .iter()
+                    .enumerate()
                     {
                         let ch = char_from_u16(u);
                         let trie_value = self.iter.trie().bmp(u);
-                        self.upcoming
-                            .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
+                        let item_span = if idx == 0 { span } else { cont_span };
+                        self.upcoming.push(Spanned::new(
+                            CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
+                                ch, trie_value,
+                            ),
+                            item_span,
+                        ));
                     }
                 } else {
                     let len = (len_bits + 1) as usize;
                     let offset32 = offset - self.scalars16.len();
-                    for ch in unwrap_or_gigo(
+                    for (idx, ch) in unwrap_or_gigo(
                         self.scalars32.get_subslice(offset32..offset32 + len),
                         SINGLE_REPLACEMENT_CHARACTER_CHAR, // single instead of empty for consistency with the other code path
                     )
                     .iter()
+                    .enumerate()
                     {
                         let trie_value = self.iter.trie().scalar(ch);
-                        self.upcoming
-                            .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
+                        let item_span = if idx == 0 { span } else { cont_span };
+                        self.upcoming.push(Spanned::new(
+                            CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
+                                ch, trie_value,
+                            ),
+                            item_span,
+                        ));
                     }
                 }
                 search_start_combining = !only_non_starters_in_trail;
@@ -1459,7 +1560,10 @@ where
     // Sorts the combining characters and leaves the starter at the end
     // unnormalized. The trailing unnormalized starter doesn't get appended if
     // `self.iter` is exhausted.
-    fn push_decomposed_and_gather_combining(&mut self, c: CharacterAndClassAndTrieValue) {
+    fn push_decomposed_and_gather_combining(
+        &mut self,
+        c: Spanned<CharacterAndClassAndTrieValue, Mode::Span>,
+    ) {
         let start_combining = self.push_decomposed_starter(c);
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
@@ -1490,13 +1594,17 @@ where
     // Assumption: `pos` starts from zero and increases one by one.
     // Indexing is OK, because we check against `len()` and the `pos`
     // increases one by one by construction.
+    #[inline]
     #[expect(clippy::indexing_slicing)]
-    fn look_ahead(&mut self, pos: usize) -> Option<CharacterAndClassAndTrieValue> {
+    fn look_ahead(
+        &mut self,
+        pos: usize,
+    ) -> Option<&Spanned<CharacterAndClassAndTrieValue, Mode::Span>> {
         debug_assert!(self.upcoming_normalized);
         if pos + 1 == self.upcoming.len() {
             let c = self.upcoming.remove(pos);
             self.push_decomposed_and_gather_combining(c);
-            Some(self.upcoming[pos].clone())
+            Some(&self.upcoming[pos])
         } else if pos == self.upcoming.len() {
             if let Some(c) = self.iter_next() {
                 debug_assert!(
@@ -1504,7 +1612,7 @@ where
                     "The `upcoming` queue should be empty when iteration `pos` at the end"
                 );
                 self.push_decomposed_and_gather_combining(c);
-                Some(self.upcoming[pos].clone())
+                Some(&self.upcoming[pos])
             } else {
                 #[cfg(debug_assertions)]
                 {
@@ -1513,7 +1621,7 @@ where
                 None
             }
         } else {
-            Some(self.upcoming[pos].clone())
+            Some(&self.upcoming[pos])
         }
     }
 
@@ -1525,7 +1633,10 @@ where
         }
     }
 
-    fn prepend_and_sort_non_starter_prefix_of_suffix(&mut self, c: CharacterAndClassAndTrieValue) {
+    fn prepend_and_sort_non_starter_prefix_of_suffix(
+        &mut self,
+        c: Spanned<CharacterAndClassAndTrieValue, Mode::Span>,
+    ) {
         // Add one for the insertion afterwards.
         let end = 1 + {
             let mut iter = self.upcoming.iter().enumerate();
@@ -1562,7 +1673,7 @@ where
         self.prefix[0] = '\u{FFFF}';
     }
 
-    pub fn next(&mut self) -> CollationElement {
+    pub fn next(&mut self) -> Mode::Output {
         #[cfg(debug_assertions)]
         debug_assert!(self.initialized);
         debug_assert!(self.is_next_decomposition_starts_with_starter());
@@ -1572,17 +1683,18 @@ where
                 self.pending.clear();
                 self.pending_pos = 0;
             }
-            return ret;
+            return Mode::make_output(ret.value, ret.span);
         }
         debug_assert_eq!(self.pending_pos, 0);
         if let Some(c_c_tv) = self.next_internal() {
+            let mut current_span = c_c_tv.span;
             let mut c = c_c_tv.character();
             let mut ce32;
             let mut data: &CollationData = self.tailoring;
             // TODO: Should this be a reusable buffer on the struct instead of
             // getting re-created on the stack every time?
             let mut combining_characters: SmallVec<
-                [CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE],
+                [Spanned<CharacterAndClass, Mode::Span>; COMBINING_CHARACTER_BUFFER_SIZE],
             > = SmallVec::new(); // TODO(#2005): Figure out good length
 
             // Betting that fusing the NFD algorithm into this one at the
@@ -1635,7 +1747,7 @@ where
                 if self.is_next_decomposition_starts_with_starter() {
                     if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                         self.prefix_push(c);
-                        return ce;
+                        return Mode::make_output(ce, current_span);
                     } else if ce32.tag() == Tag::Contraction
                         && ce32.every_suffix_starts_with_combining()
                     {
@@ -1645,7 +1757,7 @@ where
                         let default = data.get_default(ce32.index());
                         if let Some(ce) = default.to_ce_simple_or_long_primary() {
                             self.prefix_push(c);
-                            return ce;
+                            return Mode::make_output(ce, current_span);
                         }
                     }
                     // TODO(2003): Figure out if it would be an optimization to
@@ -1663,6 +1775,7 @@ where
                         ce32 = data.ce32_for_char(c);
                     }
                     let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                    let cont_span = Mode::continuation_span(current_span);
                     if self.is_next_decomposition_starts_with_starter() {
                         let diacritic_index =
                             (combining as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
@@ -1674,9 +1787,9 @@ where
                             if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                                 let ce_for_combining =
                                     CollationElement::new_from_secondary(secondary);
-                                self.push_pending(ce_for_combining);
+                                self.push_pending(ce_for_combining, cont_span);
                                 self.mark_prefix_unmatchable();
-                                return ce;
+                                return Mode::make_output(ce, current_span);
                             }
                             if ce32.tag() == Tag::Contraction
                                 && ce32.every_suffix_starts_with_combining()
@@ -1690,19 +1803,22 @@ where
                                             .to_ce_simple_or_long_primary()
                                     {
                                         self.mark_prefix_unmatchable();
-                                        return ce;
+                                        return Mode::make_output(ce, current_span);
                                     }
                                 } else if let Some(ce) = default.to_ce_simple_or_long_primary() {
                                     let ce_for_combining =
                                         CollationElement::new_from_secondary(secondary);
-                                    self.push_pending(ce_for_combining);
+                                    self.push_pending(ce_for_combining, cont_span);
                                     self.mark_prefix_unmatchable();
-                                    return ce;
+                                    return Mode::make_output(ce, current_span);
                                 }
                             }
                         }
                     }
-                    combining_characters.push(CharacterAndClass::new_with_placeholder(combining));
+                    combining_characters.push(Spanned::new(
+                        CharacterAndClass::new_with_placeholder(combining),
+                        cont_span,
+                    ));
                 } else if high_zeros {
                     // Do the Hangul check on the character instead of trusting
                     // the trie value in order not to let GIGO cause unsafety.
@@ -1713,6 +1829,7 @@ where
                         let l = hangul_offset / HANGUL_N_COUNT;
                         let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
                         let t = hangul_offset % HANGUL_T_COUNT;
+                        let cont_span = Mode::continuation_span(current_span);
 
                         // No prefix matches on Hangul
                         self.mark_prefix_unmatchable();
@@ -1727,6 +1844,7 @@ where
                                     self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
                                 )
                                 .to_ce_self_contained_or_gigo(),
+                                cont_span,
                             );
                             if t != 0 {
                                 self.push_pending(
@@ -1734,10 +1852,14 @@ where
                                         self.jamo[(HANGUL_T_BASE - HANGUL_L_BASE + t) as usize],
                                     )
                                     .to_ce_self_contained_or_gigo(),
+                                    cont_span,
                                 );
                             }
-                            return CollationElement32::new_from_ule(self.jamo[l as usize])
-                                .to_ce_self_contained_or_gigo();
+                            return Mode::make_output(
+                                CollationElement32::new_from_ule(self.jamo[l as usize])
+                                    .to_ce_self_contained_or_gigo(),
+                                current_span,
+                            );
                         }
 
                         // Uphold the invariant that the upcoming character is a starter (or end of stream)
@@ -1753,30 +1875,40 @@ where
                                     self.jamo[(HANGUL_V_BASE - HANGUL_L_BASE + v) as usize],
                                 )
                                 .to_ce_self_contained_or_gigo(),
+                                cont_span,
                             );
                             self.upcoming.insert(
                                 0,
-                                // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
-                                // in range for a char (≤ 0xD800)
-                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
-                                    unsafe { char::from_u32_unchecked(HANGUL_T_BASE + t) },
+                                Spanned::new(
+                                    // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
+                                    // in range for a char (≤ 0xD800)
+                                    CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
+                                        unsafe { char::from_u32_unchecked(HANGUL_T_BASE + t) },
+                                    ),
+                                    cont_span,
                                 ),
                             );
                         } else {
                             self.upcoming.insert(
                                 0,
-                                // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
-                                // in range for a char (≤ 0xD800)
-                                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
-                                    unsafe { char::from_u32_unchecked(HANGUL_V_BASE + v) },
+                                Spanned::new(
+                                    // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
+                                    // in range for a char (≤ 0xD800)
+                                    CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
+                                        unsafe { char::from_u32_unchecked(HANGUL_V_BASE + v) },
+                                    ),
+                                    cont_span,
                                 ),
                             );
                         }
 
                         // Indexing OK, because indices in range by construction
                         #[expect(clippy::indexing_slicing)]
-                        return CollationElement32::new_from_ule(self.jamo[l as usize])
-                            .to_ce_self_contained_or_gigo();
+                        return Mode::make_output(
+                            CollationElement32::new_from_ule(self.jamo[l as usize])
+                                .to_ce_self_contained_or_gigo(),
+                            current_span,
+                        );
                     }
 
                     let singleton = decomposition as u16;
@@ -1795,7 +1927,7 @@ where
                         && let Some(ce) = ce32.to_ce_simple_or_long_primary()
                     {
                         self.prefix_push(c);
-                        return ce;
+                        return Mode::make_output(ce, current_span);
                     }
                 } else {
                     debug_assert!(low_zeros);
@@ -1804,6 +1936,7 @@ where
                     // Only 3 of 4 bits used as of Unicode 16.
                     let len_bits = decomposition & 0b1111;
                     let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
+                    let cont_span = Mode::continuation_span(current_span);
                     if offset < self.scalars16.len() {
                         let len = (len_bits + 2) as usize;
                         let (starter, tail) = self
@@ -1824,7 +1957,12 @@ where
                                 let char_from_u = char_from_u16(u);
                                 let trie_value = self.iter.trie().bmp(u);
                                 let ccc = ccc_from_trie_value(trie_value);
-                                Self::push_combining(&mut combining_characters, char_from_u, ccc);
+                                Self::push_combining(
+                                    &mut combining_characters,
+                                    char_from_u,
+                                    ccc,
+                                    cont_span,
+                                );
                             }
                         } else {
                             let mut it = tail.iter();
@@ -1834,7 +1972,12 @@ where
                                 if ccc != CanonicalCombiningClass::NotReordered {
                                     // As of Unicode 14, this branch is never taken.
                                     // It exist for forward compatibility.
-                                    Self::push_combining(&mut combining_characters, ch, ccc);
+                                    Self::push_combining(
+                                        &mut combining_characters,
+                                        ch,
+                                        ccc,
+                                        cont_span,
+                                    );
                                     continue;
                                 }
 
@@ -1848,13 +1991,22 @@ where
                                 while let Some(u) = it.next_back() {
                                     let tail_char = char_from_u16(u);
                                     let trie_value = self.iter.trie().bmp(u);
-                                    self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
+                                    self.prepend_and_sort_non_starter_prefix_of_suffix(
+                                        Spanned::new(
+                                            CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
+                                                tail_char,
+                                                trie_value,
+                                            ),
+                                            cont_span,
+                                        ),
+                                    );
                                 }
-                                self.prepend_and_sort_non_starter_prefix_of_suffix(
+                                self.prepend_and_sort_non_starter_prefix_of_suffix(Spanned::new(
                                     CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
                                         ch,
                                     ),
-                                );
+                                    cont_span,
+                                ));
                                 break;
                             }
                         }
@@ -1876,7 +2028,7 @@ where
                             for ch in tail.iter() {
                                 let trie_value = self.iter.trie().scalar(ch);
                                 let ccc = ccc_from_trie_value(trie_value);
-                                Self::push_combining(&mut combining_characters, ch, ccc);
+                                Self::push_combining(&mut combining_characters, ch, ccc, cont_span);
                             }
                         } else {
                             let mut it = tail.iter();
@@ -1885,7 +2037,12 @@ where
                                 if ccc != CanonicalCombiningClass::NotReordered {
                                     // As of Unicode 14, this branch is never taken.
                                     // It exist for forward compatibility.
-                                    Self::push_combining(&mut combining_characters, ch, ccc);
+                                    Self::push_combining(
+                                        &mut combining_characters,
+                                        ch,
+                                        ccc,
+                                        cont_span,
+                                    );
                                     continue;
                                 }
                                 // At this point, we might have a single newly-read
@@ -1897,13 +2054,22 @@ where
 
                                 while let Some(tail_char) = it.next_back() {
                                     let trie_value = self.iter.trie().scalar(tail_char);
-                                    self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
+                                    self.prepend_and_sort_non_starter_prefix_of_suffix(
+                                        Spanned::new(
+                                            CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
+                                                tail_char,
+                                                trie_value,
+                                            ),
+                                            cont_span,
+                                        ),
+                                    );
                                 }
-                                self.prepend_and_sort_non_starter_prefix_of_suffix(
+                                self.prepend_and_sort_non_starter_prefix_of_suffix(Spanned::new(
                                     CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
                                         ch,
                                     ),
-                                );
+                                    cont_span,
+                                ));
                                 break;
                             }
                         }
@@ -1925,28 +2091,34 @@ where
             // the next starter sorted by combining class.
             let mut looked_ahead = 0;
             let mut drain_from_upcoming = 0;
+            let mut cluster_span = current_span;
             'outer: loop {
                 'ce32loop: loop {
                     // TODO(#2002): Ensure that the CE32 flavors in this loop are checked in the optimal
                     // order given their frequency in real workloads.
                     if let Some(ce) = ce32.to_ce_self_contained() {
-                        self.push_pending(ce);
+                        self.push_pending(ce, current_span);
                         break 'ce32loop;
                     } else {
                         match ce32.tag() {
                             Tag::Expansion32 => {
                                 let ce32s = data.get_ce32s(ce32.index(), ce32.len());
-                                for u in ce32s.iter() {
+                                let cont_span = Mode::continuation_span(current_span);
+                                for (idx, u) in ce32s.iter().enumerate() {
+                                    let span = if idx == 0 { current_span } else { cont_span };
                                     self.push_pending(
                                         CollationElement32::new(u).to_ce_self_contained_or_gigo(),
+                                        span,
                                     );
                                 }
                                 break 'ce32loop;
                             }
                             Tag::Expansion => {
                                 let ces = data.get_ces(ce32.index(), ce32.len());
-                                for u in ces.iter() {
-                                    self.push_pending(CollationElement::new(u));
+                                let cont_span = Mode::continuation_span(current_span);
+                                for (idx, u) in ces.iter().enumerate() {
+                                    let span = if idx == 0 { current_span } else { cont_span };
+                                    self.push_pending(CollationElement::new(u), span);
                                 }
                                 break 'ce32loop;
                             }
@@ -1998,9 +2170,23 @@ where
                                         trie.is_empty(),
                                     ) {
                                         (true, Some(ce32_i), is_empty) => {
-                                            let _ = combining_characters.remove(i);
+                                            let removed = combining_characters.remove(i);
+                                            current_span = Mode::combine_spans(
+                                                current_span,
+                                                Mode::after_starter_span(
+                                                    cluster_span,
+                                                    removed.span,
+                                                ),
+                                            );
                                             while let Some(idx) = pending_removals.pop() {
-                                                combining_characters.remove(idx);
+                                                let removed = combining_characters.remove(idx);
+                                                current_span = Mode::combine_spans(
+                                                    current_span,
+                                                    Mode::after_starter_span(
+                                                        cluster_span,
+                                                        removed.span,
+                                                    ),
+                                                );
                                                 i -= 1; // Adjust for the shortening
                                             }
                                             ce32 = CollationElement32::new(ce32_i as u32);
@@ -2036,12 +2222,18 @@ where
                                 may_have_contracted_starter = true;
                                 debug_assert!(pending_removals.is_empty());
                                 self.ensure_upcoming_normalized();
+                                let mut candidate_span = current_span;
                                 loop {
                                     let ahead = self.look_ahead(looked_ahead);
                                     looked_ahead += 1;
                                     if let Some(ch) = ahead {
-                                        trie.step(ch.character());
+                                        let ch_char = ch.character();
+                                        let ch_span = ch.span;
+                                        trie.step(ch_char);
+                                        candidate_span =
+                                            Mode::combine_spans(candidate_span, ch_span);
                                         if let Some(ce32_i) = trie.value() {
+                                            current_span = candidate_span;
                                             drain_from_upcoming = looked_ahead;
                                             ce32 = CollationElement32::new(ce32_i as u32);
                                             if trie.is_empty() {
@@ -2071,6 +2263,7 @@ where
                                             loop {
                                                 let ahead = self.look_ahead(looked_ahead + i);
                                                 if let Some(ch) = ahead {
+                                                    let ch_char = ch.character();
                                                     let ccc = ch.ccc();
                                                     if ccc == CanonicalCombiningClass::NotReordered
                                                     {
@@ -2079,21 +2272,36 @@ where
                                                         // starter anymore.
                                                         continue 'ce32loop;
                                                     }
-                                                    trie.step(ch.character());
+                                                    trie.step(ch_char);
                                                     match (
                                                         most_recent_skipped_ccc < ccc,
                                                         trie.value(),
                                                         trie.is_empty(),
                                                     ) {
                                                         (true, Some(ce32_i), is_empty) => {
-                                                            let _ = self
+                                                            let removed = self
                                                                 .upcoming
                                                                 .remove(looked_ahead + i);
+                                                            current_span = Mode::combine_spans(
+                                                                current_span,
+                                                                Mode::after_starter_span(
+                                                                    cluster_span,
+                                                                    removed.span,
+                                                                ),
+                                                            );
                                                             while let Some(idx) =
                                                                 pending_removals.pop()
                                                             {
-                                                                self.upcoming
+                                                                let removed = self
+                                                                    .upcoming
                                                                     .remove(looked_ahead + idx);
+                                                                current_span = Mode::combine_spans(
+                                                                    current_span,
+                                                                    Mode::after_starter_span(
+                                                                        cluster_span,
+                                                                        removed.span,
+                                                                    ),
+                                                                );
                                                                 i -= 1; // Adjust for the shortening
                                                             }
                                                             ce32 = CollationElement32::new(
@@ -2146,20 +2354,27 @@ where
                                         may_have_contracted_starter = true;
                                         self.ensure_upcoming_normalized();
                                         while let Some(upcoming) = self.look_ahead(looked_ahead) {
+                                            let upcoming_char = upcoming.character();
+                                            let upcoming_span = upcoming.span;
                                             looked_ahead += 1;
-                                            ce32 =
-                                                self.tailoring.ce32_for_char(upcoming.character());
+                                            ce32 = self.tailoring.ce32_for_char(upcoming_char);
                                             if ce32 == FALLBACK_CE32 {
-                                                ce32 =
-                                                    self.root.ce32_for_char(upcoming.character());
+                                                ce32 = self.root.ce32_for_char(upcoming_char);
                                             }
                                             if ce32.tag_checked() != Some(Tag::Digit) {
                                                 break;
                                             }
+                                            current_span =
+                                                Mode::combine_spans(current_span, upcoming_span);
                                             drain_from_upcoming = looked_ahead;
                                             digits.push(ce32.digit());
                                         }
                                     }
+                                    let mut next_digit_span = current_span;
+                                    let digit_cont_span = Mode::continuation_span(current_span);
+                                    let mut take_digit_span = || {
+                                        core::mem::replace(&mut next_digit_span, digit_cont_span)
+                                    };
                                     let mut remaining = digits.as_slice();
                                     while !remaining.is_empty() {
                                         // Skip leading zeros
@@ -2218,6 +2433,7 @@ where
                                                         numeric_primary
                                                             | ((first_byte + value) << 16),
                                                     ),
+                                                    take_digit_span(),
                                                 );
                                                 continue;
                                             }
@@ -2232,6 +2448,7 @@ where
                                                             | ((first_byte + value / 254) << 16)
                                                             | ((2 + value % 254) << 8),
                                                     ),
+                                                    take_digit_span(),
                                                 );
                                                 continue;
                                             }
@@ -2248,6 +2465,7 @@ where
                                                 primary |= (first_byte + value % 254) << 16;
                                                 self.push_pending(
                                                     CollationElement::new_from_primary(primary),
+                                                    take_digit_span(),
                                                 );
                                                 continue;
                                             }
@@ -2301,6 +2519,7 @@ where
                                                 primary |= pair;
                                                 self.push_pending(
                                                     CollationElement::new_from_primary(primary),
+                                                    take_digit_span(),
                                                 );
                                                 primary = numeric_primary;
                                                 shift = 16;
@@ -2312,9 +2531,10 @@ where
                                                 11 + 2 * (u32::from(left) * 10 + u32::from(right));
                                         }
                                         primary |= (pair - 1) << shift;
-                                        self.push_pending(CollationElement::new_from_primary(
-                                            primary,
-                                        ));
+                                        self.push_pending(
+                                            CollationElement::new_from_primary(primary),
+                                            take_digit_span(),
+                                        );
                                     }
                                     break 'ce32loop;
                                 }
@@ -2322,11 +2542,14 @@ where
                                 continue 'ce32loop;
                             }
                             Tag::Offset => {
-                                self.push_pending(data.ce_from_offset_ce32(c, ce32));
+                                self.push_pending(data.ce_from_offset_ce32(c, ce32), current_span);
                                 break 'ce32loop;
                             }
                             Tag::Implicit => {
-                                self.push_pending(CollationElement::new_implicit_from_char(c));
+                                self.push_pending(
+                                    CollationElement::new_implicit_from_char(c),
+                                    current_span,
+                                );
                                 break 'ce32loop;
                             }
                             Tag::Fallback
@@ -2340,18 +2563,20 @@ where
                             | Tag::Hangul => {
                                 debug_assert!(false);
                                 // GIGO case
-                                self.push_pending(FFFD_CE);
+                                self.push_pending(FFFD_CE, current_span);
                                 break 'ce32loop;
                             }
                         }
                     }
                 }
                 self.prefix_push(c);
+                cluster_span = Mode::combine_spans(cluster_span, current_span);
                 'combining_outer: loop {
                     debug_assert!(drain_from_upcoming == 0 || combining_characters.is_empty());
                     let mut i = 0;
-                    'combining: while let Some(ch) =
-                        combining_characters.get(i).map(|c| c.character())
+                    'combining: while let Some((ch, mark_span)) = combining_characters
+                        .get(i)
+                        .map(|spanned| (spanned.character(), spanned.span))
                     {
                         c = ch;
                         let diacritic_index = (c as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
@@ -2369,10 +2594,18 @@ where
                                 // same combining class such that the COMBINING DOT ABOVE is ignored for
                                 // collation. Since the combining class is the same, it's valid to simply
                                 // look at the next character in `combining_characters`.
+                                //
+                                // No CE is pushed for `\u{0307}`, so leave `cluster_span` unchanged
+                                // and let the following accent absorb `\u{0307}`'s span.
                                 i += 1;
                                 continue 'combining;
                             }
-                            self.push_pending(CollationElement::new_from_secondary(secondary));
+                            let ce_span = Mode::after_starter_span(cluster_span, mark_span);
+                            cluster_span = Mode::combine_spans(cluster_span, ce_span);
+                            self.push_pending(
+                                CollationElement::new_from_secondary(secondary),
+                                ce_span,
+                            );
                             self.mark_prefix_unmatchable();
                             i += 1;
                             continue 'combining;
@@ -2381,6 +2614,7 @@ where
                         // Not bothering to micro optimize away the move of the remaining
                         // part of `combining_characters`.
                         let _ = combining_characters.drain(..=i);
+                        current_span = Mode::after_starter_span(cluster_span, mark_span);
                         data = self.tailoring;
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
@@ -2442,24 +2676,31 @@ where
                     } else {
                         self.pending_pos = 1;
                     }
-                    return ret;
+                    return Mode::make_output(ret.value, ret.span);
                 }
             }
         } else {
-            NO_CE
+            Mode::make_output(NO_CE, Mode::Span::default())
         }
     }
 
     #[inline(always)]
     fn collect_combining(
         &mut self,
-        combining_characters: &mut SmallVec<[CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE]>,
+        combining_characters: &mut SmallVec<
+            [Spanned<CharacterAndClass, Mode::Span>; COMBINING_CHARACTER_BUFFER_SIZE],
+        >,
     ) {
         while !self.is_next_decomposition_starts_with_starter() {
             // `unwrap` is OK, because `!self.is_next_decomposition_starts_with_starter()`
             // means the `unwrap()` must succeed.
             #[expect(clippy::unwrap_used)]
-            let combining = self.next_internal().unwrap().c_and_c;
+            let Spanned {
+                value,
+                span: combining_span,
+            } = self.next_internal().unwrap();
+            let combining = Spanned::new(value.c_and_c, combining_span);
+            let cont_span = Mode::continuation_span(combining_span);
             let combining_c = combining.character();
             if !in_inclusive_range(combining_c, '\u{0340}', '\u{0F81}') {
                 combining_characters.push(combining);
@@ -2472,6 +2713,7 @@ where
                             combining_characters,
                             '\u{0300}',
                             CanonicalCombiningClass::Above,
+                            combining_span,
                         );
                     }
                     '\u{0341}' => {
@@ -2480,6 +2722,7 @@ where
                             combining_characters,
                             '\u{0301}',
                             CanonicalCombiningClass::Above,
+                            combining_span,
                         );
                     }
                     '\u{0343}' => {
@@ -2488,6 +2731,7 @@ where
                             combining_characters,
                             '\u{0313}',
                             CanonicalCombiningClass::Above,
+                            combining_span,
                         );
                     }
                     '\u{0344}' => {
@@ -2496,11 +2740,13 @@ where
                             combining_characters,
                             '\u{0308}',
                             CanonicalCombiningClass::Above,
+                            combining_span,
                         );
                         Self::push_combining(
                             combining_characters,
                             '\u{0301}',
                             CanonicalCombiningClass::Above,
+                            cont_span,
                         );
                     }
                     '\u{0F73}' => {
@@ -2509,11 +2755,13 @@ where
                             combining_characters,
                             '\u{0F71}',
                             CanonicalCombiningClass::CCC129,
+                            combining_span,
                         );
                         Self::push_combining(
                             combining_characters,
                             '\u{0F72}',
                             CanonicalCombiningClass::CCC130,
+                            cont_span,
                         );
                     }
                     '\u{0F75}' => {
@@ -2522,11 +2770,13 @@ where
                             combining_characters,
                             '\u{0F71}',
                             CanonicalCombiningClass::CCC129,
+                            combining_span,
                         );
                         Self::push_combining(
                             combining_characters,
                             '\u{0F74}',
                             CanonicalCombiningClass::CCC132,
+                            cont_span,
                         );
                     }
                     '\u{0F81}' => {
@@ -2535,11 +2785,13 @@ where
                             combining_characters,
                             '\u{0F71}',
                             CanonicalCombiningClass::CCC129,
+                            combining_span,
                         );
                         Self::push_combining(
                             combining_characters,
                             '\u{0F80}',
                             CanonicalCombiningClass::CCC130,
+                            cont_span,
                         );
                     }
                     _ => {
@@ -2564,17 +2816,20 @@ where
     }
 
     #[inline(always)]
-    fn push_pending(&mut self, ce: CollationElement) {
-        self.pending.push(ce);
+    fn push_pending(&mut self, ce: CollationElement, span: Mode::Span) {
+        self.pending.push(Spanned::new(ce, span));
     }
 
     #[inline(always)]
     fn push_combining(
-        combining_characters: &mut SmallVec<[CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE]>,
+        combining_characters: &mut SmallVec<
+            [Spanned<CharacterAndClass, Mode::Span>; COMBINING_CHARACTER_BUFFER_SIZE],
+        >,
         c: char,
         ccc: CanonicalCombiningClass,
+        span: Mode::Span,
     ) {
-        combining_characters.push(CharacterAndClass::new(c, ccc));
+        combining_characters.push(Spanned::new(CharacterAndClass::new(c, ccc), span));
     }
 }
 
@@ -2628,5 +2883,392 @@ mod tests {
             (0..64).map(|i| TestItem((63 - i) as u8 / 4, i)).collect();
         expected.sort_by_key(|item| item.0);
         assert_eq!(large, expected);
+    }
+
+    #[cfg(feature = "compiled_data")]
+    mod span_tests {
+        use super::*;
+        use crate::comparison::NormTrie;
+        use crate::options::CollatorOptions;
+        use crate::preferences::CollationNumericOrdering;
+        use crate::spans::{SourceSpan, SpanStream, TrackSpans};
+        use crate::{Collator, CollatorBorrowed, CollatorPreferences};
+        #[cfg(feature = "latin1")]
+        use icu_collections::codepointtrie::iter::Latin1CharsWithTrie;
+        use icu_collections::codepointtrie::iter::{
+            CharsWithTrieDefaultForAscii, Utf8CharsWithTrieDefaultForAscii, Utf16CharsWithTrie,
+        };
+        use icu_locale_core::locale;
+
+        fn make_collator(
+            locale: icu_locale_core::Locale,
+            numeric: bool,
+        ) -> CollatorBorrowed<'static> {
+            let mut prefs: CollatorPreferences = locale.into();
+            if numeric {
+                prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+            }
+            Collator::try_new(prefs, CollatorOptions::default()).unwrap()
+        }
+
+        fn collect_and_verify<I1, I2>(
+            collator: &CollatorBorrowed<'static>,
+            no_spans_stream: I1,
+            track_spans_stream: I2,
+            input_len: usize,
+        ) -> Vec<(CollationElement, SourceSpan)>
+        where
+            I1: CharWithTrieStream<'static, NormTrie<'static>, NoSpans>,
+            I2: CharWithTrieStream<'static, NormTrie<'static>, TrackSpans>,
+        {
+            let mut ce_plain =
+                collator.collation_elements_with_spans::<I1, NoSpans>(no_spans_stream);
+            let mut ce_spanned =
+                collator.collation_elements_with_spans::<I2, TrackSpans>(track_spans_stream);
+            ce_plain.init();
+            ce_spanned.init();
+
+            let mut out = Vec::new();
+            let mut prev_end = 0;
+            loop {
+                let plain = ce_plain.next();
+                let (ce, span) = ce_spanned.next();
+                assert_eq!(plain, ce);
+                if ce == NO_CE {
+                    assert_eq!(span, SourceSpan::default());
+                    assert_eq!(
+                        prev_end, input_len,
+                        "emitted spans stopped at {prev_end} instead of {input_len}"
+                    );
+                    break;
+                }
+                assert!(
+                    span.start <= span.end && span.end <= input_len,
+                    "out-of-bounds span {span:?} for len {input_len}"
+                );
+                assert_eq!(
+                    span.start, prev_end,
+                    "span {span:?} is non-contiguous or non-monotonic after {prev_end}"
+                );
+                prev_end = span.end;
+                out.push((ce, span));
+            }
+            out
+        }
+
+        fn collect_str_spans(
+            locale: icu_locale_core::Locale,
+            numeric: bool,
+            s: &str,
+        ) -> Vec<SourceSpan> {
+            let collator = make_collator(locale, numeric);
+            let trie = collator.norm_trie();
+            collect_and_verify(
+                &collator,
+                CharsWithTrieDefaultForAscii::new(s, trie),
+                SpanStream::new(CharsWithTrieDefaultForAscii::new(s, trie)),
+                s.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect()
+        }
+
+        #[test]
+        fn test_empty_and_ascii() {
+            assert_eq!(collect_str_spans(locale!("en"), false, ""), vec![]);
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "abc"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 2),
+                    SourceSpan::new(2, 3),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_leading_combining_and_reordered_marks() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0301}a"),
+                vec![SourceSpan::new(0, 2), SourceSpan::new(2, 3)]
+            );
+            // Reordered leading marks (ccc=230 before ccc=220) still cover 0..4 without a gap.
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0301}\u{0323}"),
+                vec![SourceSpan::new(0, 4), SourceSpan::new(4, 4)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "e\u{0301}\u{0323}"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 5),
+                    SourceSpan::new(5, 5),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "e\u{0301}"),
+                vec![SourceSpan::new(0, 1), SourceSpan::new(1, 3)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "é"),
+                vec![SourceSpan::new(0, 2), SourceSpan::new(2, 2)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "ế"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 3),
+                    SourceSpan::new(3, 3),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "é\u{0323}"),
+                vec![
+                    SourceSpan::new(0, 2),
+                    SourceSpan::new(2, 4),
+                    SourceSpan::new(4, 4),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("ja"), false, "が"),
+                vec![SourceSpan::new(0, 3), SourceSpan::new(3, 3)]
+            );
+        }
+
+        #[test]
+        fn test_lithuanian_dot_above_and_tibetan_contractions() {
+            // Lithuanian ignores U+0307 before U+0301; the accent span absorbs U+0307's bytes.
+            assert_eq!(
+                collect_str_spans(locale!("lt"), false, "i\u{0307}\u{0301}"),
+                vec![SourceSpan::new(0, 1), SourceSpan::new(1, 5)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("lt"), false, "\u{0307}\u{0301}"),
+                vec![SourceSpan::new(0, 4)]
+            );
+            // Non-table contraction U+0F71 + U+0F72 following a lower-CCC mark U+0334 must stay monotonic.
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0F40}\u{0F71}\u{0F72}\u{0334}"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 11),
+                    SourceSpan::new(11, 11),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0F40}\u{0F73}\u{0334}"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 8),
+                    SourceSpan::new(8, 8),
+                ]
+            );
+            // Regression sequence from #8759.
+            let _ = collect_str_spans(
+                locale!("en"),
+                false,
+                "\u{F57}\u{F4D}\u{F73}\u{F39}\u{F9F}\u{F75}\u{F4B}",
+            );
+        }
+
+        #[test]
+        fn test_multi_piece_marks_and_expansions() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0F40}\u{0F73}"),
+                vec![SourceSpan::new(0, 3), SourceSpan::new(3, 6)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0391}\u{0344}"),
+                vec![
+                    SourceSpan::new(0, 2),
+                    SourceSpan::new(2, 4),
+                    SourceSpan::new(4, 4),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("de"), false, "Straße"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 2),
+                    SourceSpan::new(2, 3),
+                    SourceSpan::new(3, 4),
+                    SourceSpan::new(4, 6),
+                    SourceSpan::new(6, 6),
+                    SourceSpan::new(6, 7),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_hangul_and_contractions() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "가"),
+                vec![SourceSpan::new(0, 3), SourceSpan::new(3, 3)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "각"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 3),
+                    SourceSpan::new(3, 3),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "가\u{0301}"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 3),
+                    SourceSpan::new(3, 5),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("cs"), false, "cha"),
+                vec![SourceSpan::new(0, 2), SourceSpan::new(2, 3)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("sv"), false, "ọ\u{0308}x"),
+                vec![
+                    SourceSpan::new(0, 5),
+                    SourceSpan::new(5, 5),
+                    SourceSpan::new(5, 6),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("sv"), false, "o\u{0323}\u{0308}x"),
+                vec![
+                    SourceSpan::new(0, 5),
+                    SourceSpan::new(5, 5),
+                    SourceSpan::new(5, 6),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("sv"), false, "o\u{093C}\u{0308}x"),
+                vec![
+                    SourceSpan::new(0, 6),
+                    SourceSpan::new(6, 6),
+                    SourceSpan::new(6, 7),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_numeric_runs() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), true, "12"),
+                vec![SourceSpan::new(0, 2)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), true, "a42b"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 3),
+                    SourceSpan::new(3, 4),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), true, "1234567890123456"),
+                vec![
+                    SourceSpan::new(0, 16),
+                    SourceSpan::new(16, 16),
+                    SourceSpan::new(16, 16),
+                ]
+            );
+            let long_digits = "1".repeat(300);
+            let spans = collect_str_spans(locale!("en"), true, &long_digits);
+            assert!(spans.len() > 2);
+            assert_eq!(spans.first().copied(), Some(SourceSpan::new(0, 300)));
+            for &span in spans.iter().skip(1) {
+                assert_eq!(span, SourceSpan::new(300, 300));
+            }
+        }
+
+        #[test]
+        fn test_utf8_utf16_and_latin1_streams() {
+            let collator = make_collator(locale!("en"), false);
+            let trie = collator.norm_trie();
+
+            let utf8_truncated = b"a\xF0\x9Fb";
+            let spans: Vec<SourceSpan> = collect_and_verify(
+                &collator,
+                Utf8CharsWithTrieDefaultForAscii::new(utf8_truncated, trie),
+                SpanStream::new(Utf8CharsWithTrieDefaultForAscii::new(utf8_truncated, trie)),
+                utf8_truncated.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect();
+            assert_eq!(
+                spans,
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 3),
+                    SourceSpan::new(3, 4),
+                ]
+            );
+
+            let utf8_cont = b"a\x80\x80b";
+            let spans: Vec<SourceSpan> = collect_and_verify(
+                &collator,
+                Utf8CharsWithTrieDefaultForAscii::new(utf8_cont, trie),
+                SpanStream::new(Utf8CharsWithTrieDefaultForAscii::new(utf8_cont, trie)),
+                utf8_cont.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect();
+            assert_eq!(
+                spans,
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 2),
+                    SourceSpan::new(2, 3),
+                    SourceSpan::new(3, 4),
+                ]
+            );
+
+            let utf16: &[u16] = &[u16::from(b'a'), 0xD83D, 0xDE00, 0xD800, u16::from(b'b')];
+            let spans: Vec<SourceSpan> = collect_and_verify(
+                &collator,
+                Utf16CharsWithTrie::new(utf16, trie),
+                SpanStream::new(Utf16CharsWithTrie::new(utf16, trie)),
+                utf16.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect();
+            assert_eq!(
+                spans,
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 3),
+                    SourceSpan::new(3, 4),
+                    SourceSpan::new(4, 5),
+                ]
+            );
+
+            #[cfg(feature = "latin1")]
+            {
+                let latin1: &[u8] = &[b'a', 0xE9, b'b'];
+                let spans: Vec<SourceSpan> = collect_and_verify(
+                    &collator,
+                    Latin1CharsWithTrie::new(latin1, trie),
+                    SpanStream::new(Latin1CharsWithTrie::new(latin1, trie)),
+                    latin1.len(),
+                )
+                .into_iter()
+                .map(|(_, span)| span)
+                .collect();
+                assert_eq!(
+                    spans,
+                    vec![
+                        SourceSpan::new(0, 1),
+                        SourceSpan::new(1, 2),
+                        SourceSpan::new(2, 2),
+                        SourceSpan::new(2, 3),
+                    ]
+                );
+            }
+        }
     }
 }
