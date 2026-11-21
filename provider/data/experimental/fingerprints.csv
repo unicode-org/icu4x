@@ -1,10 +1,12 @@
-currency/decimal/symbols/v1, <lookup>, 127B, 11 identifiers
-currency/decimal/symbols/v1, <total>, 469B, 189B, 10 unique payloads
+currency/decimal/symbols/v1, <lookup>, 139B, 13 identifiers
+currency/decimal/symbols/v1, <total>, 515B, 207B, 11 unique payloads
 currency/decimal/symbols/v1, ca/ESP, 46B, 18B, a1c6d58e8b50443f
+currency/decimal/symbols/v1, de-AT, -> ca/ESP
 currency/decimal/symbols/v1, de-LU/LUF, 46B, 18B, 3fb007994296856a
 currency/decimal/symbols/v1, el/GRD, -> ca/ESP
 currency/decimal/symbols/v1, et/EEK, 49B, 21B, 1e7bda97fc47a75b
 currency/decimal/symbols/v1, eu/ESP, 48B, 20B, ad715ee6fa0d32be
+currency/decimal/symbols/v1, fr-CH, 46B, 18B, df28d3acc02789f5
 currency/decimal/symbols/v1, gl/ESP, 48B, 20B, 1bf992c0a6d711d8
 currency/decimal/symbols/v1, it/ITL, 46B, 18B, 28dd4136886d5f01
 currency/decimal/symbols/v1, kea/CVE, 47B, 19B, 7f4fc75dad04de0d
