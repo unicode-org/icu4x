@@ -2884,4 +2884,391 @@ mod tests {
         expected.sort_by_key(|item| item.0);
         assert_eq!(large, expected);
     }
+
+    #[cfg(feature = "compiled_data")]
+    mod span_tests {
+        use super::*;
+        use crate::comparison::NormTrie;
+        use crate::options::CollatorOptions;
+        use crate::preferences::CollationNumericOrdering;
+        use crate::spans::{SourceSpan, SpanStream, TrackSpans};
+        use crate::{Collator, CollatorBorrowed, CollatorPreferences};
+        #[cfg(feature = "latin1")]
+        use icu_collections::codepointtrie::iter::Latin1CharsWithTrie;
+        use icu_collections::codepointtrie::iter::{
+            CharsWithTrieDefaultForAscii, Utf8CharsWithTrieDefaultForAscii, Utf16CharsWithTrie,
+        };
+        use icu_locale_core::locale;
+
+        fn make_collator(
+            locale: icu_locale_core::Locale,
+            numeric: bool,
+        ) -> CollatorBorrowed<'static> {
+            let mut prefs: CollatorPreferences = locale.into();
+            if numeric {
+                prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+            }
+            Collator::try_new(prefs, CollatorOptions::default()).unwrap()
+        }
+
+        fn collect_and_verify<I1, I2>(
+            collator: &CollatorBorrowed<'static>,
+            no_spans_stream: I1,
+            track_spans_stream: I2,
+            input_len: usize,
+        ) -> Vec<(CollationElement, SourceSpan)>
+        where
+            I1: CharWithTrieStream<'static, NormTrie<'static>, NoSpans>,
+            I2: CharWithTrieStream<'static, NormTrie<'static>, TrackSpans>,
+        {
+            let mut ce_plain =
+                collator.collation_elements_with_spans::<I1, NoSpans>(no_spans_stream);
+            let mut ce_spanned =
+                collator.collation_elements_with_spans::<I2, TrackSpans>(track_spans_stream);
+            ce_plain.init();
+            ce_spanned.init();
+
+            let mut out = Vec::new();
+            let mut prev_end = 0;
+            loop {
+                let plain = ce_plain.next();
+                let (ce, span) = ce_spanned.next();
+                assert_eq!(plain, ce);
+                if ce == NO_CE {
+                    assert_eq!(span, SourceSpan::default());
+                    assert_eq!(
+                        prev_end, input_len,
+                        "emitted spans stopped at {prev_end} instead of {input_len}"
+                    );
+                    break;
+                }
+                assert!(
+                    span.start <= span.end && span.end <= input_len,
+                    "out-of-bounds span {span:?} for len {input_len}"
+                );
+                assert_eq!(
+                    span.start, prev_end,
+                    "span {span:?} is non-contiguous or non-monotonic after {prev_end}"
+                );
+                prev_end = span.end;
+                out.push((ce, span));
+            }
+            out
+        }
+
+        fn collect_str_spans(
+            locale: icu_locale_core::Locale,
+            numeric: bool,
+            s: &str,
+        ) -> Vec<SourceSpan> {
+            let collator = make_collator(locale, numeric);
+            let trie = collator.norm_trie();
+            collect_and_verify(
+                &collator,
+                CharsWithTrieDefaultForAscii::new(s, trie),
+                SpanStream::new(CharsWithTrieDefaultForAscii::new(s, trie)),
+                s.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect()
+        }
+
+        #[test]
+        fn test_empty_and_ascii() {
+            assert_eq!(collect_str_spans(locale!("en"), false, ""), vec![]);
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "abc"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 2),
+                    SourceSpan::new(2, 3),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_leading_combining_and_reordered_marks() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0301}a"),
+                vec![SourceSpan::new(0, 2), SourceSpan::new(2, 3)]
+            );
+            // Reordered leading marks (ccc=230 before ccc=220) still cover 0..4 without a gap.
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0301}\u{0323}"),
+                vec![SourceSpan::new(0, 4), SourceSpan::new(4, 4)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "e\u{0301}\u{0323}"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 5),
+                    SourceSpan::new(5, 5),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "e\u{0301}"),
+                vec![SourceSpan::new(0, 1), SourceSpan::new(1, 3)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "é"),
+                vec![SourceSpan::new(0, 2), SourceSpan::new(2, 2)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "ế"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 3),
+                    SourceSpan::new(3, 3),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "é\u{0323}"),
+                vec![
+                    SourceSpan::new(0, 2),
+                    SourceSpan::new(2, 4),
+                    SourceSpan::new(4, 4),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("ja"), false, "が"),
+                vec![SourceSpan::new(0, 3), SourceSpan::new(3, 3)]
+            );
+        }
+
+        #[test]
+        fn test_lithuanian_dot_above_and_tibetan_contractions() {
+            // Lithuanian ignores U+0307 before U+0301; the accent span absorbs U+0307's bytes.
+            assert_eq!(
+                collect_str_spans(locale!("lt"), false, "i\u{0307}\u{0301}"),
+                vec![SourceSpan::new(0, 1), SourceSpan::new(1, 5)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("lt"), false, "\u{0307}\u{0301}"),
+                vec![SourceSpan::new(0, 4)]
+            );
+            // Non-table contraction U+0F71 + U+0F72 following a lower-CCC mark U+0334 must stay monotonic.
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0F40}\u{0F71}\u{0F72}\u{0334}"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 11),
+                    SourceSpan::new(11, 11),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0F40}\u{0F73}\u{0334}"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 8),
+                    SourceSpan::new(8, 8),
+                ]
+            );
+            // Regression sequence from #8759.
+            let _ = collect_str_spans(
+                locale!("en"),
+                false,
+                "\u{F57}\u{F4D}\u{F73}\u{F39}\u{F9F}\u{F75}\u{F4B}",
+            );
+        }
+
+        #[test]
+        fn test_multi_piece_marks_and_expansions() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0F40}\u{0F73}"),
+                vec![SourceSpan::new(0, 3), SourceSpan::new(3, 6)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "\u{0391}\u{0344}"),
+                vec![
+                    SourceSpan::new(0, 2),
+                    SourceSpan::new(2, 4),
+                    SourceSpan::new(4, 4),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("de"), false, "Straße"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 2),
+                    SourceSpan::new(2, 3),
+                    SourceSpan::new(3, 4),
+                    SourceSpan::new(4, 6),
+                    SourceSpan::new(6, 6),
+                    SourceSpan::new(6, 7),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_hangul_and_contractions() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "가"),
+                vec![SourceSpan::new(0, 3), SourceSpan::new(3, 3)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "각"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 3),
+                    SourceSpan::new(3, 3),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), false, "가\u{0301}"),
+                vec![
+                    SourceSpan::new(0, 3),
+                    SourceSpan::new(3, 3),
+                    SourceSpan::new(3, 5),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("cs"), false, "cha"),
+                vec![SourceSpan::new(0, 2), SourceSpan::new(2, 3)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("sv"), false, "ọ\u{0308}x"),
+                vec![
+                    SourceSpan::new(0, 5),
+                    SourceSpan::new(5, 5),
+                    SourceSpan::new(5, 6),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("sv"), false, "o\u{0323}\u{0308}x"),
+                vec![
+                    SourceSpan::new(0, 5),
+                    SourceSpan::new(5, 5),
+                    SourceSpan::new(5, 6),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("sv"), false, "o\u{093C}\u{0308}x"),
+                vec![
+                    SourceSpan::new(0, 6),
+                    SourceSpan::new(6, 6),
+                    SourceSpan::new(6, 7),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_numeric_runs() {
+            assert_eq!(
+                collect_str_spans(locale!("en"), true, "12"),
+                vec![SourceSpan::new(0, 2)]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), true, "a42b"),
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 3),
+                    SourceSpan::new(3, 4),
+                ]
+            );
+            assert_eq!(
+                collect_str_spans(locale!("en"), true, "1234567890123456"),
+                vec![
+                    SourceSpan::new(0, 16),
+                    SourceSpan::new(16, 16),
+                    SourceSpan::new(16, 16),
+                ]
+            );
+            let long_digits = "1".repeat(300);
+            let spans = collect_str_spans(locale!("en"), true, &long_digits);
+            assert!(spans.len() > 2);
+            assert_eq!(spans.first().copied(), Some(SourceSpan::new(0, 300)));
+            for &span in spans.iter().skip(1) {
+                assert_eq!(span, SourceSpan::new(300, 300));
+            }
+        }
+
+        #[test]
+        fn test_utf8_utf16_and_latin1_streams() {
+            let collator = make_collator(locale!("en"), false);
+            let trie = collator.norm_trie();
+
+            let utf8_truncated = b"a\xF0\x9Fb";
+            let spans: Vec<SourceSpan> = collect_and_verify(
+                &collator,
+                Utf8CharsWithTrieDefaultForAscii::new(utf8_truncated, trie),
+                SpanStream::new(Utf8CharsWithTrieDefaultForAscii::new(utf8_truncated, trie)),
+                utf8_truncated.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect();
+            assert_eq!(
+                spans,
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 3),
+                    SourceSpan::new(3, 4),
+                ]
+            );
+
+            let utf8_cont = b"a\x80\x80b";
+            let spans: Vec<SourceSpan> = collect_and_verify(
+                &collator,
+                Utf8CharsWithTrieDefaultForAscii::new(utf8_cont, trie),
+                SpanStream::new(Utf8CharsWithTrieDefaultForAscii::new(utf8_cont, trie)),
+                utf8_cont.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect();
+            assert_eq!(
+                spans,
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 2),
+                    SourceSpan::new(2, 3),
+                    SourceSpan::new(3, 4),
+                ]
+            );
+
+            let utf16: &[u16] = &[u16::from(b'a'), 0xD83D, 0xDE00, 0xD800, u16::from(b'b')];
+            let spans: Vec<SourceSpan> = collect_and_verify(
+                &collator,
+                Utf16CharsWithTrie::new(utf16, trie),
+                SpanStream::new(Utf16CharsWithTrie::new(utf16, trie)),
+                utf16.len(),
+            )
+            .into_iter()
+            .map(|(_, span)| span)
+            .collect();
+            assert_eq!(
+                spans,
+                vec![
+                    SourceSpan::new(0, 1),
+                    SourceSpan::new(1, 3),
+                    SourceSpan::new(3, 4),
+                    SourceSpan::new(4, 5),
+                ]
+            );
+
+            #[cfg(feature = "latin1")]
+            {
+                let latin1: &[u8] = &[b'a', 0xE9, b'b'];
+                let spans: Vec<SourceSpan> = collect_and_verify(
+                    &collator,
+                    Latin1CharsWithTrie::new(latin1, trie),
+                    SpanStream::new(Latin1CharsWithTrie::new(latin1, trie)),
+                    latin1.len(),
+                )
+                .into_iter()
+                .map(|(_, span)| span)
+                .collect();
+                assert_eq!(
+                    spans,
+                    vec![
+                        SourceSpan::new(0, 1),
+                        SourceSpan::new(1, 2),
+                        SourceSpan::new(2, 2),
+                        SourceSpan::new(2, 3),
+                    ]
+                );
+            }
+        }
+    }
 }
