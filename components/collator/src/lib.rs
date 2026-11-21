@@ -355,6 +355,7 @@ mod elements;
 
 pub mod options;
 pub mod provider;
+mod spans;
 
 pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
