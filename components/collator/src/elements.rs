@@ -767,6 +767,50 @@ impl CharacterAndClassAndTrieValue {
     }
 }
 
+pub(crate) trait HasCcc {
+    fn ccc(&self) -> CanonicalCombiningClass;
+}
+
+impl HasCcc for CharacterAndClassAndTrieValue {
+    #[inline(always)]
+    fn ccc(&self) -> CanonicalCombiningClass {
+        Self::ccc(self)
+    }
+}
+
+#[cold]
+fn sort_by_ccc_large<T: HasCcc>(slice: &mut [T]) {
+    slice.sort_by_key(HasCcc::ccc);
+}
+
+/// Stable insertion sort for small combining-character buffers.
+///
+/// Preserves the relative order of items with equal combining class per
+/// Unicode D109 while avoiding monomorphizing `slice::sort_by_key`'s
+/// driftsort seven times per element type, falling back to `sort_by_key`
+/// for unusually long runs (> 32 items).
+#[inline]
+fn sort_by_ccc<T: HasCcc>(slice: &mut [T]) {
+    if slice.len() > 32 {
+        sort_by_ccc_large(slice);
+        return;
+    }
+    for i in 1..slice.len() {
+        if let Some(mut rest) = slice.get_mut(..=i)
+            && let Some(curr) = rest.last()
+        {
+            let curr_ccc = curr.ccc();
+            while let Some((curr_slot, head)) = rest.split_last_mut()
+                && let Some(prev_slot) = head.last_mut()
+                && prev_slot.ccc() > curr_ccc
+            {
+                core::mem::swap(prev_slot, curr_slot);
+                rest = head;
+            }
+        }
+    }
+}
+
 /// Pack a `char` and a `CanonicalCombiningClass` in
 /// 32 bits (the former in the lower 24 bits and the
 /// latter in the high 8 bits). The latter can be
@@ -830,6 +874,13 @@ impl CharacterAndClass {
         // Safety invariant upheld here: The first half doesn't affect the lower 24 bits,
         // and the second half was taken from the old `self` which had these invariants upheld already.
         self.0 = ((ccc_from_trie_value(trie.scalar(scalar)).0 as u32) << 24) | u32::from(scalar);
+    }
+}
+
+impl HasCcc for CharacterAndClass {
+    #[inline(always)]
+    fn ccc(&self) -> CanonicalCombiningClass {
+        Self::ccc(self)
     }
 }
 
@@ -1162,13 +1213,13 @@ where
             } else if i == last_index {
                 // Indices are in range by construction, so indexing is OK.
                 #[expect(clippy::indexing_slicing)]
-                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                sort_by_ccc(&mut self.upcoming[start_combining..]);
                 self.upcoming.push(c);
                 return;
             } else {
                 // Indices are in range by construction, so indexing is OK.
                 #[expect(clippy::indexing_slicing)]
-                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                sort_by_ccc(&mut self.upcoming[start_combining..]);
                 start_combining = self.push_decomposed_starter(c);
             }
         }
@@ -1182,7 +1233,7 @@ where
         debug_assert!(self.iter_exhausted);
         // Indices are in range by construction, so indexing is OK.
         #[expect(clippy::indexing_slicing)]
-        self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+        sort_by_ccc(&mut self.upcoming[start_combining..]);
     }
 
     fn push_decomposed_combining(&mut self, c: CharacterAndClassAndTrieValue) {
@@ -1419,7 +1470,7 @@ where
                     // Got a new starter
                     // Indices are in range by construction, so indexing is OK.
                     #[expect(clippy::indexing_slicing)]
-                    self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                    sort_by_ccc(&mut self.upcoming[start_combining..]);
                     self.upcoming.push(ch);
                     return;
                 }
@@ -1430,7 +1481,7 @@ where
                 }
                 // Indices are in range by construction, so indexing is OK.
                 #[expect(clippy::indexing_slicing)]
-                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                sort_by_ccc(&mut self.upcoming[start_combining..]);
                 return;
             }
         }
@@ -1496,10 +1547,7 @@ where
         self.upcoming.insert(0, c);
         // Indices in range by construction
         #[expect(clippy::indexing_slicing)]
-        {
-            let slice: &mut [CharacterAndClassAndTrieValue] = &mut self.upcoming[start..end];
-            slice.sort_by_key(|cc| cc.ccc());
-        };
+        sort_by_ccc(&mut self.upcoming[start..end]);
     }
 
     fn prefix_push(&mut self, c: char) {
@@ -2501,7 +2549,60 @@ where
             combining_characters
                 .iter_mut()
                 .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(self.iter.trie()));
-            combining_characters.sort_by_key(|cc| cc.ccc());
+            sort_by_ccc(combining_characters);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[derive(Debug, PartialEq, Eq)]
+    struct TestItem(u8, usize);
+
+    impl HasCcc for TestItem {
+        fn ccc(&self) -> CanonicalCombiningClass {
+            CanonicalCombiningClass(self.0)
+        }
+    }
+
+    #[test]
+    fn test_sort_by_ccc_is_stable() {
+        let mut empty: [TestItem; 0] = [];
+        sort_by_ccc(&mut empty);
+        assert_eq!(empty, []);
+
+        let mut single = [TestItem(230, 0)];
+        sort_by_ccc(&mut single);
+        assert_eq!(single, [TestItem(230, 0)]);
+
+        let mut items = [
+            TestItem(230, 0),
+            TestItem(220, 1),
+            TestItem(230, 2),
+            TestItem(1, 3),
+            TestItem(220, 4),
+            TestItem(0, 5),
+        ];
+        sort_by_ccc(&mut items);
+        assert_eq!(
+            items,
+            [
+                TestItem(0, 5),
+                TestItem(1, 3),
+                TestItem(220, 1),
+                TestItem(220, 4),
+                TestItem(230, 0),
+                TestItem(230, 2),
+            ]
+        );
+
+        let mut large: Vec<TestItem> = (0..64).map(|i| TestItem((63 - i) as u8 / 4, i)).collect();
+        sort_by_ccc(&mut large);
+        let mut expected: Vec<TestItem> =
+            (0..64).map(|i| TestItem((63 - i) as u8 / 4, i)).collect();
+        expected.sort_by_key(|item| item.0);
+        assert_eq!(large, expected);
     }
 }
