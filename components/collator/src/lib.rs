@@ -355,6 +355,7 @@ mod elements;
 
 pub mod options;
 pub mod provider;
+mod search;
 mod spans;
 
 pub use comparison::Collator;

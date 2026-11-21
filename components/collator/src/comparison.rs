@@ -2229,7 +2229,6 @@ impl<'data> CollatorBorrowed<'data> {
     }
 
     #[inline(always)]
-    #[allow(dead_code)]
     pub(crate) fn collation_elements_with_spans<I, Mode>(
         &self,
         iter: I,

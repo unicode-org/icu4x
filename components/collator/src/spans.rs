@@ -4,9 +4,6 @@
 
 //! Zero-cost span-tracking abstractions for collation element iteration.
 
-// Consumed by subsequent stacked PRs (#7944).
-#![allow(dead_code)]
-
 use crate::elements::CollationElement;
 use core::fmt::Debug;
 use core::ops::{Deref, DerefMut};
@@ -39,6 +36,7 @@ impl SourceSpan {
         }
     }
 
+    #[allow(dead_code)]
     #[inline(always)]
     pub const fn is_empty(self) -> bool {
         self.start == self.end
