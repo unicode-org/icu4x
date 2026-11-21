@@ -23,7 +23,14 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// Currency-specific decimal symbols override data.
+    /// Decimal symbols for currency formatting, where they differ from the locale's
+    /// standard decimal symbols.
+    ///
+    /// The marker attributes are `[<numbering system>/]<currency>` for the symbols of
+    /// one currency (CLDR's `<decimal>` and `<group>` in `<currency>`), and
+    /// `[<numbering system>]` for the symbols for all other currencies (CLDR's
+    /// `<currencyDecimal>` and `<currencyGroup>`). The numbering system is left out
+    /// for the locale's default one.
     CurrencyDecimalSymbolsV1,
     "currency/decimal/symbols/v1",
     icu_decimal::provider::DecimalSymbols<'static>,
@@ -33,17 +40,22 @@ icu_provider::data_marker!(
 
 impl CurrencyDecimalSymbolsV1 {
     /// Creates attributes for this marker from parts.
+    ///
+    /// Without a currency, the attributes are for the symbols for all currencies that
+    /// have no symbols of their own.
     pub fn make_attributes(
         nu: Option<Subtag>,
-        currency: CurrencyType,
+        currency: Option<CurrencyType>,
         x: &mut TinyAsciiStr<12>,
     ) -> &DataMarkerAttributes {
-        *x = if let Some(nu) = nu {
-            nu.to_tinystr()
+        *x = match (nu, currency) {
+            (Some(nu), Some(currency)) => nu
+                .to_tinystr()
                 .concat::<1, 9>(tinystr::tinystr!(1, "/"))
-                .concat::<3, 12>(currency.iso_code())
-        } else {
-            currency.iso_code().resize()
+                .concat::<3, 12>(currency.iso_code()),
+            (Some(nu), None) => nu.to_tinystr().resize(),
+            (None, Some(currency)) => currency.iso_code().resize(),
+            (None, None) => TinyAsciiStr::EMPTY,
         };
         DataMarkerAttributes::from_str_or_panic(x.as_str())
     }
@@ -52,12 +64,21 @@ impl CurrencyDecimalSymbolsV1 {
     #[cfg(feature = "datagen")]
     pub fn parse_attributes(
         attrs: &DataMarkerAttributes,
-    ) -> Option<(Option<Subtag>, CurrencyType)> {
+    ) -> Option<(Option<Subtag>, Option<CurrencyType>)> {
         let (nu, currency) = match attrs.as_str().split_once('/') {
-            Some((nu, curr)) => (Some(Subtag::try_from_str(nu).ok()?), curr),
-            None => (None, attrs.as_str()),
+            Some((nu, currency)) => (nu, currency),
+            // On their own, currencies are in upper case and numbering systems in lower case.
+            None if attrs.starts_with(|c: char| c.is_ascii_uppercase()) => ("", attrs.as_str()),
+            None => (attrs.as_str(), ""),
         };
-        let currency = CurrencyType::try_from_str(currency).ok()?;
+        let nu = match nu {
+            "" => None,
+            nu => Some(Subtag::try_from_str(nu).ok()?),
+        };
+        let currency = match currency {
+            "" => None,
+            currency => Some(CurrencyType::try_from_str(currency).ok()?),
+        };
 
         Some((nu, currency))
     }
@@ -165,25 +186,31 @@ fn test_currency_attributes_roundtrip() {
     let currency = currency!("PTE");
     let arab = subtag!("Arab");
 
-    assert_eq!(
-        CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
-            Some(arab),
-            currency,
-            &mut Default::default()
-        ))
-        .unwrap(),
-        (Some(arab), currency)
-    );
+    // With and without a numbering system, for one currency and for all currencies.
+    for (nu, currency, expected) in [
+        (Some(arab), Some(currency), "arab/PTE"),
+        (None, Some(currency), "PTE"),
+        (Some(arab), None, "arab"),
+        (None, None, ""),
+    ] {
+        let mut buf = TinyAsciiStr::EMPTY;
+        let attrs = CurrencyDecimalSymbolsV1::make_attributes(nu, currency, &mut buf);
+        assert_eq!(attrs.as_str(), expected);
+        assert_eq!(
+            CurrencyDecimalSymbolsV1::parse_attributes(attrs),
+            Some((nu, currency))
+        );
+    }
 
-    assert_eq!(
-        CurrencyDecimalSymbolsV1::parse_attributes(CurrencyDecimalSymbolsV1::make_attributes(
-            None,
-            currency,
-            &mut Default::default()
-        ))
-        .unwrap(),
-        (None, currency)
-    );
+    // `USDn` is an attribute of `CurrencySymbolsV1`, which shares the attributes domain.
+    for invalid in ["EU", "EURx", "USDn", "latn/EU"] {
+        assert_eq!(
+            CurrencyDecimalSymbolsV1::parse_attributes(DataMarkerAttributes::from_str_or_panic(
+                invalid
+            )),
+            None
+        );
+    }
 
     let mut buf = TinyAsciiStr::EMPTY;
     for width in [CurrencySymbolsV1::SHORT, CurrencySymbolsV1::NARROW] {
