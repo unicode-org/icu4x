@@ -10,6 +10,12 @@
 use crate::elements::CollationElement;
 use core::fmt::Debug;
 use core::ops::{Deref, DerefMut};
+#[cfg(feature = "latin1")]
+use icu_collections::codepointtrie::iter::Latin1CharsWithTrie;
+use icu_collections::codepointtrie::iter::{
+    CharsWithTrieDefaultForAscii, Utf8CharsWithTrieDefaultForAscii, Utf16CharsWithTrie, WithTrie,
+};
+use icu_collections::codepointtrie::{AbstractCodePointTrie, TrieValue};
 
 /// Half-open `start..end` offset range in the source text
 /// (UTF-8 bytes, UTF-16 code units, or Latin-1 bytes).
@@ -144,6 +150,118 @@ impl SpanMode for TrackSpans {
     }
 }
 
+/// Fused character-and-trie stream parameterized over [`SpanMode`].
+pub(crate) trait CharWithTrieStream<'trie, T, Mode: SpanMode>:
+    WithTrie<'trie, T, u32>
+where
+    T: AbstractCodePointTrie<'trie, u32>,
+{
+    fn next_char_with_trie(&mut self) -> Option<(char, u32, Mode::Span)>;
+}
+
+impl<'trie, T, I> CharWithTrieStream<'trie, T, NoSpans> for I
+where
+    T: AbstractCodePointTrie<'trie, u32>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'trie, T, u32>,
+{
+    #[inline(always)]
+    fn next_char_with_trie(&mut self) -> Option<(char, u32, ())> {
+        let (c, trie_val) = self.next()?;
+        Some((c, trie_val, ()))
+    }
+}
+
+/// Remaining byte or code-unit length of a slice-backed `WithTrie` iterator.
+pub(crate) trait RemainingLen {
+    fn remaining_len(&self) -> usize;
+}
+
+impl<'trie, T, V> RemainingLen for CharsWithTrieDefaultForAscii<'_, 'trie, T, V>
+where
+    V: TrieValue + Default,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline(always)]
+    fn remaining_len(&self) -> usize {
+        self.as_str().len()
+    }
+}
+
+impl<'trie, T, V> RemainingLen for Utf8CharsWithTrieDefaultForAscii<'_, 'trie, T, V>
+where
+    V: TrieValue + Default,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline(always)]
+    fn remaining_len(&self) -> usize {
+        self.as_slice().len()
+    }
+}
+
+impl<'trie, T, V> RemainingLen for Utf16CharsWithTrie<'_, 'trie, T, V>
+where
+    V: TrieValue,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline(always)]
+    fn remaining_len(&self) -> usize {
+        self.as_slice().len()
+    }
+}
+
+#[cfg(feature = "latin1")]
+impl<'trie, T, V> RemainingLen for Latin1CharsWithTrie<'_, 'trie, T, V>
+where
+    V: TrieValue,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline(always)]
+    fn remaining_len(&self) -> usize {
+        self.as_slice().len()
+    }
+}
+
+/// Wraps any slice-backed `WithTrie` iterator to emit exact `SourceSpan`s
+/// alongside `(char, u32)` with zero redundant offset bookkeeping.
+#[derive(Debug)]
+pub(crate) struct SpanStream<I> {
+    iter: I,
+    end_offset: usize,
+}
+
+impl<I: RemainingLen> SpanStream<I> {
+    #[inline(always)]
+    pub fn new(iter: I) -> Self {
+        let end_offset = iter.remaining_len();
+        Self { iter, end_offset }
+    }
+}
+
+impl<'trie, T, I> WithTrie<'trie, T, u32> for SpanStream<I>
+where
+    T: AbstractCodePointTrie<'trie, u32>,
+    I: WithTrie<'trie, T, u32>,
+{
+    #[inline(always)]
+    fn trie(&self) -> &'trie T {
+        self.iter.trie()
+    }
+}
+
+impl<'trie, T, I> CharWithTrieStream<'trie, T, TrackSpans> for SpanStream<I>
+where
+    T: AbstractCodePointTrie<'trie, u32>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'trie, T, u32> + RemainingLen,
+{
+    #[inline(always)]
+    fn next_char_with_trie(&mut self) -> Option<(char, u32, SourceSpan)> {
+        let start = self.end_offset - self.iter.remaining_len();
+        let (c, trie_val) = self.iter.next()?;
+        let end = self.end_offset - self.iter.remaining_len();
+        Some((c, trie_val, SourceSpan::new(start, end)))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -197,6 +315,96 @@ mod tests {
         assert_eq!(
             TrackSpans::after_starter_span(SourceSpan::new(0, 0), SourceSpan::new(2, 4)),
             SourceSpan::new(0, 4)
+        );
+    }
+
+    #[cfg(feature = "compiled_data")]
+    fn collect_stream_spans<'trie, I>(mut stream: SpanStream<I>) -> Vec<(char, SourceSpan)>
+    where
+        I: Iterator<Item = (char, u32)>
+            + WithTrie<'trie, icu_collections::codepointtrie::FastCodePointTrie<'trie, u32>, u32>
+            + RemainingLen,
+    {
+        let mut out = Vec::new();
+        while let Some((c, _tv, span)) = stream.next_char_with_trie() {
+            out.push((c, span));
+        }
+        out
+    }
+
+    #[cfg(feature = "compiled_data")]
+    #[test]
+    fn test_span_stream_with_nfd_trie() {
+        use icu_collections::codepointtrie::FastCodePointTrie;
+        use icu_normalizer::provider::Baked;
+
+        let trie: &FastCodePointTrie<u32> = (&Baked::SINGLETON_NORMALIZER_NFD_DATA_V1.trie)
+            .try_into()
+            .unwrap();
+
+        let s = "a\u{0301}😀";
+        assert_eq!(
+            collect_stream_spans(SpanStream::new(CharsWithTrieDefaultForAscii::new(s, trie))),
+            vec![
+                ('a', SourceSpan::new(0, 1)),
+                ('\u{0301}', SourceSpan::new(1, 3)),
+                ('😀', SourceSpan::new(3, 7)),
+            ]
+        );
+
+        let utf8_bytes = b"a\xF0\x9Fb\x80\x80";
+        assert_eq!(
+            collect_stream_spans(SpanStream::new(Utf8CharsWithTrieDefaultForAscii::new(
+                utf8_bytes, trie
+            ))),
+            vec![
+                ('a', SourceSpan::new(0, 1)),
+                (char::REPLACEMENT_CHARACTER, SourceSpan::new(1, 3)),
+                ('b', SourceSpan::new(3, 4)),
+                (char::REPLACEMENT_CHARACTER, SourceSpan::new(4, 5)),
+                (char::REPLACEMENT_CHARACTER, SourceSpan::new(5, 6)),
+            ]
+        );
+
+        let utf16_units: &[u16] = &[
+            u16::from(b'a'),
+            0xD83D,
+            0xDE00,
+            0xD800,
+            0xDC00,
+            0xD800,
+            u16::from(b'b'),
+        ];
+        assert_eq!(
+            collect_stream_spans(SpanStream::new(Utf16CharsWithTrie::new(utf16_units, trie))),
+            vec![
+                ('a', SourceSpan::new(0, 1)),
+                ('😀', SourceSpan::new(1, 3)),
+                ('\u{10000}', SourceSpan::new(3, 5)),
+                (char::REPLACEMENT_CHARACTER, SourceSpan::new(5, 6)),
+                ('b', SourceSpan::new(6, 7)),
+            ]
+        );
+    }
+
+    #[cfg(all(test, feature = "compiled_data", feature = "latin1"))]
+    #[test]
+    fn test_latin1_span_stream() {
+        use icu_collections::codepointtrie::FastCodePointTrie;
+        use icu_normalizer::provider::Baked;
+
+        let trie: &FastCodePointTrie<u32> = (&Baked::SINGLETON_NORMALIZER_NFD_DATA_V1.trie)
+            .try_into()
+            .unwrap();
+
+        let bytes = &[b'a', 0xE9, b'b'];
+        assert_eq!(
+            collect_stream_spans(SpanStream::new(Latin1CharsWithTrie::new(bytes, trie))),
+            vec![
+                ('a', SourceSpan::new(0, 1)),
+                ('é', SourceSpan::new(1, 2)),
+                ('b', SourceSpan::new(2, 3)),
+            ]
         );
     }
 }
