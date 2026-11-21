@@ -57,7 +57,7 @@ use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
-type NormTrie<'trie> = FastCodePointTrie<'trie, u32>;
+pub(crate) type NormTrie<'trie> = FastCodePointTrie<'trie, u32>;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
@@ -793,7 +793,7 @@ impl<'data> CollatorBorrowed<'data> {
         self.options.into()
     }
 
-    fn norm_trie(&self) -> &'data NormTrie<'data> {
+    pub(crate) fn norm_trie(&self) -> &'data NormTrie<'data> {
         <&NormTrie<'data>>::try_from(&self.decompositions.trie)
             .unwrap_or_else(|_| unreachable!("Incompatible data"))
     }
@@ -2226,6 +2226,28 @@ impl<'data> CollatorBorrowed<'data> {
         write_level!(quaternaries, QUATERNARY_LEVEL_FLAG);
 
         Ok(())
+    }
+
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub(crate) fn collation_elements_with_spans<I, Mode>(
+        &self,
+        iter: I,
+    ) -> CollationElements<'data, I, NormTrie<'data>, Mode>
+    where
+        I: crate::spans::CharWithTrieStream<'data, NormTrie<'data>, Mode>,
+        Mode: crate::spans::SpanMode,
+    {
+        CollationElements::new_with_spans(
+            iter,
+            self.root,
+            self.tailoring,
+            self.jamo.as_array(),
+            &self.diacritics.secondaries,
+            self.tables,
+            self.numeric_primary(),
+            self.options.lithuanian_dot_above(),
+        )
     }
 }
 
