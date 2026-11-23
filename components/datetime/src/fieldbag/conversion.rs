@@ -268,9 +268,6 @@ fn fieldbag_to_time_precision(bag: &DateTimeFieldBag) -> Option<options::TimePre
 }
 
 fn fieldbag_to_zone_style(bag: &DateTimeFieldBag) -> Option<builder::ZoneStyle> {
-    // The 6 ECMA-402 TimeZoneName styles map 1-to-1 to their corresponding ZoneStyle
-    // variants. ZoneStyle::Location and ZoneStyle::ExemplarCity have no ECMA-402
-    // TimeZoneName equivalent and are not produced in this direction (see #8434).
     match bag.time_zone_name {
         Some(TimeZoneName::ShortSpecific) => Some(builder::ZoneStyle::SpecificShort),
         Some(TimeZoneName::LongSpecific) => Some(builder::ZoneStyle::SpecificLong),
@@ -278,6 +275,8 @@ fn fieldbag_to_zone_style(bag: &DateTimeFieldBag) -> Option<builder::ZoneStyle> 
         Some(TimeZoneName::LongOffset) => Some(builder::ZoneStyle::LocalizedOffsetLong),
         Some(TimeZoneName::ShortGeneric) => Some(builder::ZoneStyle::GenericShort),
         Some(TimeZoneName::LongGeneric) => Some(builder::ZoneStyle::GenericLong),
+        Some(TimeZoneName::Location) => Some(builder::ZoneStyle::Location),
+        Some(TimeZoneName::ExemplarCity) => Some(builder::ZoneStyle::ExemplarCity),
         None => None,
     }
 }
@@ -439,12 +438,8 @@ pub(crate) fn fieldset_to_fieldbag(fieldset: &builder::FieldSetBuilder) -> DateT
             Some(builder::ZoneStyle::LocalizedOffsetLong) => Some(TimeZoneName::LongOffset),
             Some(builder::ZoneStyle::GenericShort) => Some(TimeZoneName::ShortGeneric),
             Some(builder::ZoneStyle::GenericLong) => Some(TimeZoneName::LongGeneric),
-            // TODO(#8434): TimeZoneName currently only models the 6 ECMA-402 zone styles and
-            // does not have variants for Location (`VVVV`) or ExemplarCity (`VVV`). Map them to
-            // the closest non-offset, non-DST-specific analog (`LongGeneric`).
-            Some(builder::ZoneStyle::Location | builder::ZoneStyle::ExemplarCity) => {
-                Some(TimeZoneName::LongGeneric)
-            }
+            Some(builder::ZoneStyle::Location) => Some(TimeZoneName::Location),
+            Some(builder::ZoneStyle::ExemplarCity) => Some(TimeZoneName::ExemplarCity),
             None => None,
         },
     }

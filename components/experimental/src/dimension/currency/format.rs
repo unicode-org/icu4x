@@ -98,6 +98,82 @@ mod tests {
     }
 
     #[test]
+    pub fn test_fr_ch() {
+        // `fr-CH` has the decimal separator `.` for all currencies (`currencyDecimal` in
+        // CLDR), instead of its standard `,`. The grouping separator stays the standard `'`.
+        let prefs = locale!("fr-CH").into();
+        let symbol = |currency| {
+            CurrencyFormatter::try_new_symbol(prefs, currency, Default::default()).unwrap()
+        };
+        let narrow = |currency| {
+            CurrencyFormatter::try_new_symbol_narrow(prefs, currency, Default::default()).unwrap()
+        };
+        let code = |currency| {
+            CurrencyFormatter::try_new_code(prefs, currency, Default::default()).unwrap()
+        };
+        let name = |currency| CurrencyFormatter::try_new_name(prefs, currency).unwrap();
+
+        let eur = currency!("EUR");
+        check(&symbol(eur), "1.2", "1.20 €");
+        check(&symbol(eur), "-1230.05", "-1'230.05 €");
+        check(&narrow(eur), "1.2", "1.20 €");
+        check(&narrow(eur), "-1230.05", "-1'230.05 €");
+        check(&code(eur), "1.2", "1.20 EUR");
+        check(&code(eur), "-1230.05", "-1'230.05 EUR");
+        check(&name(eur), "1.2", "1.20 euro");
+        check(&name(eur), "-1230.05", "-1'230.05 euros");
+
+        let usd = currency!("USD");
+        check(&symbol(usd), "1.2", "1.20 $US");
+        check(&symbol(usd), "-1230.05", "-1'230.05 $US");
+        check(&narrow(usd), "1.2", "1.20 $");
+        check(&narrow(usd), "-1230.05", "-1'230.05 $");
+        check(&code(usd), "1.2", "1.20 USD");
+        check(&code(usd), "-1230.05", "-1'230.05 USD");
+        check(&name(usd), "1.2", "1.20 dollar des États-Unis");
+        check(&name(usd), "-1230.05", "-1'230.05 dollars des États-Unis");
+
+        let symbol_accounting =
+            CurrencyFormatter::try_new_symbol(prefs, eur, accounting()).unwrap();
+        check(&symbol_accounting, "-1230.05", "(1'230.05 €)");
+
+        let no_currency =
+            CurrencyFormatter::try_new_no_currency(prefs, eur, Default::default()).unwrap();
+        check(&no_currency, "-1230.05", "-1'230.05");
+
+        // The same when the locale names its default numbering system.
+        let latn = CurrencyFormatter::try_new_symbol(
+            locale!("fr-CH-u-nu-latn").into(),
+            eur,
+            Default::default(),
+        )
+        .unwrap();
+        check(&latn, "-1230.05", "-1'230.05 €");
+    }
+
+    #[test]
+    pub fn test_de_at() {
+        // `de-AT` has the grouping separator `.` for all currencies (`currencyGroup` in
+        // CLDR), instead of its standard U+00A0. The decimal separator stays the standard `,`.
+        let prefs = locale!("de-AT").into();
+        let eur = currency!("EUR");
+
+        let symbol = CurrencyFormatter::try_new_symbol(prefs, eur, Default::default()).unwrap();
+        check(&symbol, "1.2", "€ 1,20");
+        check(&symbol, "-1230.05", "-€ 1.230,05");
+
+        let code = CurrencyFormatter::try_new_code(prefs, eur, Default::default()).unwrap();
+        check(&code, "-1230.05", "-EUR 1.230,05");
+
+        let name = CurrencyFormatter::try_new_name(prefs, eur).unwrap();
+        check(&name, "-1230.05", "-1.230,05 Euro");
+
+        let no_currency =
+            CurrencyFormatter::try_new_no_currency(prefs, eur, Default::default()).unwrap();
+        check(&no_currency, "-1230.05", "-1.230,05");
+    }
+
+    #[test]
     pub fn test_fr_fr() {
         let prefs = locale!("fr-FR").into();
         let eur = currency!("EUR");

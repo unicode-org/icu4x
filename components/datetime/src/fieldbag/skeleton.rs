@@ -15,7 +15,7 @@ use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenize
 /// or widths, or unknown fields. For lenient parsing that recovers from these conditions, use
 /// [`DateTimeFieldBag::from_skeleton`].
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, displaydoc::Display)]
 #[ignore_extra_doc_attributes]
 pub enum DateTimeFieldBagParseError {
     /// A field category was specified more than once in the skeleton.
@@ -168,10 +168,6 @@ pub(crate) fn uts35_to_fieldbag(
                 'Z' | 'x' | 'X' => {
                     error.get_or_insert(NonCanonicalField);
                     'O'
-                }
-                'V' => {
-                    error.get_or_insert(NonCanonicalField);
-                    'v'
                 }
                 other => other,
             };
@@ -406,6 +402,20 @@ pub(crate) fn uts35_to_fieldbag(
                 );
                 error.get_or_insert(InvalidFieldLength);
             }
+            Token::Symbol('V', 3) => {
+                put_field!(
+                    &mut error,
+                    &mut bag.time_zone_name,
+                    TimeZoneName::ExemplarCity
+                );
+            }
+            Token::Symbol('V', 4) => {
+                put_field!(&mut error, &mut bag.time_zone_name, TimeZoneName::Location);
+            }
+            Token::Symbol('V', _) => {
+                put_field!(&mut error, &mut bag.time_zone_name, TimeZoneName::Location);
+                error.get_or_insert(InvalidFieldLength);
+            }
             Token::Symbol(_, _) => {
                 error.get_or_insert(UnknownField);
             }
@@ -508,6 +518,8 @@ pub(crate) fn fieldbag_to_uts35<W: ?Sized + fmt::Write>(
         Some(TimeZoneName::LongOffset) => sink.write_str("OOOO")?,
         Some(TimeZoneName::ShortGeneric) => sink.write_char('v')?,
         Some(TimeZoneName::LongGeneric) => sink.write_str("vvvv")?,
+        Some(TimeZoneName::Location) => sink.write_str("VVVV")?,
+        Some(TimeZoneName::ExemplarCity) => sink.write_str("VVV")?,
         None => (),
     }
     Ok(())
@@ -533,6 +545,13 @@ fn test_skeleton_parse_errors_and_lenient() {
         ("L", DateTimeFieldBagParseError::NonCanonicalField, "M"),
         ("K", DateTimeFieldBagParseError::NonCanonicalField, "h"),
         ("k", DateTimeFieldBagParseError::NonCanonicalField, "H"),
+        ("V", DateTimeFieldBagParseError::InvalidFieldLength, "VVVV"),
+        ("VV", DateTimeFieldBagParseError::InvalidFieldLength, "VVVV"),
+        (
+            "VVVVV",
+            DateTimeFieldBagParseError::InvalidFieldLength,
+            "VVVV",
+        ),
         ("Q", DateTimeFieldBagParseError::UnknownField, ""),
         ("yQw", DateTimeFieldBagParseError::UnknownField, "y"),
     ];

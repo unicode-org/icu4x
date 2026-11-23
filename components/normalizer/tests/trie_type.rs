@@ -5,10 +5,10 @@
 //! Constructors must reject data whose trie type differs from the one that
 //! the normalization code assumes instead of panicking later.
 
-use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType};
+use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_normalizer::properties::CanonicalComposition;
 use icu_normalizer::provider::{
-    DecompositionData, NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdTablesV1,
+    DecompositionData, NormalizerNfcV2, NormalizerNfdDataV1, NormalizerNfdTablesV1,
     NormalizerNfkdDataV1, NormalizerNfkdTablesV1, NormalizerUts46DataV1,
 };
 use icu_normalizer::uts46::Uts46Mapper;
@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
 /// A structurally valid small-type trie that maps everything to `value`.
-fn small_trie(value: u32) -> CodePointTrie<'static, u32> {
+fn small_trie<T: TrieValue>(value: u32) -> CodePointTrie<'static, T> {
     let header = CodePointTrieHeader {
         high_start: 0,
         shifted12_high_start: 0,
@@ -29,16 +29,18 @@ fn small_trie(value: u32) -> CodePointTrie<'static, u32> {
     let mut arr = [0u16; 1024];
     arr[1] = 64;
     let index = ZeroVec::alloc_from_slice(&arr);
-    let data = ZeroVec::alloc_from_slice(&[value; 128]);
+    let data = ZeroVec::alloc_from_slice(&[T::try_from_u32(value).ok().unwrap(); 128]);
     CodePointTrie::try_new(header, index, data).unwrap()
 }
 
-/// Serves baked data except for replacing the NFD and NFKD tries with
+/// Serves baked data except for replacing the decomposition tries with
 /// small-type tries.
+///
+/// (The type of the composition trie is enforced by the type system.)
 struct SmallTrieProvider;
 
-impl DataProvider<NormalizerNfcV1> for SmallTrieProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV1>, DataError> {
+impl DataProvider<NormalizerNfcV2> for SmallTrieProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV2>, DataError> {
         icu_normalizer::provider::Baked.load(req)
     }
 }
@@ -170,7 +172,7 @@ baked_impl!(NormalizerNfdTablesV1);
 #[cfg(feature = "serde")]
 baked_impl!(NormalizerNfkdTablesV1);
 #[cfg(feature = "serde")]
-baked_impl!(NormalizerNfcV1);
+baked_impl!(NormalizerNfcV2);
 
 #[cfg(feature = "serde")]
 #[test]

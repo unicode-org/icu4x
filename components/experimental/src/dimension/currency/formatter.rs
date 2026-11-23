@@ -854,6 +854,12 @@ impl CurrencyFormatter<DecimalFormatter> {
     }
 }
 
+/// Provides the decimal symbols for formatting amounts of a currency.
+///
+/// These are the first of the following that the locale has:
+/// 1. the symbols of the currency (`PTE` in `pt-PT` has the decimal separator `$`),
+/// 2. the symbols for all currencies (`fr-CH` has the decimal separator `.`),
+/// 3. the standard decimal symbols.
 struct WrappingProvider<'a, D1: ?Sized, D2: ?Sized>(&'a D1, &'a D2, CurrencyType);
 
 impl<
@@ -866,28 +872,31 @@ impl<
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<icu_decimal::provider::DecimalSymbolsV1>, DataError> {
-        if let Some(x) = self
-            .0
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    CurrencyDecimalSymbolsV1::make_attributes(
-                        icu_decimal::provider::DecimalSymbolsV1::parse_attributes(
-                            req.id.marker_attributes,
+        let nu =
+            icu_decimal::provider::DecimalSymbolsV1::parse_attributes(req.id.marker_attributes);
+
+        for currency in [Some(self.2), None] {
+            if let Some(x) = self
+                .0
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        CurrencyDecimalSymbolsV1::make_attributes(
+                            nu,
+                            currency,
+                            &mut Default::default(),
                         ),
-                        self.2,
-                        &mut Default::default(),
+                        req.id.locale,
                     ),
-                    req.id.locale,
-                ),
-                metadata: {
-                    let mut m = req.metadata;
-                    m.silent = true;
-                    m
-                },
-            })
-            .allow_identifier_not_found()?
-        {
-            return Ok(x.cast());
+                    metadata: {
+                        let mut m = req.metadata;
+                        m.silent = true;
+                        m
+                    },
+                })
+                .allow_identifier_not_found()?
+            {
+                return Ok(x.cast());
+            }
         }
 
         self.1.load(req)
