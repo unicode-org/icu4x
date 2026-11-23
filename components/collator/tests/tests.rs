@@ -29,7 +29,7 @@ const _: () = {
     impl_collation_special_primaries_v1!(TestingProvider);
     impl_collation_reordering_v1!(TestingProvider);
 
-    icu_normalizer_data::impl_normalizer_nfc_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfc_v2!(TestingProvider);
     icu_normalizer_data::impl_normalizer_nfd_data_v1!(TestingProvider);
     icu_normalizer_data::impl_normalizer_nfd_supplement_v1!(TestingProvider);
     icu_normalizer_data::impl_normalizer_nfd_tables_v1!(TestingProvider);
@@ -2077,6 +2077,20 @@ fn test_fffe_issue_6811() {
     // The merge separator must even compare less than U+0000.
     assert_eq!(
         collator.compare_utf16(&[0xFFFE, 0x0000], &[0x0000, 0xFFFE]),
+        Ordering::Less
+    );
+}
+
+#[test]
+fn test_sorting_by_ccc() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare(
+            "\u{F57}\u{F4D}\u{F73}\u{F39}\u{F9F}\u{F75}\u{F4B}",
+            "\u{F57}\u{F4D}\u{F73}\u{F39}\u{F9F}\u{F75}\u{F4B}\u{F47}\u{F0D}\u{F73}\u{F69}\u{F8F}"
+        ),
         Ordering::Less
     );
 }

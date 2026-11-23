@@ -1786,6 +1786,27 @@ fn test_canonical_composition_owned() {
 }
 
 #[test]
+fn test_canonical_composition_reversed_vowel() {
+    // Pairs whose starter is an ASCII vowel are stored reversed in the data.
+    // Make sure that the reversed pair does not compose.
+    let comp = CanonicalCompositionBorrowed::new();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+
+    assert_eq!(comp.compose('a', '\u{0301}'), Some('á'));
+    assert_eq!(comp.compose('\u{0301}', 'a'), None);
+    assert_eq!(comp.compose('U', '\u{0308}'), Some('Ü'));
+    assert_eq!(comp.compose('\u{0308}', 'U'), None);
+    assert_eq!(nfc.normalize("\u{0301}a"), "\u{0301}a");
+
+    // No character composes with a following ASCII vowel.
+    for c in (0..=0x10FFFF).filter_map(char::from_u32) {
+        for vowel in ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'] {
+            assert_eq!(comp.compose(c, vowel), None, "{c:?} + {vowel:?}");
+        }
+    }
+}
+
+#[test]
 fn test_canonical_decomposition() {
     let decomp = CanonicalDecompositionBorrowed::new();
 
@@ -2446,7 +2467,7 @@ fn test_latin1_normalize_nfkc_to() {
 fn test_reject_invalid_replacement_character_trie_value() {
     use icu_collections::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType};
     use icu_normalizer::provider::{
-        DecompositionData, NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdTablesV1,
+        DecompositionData, NormalizerNfcV2, NormalizerNfdDataV1, NormalizerNfdTablesV1,
         NormalizerNfkdDataV1, NormalizerNfkdTablesV1, NormalizerUts46DataV1,
     };
     use icu_provider::prelude::*;
@@ -2522,8 +2543,8 @@ fn test_reject_invalid_replacement_character_trie_value() {
         }
     }
 
-    impl DataProvider<NormalizerNfcV1> for BogusProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV1>, DataError> {
+    impl DataProvider<NormalizerNfcV2> for BogusProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<NormalizerNfcV2>, DataError> {
             icu_normalizer::provider::Baked.load(req)
         }
     }

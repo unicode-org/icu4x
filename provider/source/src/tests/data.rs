@@ -548,6 +548,8 @@ pub fn cldr_data() -> AbstractFs {
         "cldr-numbers-full/main/es/numbers.json",
         "cldr-numbers-full/main/fil/currencies.json",
         "cldr-numbers-full/main/fil/numbers.json",
+        "cldr-numbers-full/main/fr-CH/currencies.json",
+        "cldr-numbers-full/main/fr-CH/numbers.json",
         "cldr-numbers-full/main/fr/currencies.json",
         "cldr-numbers-full/main/fr/numbers.json",
         "cldr-numbers-full/main/ja/currencies.json",
