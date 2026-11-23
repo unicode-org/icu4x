@@ -417,6 +417,11 @@ fn rebuild_data<'a>(
             _ => {
                 if lang == language!("ja") {
                     // Hoist Hiragana
+                    // Note: Since we excluded `unihan` above,
+                    // we aren't hoisting for `unihan`, which is
+                    // assumed to be pretty much unused. Hoisting
+                    // Hiragana for `ja-u-co-unihan` would cost 368
+                    // bytes in baked data.
                     log::info!("Hoist Hiragana for {:?}", id);
                     for i in 0x3041..0x30A0 {
                         if let Some(ce32) = hoistable(trie.get32(i), root, i, default_value) {
