@@ -1924,7 +1924,10 @@ impl<T: TrieValue + databake::Bake> databake::Bake for FastCodePointTrie<'_, T> 
         let data = self.inner.data.bake(env);
         let error_value = self.inner.error_value.bake(env);
         let null_value = self.inner.null_value.bake(env);
-        databake::quote! { unsafe { icu_collections::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value, #null_value) } }
+        databake::quote! { unsafe {
+            #[allow(unused_unsafe)]
+            icu_collections::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value, #null_value)
+        }}
     }
 }
 
@@ -2031,7 +2034,10 @@ impl<T: TrieValue + databake::Bake> databake::Bake for SmallCodePointTrie<'_, T>
         let data = self.inner.data.bake(env);
         let error_value = self.inner.error_value.bake(env);
         let null_value = self.inner.null_value.bake(env);
-        databake::quote! { unsafe { icu_collections::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value, #null_value) } }
+        databake::quote! { unsafe {
+            #[allow(unused_unsafe)]
+            icu_collections::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value, #null_value)
+        }}
     }
 }
 
@@ -2599,13 +2605,13 @@ mod tests {
         );
     }
 
-    #[allow(unused_unsafe)]
     #[test]
     fn databake_small() {
         databake::test_bake!(
             SmallCodePointTrie<'static, u32>,
             const,
             unsafe {
+                #[allow(unused_unsafe)]
                 crate::codepointtrie::SmallCodePointTrie::from_parts_unstable_unchecked_v1(
                     crate::codepointtrie::CodePointTrieHeader {
                         high_start: 1u32,
@@ -2626,13 +2632,13 @@ mod tests {
         );
     }
 
-    #[allow(unused_unsafe)]
     #[test]
     fn databake_fast() {
         databake::test_bake!(
             FastCodePointTrie<'static, u32>,
             const,
             unsafe {
+                #[allow(unused_unsafe)]
                 crate::codepointtrie::FastCodePointTrie::from_parts_unstable_unchecked_v1(
                     crate::codepointtrie::CodePointTrieHeader {
                         high_start: 1u32,

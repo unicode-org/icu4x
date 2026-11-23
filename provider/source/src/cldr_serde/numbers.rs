@@ -179,6 +179,12 @@ pub(crate) struct Symbols {
     pub(crate) plus_sign: String,
     #[serde(rename = "percentSign")]
     pub(crate) percent_sign: String,
+    /// Decimal separator for currency formatting (UTS 35 `<currencyDecimal>`).
+    #[serde(rename = "currencyDecimal")]
+    pub(crate) currency_decimal: Option<String>,
+    /// Grouping separator for currency formatting (UTS 35 `<currencyGroup>`).
+    #[serde(rename = "currencyGroup")]
+    pub(crate) currency_group: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

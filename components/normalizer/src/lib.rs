@@ -733,9 +733,14 @@ impl CharacterAndTrieValue {
     pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
         // This intentionally leaves `DecompositionData::NON_ROUND_TRIP_MARKER` in the value
         // to be compared with zero. U+FFFD has that flag set despite really
-        // being being round-tripping in order to make UTF-8 errors
+        // being round-tripping in order to make UTF-8 errors
         // ineligible for passthrough.
-        (self.trie_val & !DecompositionData::BACKWARD_COMBINING_MARKER) == 0
+        //
+        // Lead jamo have `DecompositionData::NON_ROUND_TRIP_MARKER` set
+        // for the benefit of the composing normalizer, but they are
+        // starters that decompose to self.
+        ((self.trie_val & !DecompositionData::BACKWARD_COMBINING_MARKER) == 0)
+            || (u32::from(self.character).wrapping_sub(HANGUL_L_BASE) < HANGUL_L_COUNT)
     }
 
     /// See trie-value-format.md

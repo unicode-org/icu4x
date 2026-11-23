@@ -10,6 +10,7 @@ use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::collections::codepointtrie::CodePointTrieBuilder;
+use icu::collections::codepointtrie::Typed;
 use icu::locale::{
     data_locale,
     subtags::{language, script},
@@ -123,6 +124,7 @@ impl SourceDataProvider {
         Ok(self
             .icuexport()?
             .list(&format!("collation/{}", self.collation_root_han()))?
+            .filter(|name| !name.contains("POSIX")) // No known use cases
             // Root data should not be listed for tailorings
             .filter(|p| !p.ends_with("root_standard_data.toml"))
             .filter_map(|mut file_name| {
@@ -252,8 +254,12 @@ impl collator_serde::CollationData {
             builder.set_value(i, trie.get32(i));
         }
 
+        let Typed::Small(trie) = builder.build().to_typed() else {
+            unreachable!("The builder was configured with `TrieType::Small`");
+        };
+
         Ok(CollationData {
-            trie: builder.build(),
+            trie,
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
             ces: self.ces.iter().map(|i| *i as u64).collect(),

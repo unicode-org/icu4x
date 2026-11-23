@@ -12,11 +12,13 @@ Two flags common to all trie value types other than the above ignorable marker:
 
 Bit 31 (the most significant bit): 1 iff the first character of the decomposition can combine backwards.
 
-Bit 30: 1 iff applying NFC to the decomposition does not result in the character being decomposed. (Currently, this bit isn't actually useful for non-starters, and a future change might involve setting this flag on non-starters that decompose to themselves if that turns out to be useful for some optimization.)
+Bit 30: 1 iff applying NFC to the decomposition does not result in the character being decomposed (or the character is lead jamo). (Currently, this bit isn't actually useful for non-starters, and a future change might involve setting this flag on non-starters that decompose to themselves if that turns out to be useful for some optimization.)
+
+In addition to the general semantics of bit 30, bit 30 is set to 1 for for lead jamo. This is a performance optimization to exit the pass-through fast path in a more efficient manner than letting the next jamo cause the exit. Old data does not have the bit set for lead jamo. Results are correct regardless: Old code computes correct results with lead jamo having the bit set and new code computes correct result even if the bit is not set.
 
 ## Types of Trie Values
 
-The character is a starter (CCC == 0) that decomposes to itself: The 31 lower bits set to zero. (Bit 31 may be set to 1, but bit 30 cannot.)
+The character is a starter (CCC == 0) that decomposes to itself: The 31 lower bits set to zero. (Bit 31 may be set to 1, but bit 30 cannot, except for lead jamo; see above.)
 
 REPLACEMENT CHARACTER: Bit 31 set to 1 and all others set to zero. This in an exception to the above item in order to allow catching UTF-8 errors as a side effect of a passthrough check.
 

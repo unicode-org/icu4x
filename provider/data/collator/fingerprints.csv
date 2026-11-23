@@ -5,7 +5,7 @@ collation/diacritics/v1, und, 182B, 160B, 8ace760351a33687
 collation/diacritics/v1, vi, 182B, 160B, 6b057eec42bee512
 collation/diacritics/v1, vi/trad, -> vi
 collation/jamo/v1, <singleton>, 1048B, 1026B, ccbfc88a6d3a411e
-collation/metadata/v1, <lookup>, 547B, 112 identifiers
+collation/metadata/v1, <lookup>, 535B, 111 identifiers
 collation/metadata/v1, <total>, 36B, 12B, 9 unique payloads
 collation/metadata/v1, af, 4B, 1B, 9aab82d56f3b362e
 collation/metadata/v1, am, 4B, 1B, d1dcef7af54c8272
@@ -30,7 +30,6 @@ collation/metadata/v1, de/phonebk, -> af
 collation/metadata/v1, dsb, -> af
 collation/metadata/v1, ee, 4B, 1B, ed0e600a85b6c191
 collation/metadata/v1, el, -> am
-collation/metadata/v1, en-US-posix, -> af
 collation/metadata/v1, eo, -> af
 collation/metadata/v1, es, -> af
 collation/metadata/v1, es/trad, -> af
@@ -182,8 +181,8 @@ collation/reordering/v1, und-Hant, -> und-Hani/stroke
 collation/reordering/v1, ur, -> ar
 collation/root/v1, <singleton>, 134434B, 134309B, 8a38b84c62c280a3
 collation/special/primaries/v1, <singleton>, 96B, 42B, 4926c05315df8486
-collation/tailoring/v1, <lookup>, 608B, 102 identifiers
-collation/tailoring/v1, <total>, 921266B, 908769B, 93 unique payloads
+collation/tailoring/v1, <lookup>, 595B, 101 identifiers
+collation/tailoring/v1, <total>, 919970B, 907606B, 92 unique payloads
 collation/tailoring/v1, af, 1012B, 877B, 8e3ca7ba0c0efe4b
 collation/tailoring/v1, ar, 8120B, 7987B, f87603c60cb612d4
 collation/tailoring/v1, ar/compat, 1788B, 1652B, 9bab07c54d28766b
@@ -204,7 +203,6 @@ collation/tailoring/v1, de-AT/phonebk, 1312B, 1175B, bcb73718474d63b3
 collation/tailoring/v1, de/phonebk, 910B, 775B, 7b88d3e20523de29
 collation/tailoring/v1, dsb, 1272B, 1138B, 282c4909b7d43453
 collation/tailoring/v1, ee, 1836B, 1702B, f42f57b0081b06e5
-collation/tailoring/v1, en-US-posix, 1296B, 1163B, f4cd1c9233455e8f
 collation/tailoring/v1, eo, 944B, 810B, 388dee595e344bc6
 collation/tailoring/v1, es, 820B, 685B, bf196f19cfa09254
 collation/tailoring/v1, es/trad, 886B, 751B, 1063a8d2ddb42042
