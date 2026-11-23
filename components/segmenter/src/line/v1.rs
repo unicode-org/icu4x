@@ -275,14 +275,14 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV1<'_, '_, Y> {
             // CSS word-break property handling
             #[allow(clippy::single_match)]
             if self.options.word_option == LineBreakWordOption::KeepAll {
-                //  typographic letter units shouldn't be break
+                //  typographic letter units shouldn't be break. A hyphen (HY) is not a letter unit,
+                // so the break after it stays (CSS Text 3 § 5.2).
                 if matches!(
                     left_prop,
                     RuleBreakData::LINE_PROPERTY_AI
                         | RuleBreakData::LINE_PROPERTY_AL
                         | RuleBreakData::LINE_PROPERTY_ID
                         | RuleBreakData::LINE_PROPERTY_NU
-                        | RuleBreakData::LINE_PROPERTY_HY
                         | RuleBreakData::LINE_PROPERTY_H2
                         | RuleBreakData::LINE_PROPERTY_H3
                         | RuleBreakData::LINE_PROPERTY_JL
@@ -295,7 +295,6 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV1<'_, '_, Y> {
                         | RuleBreakData::LINE_PROPERTY_AL
                         | RuleBreakData::LINE_PROPERTY_ID
                         | RuleBreakData::LINE_PROPERTY_NU
-                        | RuleBreakData::LINE_PROPERTY_HY
                         | RuleBreakData::LINE_PROPERTY_H2
                         | RuleBreakData::LINE_PROPERTY_H3
                         | RuleBreakData::LINE_PROPERTY_JL
