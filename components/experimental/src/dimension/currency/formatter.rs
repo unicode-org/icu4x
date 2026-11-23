@@ -539,7 +539,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingProvider(provider, provider, provider, Some(currency_code)),
+                &WrappingProvider::new(provider, Some(currency_code)),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -571,7 +571,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingProvider(provider, provider, provider, Some(currency_code)),
+                &WrappingProvider::new(provider, Some(currency_code)),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -661,7 +661,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_code_internal_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingProvider(provider, provider, provider, Some(currency_code)),
+                &WrappingProvider::new(provider, Some(currency_code)),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -741,7 +741,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_name_internal_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingProvider(provider, provider, provider, Some(currency_code)),
+                &WrappingProvider::new(provider, Some(currency_code)),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -823,7 +823,7 @@ impl CurrencyFormatter<DecimalFormatter> {
         Self::try_new_no_currency_internal_unstable(
             provider,
             DecimalFormatter::try_new_unstable(
-                &WrappingProvider(provider, provider, provider, Some(currency_code)),
+                &WrappingProvider::new(provider, Some(currency_code)),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -850,6 +850,12 @@ struct WrappingProvider<'a, D1: ?Sized, D2: ?Sized, D3: ?Sized>(
     Option<CurrencyType>,
 );
 
+impl<'a, D: ?Sized> WrappingProvider<'a, D, D, D> {
+    fn new(provider: &'a D, currency: Option<CurrencyType>) -> Self {
+        Self(provider, provider, provider, currency)
+    }
+}
+
 #[cfg(feature = "compiled_data")]
 impl
     WrappingProvider<
@@ -871,11 +877,10 @@ impl
 }
 
 impl<
-    'a,
     D1: ?Sized + DataProvider<CurrencyDecimalSymbolsV1>,
     D2: ?Sized + DataProvider<icu_decimal::provider::DecimalSymbolsV1>,
     D3: ?Sized,
-> DataProvider<icu_decimal::provider::DecimalSymbolsV1> for WrappingProvider<'a, D1, D2, D3>
+> DataProvider<icu_decimal::provider::DecimalSymbolsV1> for WrappingProvider<'_, D1, D2, D3>
 {
     fn load(
         &self,
@@ -913,26 +918,41 @@ impl<
     }
 }
 
-// The other data that the formatters load is passed on unchanged.
-macro_rules! redirect {
-    ($($marker:ty),*) => {
-        $(
-            impl<D1: ?Sized, D2: ?Sized + DataProvider<$marker>, D3: ?Sized> DataProvider<$marker>
-                for WrappingProvider<'_, D1, D2, D3>
-            {
-                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    self.1.load(req)
-                }
-            }
-        )*
-    };
+impl<D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalDigitsV1>, D3: ?Sized>
+    DataProvider<icu_decimal::provider::DecimalDigitsV1> for WrappingProvider<'_, D1, D2, D3>
+{
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<icu_decimal::provider::DecimalDigitsV1>, DataError> {
+        self.1.load(req)
+    }
 }
 
-redirect!(
-    icu_decimal::provider::DecimalDigitsV1,
-    icu_decimal::provider::DecimalCompactShortV1,
-    icu_decimal::provider::DecimalCompactLongV1
-);
+impl<
+    D1: ?Sized,
+    D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCompactShortV1>,
+    D3: ?Sized,
+> DataProvider<icu_decimal::provider::DecimalCompactShortV1> for WrappingProvider<'_, D1, D2, D3>
+{
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<icu_decimal::provider::DecimalCompactShortV1>, DataError> {
+        self.1.load(req)
+    }
+}
+
+impl<D1: ?Sized, D2: ?Sized + DataProvider<icu_decimal::provider::DecimalCompactLongV1>, D3: ?Sized>
+    DataProvider<icu_decimal::provider::DecimalCompactLongV1> for WrappingProvider<'_, D1, D2, D3>
+{
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<icu_decimal::provider::DecimalCompactLongV1>, DataError> {
+        self.1.load(req)
+    }
+}
 
 impl<D1: ?Sized, D2: ?Sized, D3: ?Sized + DataProvider<icu_plurals::provider::PluralsCardinalV1>>
     DataProvider<icu_plurals::provider::PluralsCardinalV1> for WrappingProvider<'_, D1, D2, D3>
@@ -1260,7 +1280,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1294,7 +1314,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1326,7 +1346,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_name_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1357,7 +1377,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1391,7 +1411,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_essential_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1423,7 +1443,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_name_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1452,7 +1472,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_code_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_short_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
@@ -1482,7 +1502,7 @@ impl CurrencyFormatter<CompactDecimalFormatter> {
         Self::try_new_code_internal_unstable(
             provider,
             CompactDecimalFormatter::try_new_long_unstable(
-                &WrappingProvider(provider, provider, provider, None),
+                &WrappingProvider::new(provider, None),
                 (&prefs).into(),
                 Default::default(),
             )?,
