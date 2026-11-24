@@ -105,18 +105,6 @@ pub(crate) struct UnitsData {
     pub(crate) duration: DurationUnits,
 }
 
-impl UnitsData {
-    /// Returns the data of a length: "long", "short", or "narrow".
-    pub(crate) fn length(&self, length: &str) -> Option<&UnitsLengthData> {
-        match length {
-            "long" => Some(&self.long),
-            "short" => Some(&self.short),
-            "narrow" => Some(&self.narrow),
-            _ => None,
-        }
-    }
-}
-
 #[derive(PartialEq, Debug)]
 pub(crate) struct UnitsLengthData {
     /// Maps from each category to a map for each units with their associated patterns
