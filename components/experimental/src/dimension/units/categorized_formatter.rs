@@ -296,7 +296,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         let (locale, decimal_formatter, plural_rules) =
             Self::extract_formatting_info_unstable(provider, prefs)?;
 
-        // TODO(#8125): this might return a short display name from tiny, even if there would be a long one in light.
+        // TODO(#8125): this might return the display name of a parent locale from tiny, even if the locale has its own one in light.
         let display_name =
             Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
                 DataProvider::<C::DataMarkerTiny>::load(provider, req)
@@ -333,7 +333,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     {
         let (locale, decimal_formatter, plural_rules) = Self::extract_formatting_info(prefs)?;
 
-        // TODO(#8125): this might return a short display name from tiny or light, even if there would be a long one in heavy.
+        // TODO(#8125): this might return the display name of a parent locale from tiny or light, even if the locale has its own one in heavy.
         let display_name =
             Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
                 <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
@@ -439,6 +439,7 @@ mod tests {
                 UnitsFormatterOptions::default(),
                 "1,000 m²",
             ),
+            // TODO(#8125): `square-meter` is not a tiny unit in `en`, so this is the short name of root.
             (
                 locale!("en-US"),
                 Area::square_meter(),
@@ -504,7 +505,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 m²",
+                "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
@@ -568,7 +569,7 @@ mod tests {
                     width: Width::Long,
                     ..Default::default()
                 },
-                "1,000 m²",
+                "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
