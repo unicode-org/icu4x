@@ -25,13 +25,10 @@ use icu_provider::{
 use smallvec::SmallVec;
 
 /// Type alias for the formatting info needed by the formatter constructors.
-type FormattingInfo = (
-    DataLocale,
-    DecimalFormatter,
-    PluralRules,
-    // Holds the attributes.
-    SmallVec<[u8; 32]>, // TODO: Remove this once we have separate markers for different widths.
-);
+type FormattingInfo = (DataLocale, DecimalFormatter, PluralRules);
+
+/// The display name of a unit, loaded from one of the unit names markers.
+type DisplayName = DataPayload<ErasedMarker<UnitsDisplayNames<'static>>>;
 
 define_preferences!(
     /// The preferences for units formatting.
@@ -57,7 +54,7 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 #[derive(Debug)]
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
-    display_name: DataPayload<ErasedMarker<UnitsDisplayNames<'static>>>,
+    display_name: DisplayName,
     decimal_formatter: DecimalFormatter,
     plural_rules: PluralRules,
 }
@@ -75,6 +72,37 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         buffer.extend_from_slice(length.as_bytes());
         buffer.extend_from_slice(unit.as_bytes());
         buffer
+    }
+
+    /// Loads the display name of a unit for a width.
+    ///
+    /// `load` loads the display name for a request from the markers of the constructor.
+    ///
+    /// As in CLDR, a unit has a long or a narrow name only where it differs from the short
+    /// name, in the locale or in one of its parents. So if `load` finds no name for the
+    /// width, the short name is the name for that width.
+    fn load_display_name(
+        locale: &DataLocale,
+        categorized_unit: &CategorizedMeasureUnit<C>,
+        width: Width,
+        load: impl Fn(DataRequest) -> Result<DisplayName, DataError>,
+    ) -> Result<DisplayName, DataError> {
+        let load_width = |width| {
+            // TODO: Remove this allocation once we have separate markers for different widths.
+            let attribute = Self::attribute(width, categorized_unit.cldr_id());
+            let attribute = DataMarkerAttributes::try_from_utf8(&attribute)
+                .map_err(|_| DataError::custom("Failed to create a data marker"))?;
+            load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attribute, locale),
+                ..Default::default()
+            })
+        };
+
+        let display_name = load_width(width);
+        if display_name.is_ok() || width == Width::Short {
+            return display_name;
+        }
+        load_width(Width::Short).or(display_name)
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -111,8 +139,6 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     #[cfg(feature = "compiled_data")]
     fn extract_formatting_info(
         prefs: CategorizedUnitsFormatterPreferences,
-        categorized_unit: CategorizedMeasureUnit<C>,
-        options: super::options::UnitsFormatterOptions,
     ) -> Result<FormattingInfo, DataError> {
         let locale = C::DataMarkerTiny::make_locale(prefs.locale_preferences);
         let decimal_formatter: DecimalFormatter =
@@ -120,10 +146,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
-        // TODO: Remove this allocation once we have separate markers for different widths.
-        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
-
-        Ok((locale, decimal_formatter, plural_rules, attribute))
+        Ok((locale, decimal_formatter, plural_rules))
     }
 
     /// Extracts the formatting info for that needed to create an unstable creator of [`CategorizedFormatter`].
@@ -132,8 +155,6 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     fn extract_formatting_info_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
-        categorized_unit: CategorizedMeasureUnit<C>,
-        options: super::options::UnitsFormatterOptions,
     ) -> Result<FormattingInfo, DataError>
     where
         D: ?Sized
@@ -150,10 +171,7 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
-        // TODO: Remove this allocation once we have separate markers for different widths.
-        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
-
-        Ok((locale, decimal_formatter, plural_rules, attribute))
+        Ok((locale, decimal_formatter, plural_rules))
     }
 
     /// Creates a new [`CategorizedFormatter`] from compiled locale data and an options bag.
@@ -170,21 +188,16 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     where
         crate::provider::Baked: DataProvider<C::DataMarkerTiny>,
     {
-        let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info(prefs, categorized_unit, options)?;
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
-            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
+        let (locale, decimal_formatter, plural_rules) = Self::extract_formatting_info(prefs)?;
 
-        let display_name = crate::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    unit_attribute,
-                    &locale,
-                ),
-                ..Default::default()
-            })?
-            .payload
-            .cast();
+        let display_name =
+            Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
+                <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
+                    &crate::provider::Baked,
+                    req,
+                )
+                .map(|r| r.payload.cast())
+            })?;
 
         Ok(Self {
             _category: PhantomData,
@@ -208,24 +221,13 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
+        let (locale, decimal_formatter, plural_rules) =
+            Self::extract_formatting_info_unstable(provider, prefs)?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
-            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
-
-        let display_name = DataProvider::<C::DataMarkerTiny>::load(
-            provider,
-            DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    unit_attribute,
-                    &locale,
-                ),
-                ..Default::default()
-            },
-        )?
-        .payload
-        .cast();
+        let display_name =
+            Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
+                DataProvider::<C::DataMarkerTiny>::load(provider, req).map(|r| r.payload.cast())
+            })?;
 
         Ok(Self {
             _category: PhantomData,
@@ -250,28 +252,23 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         crate::provider::Baked: DataProvider<C::DataMarkerTiny>,
         crate::provider::Baked: DataProvider<C::DataMarkerLight>,
     {
-        let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info(prefs, categorized_unit, options)?;
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
-            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
+        let (locale, decimal_formatter, plural_rules) = Self::extract_formatting_info(prefs)?;
 
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attribute, &locale),
-            ..Default::default()
-        };
-
-        let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
-            &crate::provider::Baked,
-            req,
-        )
-        .map(|r| r.payload.cast())
-        .or_else(|_| {
-            <crate::provider::Baked as DataProvider<C::DataMarkerLight>>::load(
-                &crate::provider::Baked,
-                req,
-            )
-            .map(|r| r.payload.cast())
-        })?;
+        let display_name =
+            Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
+                <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
+                    &crate::provider::Baked,
+                    req,
+                )
+                .map(|r| r.payload.cast())
+                .or_else(|_| {
+                    <crate::provider::Baked as DataProvider<C::DataMarkerLight>>::load(
+                        &crate::provider::Baked,
+                        req,
+                    )
+                    .map(|r| r.payload.cast())
+                })
+            })?;
 
         Ok(Self {
             _category: PhantomData,
@@ -296,22 +293,18 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
-
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
-            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
-
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attribute, &locale),
-            ..Default::default()
-        };
+        let (locale, decimal_formatter, plural_rules) =
+            Self::extract_formatting_info_unstable(provider, prefs)?;
 
         // TODO(#8125): this might return a short display name from tiny, even if there would be a long one in light.
-        let display_name = DataProvider::<C::DataMarkerTiny>::load(provider, req)
-            .map(|r| r.payload.cast())
-            .or_else(|_| {
-                DataProvider::<C::DataMarkerLight>::load(provider, req).map(|r| r.payload.cast())
+        let display_name =
+            Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
+                DataProvider::<C::DataMarkerTiny>::load(provider, req)
+                    .map(|r| r.payload.cast())
+                    .or_else(|_| {
+                        DataProvider::<C::DataMarkerLight>::load(provider, req)
+                            .map(|r| r.payload.cast())
+                    })
             })?;
 
         Ok(Self {
@@ -338,36 +331,31 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         crate::provider::Baked: DataProvider<C::DataMarkerLight>,
         crate::provider::Baked: DataProvider<C::DataMarkerHeavy>,
     {
-        let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info(prefs, categorized_unit, options)?;
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
-            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
-
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attribute, &locale),
-            ..Default::default()
-        };
+        let (locale, decimal_formatter, plural_rules) = Self::extract_formatting_info(prefs)?;
 
         // TODO(#8125): this might return a short display name from tiny or light, even if there would be a long one in heavy.
-        let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
-            &crate::provider::Baked,
-            req,
-        )
-        .map(|r| r.payload.cast())
-        .or_else(|_| {
-            <crate::provider::Baked as DataProvider<C::DataMarkerLight>>::load(
-                &crate::provider::Baked,
-                req,
-            )
-            .map(|r| r.payload.cast())
-        })
-        .or_else(|_| {
-            <crate::provider::Baked as DataProvider<C::DataMarkerHeavy>>::load(
-                &crate::provider::Baked,
-                req,
-            )
-            .map(|r| r.payload.cast())
-        })?;
+        let display_name =
+            Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
+                <crate::provider::Baked as DataProvider<C::DataMarkerTiny>>::load(
+                    &crate::provider::Baked,
+                    req,
+                )
+                .map(|r| r.payload.cast())
+                .or_else(|_| {
+                    <crate::provider::Baked as DataProvider<C::DataMarkerLight>>::load(
+                        &crate::provider::Baked,
+                        req,
+                    )
+                    .map(|r| r.payload.cast())
+                })
+                .or_else(|_| {
+                    <crate::provider::Baked as DataProvider<C::DataMarkerHeavy>>::load(
+                        &crate::provider::Baked,
+                        req,
+                    )
+                    .map(|r| r.payload.cast())
+                })
+            })?;
 
         Ok(Self {
             _category: PhantomData,
@@ -393,24 +381,21 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
+        let (locale, decimal_formatter, plural_rules) =
+            Self::extract_formatting_info_unstable(provider, prefs)?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
-            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
-
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attribute, &locale),
-            ..Default::default()
-        };
-
-        let display_name = DataProvider::<C::DataMarkerTiny>::load(provider, req)
-            .map(|r| r.payload.cast())
-            .or_else(|_| {
-                DataProvider::<C::DataMarkerLight>::load(provider, req).map(|r| r.payload.cast())
-            })
-            .or_else(|_| {
-                DataProvider::<C::DataMarkerHeavy>::load(provider, req).map(|r| r.payload.cast())
+        let display_name =
+            Self::load_display_name(&locale, &categorized_unit, options.width, |req| {
+                DataProvider::<C::DataMarkerTiny>::load(provider, req)
+                    .map(|r| r.payload.cast())
+                    .or_else(|_| {
+                        DataProvider::<C::DataMarkerLight>::load(provider, req)
+                            .map(|r| r.payload.cast())
+                    })
+                    .or_else(|_| {
+                        DataProvider::<C::DataMarkerHeavy>::load(provider, req)
+                            .map(|r| r.payload.cast())
+                    })
             })?;
 
         Ok(Self {
@@ -737,6 +722,37 @@ mod tests {
                     assert!(formatter.is_ok(), "{locale} {width:?} {cldr_id}");
                 }
             }
+        }
+    }
+
+    /// The long and the narrow names of a unit fall back to its short name, as in CLDR.
+    #[test]
+    fn test_long_and_narrow_fall_back_to_short() {
+        let value = Decimal::from_str("1000").unwrap();
+
+        let test_cases = [
+            // In English, the long name of `day` is also its short name.
+            (locale!("en-US"), Width::Long, "1,000 days"),
+            (locale!("en-US"), Width::Short, "1,000 days"),
+            (locale!("en-US"), Width::Narrow, "1,000d"),
+            // Root has only short names.
+            (locale!("und"), Width::Long, "1,000 d"),
+            (locale!("und"), Width::Narrow, "1,000 d"),
+            // The narrow name of `day` in `es-CO` is also its short name.
+            // Its parent `es-419` has another narrow name, which `es-CO` must not take.
+            (locale!("es-419"), Width::Narrow, "1,000dd."),
+            (locale!("es-CO"), Width::Short, "1.000 días"),
+            (locale!("es-CO"), Width::Narrow, "1.000 días"),
+        ];
+
+        for (locale, width, expected) in test_cases {
+            let formatter = CategorizedFormatter::<Duration>::try_new_tiny(
+                locale.into(),
+                Duration::day(),
+                width.into(),
+            )
+            .unwrap();
+            assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
         }
     }
 }
