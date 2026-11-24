@@ -52,9 +52,9 @@ pub(crate) struct Resource {
 /// Determines the type of unit
 #[derive(PartialEq)]
 pub(crate) enum UnitType {
-    Core,
-    Extended,
-    Outlier,
+    Tiny,
+    Light,
+    Heavy,
 }
 
 /// Maps a category (e.g., "length", "mass", "duration") to a map from each region to a set of units.
