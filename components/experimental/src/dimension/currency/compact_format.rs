@@ -232,4 +232,47 @@ mod tests {
         check(&fmt_name, "1299", "1,3 mil escudos portugueses");
         check(&fmt_long_name, "1299", "1,3 mil escudos portugueses");
     }
+
+    #[test]
+    pub fn test_fr_ch() {
+        // `fr-CH` has the decimal separator `.` for all currencies (`currencyDecimal` in
+        // CLDR), instead of its standard `,`.
+        let prefs = locale!("fr-CH").into();
+        let eur = currency!("EUR");
+        let usd = currency!("USD");
+        let options = Default::default();
+
+        let fmt_eur = CurrencyFormatter::try_new_compact_symbol(prefs, eur, options).unwrap();
+        check(&fmt_eur, "-1230.05", "-1.2 k €");
+        check(&fmt_eur, "1234565.0", "1.2 M €");
+
+        let fmt_usd = CurrencyFormatter::try_new_compact_symbol(prefs, usd, options).unwrap();
+        check(&fmt_usd, "-1230.05", "-1.2 k $US");
+        check(&fmt_usd, "1234565.0", "1.2 M $US");
+
+        let fmt_code = CurrencyFormatter::try_new_compact_code(prefs, eur, options).unwrap();
+        check(&fmt_code, "-1230.05", "-1.2 k EUR");
+
+        let fmt_name = CurrencyFormatter::try_new_compact_name(prefs, eur).unwrap();
+        check(&fmt_name, "-1230.05", "-1.2 k euros");
+
+        let fmt_long_name = CurrencyFormatter::try_new_compact_long_name(prefs, eur).unwrap();
+        check(&fmt_long_name, "-1230.05", "-1.2 millier euros");
+    }
+
+    #[test]
+    pub fn test_de_at() {
+        // `de-AT` has the grouping separator `.` for all currencies (`currencyGroup` in
+        // CLDR), instead of its standard U+00A0. German has no short form for thousands,
+        // so the grouping separator shows.
+        let prefs = locale!("de-AT").into();
+        let eur = currency!("EUR");
+
+        let fmt =
+            CurrencyFormatter::try_new_compact_symbol(prefs, eur, Default::default()).unwrap();
+        check(&fmt, "12345.67", "€ 12.346");
+
+        let fmt_name = CurrencyFormatter::try_new_compact_name(prefs, eur).unwrap();
+        check(&fmt_name, "12345.67", "12.346 Euro");
+    }
 }
