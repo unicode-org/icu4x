@@ -22,11 +22,16 @@ impl SourceDataProvider {
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
-        let (length, unit) = req
-            .id
-            .marker_attributes
-            .split_once('-')
-            .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
+        // The attributes are the unit for the short length, and the unit with `-l` or `-n`
+        // after it for the long or the narrow length.
+        let attributes = req.id.marker_attributes.as_str();
+        let (length, unit) = if let Some(unit) = attributes.strip_suffix("-l") {
+            ("long", unit)
+        } else if let Some(unit) = attributes.strip_suffix("-n") {
+            ("narrow", unit)
+        } else {
+            ("short", attributes)
+        };
 
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
@@ -129,10 +134,12 @@ impl SourceDataProvider {
             let units_format_data = &units_format_data.main.value.units;
 
             for length in &["long", "short", "narrow"] {
-                let length_patterns = match *length {
-                    "long" => &units_format_data.long,
-                    "short" => &units_format_data.short,
-                    "narrow" => &units_format_data.narrow,
+                // The patterns of the length, and what the length adds after the unit
+                // in the attributes.
+                let (length_patterns, suffix) = match *length {
+                    "long" => (&units_format_data.long, "-l"),
+                    "short" => (&units_format_data.short, ""),
+                    "narrow" => (&units_format_data.narrow, "-n"),
                     _ => {
                         return Err(DataErrorKind::IdentifierNotFound
                             .into_error()
@@ -173,8 +180,17 @@ impl SourceDataProvider {
                         continue;
                     }
 
+                    // A unit that ends like the attributes of the long or the narrow length
+                    // would be read as another unit.
+                    if unit.ends_with("-l") || unit.ends_with("-n") {
+                        return Err(DataError::custom(
+                            "The unit ends like the attributes of a length",
+                        )
+                        .with_debug_context(&unit));
+                    }
+
                     data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
+                        DataMarkerAttributes::try_from_string(format!("{unit}{suffix}")).map_err(
                             |_| {
                                 DataError::custom("Failed to parse the attribute")
                                     .with_debug_context(&unit)
@@ -244,7 +260,7 @@ fn test_basic() {
     let us_locale_long_meter: DataPayload<UnitsNamesLengthTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter-l"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -262,7 +278,7 @@ fn test_basic() {
     let us_locale_short_meter: DataPayload<UnitsNamesLengthTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -279,7 +295,7 @@ fn test_basic() {
     let ar_eg_locale: DataPayload<UnitsNamesLengthTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter-l"),
                 &data_locale!("ar-EG"),
             ),
             ..Default::default()
@@ -294,7 +310,7 @@ fn test_basic() {
     let fr_locale: DataPayload<UnitsNamesLengthTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("fr"),
             ),
             ..Default::default()
@@ -307,7 +323,7 @@ fn test_basic() {
     assert_writeable_eq!(short, "5 m");
 }
 
-/// Loads the unit names of an attribute, such as `narrow-day`, for a locale from the
+/// Loads the unit names of an attribute, such as `day-n`, for a locale from the
 /// marker `M`. Returns `None` if the data has no such names.
 #[cfg(test)]
 fn load_names<M>(
@@ -343,27 +359,24 @@ fn test_long_and_narrow_differ_from_short() {
         |locale, attributes| load_names::<UnitsNamesDurationHeavyV1>(&provider, locale, attributes);
 
     // In root, the long and the narrow patterns are aliases of the short ones.
-    assert!(tiny("und", "short-day").is_some());
-    assert!(tiny("und", "long-day").is_none());
-    assert!(tiny("und", "narrow-day").is_none());
+    assert!(tiny("und", "day").is_some());
+    assert!(tiny("und", "day-l").is_none());
+    assert!(tiny("und", "day-n").is_none());
 
     // In English, the long patterns of `day` are the short ones (`{0} day`, `{0} days`),
     // and the narrow pattern is `{0}d`.
-    assert!(tiny("en", "short-day").is_some());
-    assert!(tiny("en", "long-day").is_none());
-    assert!(tiny("en", "narrow-day").is_some());
+    assert!(tiny("en", "day").is_some());
+    assert!(tiny("en", "day-l").is_none());
+    assert!(tiny("en", "day-n").is_some());
 
     // The narrow patterns of `night` in `es-AR` are its short ones (`{0} noches`).
     // But `es`, a parent of `es-AR`, has the narrow `{0}noches`, and the formatter
     // would find it for `es-AR`. So `es-AR` keeps its narrow patterns.
-    assert!(heavy("es-AR", "narrow-night").is_some());
-    assert_eq!(
-        heavy("es-AR", "narrow-night"),
-        heavy("es-AR", "short-night")
-    );
-    assert_ne!(heavy("es-AR", "narrow-night"), heavy("es", "narrow-night"));
+    assert!(heavy("es-AR", "night-n").is_some());
+    assert_eq!(heavy("es-AR", "night-n"), heavy("es-AR", "night"));
+    assert_ne!(heavy("es-AR", "night-n"), heavy("es", "night-n"));
 
     // The long patterns of `night` are the short ones in `es-AR`, in `es`, and in root.
-    assert!(heavy("es-AR", "long-night").is_none());
-    assert!(heavy("es", "long-night").is_none());
+    assert!(heavy("es-AR", "night-l").is_none());
+    assert!(heavy("es", "night-l").is_none());
 }
