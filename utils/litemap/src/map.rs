@@ -1369,7 +1369,10 @@ where
     where
         V: Default,
     {
-        self.or_insert(V::default())
+        match self {
+            Self::Occupied(entry) => entry.into_mut(),
+            Self::Vacant(entry) => entry.insert(V::default())
+        }
     }
 
     /// Ensures a value is in the entry by inserting the result of the default function if empty,
