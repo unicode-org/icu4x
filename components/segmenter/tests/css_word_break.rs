@@ -147,6 +147,12 @@ fn wordbreak_keepall() {
 
     // from css/css-text/word-break/word-break-keep-all-003.html
     keep_all("และและ", &["และ", "และ"]);
+
+    // A hyphen is not a letter unit: keep-all keeps the break after it, as normal does.
+    keep_all("Stone-pot bibimbap", &["Stone-", "pot ", "bibimbap"]);
+    keep_all("돌솥-비빔밥", &["돌솥-", "비빔밥"]);
+    // No break between a hyphen and a number, in either mode (LB25).
+    keep_all("a -1", &["a ", "-1"]);
 }
 
 #[test]

@@ -368,7 +368,8 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
 
             // CSS word-break property handling
             if self.options.word_option == LineBreakWordOption::KeepAll {
-                //  typographic letter units shouldn't be break
+                //  typographic letter units shouldn't be break. A hyphen (HY) is not a letter unit,
+                // so the break after it stays (CSS Text 3 § 5.2).
                 if matches!(
                     left_prop,
                     RuleBreakData::LINE_V3_PROPERTY_AI
@@ -379,7 +380,6 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
                         | RuleBreakData::LINE_V3_PROPERTY_ID
                         | RuleBreakData::LINE_V3_PROPERTY_ID_EASTASIAN
                         | RuleBreakData::LINE_V3_PROPERTY_NU
-                        | RuleBreakData::LINE_V3_PROPERTY_HY
                         | RuleBreakData::LINE_V3_PROPERTY_H2
                         | RuleBreakData::LINE_V3_PROPERTY_H3
                         | RuleBreakData::LINE_V3_PROPERTY_JL
@@ -396,7 +396,6 @@ impl<Y: RuleBreakType> Iterator for LineBreakIteratorV3<'_, '_, Y> {
                         | RuleBreakData::LINE_V3_PROPERTY_ID
                         | RuleBreakData::LINE_V3_PROPERTY_ID_EASTASIAN
                         | RuleBreakData::LINE_V3_PROPERTY_NU
-                        | RuleBreakData::LINE_V3_PROPERTY_HY
                         | RuleBreakData::LINE_V3_PROPERTY_H2
                         | RuleBreakData::LINE_V3_PROPERTY_H3
                         | RuleBreakData::LINE_V3_PROPERTY_JL
