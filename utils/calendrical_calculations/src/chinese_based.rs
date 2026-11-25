@@ -452,31 +452,25 @@ pub fn chinese_based_date_from_fixed<C: ChineseBased>(date: RataDie) -> ChineseF
 
 /// Given that `new_year` is the first day of a leap year, find which month in the year is a leap month.
 ///
-/// Since the first month in which there are no major solar terms is a leap month, this function
-/// cycles through months until it finds the leap month, then returns the number of that month. This
-/// function assumes the date passed in is in a leap year and tests to ensure this is the case in debug
-/// mode by asserting that no more than thirteen months are analyzed.
-///
-/// Calls to `no_major_solar_term` have been inlined for increased efficiency.
+/// Since the first month of a 13-month winter-solstice-to-winter-solstice period (*sui*) in which there are
+/// no major solar terms is a leap month, this function determines which *sui* contains the leap month and
+/// returns its 1-based ordinal in the lunar year. This function assumes the date passed in is in a leap year
+/// and tests to ensure this is the case in debug mode.
 ///
 /// Conceptually similar to code from _Calendrical Calculations_ by Reingold & Dershowitz
 /// Lisp reference code: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5443-L5450>
 pub fn get_leap_month_from_new_year<C: ChineseBased>(new_year: RataDie) -> u8 {
-    let mut cur = new_year;
-    let mut result = 1;
-    let mut solar_term = major_solar_term_from_fixed::<C>(cur);
-    loop {
-        let next = new_moon_on_or_after::<C>((cur + 1).as_moment());
-        let next_solar_term = major_solar_term_from_fixed::<C>(next);
-        if result >= MAX_ITERS_FOR_MONTHS_OF_YEAR || solar_term == next_solar_term {
-            break;
-        }
-        cur = next;
-        solar_term = next_solar_term;
-        result += 1;
-    }
-    debug_assert!(result < MAX_ITERS_FOR_MONTHS_OF_YEAR, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
-    result
+    debug_assert!(
+        !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&new_year)
+            || YearBounds::compute::<C>(new_year).is_leap(),
+        "The given year was not a leap year."
+    );
+    // A 13-month leap year is 383–385 days long (whereas 12 months is at most 360 days),
+    // so `new_year + 370` always falls inside the 13th month.
+    let next_new_year = new_moon_on_or_after::<C>((new_year + 370).as_moment());
+    month_structure_for_year::<C>(new_year, next_new_year)
+        .1
+        .unwrap_or(13)
 }
 
 /// Returns the number of days in the given (year, month).
@@ -532,13 +526,22 @@ pub fn month_structure_for_year<C: ChineseBased>(
 
     let mut current_month_start = new_year;
     let mut current_month_major_solar_term = major_solar_term_from_fixed::<C>(new_year);
-    let mut leap_month_index = None;
+    let mut first_sui_leap = None;
+    let mut month_12_start = new_year;
+    let mut month_12_no_major_term = false;
     for i in 0u8..12 {
         let next_month_start = new_moon_on_or_after::<C>((current_month_start + 28).as_moment());
         let next_month_major_solar_term = major_solar_term_from_fixed::<C>(next_month_start);
 
-        if next_month_major_solar_term == current_month_major_solar_term {
-            leap_month_index = Some(i + 1);
+        if i < 11 {
+            if first_sui_leap.is_none()
+                && next_month_major_solar_term == current_month_major_solar_term
+            {
+                first_sui_leap = Some(i + 1);
+            }
+        } else {
+            month_12_start = current_month_start;
+            month_12_no_major_term = next_month_major_solar_term == current_month_major_solar_term;
         }
 
         let diff = next_month_start - current_month_start;
@@ -554,7 +557,7 @@ pub fn month_structure_for_year<C: ChineseBased>(
         current_month_major_solar_term = next_month_major_solar_term;
     }
 
-    if current_month_start == next_new_year {
+    let leap_month_index = if current_month_start == next_new_year {
         // not all months without solar terms are leap months; they are only leap months if
         // the year can admit them
         //
@@ -564,7 +567,7 @@ pub fn month_structure_for_year<C: ChineseBased>(
         // that does not contain a major solar term — that is, the first lunar month that is wholly within a solar month.
         //
         // As such, if a month without a solar term is found in a non-leap year, we just ingnore it.
-        leap_month_index = None;
+        None
     } else {
         let diff = next_new_year - current_month_start;
         debug_assert!(
@@ -573,15 +576,39 @@ pub fn month_structure_for_year<C: ChineseBased>(
         if diff == 30 {
             ret[12] = true;
         }
-    }
-    if current_month_start != next_new_year && leap_month_index.is_none() {
-        leap_month_index = Some(13); // The last month is a leap month
-        debug_assert!(
-            major_solar_term_from_fixed::<C>(current_month_start) == current_month_major_solar_term
-                || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&new_year),
-            "A leap month is required here, but it had a major solar term!"
-        );
-    }
+
+        // A lunar year straddles two winter-solstice-to-winter-solstice periods (suis),
+        // split at the 11th month (which always contains December's winter solstice).
+        // If December's solstice precedes ordinal month 12, month 11 is ordinal 11 and
+        // the leap month is in the second sui (ordinal 12 or 13), ignoring any month
+        // without a major solar term in the 12-month first sui (e.g. 2033). Otherwise,
+        // month 11 is ordinal 12 and the leap month is the first month without a major
+        // solar term in the 13-month first sui (ordinals 1..=11).
+        let solstice =
+            bind_winter_solstice::<C>(winter_solstice_on_or_before::<C>(current_month_start));
+        if solstice < month_12_start {
+            if month_12_no_major_term {
+                Some(12)
+            } else {
+                // The last month is a leap month
+                debug_assert!(
+                    major_solar_term_from_fixed::<C>(next_new_year)
+                        == current_month_major_solar_term
+                        || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&new_year),
+                    "A leap month is required here, but it had a major solar term!"
+                );
+                Some(13)
+            }
+        } else if let Some(leap) = first_sui_leap {
+            Some(leap)
+        } else if month_12_no_major_term {
+            // Outside ~[-2000, 4000], `bind_winter_solstice` clamping can produce a 13-month
+            // first sui where every month in 1..=11 still contains an unbound solar term.
+            Some(12)
+        } else {
+            Some(13)
+        }
+    };
 
     (ret, leap_month_index)
 }
@@ -649,6 +676,11 @@ mod test {
             let (month_lengths, leap) = month_structure_for_year::<Chinese>(
                 chinese_year.year_bounds.new_year,
                 chinese_year.year_bounds.next_new_year,
+            );
+            assert_eq!(
+                chinese_year.leap_month.map(NonZeroU8::get),
+                leap,
+                "Leap month for {year} must be the same"
             );
 
             for (i, month_is_30) in month_lengths.into_iter().enumerate() {
@@ -815,12 +847,23 @@ mod test {
 #[test]
 fn test_chinese_leap_months() {
     let expected = [
+        // 12-month first sui has a month without a major solar term (ordinal 9),
+        // while 13-month second sui has leap 12th month (ordinal 13)
+        (583, 13),
+        // 13-month first sui has two months without a major solar term (ordinals 9 and 11);
+        // the first one (ordinal 9) is the leap month
+        (1479, 9),
+        (1642, 12),
         (1933, 6),
         (1938, 8),
         (1984, 11),
         (2009, 6),
         (2017, 7),
         (2028, 6),
+        // Issue #8766: 12-month first sui has a month without a major solar term (ordinal 8),
+        // while 13-month second sui has leap 11th month (ordinal 12)
+        (2033, 12),
+        (2128, 12),
     ];
 
     for (year, expected_month) in expected {
@@ -831,6 +874,27 @@ fn test_chinese_leap_months() {
             expected_month,
             get_leap_month_from_new_year::<Chinese>(bounds.new_year),
             "{year} have leap month {expected_month}"
+        );
+        assert_eq!(
+            Some(expected_month),
+            month_structure_for_year::<Chinese>(bounds.new_year, bounds.next_new_year).1,
+            "{year} month_structure_for_year have leap month {expected_month}"
+        );
+    }
+
+    for (year, expected_month) in [(1308, 13), (1479, 9), (1851, 12), (2033, 12)] {
+        let bounds = YearBounds::compute::<Dangi>(fixed_from_gregorian(year, 6, 1));
+
+        assert!(bounds.is_leap(), "Dangi {year} should be a leap year");
+        assert_eq!(
+            expected_month,
+            get_leap_month_from_new_year::<Dangi>(bounds.new_year),
+            "Dangi {year} have leap month {expected_month}"
+        );
+        assert_eq!(
+            Some(expected_month),
+            month_structure_for_year::<Dangi>(bounds.new_year, bounds.next_new_year).1,
+            "Dangi {year} month_structure_for_year have leap month {expected_month}"
         );
     }
 }
