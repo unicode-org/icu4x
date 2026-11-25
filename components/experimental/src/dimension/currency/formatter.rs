@@ -5,7 +5,7 @@
 use core::fmt::Display;
 
 use super::super::provider::currency::{
-    essentials::CurrencyEssentialsV1,
+    essentials::{CurrencyEssentialsV1, SymbolLetters},
     extended::CurrencyExtendedDataV1,
     fractions::{CurrencyFractionsV1, FractionInfo, Rounding},
     no_currency::{CurrencyPatternsNoCurrency, CurrencyPatternsNoCurrencyV1},
@@ -1590,7 +1590,6 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
         //   formatter (such as `CompactDecimalFormatter`) to handle magnitude-based trailing zero trimming.
         let rounded_value = apply_precision(value.clone(), self.fraction_info);
         let formatted_value = V::format_unsigned(&self.value_formatter, rounded_value.absolute);
-        let accounting = self.usage == CurrencyUsage::Accounting;
 
         let (pattern, currency_str, sign) = match &self.currency_data {
             CurrencyFormatterData::IsoCodeSymbol {
@@ -1599,10 +1598,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             } => {
                 let (pattern, sign) = select_essentials_pattern(
                     essential.get(),
-                    accounting,
+                    self.usage,
                     rounded_value.sign,
-                    true,
-                    true,
+                    SymbolLetters::Both,
                 );
                 (pattern, iso_code.as_str(), sign)
             }
@@ -1614,10 +1612,9 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
                 let symbol = symbol.get();
                 let (pattern, sign) = select_essentials_pattern(
                     essential.get(),
-                    accounting,
+                    self.usage,
                     rounded_value.sign,
-                    symbol.starts_with_letter(),
-                    symbol.ends_with_letter(),
+                    symbol.letters(),
                 );
                 (pattern, symbol.as_str(), sign)
             }
@@ -1633,7 +1630,7 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
             }
             CurrencyFormatterData::NoCurrency { patterns } => {
                 let (pattern, sign) =
-                    select_no_currency_pattern(patterns.get(), accounting, rounded_value.sign);
+                    select_no_currency_pattern(patterns.get(), self.usage, rounded_value.sign);
                 (pattern, "", sign)
             }
         };
@@ -1655,10 +1652,10 @@ impl<V: AbstractFormatter> CurrencyFormatter<V> {
 /// Returns [`Sign::None`] if an explicit negative pattern is matched (which already encodes the sign).
 fn select_no_currency_pattern<'a>(
     patterns: &'a CurrencyPatternsNoCurrency<'_>,
-    accounting: bool,
+    usage: CurrencyUsage,
     sign: Sign,
 ) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
-    if accounting {
+    if usage == CurrencyUsage::Accounting {
         if sign == Sign::Negative
             && let Some(pattern) = patterns.get_negative_accounting()
         {
@@ -1686,16 +1683,16 @@ fn select_no_currency_pattern<'a>(
 /// rendered by the value formatter.
 fn select_essentials_pattern<'a>(
     essentials: &'a super::super::provider::currency::essentials::CurrencyEssentials<'_>,
-    accounting: bool,
+    usage: CurrencyUsage,
     sign: Sign,
-    symbol_starts_with_letter: bool,
-    symbol_ends_with_letter: bool,
+    letters: SymbolLetters,
 ) -> (&'a icu_pattern::DoublePlaceholderPattern, Sign) {
+    let accounting = usage == CurrencyUsage::Accounting;
     if sign == Sign::Negative {
         let negative_pattern = if accounting {
-            essentials.get_negative_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
+            essentials.get_negative_accounting(letters)
         } else {
-            essentials.get_negative(symbol_starts_with_letter, symbol_ends_with_letter)
+            essentials.get_negative(letters)
         };
         if let Some(pattern) = negative_pattern {
             return (pattern, Sign::None);
@@ -1703,9 +1700,9 @@ fn select_essentials_pattern<'a>(
     }
 
     let positive_pattern = if accounting {
-        essentials.get_positive_accounting(symbol_starts_with_letter, symbol_ends_with_letter)
+        essentials.get_positive_accounting(letters)
     } else {
-        essentials.get_positive(symbol_starts_with_letter, symbol_ends_with_letter)
+        essentials.get_positive(letters)
     };
     (positive_pattern, sign)
 }
