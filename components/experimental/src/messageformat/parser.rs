@@ -22,8 +22,28 @@ pub(crate) enum Event<'a> {
     ExpressionStart,
     /// The operand of the expression.
     Operand(Value<'a>),
+    /// The function of the expression, without its options.
+    Function(Identifier<'a>),
+    /// An option of the expression's function.
+    OptionPair {
+        name: Identifier<'a>,
+        value: Value<'a>,
+    },
+    /// An attribute of the expression.
+    Attribute {
+        name: Identifier<'a>,
+        value: Option<Literal<'a>>,
+    },
     /// The `}` that closes an expression.
     ExpressionEnd,
+}
+
+/// The name of a function, option or attribute. Neither part contains bidi marks.
+#[derive(Debug)]
+#[cfg_attr(test, derive(PartialEq, Eq))]
+pub(crate) struct Identifier<'a> {
+    pub(crate) namespace: Option<&'a str>,
+    pub(crate) name: &'a str,
 }
 
 /// A literal or a variable.
@@ -116,11 +136,15 @@ pub(crate) struct Parser<'a> {
 }
 
 /// Where the parser is in the message, named after the last event it yielded.
+#[derive(Clone, Copy)]
 enum State {
     /// In a pattern, outside of any expression.
     Pattern,
     ExpressionStart,
     Operand,
+    /// After a function or one of its options.
+    Function,
+    Attribute,
 }
 
 impl<'a> Parser<'a> {
@@ -182,8 +206,10 @@ impl<'a> Parser<'a> {
     fn next_event(&mut self) -> Result<Option<(Event<'a>, Range<usize>)>, ParseError> {
         match self.state {
             State::Pattern => self.parse_pattern_part(),
-            State::ExpressionStart => self.parse_operand().map(Some),
-            State::Operand => self.parse_expression_end().map(Some),
+            State::ExpressionStart => self.parse_expression_start().map(Some),
+            State::Operand | State::Function | State::Attribute => {
+                self.parse_expression_part().map(Some)
+            }
         }
     }
 
@@ -269,42 +295,142 @@ impl<'a> Parser<'a> {
 
     // literal-expression  = "{" o literal [s function] *(s attribute) o "}"
     // variable-expression = "{" o variable [s function] *(s attribute) o "}"
-    // The `o literal` or `o variable` after the "{".
-    fn parse_operand(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
+    // function-expression = "{" o function *(s attribute) o "}"
+    // The `o literal`, `o variable` or `o function` after the "{".
+    fn parse_expression_start(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
         self.skip_o()?;
         let start = self.offset();
-        let operand = match self.peek()? {
-            Some(p) if p.c == '$' => {
+        let event = match self.peek()? {
+            Some(p) if p.c == ':' => {
                 p.consume();
-                Value::Variable(self.parse_name()?)
+                self.parse_function()?
             }
-            Some(p) if p.c == '|' => {
-                p.consume();
-                Value::Literal(self.parse_quoted_literal()?)
+            // The start of markup.
+            Some(p) if matches!(p.c, '#' | '/') => return Err(self.unsupported()),
+            _ => {
+                let operand = self.parse_value()?;
+                self.state = State::Operand;
+                Event::Operand(operand)
             }
-            // The start of a function-expression or markup.
-            Some(p) if matches!(p.c, ':' | '#' | '/') => return Err(self.unsupported()),
-            _ => Value::Literal(self.parse_unquoted_literal()?),
         };
-        self.state = State::Operand;
-        Ok((Event::Operand(operand), start..self.offset()))
+        Ok((event, start..self.offset()))
     }
 
-    // The `[s function] *(s attribute) o "}"` after an operand,
-    // without function and attributes.
-    fn parse_expression_end(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
+    // What can follow in an expression:
+    // after an operand,             [s function] *(s attribute) o "}"
+    // after a function or option,   *(s option) *(s attribute) o "}"
+    // after an attribute,           *(s attribute) o "}"
+    fn parse_expression_part(&mut self) -> Result<(Event<'a>, Range<usize>), ParseError> {
+        let state = self.state;
+        // s = *bidi ws o, so bidi marks alone do not separate the parts.
         let saw_ws = self.skip_o()?;
         let start = self.offset();
-        match self.peek()? {
-            Some(p) if p.c == '}' => {
+        let Some(p) = self.peek()? else {
+            return Err(self.eof());
+        };
+        let event = match (p.c, state) {
+            ('}', _) => {
                 p.consume();
                 self.state = State::Pattern;
-                Ok((Event::ExpressionEnd, start..self.offset()))
+                Event::ExpressionEnd
             }
-            // s = *bidi ws o, so bidi marks alone do not separate a function or attribute.
-            Some(p) if saw_ws && matches!(p.c, ':' | '@') => Err(self.unsupported()),
-            Some(p) => Err(p.unexpected()),
-            None => Err(self.eof()),
+            (':', State::Operand) if saw_ws => {
+                p.consume();
+                self.parse_function()?
+            }
+            ('@', _) if saw_ws => {
+                p.consume();
+                self.parse_attribute()?
+            }
+            (_, State::Function) if saw_ws => self.parse_option()?,
+            _ => return Err(p.unexpected()),
+        };
+        Ok((event, start..self.offset()))
+    }
+
+    // function = ":" identifier *(s option)
+    // The ":" has been consumed. The options are yielded as separate events.
+    fn parse_function(&mut self) -> Result<Event<'a>, ParseError> {
+        let name = self.parse_identifier()?;
+        self.state = State::Function;
+        Ok(Event::Function(name))
+    }
+
+    // option = identifier o "=" o (literal / variable)
+    fn parse_option(&mut self) -> Result<Event<'a>, ParseError> {
+        let name = self.parse_identifier()?;
+        self.skip_o()?;
+        match self.peek()? {
+            Some(p) if p.c == '=' => p.consume(),
+            Some(p) => return Err(p.unexpected()),
+            None => return Err(self.eof()),
+        }
+        self.skip_o()?;
+        let value = self.parse_value()?;
+        Ok(Event::OptionPair { name, value })
+    }
+
+    // attribute = "@" identifier [o "=" o literal]
+    // The "@" has been consumed.
+    fn parse_attribute(&mut self) -> Result<Event<'a>, ParseError> {
+        let name = self.parse_identifier()?;
+        // Without a "=", the whitespace after the identifier is not part of the
+        // attribute: it may be the `s` that the next attribute requires.
+        let after_name = self.rest;
+        self.skip_o()?;
+        let value = match self.peek()? {
+            Some(p) if p.c == '=' => {
+                p.consume();
+                self.skip_o()?;
+                Some(self.parse_literal()?)
+            }
+            _ => {
+                self.rest = after_name;
+                None
+            }
+        };
+        self.state = State::Attribute;
+        Ok(Event::Attribute { name, value })
+    }
+
+    // identifier = [namespace ":"] name
+    // namespace  = name
+    fn parse_identifier(&mut self) -> Result<Identifier<'a>, ParseError> {
+        let name = self.parse_name()?;
+        match self.peek()? {
+            Some(p) if p.c == ':' => {
+                p.consume();
+                Ok(Identifier {
+                    namespace: Some(name),
+                    name: self.parse_name()?,
+                })
+            }
+            _ => Ok(Identifier {
+                namespace: None,
+                name,
+            }),
+        }
+    }
+
+    // literal / variable
+    fn parse_value(&mut self) -> Result<Value<'a>, ParseError> {
+        match self.peek()? {
+            Some(p) if p.c == '$' => {
+                p.consume();
+                Ok(Value::Variable(self.parse_name()?))
+            }
+            _ => Ok(Value::Literal(self.parse_literal()?)),
+        }
+    }
+
+    // literal = quoted-literal / unquoted-literal
+    fn parse_literal(&mut self) -> Result<Literal<'a>, ParseError> {
+        match self.peek()? {
+            Some(p) if p.c == '|' => {
+                p.consume();
+                self.parse_quoted_literal()
+            }
+            _ => self.parse_unquoted_literal(),
         }
     }
 
@@ -499,7 +625,40 @@ mod tests {
     }
 
     fn lit(raw: &str) -> Event<'_> {
-        Operand(Value::Literal(Literal { raw }))
+        Operand(literal(raw))
+    }
+
+    fn literal(raw: &str) -> Value<'_> {
+        Value::Literal(Literal { raw })
+    }
+
+    /// An identifier written as `name` or `namespace:name`.
+    fn id(identifier: &str) -> Identifier<'_> {
+        match identifier.split_once(':') {
+            Some((namespace, name)) => Identifier {
+                namespace: Some(namespace),
+                name,
+            },
+            None => Identifier {
+                namespace: None,
+                name: identifier,
+            },
+        }
+    }
+
+    fn function(name: &str) -> Event<'_> {
+        Function(id(name))
+    }
+
+    fn option<'a>(name: &'a str, value: Value<'a>) -> Event<'a> {
+        let name = id(name);
+        OptionPair { name, value }
+    }
+
+    fn attribute<'a>(name: &'a str, value: Option<&'a str>) -> Event<'a> {
+        let name = id(name);
+        let value = value.map(|raw| Literal { raw });
+        Attribute { name, value }
     }
 
     /// The events of a message that is a single expression without whitespace,
@@ -510,6 +669,15 @@ mod tests {
             (operand, 1..len + 1),
             (ExpressionEnd, len + 1..len + 2),
         ]
+    }
+
+    /// The events of a message that is a single expression,
+    /// with the given parts between the `{` and the `}` at offset `close`.
+    fn expression_of(parts: Events<'_>, close: usize) -> Events<'_> {
+        let mut events = vec![(ExpressionStart, 0..1)];
+        events.extend(parts);
+        events.push((ExpressionEnd, close..close + 1));
+        events
     }
 
     #[test]
@@ -699,6 +867,9 @@ mod tests {
         assert_eq!(parse("{$x"), error(3, Eof));
         assert_eq!(parse("{|a|"), error(4, Eof));
         assert_eq!(parse("{42 "), error(4, Eof));
+        assert_eq!(parse("{:f"), error(3, Eof));
+        assert_eq!(parse("{$x :f k=v"), error(10, Eof));
+        assert_eq!(parse("{$x @a "), error(7, Eof));
     }
 
     #[test]
@@ -881,6 +1052,10 @@ mod tests {
             (b"{|a\xFF|}", 3),
             (b"{|\\\xFF|}", 3),
             (b"{4\xFF}", 2),
+            // In an identifier, in an option value and after an attribute.
+            (b"{:f\xFF}", 3),
+            (b"{:f k=\xFF}", 6),
+            (b"{$x @a \xFF}", 7),
         ] {
             assert_eq!(
                 Parser::new(source).collect::<Result<Events, _>>(),
@@ -891,16 +1066,175 @@ mod tests {
     }
 
     #[test]
-    fn unsupported_constructs() {
-        for (source, offset) in [
-            ("{:fn}", 1),
-            ("{$x :fn}", 4),
-            ("{$x @a}", 4),
-            ("{|a| :fn}", 5),
-            ("{42 @a}", 4),
-            ("{#b}", 1),
-            ("{/b}", 1),
-        ] {
+    fn function_after_quoted_literal() {
+        assert_eq!(
+            parse("{|a| :f}"),
+            Ok(expression_of(
+                vec![(lit("a"), 1..4), (function("f"), 5..7)],
+                7
+            ))
+        );
+    }
+
+    #[test]
+    fn bidi_marks_in_identifier() {
+        assert_eq!(
+            parse("{:\u{200E}ns\u{200F}:\u{200E}f\u{200F}}"),
+            Ok(expression_of(vec![(function("ns:f"), 1..18)], 18))
+        );
+    }
+
+    #[test]
+    fn non_ascii_identifiers() {
+        assert_eq!(
+            parse("{:名前 キー=値}"),
+            Ok(expression_of(
+                vec![
+                    (function("名前"), 1..8),
+                    (option("キー", literal("値")), 9..19)
+                ],
+                19
+            ))
+        );
+    }
+
+    #[test]
+    fn invalid_identifiers() {
+        assert_eq!(parse("{:}"), error(2, UnexpectedChar('}')));
+        assert_eq!(parse("{: f}"), error(2, UnexpectedChar(' ')));
+        assert_eq!(parse("{:1}"), error(2, UnexpectedChar('1')));
+        assert_eq!(parse("{::f}"), error(2, UnexpectedChar(':')));
+        assert_eq!(parse("{:f:}"), error(4, UnexpectedChar('}')));
+        assert_eq!(parse("{:f::g}"), error(4, UnexpectedChar(':')));
+        assert_eq!(parse("{:a:b:c}"), error(5, UnexpectedChar(':')));
+    }
+
+    #[test]
+    fn second_function() {
+        assert_eq!(parse("{:f :g}"), error(4, UnexpectedChar(':')));
+        assert_eq!(parse("{$x :f :g}"), error(7, UnexpectedChar(':')));
+    }
+
+    #[test]
+    fn option_with_quoted_literal_or_variable() {
+        let options = vec![
+            (function("f"), 1..3),
+            (option("a", literal("b c")), 4..11),
+            (option("d", Value::Variable("x")), 12..16),
+        ];
+        assert_eq!(parse("{:f a=|b c| d=$x}"), Ok(expression_of(options, 16)));
+    }
+
+    #[test]
+    fn whitespace_and_bidi_around_option_equals() {
+        assert_eq!(
+            parse("{:f k \u{200E}=\t v}"),
+            Ok(expression_of(
+                vec![(function("f"), 1..3), (option("k", literal("v")), 4..13)],
+                13
+            ))
+        );
+    }
+
+    #[test]
+    fn option_requires_whitespace() {
+        assert_eq!(parse("{:f k=|a|l=w}"), error(9, UnexpectedChar('l')));
+        assert_eq!(parse("{:f\u{200E}k=v}"), error(6, UnexpectedChar('k')));
+    }
+
+    #[test]
+    fn option_without_equals_or_value() {
+        assert_eq!(parse("{:f k}"), error(5, UnexpectedChar('}')));
+        assert_eq!(parse("{:f k v}"), error(6, UnexpectedChar('v')));
+        assert_eq!(parse("{:f k=}"), error(6, UnexpectedChar('}')));
+        assert_eq!(parse("{:f k"), error(5, Eof));
+        assert_eq!(parse("{:f k="), error(6, Eof));
+    }
+
+    #[test]
+    fn option_without_function() {
+        assert_eq!(parse("{$x k=v}"), error(4, UnexpectedChar('k')));
+        assert_eq!(parse("{42 k=v}"), error(4, UnexpectedChar('k')));
+    }
+
+    #[test]
+    fn whitespace_and_bidi_around_attribute_equals() {
+        assert_eq!(
+            parse("{$x @a \u{200E}=\t 1}"),
+            Ok(expression_of(
+                vec![(var("x"), 1..3), (attribute("a", Some("1")), 4..14)],
+                14
+            ))
+        );
+    }
+
+    #[test]
+    fn whitespace_after_attribute_without_value_is_not_in_its_span() {
+        assert_eq!(
+            parse("{$x @a \u{200E}}"),
+            Ok(expression_of(
+                vec![(var("x"), 1..3), (attribute("a", None), 4..6)],
+                10
+            ))
+        );
+    }
+
+    #[test]
+    fn attributes_after_function_and_option() {
+        let parts = vec![
+            (var("x"), 1..3),
+            (function("f"), 4..6),
+            (option("k", literal("v")), 7..10),
+            (attribute("a", None), 11..13),
+            (attribute("ns:b", Some("1")), 14..21),
+        ];
+        assert_eq!(
+            parse("{$x :f k=v @a @ns:b=1}"),
+            Ok(expression_of(parts, 21))
+        );
+    }
+
+    #[test]
+    fn duplicate_attributes_are_yielded() {
+        let parts = vec![
+            (function("f"), 1..3),
+            (attribute("a", None), 4..6),
+            (attribute("a", Some("1")), 7..11),
+        ];
+        assert_eq!(parse("{:f @a @a=1}"), Ok(expression_of(parts, 11)));
+    }
+
+    #[test]
+    fn attribute_value_must_be_a_literal() {
+        assert_eq!(parse("{$x @a=$y}"), error(7, UnexpectedChar('$')));
+        assert_eq!(parse("{$x @a=@b}"), error(7, UnexpectedChar('@')));
+        assert_eq!(parse("{$x @a=}"), error(7, UnexpectedChar('}')));
+        assert_eq!(parse("{$x @a="), error(7, Eof));
+    }
+
+    #[test]
+    fn attribute_requires_whitespace() {
+        assert_eq!(parse("{$x@a}"), error(3, UnexpectedChar('@')));
+        assert_eq!(parse("{:f@a}"), error(3, UnexpectedChar('@')));
+        assert_eq!(parse("{$x @a@b}"), error(6, UnexpectedChar('@')));
+        assert_eq!(parse("{$x @a=1@b}"), error(8, UnexpectedChar('@')));
+    }
+
+    #[test]
+    fn only_attributes_after_an_attribute() {
+        assert_eq!(parse("{:f @a k=v}"), error(7, UnexpectedChar('k')));
+        assert_eq!(parse("{$x @a :f}"), error(7, UnexpectedChar(':')));
+    }
+
+    #[test]
+    fn attribute_without_operand_or_function() {
+        assert_eq!(parse("{@a}"), error(1, UnexpectedChar('@')));
+        assert_eq!(parse("{ @a }"), error(2, UnexpectedChar('@')));
+    }
+
+    #[test]
+    fn markup_is_unsupported() {
+        for (source, offset) in [("{#b}", 1), ("{/b}", 1), ("{ #b}", 2)] {
             assert_eq!(parse(source), error(offset, Unsupported), "{source:?}");
         }
     }
@@ -1073,6 +1407,91 @@ mod tests {
     }
 
     // Fixtures from unicode-org/message-format-wg at tag LDML48.2,
+    // commit 7f142fb4f1f5ea6ab1eb34ce2b87e918ca9fd331, test/tests/syntax.json and bidi.json.
+    #[test]
+    fn conformance_valid_expressions() {
+        #[rustfmt::skip]
+        let fixtures = [
+            ("{a :f}", vec![(lit("a"), 1..2), (function("f"), 3..5)], 5),
+            ("{a :u:f}", vec![(lit("a"), 1..2), (function("u:f"), 3..7)], 7),
+            ("{$x :f}", vec![(var("x"), 1..3), (function("f"), 4..6)], 6),
+            ("{$x :u:f}", vec![(var("x"), 1..3), (function("u:f"), 4..8)], 8),
+            ("{:u:f}", vec![(function("u:f"), 1..5)], 5),
+            ("{:f}", vec![(function("f"), 1..3)], 3),
+            ("{ :f}", vec![(function("f"), 2..4)], 4),
+            ("{:f }", vec![(function("f"), 1..3)], 4),
+            ("{a @c}", vec![(lit("a"), 1..2), (attribute("c", None), 3..5)], 5),
+            ("{$x @c}", vec![(var("x"), 1..3), (attribute("c", None), 4..6)], 6),
+            ("{:f @c}", vec![(function("f"), 1..3), (attribute("c", None), 4..6)], 6),
+            ("{:f k=v}", vec![(function("f"), 1..3), (option("k", literal("v")), 4..7)], 7),
+            ("{:f k =v}", vec![(function("f"), 1..3), (option("k", literal("v")), 4..8)], 8),
+            ("{:f k= v}", vec![(function("f"), 1..3), (option("k", literal("v")), 4..8)], 8),
+            ("{:f k = v}", vec![(function("f"), 1..3), (option("k", literal("v")), 4..9)], 9),
+            ("{a @c=d}", vec![(lit("a"), 1..2), (attribute("c", Some("d")), 3..7)], 7),
+            ("{a @c =d}", vec![(lit("a"), 1..2), (attribute("c", Some("d")), 3..8)], 8),
+            ("{a @c= d}", vec![(lit("a"), 1..2), (attribute("c", Some("d")), 3..8)], 8),
+            ("{a @c = d}", vec![(lit("a"), 1..2), (attribute("c", Some("d")), 3..9)], 9),
+            (
+                "{42 @foo=|bar|}",
+                vec![(lit("42"), 1..3), (attribute("foo", Some("bar")), 4..14)],
+                14,
+            ),
+            (
+                "{42 @foo @bar=13}",
+                vec![
+                    (lit("42"), 1..3),
+                    (attribute("foo", None), 4..8),
+                    (attribute("bar", Some("13")), 9..16),
+                ],
+                16,
+            ),
+            (
+                "{1 \u{200E} :number \u{200F}}",
+                vec![(lit("1"), 1..2), (function("number"), 7..14)],
+                18,
+            ),
+            (
+                "{1 :number minimumFractionDigits\u{200F}=\u{200E}1 }",
+                vec![
+                    (lit("1"), 1..2),
+                    (function("number"), 3..10),
+                    (option("minimumFractionDigits", literal("1")), 11..40),
+                ],
+                41,
+            ),
+            (
+                "{1 :number @locale\u{200F}=\u{200E}en }",
+                vec![
+                    (lit("1"), 1..2),
+                    (function("number"), 3..10),
+                    (attribute("locale", Some("en")), 11..27),
+                ],
+                28,
+            ),
+        ];
+        for (source, parts, close) in fixtures {
+            assert_eq!(parse(source), Ok(expression_of(parts, close)), "{source:?}");
+        }
+    }
+
+    // A fixture from test/tests/data-model-errors.json at the same commit.
+    // Duplicate option names are for the data model to reject.
+    #[test]
+    fn duplicate_option_names_are_not_a_syntax_error() {
+        assert_eq!(
+            parse("bad {:placeholder option=x option=x}"),
+            Ok(vec![
+                (Text("bad "), 0..4),
+                (ExpressionStart, 4..5),
+                (function("placeholder"), 5..17),
+                (option("option", literal("x")), 18..26),
+                (option("option", literal("x")), 27..35),
+                (ExpressionEnd, 35..36),
+            ])
+        );
+    }
+
+    // Fixtures from unicode-org/message-format-wg at tag LDML48.2,
     // commit 7f142fb4f1f5ea6ab1eb34ce2b87e918ca9fd331, test/tests/syntax-errors.json.
     // Only fixtures whose error lies within the supported subset are included,
     // so each one is diagnosed as a syntax error rather than `Unsupported`.
@@ -1115,6 +1534,39 @@ mod tests {
             ("hello {$foo ~xyzz }", 12, UnexpectedChar('~')),
             ("hello {$x   <xyzz   }", 12, UnexpectedChar('<')),
             ("{  !xyzz   }", 3, UnexpectedChar('!')),
+            ("missing space {:func@bar}", 20, UnexpectedChar('@')),
+            ("missing space {:func @bar@baz}", 25, UnexpectedChar('@')),
+            ("missing space {:func @bar=42@baz}", 28, UnexpectedChar('@')),
+            ("bad {:} placeholder", 6, UnexpectedChar('}')),
+            (
+                "no-equal {|42| :number minimumFractionDigits 2}",
+                45,
+                UnexpectedChar('2'),
+            ),
+            ("bad {:placeholder option=}", 25, UnexpectedChar('}')),
+            ("bad {:placeholder option value}", 25, UnexpectedChar('v')),
+            ("bad {:placeholder option:value}", 30, UnexpectedChar('}')),
+            ("bad {:placeholder option}", 24, UnexpectedChar('}')),
+            ("bad {:placeholder:}", 18, UnexpectedChar('}')),
+            ("bad {::placeholder}", 6, UnexpectedChar(':')),
+            ("bad {:placeholder::foo}", 18, UnexpectedChar(':')),
+            ("bad {:placeholder option:=x}", 25, UnexpectedChar('=')),
+            ("bad {:placeholder :option=x}", 18, UnexpectedChar(':')),
+            ("bad {:placeholder option::x=y}", 25, UnexpectedChar(':')),
+            ("bad {:placeholder @attribute=}", 29, UnexpectedChar('}')),
+            (
+                "bad {:placeholder @attribute=@foo}",
+                29,
+                UnexpectedChar('@'),
+            ),
+            (
+                "bad {:placeholder @attribute=$foo}",
+                29,
+                UnexpectedChar('$'),
+            ),
+            ("{ @misplaced = attribute }", 2, UnexpectedChar('@')),
+            ("no {:placeholder end", 20, Eof),
+            ("foo {?reserved @a @b=c}", 5, UnexpectedChar('?')),
         ] {
             assert_eq!(parse(source), error(offset, kind), "{source:?}");
         }
