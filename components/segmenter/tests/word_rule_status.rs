@@ -153,3 +153,57 @@ fn rule_status_th() {
         assert!(!iter.is_word_like(), "None is false");
     }
 }
+
+#[test]
+fn rule_status_letter_followed_by_zwj_and_extend() {
+    for segmenter in [
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        {
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
+            s.load_auto();
+            s
+        },
+    ] {
+        // WB4: a trailing ZWJ or Extend does not change the type of the word before it.
+        // "a" is ALetter and U+200D is ZWJ, so the word must still report Letter instead
+        // of the status of the `ALetter_ZWJ` state that follows it.
+        let mut iter = segmenter.segment_str("a\u{200d}");
+
+        assert_eq!(iter.next(), Some(0), "SOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "SOT is false");
+
+        assert_eq!(iter.next(), Some(4), "after a and ZWJ");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter is true");
+
+        assert_eq!(iter.next(), None, "EOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+        assert!(!iter.is_word_like(), "None is false");
+    }
+}
+
+#[test]
+fn rule_status_katakana_followed_by_zwj() {
+    // Only the UAX #29 rule-based segmenter is exercised here: its `rule_status_table` is
+    // generated from `provider/source/data/segmenter/word.toml`. The neo segmenter reads
+    // its statuses from the ICU state machine data instead, and currently breaks "ヱ‍"
+    // into two segments, which is a separate question from the reported status values.
+    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+
+    // "ヱ" (U+30F1) is Katakana and the trailing U+200D is ZWJ. The status used to come
+    // from the `Katakana_ZWJ` state's index, which read an unrelated rule's value.
+    let mut iter = segmenter.segment_str("\u{30f1}\u{200d}");
+
+    assert_eq!(iter.next(), Some(0), "SOT");
+    assert_eq!(iter.word_type(), WordType::None, "none");
+
+    assert_eq!(iter.next(), Some(6), "after katakana and ZWJ");
+    assert_eq!(iter.word_type(), WordType::Letter, "letter");
+    assert!(iter.is_word_like(), "Letter is true");
+
+    assert_eq!(iter.next(), None, "EOT");
+    assert_eq!(iter.word_type(), WordType::None, "none");
+}

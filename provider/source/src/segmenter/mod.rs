@@ -130,6 +130,37 @@ fn generate_rule_break_data(
         properties_names.iter().position(|n| n.eq(s))
     }
 
+    /// The `WordType` a word break property reports as the status of a segment.
+    ///
+    /// UAX #29 gives a type to only some properties: `Numeric` is a number, and
+    /// `ALetter`, `Hebrew_Letter`, `ExtendNumLet`, `Katakana` and `SA` are letters.
+    /// Every other property is not word-like on its own.
+    ///
+    /// The state names in `word.toml` are built as `<left>_<right>`, so a state that
+    /// extends one of those properties (`ALetter_ZWJ`, `Katakana_ZWJ`,
+    /// `ALetter_Extended_Pictographic`, `Hebrew_Letter_Single_Quote_ZWJ`, ...) reports
+    /// the type of the longest named property it starts with. That keeps WB4 intact:
+    /// a trailing ZWJ or Extend does not change the type of the word before it.
+    fn word_type_for_property(name: &str) -> WordType {
+        const TYPED_PROPERTIES: &[(&str, WordType)] = &[
+            ("Numeric", WordType::Number),
+            ("ALetter_Extended_Pictographic", WordType::Letter),
+            ("ALetter", WordType::Letter),
+            ("Hebrew_Letter", WordType::Letter),
+            ("ExtendNumLet", WordType::Letter),
+            ("Katakana", WordType::Letter),
+            ("SA", WordType::Letter),
+        ];
+
+        TYPED_PROPERTIES
+            .iter()
+            .filter(|(prefix, _)| name.starts_with(*prefix))
+            // The longest match wins: `ALetter_Extended_Pictographic` must not be read
+            // as `ALetter`, and `ExtendNumLet_ZWJ` must not be read as `Extend`.
+            .max_by_key(|(prefix, _)| prefix.len())
+            .map_or(WordType::None, |&(_, word_type)| word_type)
+    }
+
     fn is_east_asian(eaw: CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
         matches!(
             eaw.get32(codepoint),
@@ -869,16 +900,16 @@ fn generate_rule_break_data(
             .map(|o| o.unwrap())
             .collect(),
         rule_status_table: if segmenter.segmenter_type == "word" {
-            segmenter
-                .tables
+            // The runtime looks this table up with the deduplicated property index
+            // (`RuleBreakIterator::rule_status`), so it has to be built over the property
+            // names in that same order, not over the `[[tables]]` entries: a combined
+            // state is its own entry, and the two lists stop lining up after the simple
+            // properties. `Unknown` is property 0 and has no table entry, because the
+            // iterator returns `None` for it before reaching the table.
+            properties_names
                 .iter()
-                .map(|p| match &*p.name {
-                    "Numeric" => WordType::Number,
-                    "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
-                        WordType::Letter
-                    }
-                    _ => WordType::None,
-                } as u8)
+                .skip(1)
+                .map(|name| word_type_for_property(name) as u8)
                 .collect()
         } else {
             Default::default()
