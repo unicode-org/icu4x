@@ -19,15 +19,16 @@ pub(super) fn tanh(x: f32) -> f32 {
 
 /// `e^x`.
 ///
-/// Splits `x = n ln 2 + r` with `|r| <= ln 2 / 2` and evaluates `e^r` with a degree-6
-/// polynomial (Cephes `expf`), relative error about 2e-7. The input is clamped so that
-/// `2^n` stays a normal `f32`.
+/// Splits `x = n ln 2 + r` with `|r| <= ln 2 / 2` and evaluates `e^r` with a degree-7
+/// Taylor polynomial, relative error under 1e-7. The input is clamped so that `2^n`
+/// stays a normal `f32`.
 #[inline]
 pub(super) fn exp(x: f32) -> f32 {
     const LOG2_E: f32 = core::f32::consts::LOG2_E;
-    // ln 2 split into a high part with few mantissa bits and a correction
-    const LN2_HI: f32 = 0.693_359_4;
-    const LN2_LO: f32 = -2.121_944_4e-4;
+    // Cody-Waite split of ln 2 into a high part with 12 significant bits (so `n * LN2_HI`
+    // is exact for `|n| <= 127`) and a low correction term.
+    const LN2_HI: f32 = 2839.0 / 4096.0;
+    const LN2_LO: f32 = (core::f64::consts::LN_2 - LN2_HI as f64) as f32;
     let x = x.clamp(-87.0, 88.0);
     // Round to nearest by adding and subtracting 1.5 * 2^23 (|x * LOG2_E| < 2^22);
     // `f32::round` is a libm call in no_std builds.
@@ -35,12 +36,14 @@ pub(super) fn exp(x: f32) -> f32 {
     let t = x * LOG2_E + ROUND;
     let n = t - ROUND;
     let r = x - n * LN2_HI - n * LN2_LO;
-    let p = 1.987_569_1e-4_f32;
-    let p = p * r + 1.398_199_9e-3;
-    let p = p * r + 8.333_452e-3;
-    let p = p * r + 4.166_579_6e-2;
-    let p = p * r + 1.666_666_5e-1;
-    let p = p * r + 0.5;
+    // Degree-7 Taylor polynomial of e^r via Horner's method:
+    // 1 + r + r^2 * (1/2! + r * (1/3! + r * (1/4! + r * (1/5! + r * (1/6! + r / 7!)))))
+    let p = 1.0_f32 / 5040.0;
+    let p = p * r + 1.0 / 720.0;
+    let p = p * r + 1.0 / 120.0;
+    let p = p * r + 1.0 / 24.0;
+    let p = p * r + 1.0 / 6.0;
+    let p = p * r + 1.0 / 2.0;
     let er = p * r * r + r + 1.0;
     // 2^n, built from the exponent bits; n is in [-126, 127] after the clamp. The low
     // mantissa bits of `t` hold n, which avoids a float-to-int cast that would stop
@@ -70,6 +73,7 @@ mod tests {
             assert!(exp(x).is_normal(), "exp({x}) = {}", exp(x));
         }
         assert!(exp(f32::NEG_INFINITY).is_normal());
+        assert!(exp(f32::NAN).is_nan());
     }
 
     #[test]
@@ -86,5 +90,7 @@ mod tests {
             );
             assert!((f64::from(t) - x64.tanh()).abs() < 1e-6, "tanh({x})");
         }
+        assert!(sigmoid(f32::NAN).is_nan());
+        assert!(tanh(f32::NAN).is_nan());
     }
 }
