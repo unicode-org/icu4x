@@ -1536,6 +1536,7 @@ dependencies = [
  "time",
  "tinystr",
  "ureq",
+ "utf8_iter",
  "writeable",
  "zerotrie",
  "zerovec",

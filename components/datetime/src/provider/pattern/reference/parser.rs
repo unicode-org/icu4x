@@ -12,6 +12,7 @@ use super::{GenericPattern, Pattern};
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use alloc::vec;
 use alloc::vec::Vec;
+use utf8_iter::Utf8CharsEx;
 
 /// A parser for [UTS #35 Date Format Patterns] and generic combination ("glue") patterns.
 ///
@@ -111,13 +112,8 @@ impl<'p> Parser<'p> {
                         result.extend(core::iter::repeat_n(PatternItem::Literal(ch), length));
                     }
                 }
-                Token::Literal(bytes) => {
-                    for chunk in bytes.utf8_chunks() {
-                        result.extend(chunk.valid().chars().map(PatternItem::Literal));
-                        if !chunk.invalid().is_empty() {
-                            result.push(PatternItem::Literal(char::REPLACEMENT_CHARACTER));
-                        }
-                    }
+                Token::Literal(s) => {
+                    result.extend(s.chars().map(PatternItem::Literal));
                 }
                 Token::UnclosedLiteral(_) => {
                     return Err(PatternError::UnclosedLiteral);
