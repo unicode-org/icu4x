@@ -472,6 +472,9 @@ impl SourceDataProvider {
     pub fn with_collation_root_han(self, collation_root_han: CollationRootHan) -> Self {
         Self {
             collation_root_han,
+            // Mint a new cache in case a pre-existing one has entries depending
+            // on `collation_root_han`.
+            requests_cache: Default::default(),
             ..self
         }
     }

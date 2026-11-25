@@ -148,6 +148,23 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     CollationSpecialPrimariesV1::INFO,
 ];
 
+/// `true` iff `ce32`, when interpreted as `CollationElement32`,
+/// is self-contained.
+///
+/// For use by datagen only.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases.
+/// </div>
+#[cfg(feature = "datagen")]
+#[doc(hidden)]
+pub fn is_self_contained(ce32: u32) -> bool {
+    CollationElement32::new(ce32)
+        .to_ce_self_contained()
+        .is_some()
+}
+
 const SINGLE_U32: &ZeroSlice<u32> =
     zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [FFFD_CE32_VALUE]);
 const SINGLE_U64: &ZeroSlice<u64> =
