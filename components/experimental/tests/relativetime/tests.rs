@@ -24,8 +24,9 @@ macro_rules! generate_test {
             .expect("locale should be present");
 
             $(
+                let dec = Decimal::from($en_time);
                 assert_writeable_eq!(
-                    relative_time_formatter.format(Decimal::from($en_time)),
+                    relative_time_formatter.format(&dec),
                     $en_expected
                 );
             )+
@@ -37,8 +38,9 @@ macro_rules! generate_test {
             .expect("locale should be present");
 
             $(
+                let dec = Decimal::from($ar_time);
                 assert_writeable_eq!(
-                    relative_time_formatter.format(Decimal::from($ar_time)),
+                    relative_time_formatter.format(&dec),
                     $ar_expected
                 );
             )+
@@ -1157,9 +1159,21 @@ fn test_numbering_system_latn() {
     let formatter_bn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
     prefs.numbering_system = Some(value!("latn").try_into().unwrap());
     let formatter_bn_latn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
-    assert_writeable_eq!(formatter_bn.format(55.into()), "৫৫ দিনের মধ্যে");
-    assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
+    let dec = 55.into();
+    assert_writeable_eq!(formatter_bn.format(&dec), "৫৫ দিনের মধ্যে");
+    assert_writeable_eq!(formatter_bn_latn.format(&dec), "55 দিনের মধ্যে");
 }
+
+#[test]
+fn test_format_to_string() {
+    let options = RelativeTimeFormatterOptions::default().with_numeric(Numeric::Auto);
+    let formatter = RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
+
+    assert_eq!(formatter.format_to_string(&0.into()), "today");
+    assert_eq!(formatter.format_to_string(&(-1).into()), "yesterday");
+    assert_eq!(formatter.format_to_string(&5.into()), "in 5 days");
+}
+
 #[test]
 fn test_options_and_grouping_strategy() {
     let formatter_default = RelativeTimeFormatter::try_new_long_day(
@@ -1167,15 +1181,18 @@ fn test_options_and_grouping_strategy() {
         RelativeTimeFormatterOptions::default(),
     )
     .unwrap();
-    assert_writeable_eq!(formatter_default.format(1500.into()), "in 1,500 days");
+    let d1500 = 1500.into();
+    let d15000 = 15000.into();
+    let d1 = 1.into();
+    assert_writeable_eq!(formatter_default.format(&d1500), "in 1,500 days");
 
     let formatter_min2 = RelativeTimeFormatter::try_new_long_day(
         locale!("en").into(),
         RelativeTimeFormatterOptions::default().with_grouping_strategy(GroupingStrategy::Min2),
     )
     .unwrap();
-    assert_writeable_eq!(formatter_min2.format(1500.into()), "in 1500 days");
-    assert_writeable_eq!(formatter_min2.format(15000.into()), "in 15,000 days");
+    assert_writeable_eq!(formatter_min2.format(&d1500), "in 1500 days");
+    assert_writeable_eq!(formatter_min2.format(&d15000), "in 15,000 days");
 
     let formatter_never = RelativeTimeFormatter::try_new_long_day(
         locale!("en").into(),
@@ -1184,8 +1201,8 @@ fn test_options_and_grouping_strategy() {
             .with_grouping_strategy(GroupingStrategy::Never),
     )
     .unwrap();
-    assert_writeable_eq!(formatter_never.format(1.into()), "tomorrow");
-    assert_writeable_eq!(formatter_never.format(15000.into()), "in 15000 days");
+    assert_writeable_eq!(formatter_never.format(&d1), "tomorrow");
+    assert_writeable_eq!(formatter_never.format(&d15000), "in 15000 days");
 }
 
 #[test]
@@ -1200,15 +1217,17 @@ fn test_write_to_parts() {
         RelativeTimeFormatter::try_new_long_day(locale!("en").into(), options).unwrap();
 
     // Non-numeric relative literal ("yesterday")
+    let minus_one = (-1).into();
     assert_writeable_parts_eq!(
-        formatter_en.format((-1).into()),
+        formatter_en.format(&minus_one),
         "yesterday",
         [(0, 9, parts::LITERAL)]
     );
 
     // Numeric interpolated pattern ("in 5 days")
+    let five = 5.into();
     assert_writeable_parts_eq!(
-        formatter_en.format(5.into()),
+        formatter_en.format(&five),
         "in 5 days",
         [(3, 4, icu_decimal::parts::INTEGER)]
     );
@@ -1216,7 +1235,7 @@ fn test_write_to_parts() {
     // Numeric interpolated pattern with group and fraction ("1,234.5 days ago")
     let dec: Decimal = "-1234.5".parse().unwrap();
     assert_writeable_parts_eq!(
-        formatter_en.format(dec),
+        formatter_en.format(&dec),
         "1,234.5 days ago",
         [
             (0, 5, icu_decimal::parts::INTEGER),
@@ -1232,7 +1251,7 @@ fn test_write_to_parts() {
         RelativeTimeFormatterOptions::default(),
     )
     .unwrap();
-    assert_writeable_parts_eq!(formatter_ar.format((-1).into()), "قبل سنة واحدة", []);
+    assert_writeable_parts_eq!(formatter_ar.format(&minus_one), "قبل سنة واحدة", []);
 }
 
 #[test]
@@ -1248,14 +1267,16 @@ fn test_negative_zero_and_trailing_zeros() {
     .unwrap();
 
     // +0 with Numeric::Auto uses "today", but -0 falls through to "past" ("0 days ago").
+    let zero = 0.into();
     let neg_zero: Decimal = "-0".parse().unwrap();
-    assert_writeable_eq!(formatter_auto.format(0.into()), "today");
-    assert_writeable_eq!(formatter_auto.format(neg_zero), "0 days ago");
-    assert_writeable_eq!(formatter_always.format(0.into()), "in 0 days");
-    assert_writeable_eq!(formatter_always.format("-0".parse().unwrap()), "0 days ago");
+    assert_writeable_eq!(formatter_auto.format(&zero), "today");
+    assert_writeable_eq!(formatter_auto.format(&neg_zero), "0 days ago");
+    assert_writeable_eq!(formatter_always.format(&zero), "in 0 days");
+    assert_writeable_eq!(formatter_always.format(&neg_zero), "0 days ago");
 
     // 1.0 with trailing fractional zero does not match integer 1 ("tomorrow").
+    let one = 1.into();
     let one_point_zero: Decimal = "1.0".parse().unwrap();
-    assert_writeable_eq!(formatter_auto.format(1.into()), "tomorrow");
-    assert_writeable_eq!(formatter_auto.format(one_point_zero), "in 1.0 days");
+    assert_writeable_eq!(formatter_auto.format(&one), "tomorrow");
+    assert_writeable_eq!(formatter_auto.format(&one_point_zero), "in 1.0 days");
 }
