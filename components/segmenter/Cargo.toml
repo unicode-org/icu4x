@@ -35,7 +35,6 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 
-
 icu_segmenter_data = { workspace = true, optional = true }
 icu_locale_fallback = { workspace = true, optional = true }
 
