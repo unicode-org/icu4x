@@ -298,6 +298,16 @@ fn main() {
 
 struct StubExporter<E>(E);
 
+/// Azeri is included in collation stub data, because it has both tailoring and reordering data.
+fn is_stub_collation_locale(locale: &DataLocale) -> bool {
+    use icu::locale::subtags::language;
+    locale.language == language!("az")
+        && locale.script.is_none()
+        && locale.region.is_none()
+        && locale.variant.is_none()
+        && locale.subdivision.is_none()
+}
+
 impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
@@ -305,9 +315,12 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        if (id.locale.is_unknown()
+        if ((id.locale.is_unknown()
             || marker == icu::segmenter::provider::SegmenterBreakLineOverrideV2::INFO)
-            && marker.expose_baked_consts
+            && marker.expose_baked_consts)
+            // Make every collation-related marker have data.
+            || (icu::collator::provider::MARKERS.contains(&marker)
+                && is_stub_collation_locale(id.locale))
         {
             self.0.put_payload(marker, id, payload)
         } else {
