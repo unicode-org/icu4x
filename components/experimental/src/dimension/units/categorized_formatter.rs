@@ -62,7 +62,7 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
 
 impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     /// Returns the data marker attributes of a unit for a width: the unit for the short width,
-    /// and the unit with `-l` or `-n` after it for the long or the narrow width.
+    /// and the unit with `/l` or `/n` after it for the long or the narrow width.
     ///
     /// The width is after the unit so that the widths of a unit share the unit in the keys
     /// of the data.
@@ -72,8 +72,8 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
         let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
         let suffix = match width {
             Width::Short => "",
-            Width::Narrow => "-n",
-            Width::Long => "-l",
+            Width::Narrow => "/n",
+            Width::Long => "/l",
         };
         buffer.extend_from_slice(unit.as_bytes());
         buffer.extend_from_slice(suffix.as_bytes());
@@ -798,7 +798,7 @@ mod tests {
         assert_eq!(result.unwrap_err().kind, DataErrorKind::IdentifierNotFound);
         assert_eq!(
             requests.into_inner(),
-            [("day-l".to_string(), true), ("day".to_string(), false)]
+            [("day/l".to_string(), true), ("day".to_string(), false)]
         );
 
         // Another error is returned, and the short name is not loaded.
