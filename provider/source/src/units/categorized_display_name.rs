@@ -6,10 +6,22 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_names::{
-    UnitsNamesAreaHeavyV1, UnitsNamesAreaLightV1, UnitsNamesAreaTinyV1, UnitsNamesDurationHeavyV1,
-    UnitsNamesDurationLightV1, UnitsNamesDurationTinyV1, UnitsNamesLengthHeavyV1,
-    UnitsNamesLengthLightV1, UnitsNamesLengthTinyV1, UnitsNamesMassHeavyV1, UnitsNamesMassLightV1,
-    UnitsNamesMassTinyV1, UnitsNamesVolumeHeavyV1, UnitsNamesVolumeLightV1, UnitsNamesVolumeTinyV1,
+    UnitsNamesAreaLongHeavyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongTinyV1,
+    UnitsNamesAreaNarrowHeavyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowTinyV1,
+    UnitsNamesAreaShortHeavyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortTinyV1,
+    UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongTinyV1,
+    UnitsNamesDurationNarrowHeavyV1, UnitsNamesDurationNarrowLightV1,
+    UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationShortHeavyV1, UnitsNamesDurationShortLightV1,
+    UnitsNamesDurationShortTinyV1, UnitsNamesLengthLongHeavyV1, UnitsNamesLengthLongLightV1,
+    UnitsNamesLengthLongTinyV1, UnitsNamesLengthNarrowHeavyV1, UnitsNamesLengthNarrowLightV1,
+    UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthShortHeavyV1, UnitsNamesLengthShortLightV1,
+    UnitsNamesLengthShortTinyV1, UnitsNamesMassLongHeavyV1, UnitsNamesMassLongLightV1,
+    UnitsNamesMassLongTinyV1, UnitsNamesMassNarrowHeavyV1, UnitsNamesMassNarrowLightV1,
+    UnitsNamesMassNarrowTinyV1, UnitsNamesMassShortHeavyV1, UnitsNamesMassShortLightV1,
+    UnitsNamesMassShortTinyV1, UnitsNamesVolumeLongHeavyV1, UnitsNamesVolumeLongLightV1,
+    UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeNarrowHeavyV1, UnitsNamesVolumeNarrowLightV1,
+    UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeShortHeavyV1, UnitsNamesVolumeShortLightV1,
+    UnitsNamesVolumeShortTinyV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
 use icu::locale::fallback::{LocaleFallbackIterator, LocaleFallbacker};
@@ -17,42 +29,50 @@ use icu_provider::DataMarkerAttributes;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
+/// The width of the unit names that a marker holds.
+#[derive(Clone, Copy, PartialEq)]
+enum Width {
+    Long,
+    Short,
+    Narrow,
+}
+
+impl Width {
+    /// Returns the data of this width from the units data of a locale.
+    fn select(
+        self,
+        units: &cldr_serde::units::data::UnitsData,
+    ) -> &cldr_serde::units::data::UnitsLengthData {
+        match self {
+            Self::Long => &units.long,
+            Self::Short => &units.short,
+            Self::Narrow => &units.narrow,
+        }
+    }
+}
+
 impl SourceDataProvider {
-    fn get_display_name_payload<M>(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>
+    fn get_display_name_payload<M>(
+        &self,
+        req: DataRequest,
+        width: Width,
+    ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
-        let (length, unit) = req
-            .id
-            .marker_attributes
-            .split_once('-')
-            .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
+        let unit = req.id.marker_attributes.as_str();
 
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
             .units()
             .read_and_parse(req.id.locale, "units.json")?;
 
-        let units_format_data = &units_format_data.main.value.units;
-
-        let unit_patterns = match length {
-            "long" => &units_format_data.long,
-            "short" => &units_format_data.short,
-            "narrow" => &units_format_data.narrow,
-            _ => {
-                return Err(DataErrorKind::InvalidRequest
-                    .with_req(M::INFO, req)
-                    .with_debug_context(length));
-            }
-        }
-        .categories
-        .iter()
-        .find_map(|(_, units_map)| units_map.get(unit))
-        .ok_or_else(|| {
-            DataErrorKind::IdentifierNotFound
-                .with_req(M::INFO, req)
-                .with_debug_context(length)
-        })?;
+        let unit_patterns = width
+            .select(&units_format_data.main.value.units)
+            .categories
+            .iter()
+            .find_map(|(_, units_map)| units_map.get(unit))
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(M::INFO, req))?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -60,7 +80,7 @@ impl SourceDataProvider {
         })
     }
 
-    /// Returns whether the patterns of a unit for a length differ from its short patterns
+    /// Returns whether the patterns of a unit for a width differ from its short patterns
     /// in a locale or in one of its parents. Only then does the data need them.
     ///
     /// As in CLDR, the formatter looks for the long or the narrow patterns in the locale and
@@ -73,7 +93,7 @@ impl SourceDataProvider {
     fn differs_from_short(
         &self,
         mut locales: LocaleFallbackIterator,
-        length: &str,
+        width: Width,
         category: &str,
         unit: &str,
     ) -> Result<bool, DataError> {
@@ -84,16 +104,17 @@ impl SourceDataProvider {
                 let data: &cldr_serde::units::data::Resource =
                     units.read_and_parse(locale, "units.json")?;
                 let data = &data.main.value.units;
-                let patterns = |length| {
-                    data.length(length)?
+                let patterns = |width: Width| {
+                    width
+                        .select(data)
                         .categories
                         .get(category)?
                         .get(unit)?
                         .try_into_plural_elements_packed_cow()
                         .ok()
                 };
-                let length_patterns = patterns(length);
-                if length_patterns.is_some() && length_patterns != patterns("short") {
+                let width_patterns = patterns(width);
+                if width_patterns.is_some() && width_patterns != patterns(Width::Short) {
                     return Ok(true);
                 }
             }
@@ -108,6 +129,7 @@ impl SourceDataProvider {
         &self,
         unit_type: UnitType,
         category: &str,
+        width: Width,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let fallbacker = LocaleFallbacker::try_new_unstable(self)?;
         let fallbacker = fallbacker.for_config(M::INFO.fallback_config);
@@ -126,63 +148,49 @@ impl SourceDataProvider {
 
             let units_format_data: &cldr_serde::units::data::Resource =
                 self.cldr()?.units().read_and_parse(&locale, "units.json")?;
-            let units_format_data = &units_format_data.main.value.units;
-
-            for length in &["long", "short", "narrow"] {
-                let length_patterns = match *length {
-                    "long" => &units_format_data.long,
-                    "short" => &units_format_data.short,
-                    "narrow" => &units_format_data.narrow,
-                    _ => {
-                        return Err(DataErrorKind::IdentifierNotFound
-                            .into_error()
-                            .with_debug_context(length));
-                    }
-                };
-
-                let units_map = length_patterns.categories.get(category).ok_or_else(|| {
+            let units_map = width
+                .select(&units_format_data.main.value.units)
+                .categories
+                .get(category)
+                .ok_or_else(|| {
                     DataErrorKind::InvalidRequest
                         .into_error()
                         .with_debug_context(category)
                 })?;
-                for (unit, patterns) in units_map {
-                    if patterns.other.is_none() {
-                        continue;
-                    }
+            for (unit, patterns) in units_map {
+                if patterns.other.is_none() {
+                    continue;
+                }
 
-                    if cldr_serde::units::preferences::Supplemental::unit_type(
+                if cldr_serde::units::preferences::Supplemental::unit_type(
+                    category,
+                    unit,
+                    &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
+                    &categorized_units_list,
+                ) != unit_type
+                {
+                    continue;
+                }
+
+                // The formatter takes the short patterns when the data has no patterns
+                // for the width, as CLDR does.
+                if width != Width::Short
+                    && !self.differs_from_short(
+                        fallbacker.fallback_for(locale),
+                        width,
                         category,
                         unit,
-                        &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
-                        &categorized_units_list,
-                    ) != unit_type
-                    {
-                        continue;
-                    }
-
-                    // The formatter takes the short patterns when the data has no patterns
-                    // for the length, as CLDR does.
-                    if *length != "short"
-                        && !self.differs_from_short(
-                            fallbacker.fallback_for(locale),
-                            length,
-                            category,
-                            unit,
-                        )?
-                    {
-                        continue;
-                    }
-
-                    data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse the attribute")
-                                    .with_debug_context(&unit)
-                            },
-                        )?,
-                        locale,
-                    ));
+                    )?
+                {
+                    continue;
                 }
+
+                data_locales.insert(DataIdentifierCow::from_owned(
+                    DataMarkerAttributes::try_from_string(unit.clone()).map_err(|_| {
+                        DataError::custom("Failed to parse the attribute").with_debug_context(&unit)
+                    })?,
+                    locale,
+                ));
             }
         }
 
@@ -191,46 +199,86 @@ impl SourceDataProvider {
 }
 
 macro_rules! impl_units_display_names_provider {
-    ($marker:ty, $unit_type:expr, $category:expr) => {
+    ($marker:ty, $unit_type:expr, $category:expr, $width:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
-                self.get_display_name_payload::<$marker>(req)
+                self.get_display_name_payload::<$marker>(req, $width)
             }
         }
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.get_display_name_iter_ids_cached::<$marker>($unit_type, $category)
+                self.get_display_name_iter_ids_cached::<$marker>($unit_type, $category, $width)
             }
         }
     };
 }
 
-// Area
-impl_units_display_names_provider!(UnitsNamesAreaTinyV1, UnitType::Tiny, "area");
-impl_units_display_names_provider!(UnitsNamesAreaLightV1, UnitType::Light, "area");
-impl_units_display_names_provider!(UnitsNamesAreaHeavyV1, UnitType::Heavy, "area");
+/// Implements the providers of the markers of one category: one for each width and tier.
+macro_rules! impl_units_display_names_providers {
+    (
+        $category:expr,
+        long: [$long_tiny:ty, $long_light:ty, $long_heavy:ty],
+        short: [$short_tiny:ty, $short_light:ty, $short_heavy:ty],
+        narrow: [$narrow_tiny:ty, $narrow_light:ty, $narrow_heavy:ty] $(,)?
+    ) => {
+        impl_units_display_names_provider!($long_tiny, UnitType::Tiny, $category, Width::Long);
+        impl_units_display_names_provider!($long_light, UnitType::Light, $category, Width::Long);
+        impl_units_display_names_provider!($long_heavy, UnitType::Heavy, $category, Width::Long);
+        impl_units_display_names_provider!($short_tiny, UnitType::Tiny, $category, Width::Short);
+        impl_units_display_names_provider!($short_light, UnitType::Light, $category, Width::Short);
+        impl_units_display_names_provider!($short_heavy, UnitType::Heavy, $category, Width::Short);
+        impl_units_display_names_provider!($narrow_tiny, UnitType::Tiny, $category, Width::Narrow);
+        impl_units_display_names_provider!(
+            $narrow_light,
+            UnitType::Light,
+            $category,
+            Width::Narrow
+        );
+        impl_units_display_names_provider!(
+            $narrow_heavy,
+            UnitType::Heavy,
+            $category,
+            Width::Narrow
+        );
+    };
+}
 
-// Duration
-impl_units_display_names_provider!(UnitsNamesDurationTinyV1, UnitType::Tiny, "duration");
-impl_units_display_names_provider!(UnitsNamesDurationLightV1, UnitType::Light, "duration");
-impl_units_display_names_provider!(UnitsNamesDurationHeavyV1, UnitType::Heavy, "duration");
+impl_units_display_names_providers!(
+    "area",
+    long: [UnitsNamesAreaLongTinyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongHeavyV1],
+    short: [UnitsNamesAreaShortTinyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortHeavyV1],
+    narrow: [UnitsNamesAreaNarrowTinyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowHeavyV1],
+);
 
-// Length
-impl_units_display_names_provider!(UnitsNamesLengthTinyV1, UnitType::Tiny, "length");
-impl_units_display_names_provider!(UnitsNamesLengthLightV1, UnitType::Light, "length");
-impl_units_display_names_provider!(UnitsNamesLengthHeavyV1, UnitType::Heavy, "length");
+impl_units_display_names_providers!(
+    "duration",
+    long: [UnitsNamesDurationLongTinyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongHeavyV1],
+    short: [UnitsNamesDurationShortTinyV1, UnitsNamesDurationShortLightV1, UnitsNamesDurationShortHeavyV1],
+    narrow: [UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationNarrowLightV1, UnitsNamesDurationNarrowHeavyV1],
+);
 
-// Mass
-impl_units_display_names_provider!(UnitsNamesMassTinyV1, UnitType::Tiny, "mass");
-impl_units_display_names_provider!(UnitsNamesMassLightV1, UnitType::Light, "mass");
-impl_units_display_names_provider!(UnitsNamesMassHeavyV1, UnitType::Heavy, "mass");
+impl_units_display_names_providers!(
+    "length",
+    long: [UnitsNamesLengthLongTinyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongHeavyV1],
+    short: [UnitsNamesLengthShortTinyV1, UnitsNamesLengthShortLightV1, UnitsNamesLengthShortHeavyV1],
+    narrow: [UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthNarrowLightV1, UnitsNamesLengthNarrowHeavyV1],
+);
 
-// Volume
-impl_units_display_names_provider!(UnitsNamesVolumeTinyV1, UnitType::Tiny, "volume");
-impl_units_display_names_provider!(UnitsNamesVolumeLightV1, UnitType::Light, "volume");
-impl_units_display_names_provider!(UnitsNamesVolumeHeavyV1, UnitType::Heavy, "volume");
+impl_units_display_names_providers!(
+    "mass",
+    long: [UnitsNamesMassLongTinyV1, UnitsNamesMassLongLightV1, UnitsNamesMassLongHeavyV1],
+    short: [UnitsNamesMassShortTinyV1, UnitsNamesMassShortLightV1, UnitsNamesMassShortHeavyV1],
+    narrow: [UnitsNamesMassNarrowTinyV1, UnitsNamesMassNarrowLightV1, UnitsNamesMassNarrowHeavyV1],
+);
+
+impl_units_display_names_providers!(
+    "volume",
+    long: [UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeLongLightV1, UnitsNamesVolumeLongHeavyV1],
+    short: [UnitsNamesVolumeShortTinyV1, UnitsNamesVolumeShortLightV1, UnitsNamesVolumeShortHeavyV1],
+    narrow: [UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeNarrowLightV1, UnitsNamesVolumeNarrowHeavyV1],
+);
 
 #[test]
 fn test_basic() {
@@ -241,10 +289,10 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsNamesLengthLongTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -259,10 +307,10 @@ fn test_basic() {
         .interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsNamesLengthShortTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("en"),
             ),
             ..Default::default()
@@ -276,10 +324,10 @@ fn test_basic() {
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
-    let ar_eg_locale: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let ar_eg_locale: DataPayload<UnitsNamesLengthLongTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("ar-EG"),
             ),
             ..Default::default()
@@ -291,10 +339,10 @@ fn test_basic() {
     let long = ar_eg_locale.get().get(1.into(), &ar_rules).interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
-    let fr_locale: DataPayload<UnitsNamesLengthTinyV1> = provider
+    let fr_locale: DataPayload<UnitsNamesLengthShortTinyV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                DataMarkerAttributes::from_str_or_panic("meter"),
                 &data_locale!("fr"),
             ),
             ..Default::default()
@@ -307,14 +355,10 @@ fn test_basic() {
     assert_writeable_eq!(short, "5 m");
 }
 
-/// Loads the unit names of an attribute, such as `narrow-day`, for a locale from the
-/// marker `M`. Returns `None` if the data has no such names.
+/// Loads the names of a unit for a locale from the marker `M`.
+/// Returns `None` if the data has no such names.
 #[cfg(test)]
-fn load_names<M>(
-    provider: &SourceDataProvider,
-    locale: &str,
-    attributes: &str,
-) -> Option<DataPayload<M>>
+fn load_names<M>(provider: &SourceDataProvider, locale: &str, unit: &str) -> Option<DataPayload<M>>
 where
     M: DataMarker,
     SourceDataProvider: DataProvider<M>,
@@ -322,7 +366,7 @@ where
     provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                DataMarkerAttributes::from_str_or_panic(attributes),
+                DataMarkerAttributes::from_str_or_panic(unit),
                 &locale.parse().unwrap(),
             ),
             ..Default::default()
@@ -336,34 +380,41 @@ where
 /// can't take the short ones.
 #[test]
 fn test_long_and_narrow_differ_from_short() {
-    let provider = SourceDataProvider::new_testing();
-    let tiny =
-        |locale, attributes| load_names::<UnitsNamesDurationTinyV1>(&provider, locale, attributes);
-    let heavy =
-        |locale, attributes| load_names::<UnitsNamesDurationHeavyV1>(&provider, locale, attributes);
+    let provider = &SourceDataProvider::new_testing();
+    let long_tiny =
+        |locale, unit| load_names::<UnitsNamesDurationLongTinyV1>(provider, locale, unit);
+    let short_tiny =
+        |locale, unit| load_names::<UnitsNamesDurationShortTinyV1>(provider, locale, unit);
+    let narrow_tiny =
+        |locale, unit| load_names::<UnitsNamesDurationNarrowTinyV1>(provider, locale, unit);
+    let long_heavy =
+        |locale, unit| load_names::<UnitsNamesDurationLongHeavyV1>(provider, locale, unit);
+    let short_heavy =
+        |locale, unit| load_names::<UnitsNamesDurationShortHeavyV1>(provider, locale, unit);
+    let narrow_heavy =
+        |locale, unit| load_names::<UnitsNamesDurationNarrowHeavyV1>(provider, locale, unit);
 
     // In root, the long and the narrow patterns are aliases of the short ones.
-    assert!(tiny("und", "short-day").is_some());
-    assert!(tiny("und", "long-day").is_none());
-    assert!(tiny("und", "narrow-day").is_none());
+    assert!(short_tiny("und", "day").is_some());
+    assert!(long_tiny("und", "day").is_none());
+    assert!(narrow_tiny("und", "day").is_none());
 
     // In English, the long patterns of `day` are the short ones (`{0} day`, `{0} days`),
     // and the narrow pattern is `{0}d`.
-    assert!(tiny("en", "short-day").is_some());
-    assert!(tiny("en", "long-day").is_none());
-    assert!(tiny("en", "narrow-day").is_some());
+    assert!(short_tiny("en", "day").is_some());
+    assert!(long_tiny("en", "day").is_none());
+    assert!(narrow_tiny("en", "day").is_some());
 
     // The narrow patterns of `night` in `es-AR` are its short ones (`{0} noches`).
     // But `es`, a parent of `es-AR`, has the narrow `{0}noches`, and the formatter
     // would find it for `es-AR`. So `es-AR` keeps its narrow patterns.
-    assert!(heavy("es-AR", "narrow-night").is_some());
-    assert_eq!(
-        heavy("es-AR", "narrow-night"),
-        heavy("es-AR", "short-night")
-    );
-    assert_ne!(heavy("es-AR", "narrow-night"), heavy("es", "narrow-night"));
+    let es_ar_narrow = narrow_heavy("es-AR", "night").unwrap();
+    let es_ar_short = short_heavy("es-AR", "night").unwrap();
+    let es_narrow = narrow_heavy("es", "night").unwrap();
+    assert_eq!(es_ar_narrow.get(), es_ar_short.get());
+    assert_ne!(es_ar_narrow.get(), es_narrow.get());
 
     // The long patterns of `night` are the short ones in `es-AR`, in `es`, and in root.
-    assert!(heavy("es-AR", "long-night").is_none());
-    assert!(heavy("es", "long-night").is_none());
+    assert!(long_heavy("es-AR", "night").is_none());
+    assert!(long_heavy("es", "night").is_none());
 }

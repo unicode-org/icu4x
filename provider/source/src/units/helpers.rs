@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_serde::units::data::{Patterns, UnitsData, UnitsLengthData};
+use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::units::info::Constant;
 use crate::cldr_serde::units::preferences::{CategorizedUnitsList, Supplemental, UnitType};
 use core::str::FromStr;
@@ -505,18 +505,6 @@ impl Patterns {
             .with_explicit_one_value(self.explicit_one.as_deref())
             .with_explicit_zero_value(self.explicit_zero.as_deref())
             .into())
-    }
-}
-
-impl UnitsData {
-    /// Returns the data of a length: "long", "short", or "narrow".
-    pub(crate) fn length(&self, length: &str) -> Option<&UnitsLengthData> {
-        match length {
-            "long" => Some(&self.long),
-            "short" => Some(&self.short),
-            "narrow" => Some(&self.narrow),
-            _ => None,
-        }
     }
 }
 
