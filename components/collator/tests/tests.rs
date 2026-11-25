@@ -21,8 +21,8 @@ const _: () = {
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);
-    impl_collation_root_v1!(TestingProvider);
-    impl_collation_tailoring_v1!(TestingProvider);
+    impl_collation_root_v2!(TestingProvider);
+    impl_collation_tailoring_v2!(TestingProvider);
     impl_collation_diacritics_v1!(TestingProvider);
     impl_collation_jamo_v1!(TestingProvider);
     impl_collation_metadata_v1!(TestingProvider);
@@ -1466,10 +1466,10 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1>::load(
+        DataProvider::<CollationTailoringV2>::load(
             &Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
+                id: DataIdentifierCow::from_locale(CollationTailoringV2::make_locale(
                     prefs.locale_preferences
                 ))
                 .as_borrowed(),
@@ -1489,10 +1489,10 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1>::load(
+        DataProvider::<CollationTailoringV2>::load(
             &Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
+                id: DataIdentifierCow::from_locale(CollationTailoringV2::make_locale(
                     prefs.locale_preferences
                 ))
                 .as_borrowed(),
@@ -1512,10 +1512,10 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1>::load(
+        DataProvider::<CollationTailoringV2>::load(
             &Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
+                id: DataIdentifierCow::from_locale(CollationTailoringV2::make_locale(
                     prefs.locale_preferences
                 ))
                 .as_borrowed(),
@@ -1630,6 +1630,24 @@ fn test_numeric_after() {
 
     let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     assert_eq!(collator.compare("0001000b", "1000a"), Ordering::Greater);
+}
+
+#[test]
+fn test_numeric_middle_zeros() {
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+    assert_eq!(collator.compare("5001", "501"), Ordering::Greater);
+}
+
+#[test]
+fn test_numeric_middle_zeros_long() {
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+    assert_eq!(collator.compare("50001", "5002"), Ordering::Greater);
 }
 
 #[test]
@@ -2079,6 +2097,14 @@ fn test_fffe_issue_6811() {
         collator.compare_utf16(&[0xFFFE, 0x0000], &[0x0000, 0xFFFE]),
         Ordering::Less
     );
+}
+
+#[test]
+fn test_numeric_more() {
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+    assert_eq!(collator.compare("8A", "899"), Ordering::Less);
 }
 
 #[test]
