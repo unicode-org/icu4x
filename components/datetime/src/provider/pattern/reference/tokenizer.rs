@@ -5,15 +5,12 @@
 /// A zero-allocation tokenizer for [UTS #35 Date Format Patterns] and skeletons.
 ///
 /// Splits a pattern byte slice into runs of identical ASCII alphabetic field symbols
-/// ([`Token::Symbol`]), literal characters ([`Token::Literal`]), and unclosed
+/// ([`Token::Symbol`]), literal text segments ([`Token::Literal`]), and unclosed
 /// quoted literals ([`Token::UnclosedLiteral`]).
 ///
 /// [UTS #35 Date Format Patterns]: https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
 #[derive(Clone)]
-pub(crate) struct Uts35DateTimePatternTokenizer<'a> {
-    bytes: &'a [u8],
-    in_quotes: bool,
-}
+pub(crate) struct Uts35DateTimePatternTokenizer<'a>(pub &'a [u8]);
 
 /// A token produced by [`Uts35DateTimePatternTokenizer`].
 #[cfg_attr(test, derive(Debug, PartialEq))]
@@ -22,18 +19,22 @@ pub(crate) enum Token<'a> {
     /// `(symbol_char, byte_len)`.
     ///
     /// # Examples
-    /// - `b"yyyy"` produces `Token::Symbol('y', 4)`.
-    /// - `b"G"` produces `Token::Symbol('G', 1)`.
+    /// - `"yyyy"` produces `Token::Symbol('y', 4)`.
+    /// - `"G"` produces `Token::Symbol('G', 1)`.
     Symbol(char, usize),
-    /// A single literal character, either from unquoted non-alphabetic bytes,
-    /// inside a single-quoted literal (`'...'`), or an escaped single quote (`''`).
-    /// Ill-formed UTF-8 byte sequences yield [`char::REPLACEMENT_CHARACTER`].
+    /// A literal byte slice, either from unquoted non-alphabetic bytes,
+    /// a single-quoted literal (`'...'`), or an escaped single quote (`''`).
+    ///
+    /// Note that a quoted literal containing escaped quotes (`''`) is emitted
+    /// across multiple [`Token::Literal`] tokens so each token remains a zero-copy
+    /// slice of the input.
     ///
     /// # Examples
-    /// - `": "` in `b"HH: mm"` produces `Token::Literal(':')` then `Token::Literal(' ')`.
-    /// - `b"'at'"` produces `Token::Literal('a')` then `Token::Literal('t')`.
-    /// - `b"''"` produces `Token::Literal('\'')`.
-    Literal(char),
+    /// - `": "` in `b"HH: mm"` produces `Token::Literal(b": ")`.
+    /// - `b"'at'"` produces `Token::Literal(b"at")`.
+    /// - `b"''"` produces `Token::Literal(b"'")`.
+    /// - `b"'o''clock'"` produces `Token::Literal(b"o'")` followed by `Token::Literal(b"clock")`.
+    Literal(&'a [u8]),
     /// The trailing slice of a single-quoted literal that reached the end of the input
     /// without a matching closing quote (`'`).
     ///
@@ -44,83 +45,81 @@ pub(crate) enum Token<'a> {
     UnclosedLiteral(&'a [u8]),
 }
 
-fn next_utf8_char(bytes: &mut &[u8]) -> Option<char> {
-    let prefix = bytes.get(..bytes.len().min(4))?;
-    let chunk = prefix.utf8_chunks().next()?;
-    if let Some(ch) = chunk.valid().chars().next() {
-        *bytes = bytes.get(ch.len_utf8()..)?;
-        Some(ch)
-    } else {
-        let invalid_len = chunk.invalid().len();
-        debug_assert!(invalid_len > 0);
-        *bytes = bytes.get(invalid_len..)?;
-        Some(char::REPLACEMENT_CHARACTER)
-    }
-}
-
 impl<'a> Uts35DateTimePatternTokenizer<'a> {
-    /// Creates a new tokenizer over `bytes`.
-    #[inline]
-    pub fn new(bytes: &'a [u8]) -> Self {
-        Self {
-            bytes,
-            in_quotes: false,
-        }
-    }
-
     /// Advances the tokenizer and returns the next [`Token`], or `None` at the end of the input.
     pub fn step(&mut self) -> Option<Token<'a>> {
-        if self.in_quotes {
-            if let Some(rest) = self.bytes.strip_prefix(b"''") {
-                self.bytes = rest;
-                return Some(Token::Literal('\''));
-            }
-            if let Some(rest) = self.bytes.strip_prefix(b"'") {
-                self.bytes = rest;
-                self.in_quotes = false;
-            } else if self.bytes.contains(&b'\'') {
-                return next_utf8_char(&mut self.bytes).map(Token::Literal);
-            } else {
-                let unclosed = core::mem::take(&mut self.bytes);
-                self.in_quotes = false;
-                return Some(Token::UnclosedLiteral(unclosed));
-            }
-        }
-
         // Case 1: Quoted literal (`'...'`) or escaped quote (`''`)
-        if let Some(after_open) = self.bytes.strip_prefix(b"'") {
+        if let Some(after_open) = self.0.strip_prefix(b"'") {
             // Two consecutive single quotes (`''`) outside a quoted literal represent a single `'`.
             if let Some(after_escaped) = after_open.strip_prefix(b"'") {
-                self.bytes = after_escaped;
-                return Some(Token::Literal('\''));
+                self.0 = after_escaped;
+                return Some(Token::Literal(b"'"));
             }
-            self.bytes = after_open;
-            self.in_quotes = true;
-            return self.step();
+            let mut split = after_open.splitn(2, |&b| b == b'\'');
+            let (Some(mut literal), Some(mut remainder)) = (split.next(), split.next()) else {
+                self.0 = b"";
+                return Some(Token::UnclosedLiteral(after_open));
+            };
+            // Search for nested quotes, like 'o''clock', 'a''', or 'b''''c'.
+            // Because `splitn` already consumed the first `'`, stripping pairs of `b"''"`
+            // from `remainder` naturally consumes all remaining quotes when the total quote run is
+            // odd (`1 + 2k`, closing the literal), and leaves a single leading `'` in `remainder`
+            // when the total quote run is even (`1 + 2(k - 1) + 1`, keeping the next `step()` call
+            // in quoted literal mode).
+            let mut nested_quote_count = 0;
+            while let Some(s) = remainder.strip_prefix(b"''") {
+                nested_quote_count += 1;
+                remainder = s;
+            }
+            if remainder.starts_with(b"'") {
+                nested_quote_count += 1;
+            }
+            // If we found nested quotes, return them as literals including the necessary number
+            // of quotes. For example, return 'o''clock' as two tokens: o' and clock.
+            if nested_quote_count > 0 {
+                let Some(literal_with_apostrophes) =
+                    after_open.get(..literal.len() + nested_quote_count)
+                else {
+                    debug_assert!(
+                        false,
+                        "after_open ({after_open:?}) must have at least {} bytes",
+                        literal.len() + nested_quote_count
+                    );
+                    return None;
+                };
+                literal = literal_with_apostrophes;
+            }
+            self.0 = remainder;
+            return Some(Token::Literal(literal));
         }
 
         // Case 2: Field symbol (run of identical ASCII letters, e.g. `yyyy`)
-        let &b = self.bytes.first()?;
-        if b.is_ascii_alphabetic() {
-            let byte_len = self.bytes.iter().take_while(|&&c| c == b).count();
-            self.bytes = self.bytes.get(byte_len..)?;
-            return Some(Token::Symbol(b as char, byte_len));
+        let &ch = self.0.first()?;
+        if ch.is_ascii_alphabetic() {
+            let byte_len = self.0.iter().take_while(|&&b| b == ch).count();
+            self.0 = self.0.get(byte_len..)?;
+            return Some(Token::Symbol(ch as char, byte_len));
         }
 
-        // Case 3: Unquoted literal (non-ASCII-alphabetic, non-quote character)
-        next_utf8_char(&mut self.bytes).map(Token::Literal)
+        // Case 3: Unquoted literal (run of non-ASCII-alphabetic, non-quote bytes)
+        let byte_len = self
+            .0
+            .iter()
+            .take_while(|&&b| !b.is_ascii_alphabetic() && b != b'\'')
+            .count();
+        let (literal, remainder) = self.0.split_at_checked(byte_len)?;
+        self.0 = remainder;
+        Some(Token::Literal(literal))
     }
 }
 
 #[test]
 fn test_basic() {
     let mut tokenizer: Uts35DateTimePatternTokenizer<'_> =
-        Uts35DateTimePatternTokenizer::new("abb.😀.ccc".as_bytes());
+        Uts35DateTimePatternTokenizer("abb.😀.ccc".as_bytes());
     assert_eq!(tokenizer.step(), Some(Token::Symbol('a', 1)));
     assert_eq!(tokenizer.step(), Some(Token::Symbol('b', 2)));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('😀')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(".😀.".as_bytes())));
     assert_eq!(tokenizer.step(), Some(Token::Symbol('c', 3)));
     assert_eq!(tokenizer.step(), None);
 }
@@ -128,34 +127,28 @@ fn test_basic() {
 #[test]
 fn test_quotes() {
     let mut tokenizer: Uts35DateTimePatternTokenizer<'_> =
-        Uts35DateTimePatternTokenizer::new(b"..a''bb'c'.d..");
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
+        Uts35DateTimePatternTokenizer(b"..a''bb'c'.d..");
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"..")));
     assert_eq!(tokenizer.step(), Some(Token::Symbol('a', 1)));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('\'')));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"'")));
     assert_eq!(tokenizer.step(), Some(Token::Symbol('b', 2)));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('c')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"c")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b".")));
     assert_eq!(tokenizer.step(), Some(Token::Symbol('d', 1)));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"..")));
     assert_eq!(tokenizer.step(), None);
 }
 
 #[test]
 fn test_escaped_and_unclosed_quotes() {
-    let mut tokenizer = Uts35DateTimePatternTokenizer::new(b"hh .'o''clock' 'a'''. 'foo ");
+    let mut tokenizer = Uts35DateTimePatternTokenizer(b"hh .'o''clock' 'a'''. 'foo ");
     assert_eq!(tokenizer.step(), Some(Token::Symbol('h', 2)));
-    assert_eq!(tokenizer.step(), Some(Token::Literal(' ')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
-    for ch in "o'clock".chars() {
-        assert_eq!(tokenizer.step(), Some(Token::Literal(ch)));
-    }
-    assert_eq!(tokenizer.step(), Some(Token::Literal(' ')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('a')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('\'')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('.')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal(' ')));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b" .")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"o'")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"clock")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b" ")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"a'")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b". ")));
     assert_eq!(tokenizer.step(), Some(Token::UnclosedLiteral(b"foo ")));
     assert_eq!(tokenizer.step(), None);
 }
@@ -163,30 +156,26 @@ fn test_escaped_and_unclosed_quotes() {
 #[test]
 fn test_quote_runs() {
     // Note: the expected literals concatenate to "'' 'x a''b"
-    let mut tokenizer = Uts35DateTimePatternTokenizer::new(b"'''' '''x' 'a''''b'");
-    for ch in "'' 'x a''b".chars() {
-        assert_eq!(tokenizer.step(), Some(Token::Literal(ch)));
-    }
+    let mut tokenizer = Uts35DateTimePatternTokenizer(b"'''' '''x' 'a''''b'");
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"'")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"'")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b" ")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"'")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"x")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b" ")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"a''")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"b")));
     assert_eq!(tokenizer.step(), None);
 }
 
 #[test]
 fn test_invalid_utf8_bytes() {
-    let mut tokenizer = Uts35DateTimePatternTokenizer::new(b"yy\xff'o''\xfe'M'a''unclosed\xff");
+    let mut tokenizer = Uts35DateTimePatternTokenizer(b"yy\xff'o''\xfe'M'unclosed\xff");
     assert_eq!(tokenizer.step(), Some(Token::Symbol('y', 2)));
-    assert_eq!(
-        tokenizer.step(),
-        Some(Token::Literal(char::REPLACEMENT_CHARACTER))
-    );
-    assert_eq!(tokenizer.step(), Some(Token::Literal('o')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('\'')));
-    assert_eq!(
-        tokenizer.step(),
-        Some(Token::Literal(char::REPLACEMENT_CHARACTER))
-    );
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"\xff")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"o'")));
+    assert_eq!(tokenizer.step(), Some(Token::Literal(b"\xfe")));
     assert_eq!(tokenizer.step(), Some(Token::Symbol('M', 1)));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('a')));
-    assert_eq!(tokenizer.step(), Some(Token::Literal('\'')));
     assert_eq!(
         tokenizer.step(),
         Some(Token::UnclosedLiteral(b"unclosed\xff"))

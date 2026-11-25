@@ -134,7 +134,7 @@ pub(crate) fn uts35_to_fieldbag(
         }};
     }
 
-    let mut tokenizer = Uts35DateTimePatternTokenizer::new(skeleton);
+    let mut tokenizer = Uts35DateTimePatternTokenizer(skeleton);
     let mut bag = DateTimeFieldBag::default();
     let mut error = None;
     while let Some(token) = tokenizer.step() {
