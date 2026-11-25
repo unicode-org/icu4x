@@ -153,3 +153,55 @@ fn rule_status_th() {
         assert!(!iter.is_word_like(), "None is false");
     }
 }
+
+#[test]
+fn rule_status_letter_ending_in_extend() {
+    for segmenter in [
+        WordSegmenter::new_auto(WordBreakInvariantOptions::default()),
+        {
+            let mut s = WordSegmenter::new_neo_for_non_complex_scripts(
+                WordBreakInvariantOptions::default(),
+            );
+            s.load_auto();
+            s
+        },
+    ] {
+        // "नमस्ते" ends in U+0947 DEVANAGARI VOWEL SIGN E, which is Word_Break=Extend.
+        let mut iter = segmenter.segment_str("नमस्ते दुनिया");
+
+        assert_eq!(iter.next(), Some(0), "SOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+
+        assert_eq!(iter.next(), Some(18), "after नमस्ते");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+        assert!(iter.is_word_like(), "Letter is true");
+
+        assert_eq!(iter.next(), Some(19), "after space");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+
+        assert_eq!(iter.next(), Some(37), "after दुनिया");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+
+        assert_eq!(iter.next(), None, "EOT");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+
+        // A combining mark after a Latin letter (NFD) and after a digit.
+        let mut iter = segmenter.segment_str("cafe\u{301} 4\u{301}.");
+
+        assert_eq!(iter.next(), Some(0), "SOT");
+
+        assert_eq!(iter.next(), Some(6), "after cafe\u{301}");
+        assert_eq!(iter.word_type(), WordType::Letter, "letter");
+
+        assert_eq!(iter.next(), Some(7), "after space");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+
+        assert_eq!(iter.next(), Some(10), "after 4\u{301}");
+        assert_eq!(iter.word_type(), WordType::Number, "number");
+
+        assert_eq!(iter.next(), Some(11), "after full stop");
+        assert_eq!(iter.word_type(), WordType::None, "none");
+
+        assert_eq!(iter.next(), None, "EOT");
+    }
+}
