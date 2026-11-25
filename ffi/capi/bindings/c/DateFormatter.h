@@ -24,6 +24,12 @@
 
 
 
+typedef struct icu4x_DateFormatter_create_from_skeleton_mv1_result {union {DateFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_from_skeleton_mv1_result;
+icu4x_DateFormatter_create_from_skeleton_mv1_result icu4x_DateFormatter_create_from_skeleton_mv1(const Locale* locale, DiplomatStringView skeleton);
+
+typedef struct icu4x_DateFormatter_create_from_skeleton_with_provider_mv1_result {union {DateFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_from_skeleton_with_provider_mv1_result;
+icu4x_DateFormatter_create_from_skeleton_with_provider_mv1_result icu4x_DateFormatter_create_from_skeleton_with_provider_mv1(const DataProvider* provider, const Locale* locale, DiplomatStringView skeleton);
+
 typedef struct icu4x_DateFormatter_create_d_mv1_result {union {DateFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_d_mv1_result;
 icu4x_DateFormatter_create_d_mv1_result icu4x_DateFormatter_create_d_mv1(const Locale* locale, DateTimeLength_option length, DateTimeAlignment_option alignment);
 

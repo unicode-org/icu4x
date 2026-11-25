@@ -7,6 +7,8 @@ import com.sun.jna.Structure
 
 internal interface ZonedDateTimeFormatterGregorianLib: Library {
     fun icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1(handle: Pointer)
+    fun icu4x_ZonedDateTimeFormatterGregorian_create_from_skeleton_mv1(locale: Pointer, skeleton: Slice): ResultPointerInt
+    fun icu4x_ZonedDateTimeFormatterGregorian_create_from_skeleton_with_provider_mv1(provider: Pointer, locale: Pointer, skeleton: Slice): ResultPointerInt
     fun icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_mv1(locale: Pointer, formatter: Pointer): ResultPointerInt
     fun icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_with_provider_mv1(provider: Pointer, locale: Pointer, formatter: Pointer): ResultPointerInt
     fun icu4x_ZonedDateTimeFormatterGregorian_create_specific_short_mv1(locale: Pointer, formatter: Pointer): ResultPointerInt
@@ -55,6 +57,60 @@ class ZonedDateTimeFormatterGregorian internal constructor (
     companion object {
         internal val libClass: Class<ZonedDateTimeFormatterGregorianLib> = ZonedDateTimeFormatterGregorianLib::class.java
         internal val lib: ZonedDateTimeFormatterGregorianLib = Native.load("icu4x", libClass)
+        @JvmStatic
+        
+        /**
+         * Creates a zoned formatter from a UTS #35 skeleton string.
+         *
+         * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
+         */
+        fun createFromSkeleton(locale: Locale, skeleton: String): Result<ZonedDateTimeFormatterGregorian> {
+            val skeletonSliceMemory = PrimitiveArrayTools.borrowUtf8(skeleton)
+            
+            val returnVal = lib.icu4x_ZonedDateTimeFormatterGregorian_create_from_skeleton_mv1(locale.handle, skeletonSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = ZonedDateTimeFormatterGregorian(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DateTimeFormatterLoadErrorError(DateTimeFormatterLoadError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                skeletonSliceMemory.close()
+            }
+        }
+        @JvmStatic
+        
+        /**
+         * Creates a zoned formatter from a UTS #35 skeleton string.
+         *
+         * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+         *
+         * 🚧 This API is unstable and may experience breaking changes outside major releases.
+         */
+        fun createFromSkeletonWithProvider(provider: DataProvider, locale: Locale, skeleton: String): Result<ZonedDateTimeFormatterGregorian> {
+            val skeletonSliceMemory = PrimitiveArrayTools.borrowUtf8(skeleton)
+            
+            val returnVal = lib.icu4x_ZonedDateTimeFormatterGregorian_create_from_skeleton_with_provider_mv1(provider.handle, locale.handle, skeletonSliceMemory.slice);
+            try {
+                val nativeOkVal = returnVal.getNativeOk();
+                if (nativeOkVal != null) {
+                    val selfEdges: List<Any> = listOf()
+                    val handle = nativeOkVal 
+                    val returnOpaque = ZonedDateTimeFormatterGregorian(handle, selfEdges, true)
+                    return returnOpaque.ok()
+                } else {
+                    return DateTimeFormatterLoadErrorError(DateTimeFormatterLoadError.fromNative(returnVal.getNativeErr()!!)).err()
+                }
+            } finally {
+                skeletonSliceMemory.close()
+            }
+        }
         @JvmStatic
         
         /**

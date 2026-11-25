@@ -197,7 +197,34 @@ impl DateTimeFieldBag {
     /// let err_bag = DateTimeFieldBag::try_from_skeleton("...GGGGy...");
     /// assert!(err_bag.is_err());
     /// ```
+    #[inline]
     pub fn try_from_skeleton(skeleton: &str) -> Result<Self, DateTimeFieldBagParseError> {
+        Self::try_from_skeleton_utf8(skeleton.as_bytes())
+    }
+
+    /// Creates a [`DateTimeFieldBag`] from a potentially ill-formed UTF-8 skeleton byte slice.
+    ///
+    /// See [`Self::try_from_skeleton`] for details. Ill-formed UTF-8 byte sequences are treated
+    /// as non-field literal characters (returning
+    /// [`DateTimeFieldBagParseError::UnexpectedLiteral`], or
+    /// [`DateTimeFieldBagParseError::SyntaxError`] inside an unclosed quoted literal).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use icu::datetime::fieldbag::DateTimeFieldBagParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let bag = DateTimeFieldBag::try_from_skeleton_utf8(b"GGGGy").unwrap();
+    /// assert_writeable_eq!(bag, "GGGGy");
+    ///
+    /// assert_eq!(
+    ///     DateTimeFieldBag::try_from_skeleton_utf8(b"y\xffM"),
+    ///     Err(DateTimeFieldBagParseError::UnexpectedLiteral)
+    /// );
+    /// ```
+    pub fn try_from_skeleton_utf8(skeleton: &[u8]) -> Result<Self, DateTimeFieldBagParseError> {
         let parse_result = skeleton::uts35_to_fieldbag(skeleton);
         if let Some(err) = parse_result.1 {
             Err(err)
@@ -230,7 +257,26 @@ impl DateTimeFieldBag {
     /// let lenient_bag = DateTimeFieldBag::from_skeleton("...GGGGy...");
     /// assert_eq!(lenient_bag, expected);
     /// ```
+    #[inline]
     pub fn from_skeleton(skeleton: &str) -> Self {
+        Self::from_skeleton_utf8(skeleton.as_bytes())
+    }
+
+    /// Creates a [`DateTimeFieldBag`] from a potentially ill-formed UTF-8 skeleton byte slice.
+    ///
+    /// See [`Self::from_skeleton`] for details. Invalid UTF-8 bytes are ignored along with
+    /// other non-field characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldbag::DateTimeFieldBag;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let bag = DateTimeFieldBag::from_skeleton_utf8(b"y\xffM\xfed");
+    /// assert_writeable_eq!(bag, "yMd");
+    /// ```
+    pub fn from_skeleton_utf8(skeleton: &[u8]) -> Self {
         // drop the error
         skeleton::uts35_to_fieldbag(skeleton).0
     }

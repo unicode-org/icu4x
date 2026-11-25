@@ -17,6 +17,7 @@ typedef enum DateTimeFormatterLoadError {
   DateTimeFormatterLoadError_UnsupportedLength = 2051,
   DateTimeFormatterLoadError_ConflictingField = 2057,
   DateTimeFormatterLoadError_FormatterTooSpecific = 2058,
+  DateTimeFormatterLoadError_InvalidSkeletonForFormatter = 2059,
   DateTimeFormatterLoadError_DataMarkerNotFound = 1,
   DateTimeFormatterLoadError_DataIdentifierNotFound = 2,
   DateTimeFormatterLoadError_DataInvalidRequest = 3,

@@ -20,6 +20,12 @@
 
 
 
+typedef struct icu4x_TimeZoneFormatter_create_from_skeleton_mv1_result {union {TimeZoneFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_from_skeleton_mv1_result;
+icu4x_TimeZoneFormatter_create_from_skeleton_mv1_result icu4x_TimeZoneFormatter_create_from_skeleton_mv1(const Locale* locale, DiplomatStringView skeleton);
+
+typedef struct icu4x_TimeZoneFormatter_create_from_skeleton_with_provider_mv1_result {union {TimeZoneFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_from_skeleton_with_provider_mv1_result;
+icu4x_TimeZoneFormatter_create_from_skeleton_with_provider_mv1_result icu4x_TimeZoneFormatter_create_from_skeleton_with_provider_mv1(const DataProvider* provider, const Locale* locale, DiplomatStringView skeleton);
+
 typedef struct icu4x_TimeZoneFormatter_create_specific_long_mv1_result {union {TimeZoneFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_specific_long_mv1_result;
 icu4x_TimeZoneFormatter_create_specific_long_mv1_result icu4x_TimeZoneFormatter_create_specific_long_mv1(const Locale* locale);
 

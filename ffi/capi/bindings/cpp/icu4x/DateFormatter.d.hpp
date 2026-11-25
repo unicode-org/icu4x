@@ -44,6 +44,24 @@ class DateFormatter {
 public:
 
   /**
+   * Creates a formatter from a UTS #35 skeleton string.
+   *
+   * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> create_from_skeleton(const icu4x::Locale& locale, std::string_view skeleton);
+
+  /**
+   * Creates a formatter from a UTS #35 skeleton string.
+   *
+   * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+   *
+   * 🚧 This API is unstable and may experience breaking changes outside major releases.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> create_from_skeleton_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view skeleton);
+
+  /**
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
    *
    * See the [Rust documentation for `D`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.D.html) for more information.

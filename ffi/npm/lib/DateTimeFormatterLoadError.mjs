@@ -16,6 +16,7 @@ export class DateTimeFormatterLoadError {
         ["UnsupportedLength", 2051],
         ["ConflictingField", 2057],
         ["FormatterTooSpecific", 2058],
+        ["InvalidSkeletonForFormatter", 2059],
         ["DataMarkerNotFound", 1],
         ["DataIdentifierNotFound", 2],
         ["DataInvalidRequest", 3],
@@ -78,6 +79,7 @@ export class DateTimeFormatterLoadError {
         [2051]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2051),
         [2057]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2057),
         [2058]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2058),
+        [2059]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2059),
         [1]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         [2]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
         [3]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
@@ -93,6 +95,7 @@ export class DateTimeFormatterLoadError {
     static UnsupportedLength = DateTimeFormatterLoadError.#objectValues[2051];
     static ConflictingField = DateTimeFormatterLoadError.#objectValues[2057];
     static FormatterTooSpecific = DateTimeFormatterLoadError.#objectValues[2058];
+    static InvalidSkeletonForFormatter = DateTimeFormatterLoadError.#objectValues[2059];
     static DataMarkerNotFound = DateTimeFormatterLoadError.#objectValues[1];
     static DataIdentifierNotFound = DateTimeFormatterLoadError.#objectValues[2];
     static DataInvalidRequest = DateTimeFormatterLoadError.#objectValues[3];

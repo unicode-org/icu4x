@@ -12,6 +12,7 @@ use super::{GenericPattern, Pattern};
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use alloc::vec;
 use alloc::vec::Vec;
+use utf8_iter::Utf8CharsEx;
 
 /// A parser for [UTS #35 Date Format Patterns] and generic combination ("glue") patterns.
 ///
@@ -47,7 +48,7 @@ impl<'p> Parser<'p> {
     ///
     /// [UTS #35 Date Format Pattern]: https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
     pub fn parse(self) -> Result<Vec<PatternItem>, PatternError> {
-        let mut tokenizer = Uts35DateTimePatternTokenizer(self.source);
+        let mut tokenizer = Uts35DateTimePatternTokenizer(self.source.as_bytes());
         let mut result = vec![];
 
         while let Some(token) = tokenizer.step() {
@@ -60,7 +61,7 @@ impl<'p> Parser<'p> {
                             tokenizer = lookahead;
                             fraction_digits
                         }
-                        Some(Token::Literal(".")) => match lookahead.step() {
+                        Some(Token::Literal(b".")) => match lookahead.step() {
                             Some(Token::Symbol('S', fraction_digits)) => {
                                 tokenizer = lookahead;
                                 fraction_digits

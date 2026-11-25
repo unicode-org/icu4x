@@ -28,6 +28,36 @@ final class ZonedDateFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_internal_icu4x_ZonedDateFormatter_destroy_mv1));
 
+  /// Creates a zoned formatter from a UTS #35 skeleton string.
+  ///
+  /// See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
+  factory ZonedDateFormatter.fromSkeleton(Locale locale, String skeleton) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedDateFormatter_create_from_skeleton_mv1(locale._ffi, skeleton._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a zoned formatter from a UTS #35 skeleton string.
+  ///
+  /// See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  @meta.experimental
+  factory ZonedDateFormatter.fromSkeletonWithProvider(DataProvider provider, Locale locale, String skeleton) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedDateFormatter_create_from_skeleton_with_provider_mv1(provider._ffi, locale._ffi, skeleton._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateFormatter._fromFfi(result.union.ok, []);
+  }
+
   /// Creates a zoned formatter based on a non-zoned formatter.
   ///
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
@@ -315,6 +345,18 @@ final class ZonedDateFormatter implements ffi.Finalizable {
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ZonedDateFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _internal_icu4x_ZonedDateFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_ZonedDateFormatter_create_from_skeleton_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateFormatter_create_from_skeleton_mv1(ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 skeleton);
+
+// ignore: experimental_member_use
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_ZonedDateFormatter_create_from_skeleton_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateFormatter_create_from_skeleton_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _SliceUtf8 skeleton);
 
 // ignore: experimental_member_use
 @meta.RecordUse()

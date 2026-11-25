@@ -171,6 +171,7 @@ pub mod ffi {
         UnsupportedLength = 0x8_03,
         ConflictingField = 0x8_09,
         FormatterTooSpecific = 0x8_0A,
+        InvalidSkeletonForFormatter = 0x8_0B,
 
         DataMarkerNotFound = 0x01,
         DataIdentifierNotFound = 0x02,

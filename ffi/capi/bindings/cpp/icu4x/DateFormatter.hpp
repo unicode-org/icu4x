@@ -27,6 +27,12 @@ namespace icu4x {
 namespace capi {
     extern "C" {
 
+    typedef struct icu4x_DateFormatter_create_from_skeleton_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_from_skeleton_mv1_result;
+    icu4x_DateFormatter_create_from_skeleton_mv1_result icu4x_DateFormatter_create_from_skeleton_mv1(const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView skeleton);
+
+    typedef struct icu4x_DateFormatter_create_from_skeleton_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_from_skeleton_with_provider_mv1_result;
+    icu4x_DateFormatter_create_from_skeleton_with_provider_mv1_result icu4x_DateFormatter_create_from_skeleton_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::diplomat::capi::DiplomatStringView skeleton);
+
     typedef struct icu4x_DateFormatter_create_d_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_d_mv1_result;
     icu4x_DateFormatter_create_d_mv1_result icu4x_DateFormatter_create_d_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
 
@@ -97,6 +103,19 @@ namespace capi {
     } // extern "C"
 } // namespace capi
 } // namespace
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateFormatter::create_from_skeleton(const icu4x::Locale& locale, std::string_view skeleton) {
+    auto result = icu4x::capi::icu4x_DateFormatter_create_from_skeleton_mv1(locale.AsFFI(),
+        {skeleton.data(), skeleton.size()});
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::DateFormatter>>(std::unique_ptr<icu4x::DateFormatter>(icu4x::DateFormatter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError>(icu4x::diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateFormatter::create_from_skeleton_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::string_view skeleton) {
+    auto result = icu4x::capi::icu4x_DateFormatter_create_from_skeleton_with_provider_mv1(provider.AsFFI(),
+        locale.AsFFI(),
+        {skeleton.data(), skeleton.size()});
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::DateFormatter>>(std::unique_ptr<icu4x::DateFormatter>(icu4x::DateFormatter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError>(icu4x::diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
 
 inline icu4x::diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateFormatter::create_d(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::DateTimeAlignment> alignment) {
     auto result = icu4x::capi::icu4x_DateFormatter_create_d_mv1(locale.AsFFI(),

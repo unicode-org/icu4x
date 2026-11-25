@@ -19,6 +19,24 @@ export class TimeFormatter {
 
 
     /**
+     * Creates a formatter from a UTS #35 skeleton string.
+     *
+     * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+     *
+     * @experimental
+     */
+    static createFromSkeleton(locale: Locale, skeleton: string): TimeFormatter;
+
+    /**
+     * Creates a formatter from a UTS #35 skeleton string.
+     *
+     * See the [Rust documentation for `from_skeleton`](https://docs.rs/icu/2.4.0/icu/datetime/fieldbag/struct.DateTimeFieldBag.html#method.from_skeleton) for more information.
+     *
+     * @experimental
+     */
+    static createFromSkeletonWithProvider(provider: DataProvider, locale: Locale, skeleton: string): TimeFormatter;
+
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.4.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/2.4.0/icu/datetime/fieldsets/struct.T.html) for more information.

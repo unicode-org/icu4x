@@ -300,8 +300,6 @@ lazy_static::lazy_static! {
         // We should occasionally review these
         // =========================
 
-        "icu::datetime::fieldbag",
-
         "icu::decimal::CompactDecimalFormatter",
         "icu::decimal::error::CompactExponentError",
         "icu::decimal::options::CompactDecimalFormatterOptions",
@@ -444,6 +442,20 @@ lazy_static::lazy_static! {
         "icu::datetime::options::DateTimeFormatterOptions",
         "icu::datetime::options::length::Bag",
         "icu::decimal::options::DecimalFormatterOptions",
+        // `DateTimeFieldBag` skeleton parsing is exposed directly via `from_skeleton`
+        // constructors on the datetime formatters (#8721); the remaining field-by-field
+        // options bag APIs, strict parsers, and dynamic builder/composite conversions
+        // are Rust-only or tracked under #8740 and #6445.
+        "icu::datetime::fieldbag::field",
+        "icu::datetime::fieldbag::DateTimeFieldBagParseError",
+        "icu::datetime::fieldbag::DateTimeFieldBag::new",
+        "icu::datetime::fieldbag::DateTimeFieldBag::try_from_skeleton",
+        "icu::datetime::fieldbag::DateTimeFieldBag::try_from_skeleton_utf8",
+        "icu::datetime::fieldbag::DateTimeFieldBag::from_str",
+        "icu::datetime::fieldbag::DateTimeFieldBag::write_to",
+        "icu::datetime::fieldbag::DateTimeFieldBag::to_string",
+        "icu::datetime::fieldbag::DateTimeFieldBag::to_composite_field_set",
+        "icu::datetime::fieldbag::DateTimeFieldBag::from_field_set_builder",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
