@@ -1,0 +1,157 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::capi_relativetime::GENERATED_BY }}
+
+#[rustfmt::skip]
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+pub mod ffi {
+    use alloc::boxed::Box;
+
+    use crate::unstable::decimal::ffi::DecimalGroupingStrategy;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::fixed_decimal::ffi::Decimal;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::unstable::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::provider::ffi::DataProvider;
+    use diplomat_runtime::DiplomatOption;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_experimental::relativetime::RelativeTimeFormatterPreferences;
+
+    use writeable::Writeable;
+
+    /// Configures whether to always use numeric formatting even when special formatting is available.
+    #[diplomat::rust_link(icu::experimental::relativetime::options::Numeric, Enum)]
+    #[diplomat::enum_convert(icu_experimental::relativetime::options::Numeric, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum RelativeTimeNumeric {
+        /// Always use numeric formatting.
+        #[diplomat::attr(auto, default)]
+        Always,
+        /// Automatically select special formatting if available else fallback to numeric formatting.
+        Auto,
+    }
+
+    /// A bag of options for defining how to format time using [`RelativeTimeFormatter`].
+    #[diplomat::rust_link(icu::experimental::relativetime::RelativeTimeFormatterOptions, Struct)]
+    #[diplomat::rust_link(
+        icu::experimental::relativetime::RelativeTimeFormatterOptions::default,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(
+        icu::experimental::relativetime::RelativeTimeFormatterOptions::with_numeric,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(
+        icu::experimental::relativetime::RelativeTimeFormatterOptions::with_grouping_strategy,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "RelativeTimeFormatterOptions")]
+    pub struct RelativeTimeFormatterOptionsV1 {
+        pub numeric: DiplomatOption<RelativeTimeNumeric>,
+        pub grouping_strategy: DiplomatOption<DecimalGroupingStrategy>,
+    }
+
+    /// An ICU4X `RelativeTimeFormatter` object capable of formatting a [`Decimal`] into a
+    /// locale-sensitive relative time string.
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::experimental::relativetime::RelativeTimeFormatter, Struct)]
+    pub struct RelativeTimeFormatter(pub icu_experimental::relativetime::RelativeTimeFormatter);
+
+    impl RelativeTimeFormatter {
+        {%- for width in widths %}
+        {%- for unit in units %}
+        /// Construct a new [`RelativeTimeFormatter`] for {{ width }} {{ unit.plural }} from compiled data.
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::RelativeTimeFormatter::try_new_{{ width }}_{{ unit.singular }},
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ width }}_{{ unit.singular }}")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_{{ width }}_{{ unit.singular }}(
+            locale: &Locale,
+            options: RelativeTimeFormatterOptionsV1,
+        ) -> Result<Box<RelativeTimeFormatter>, DataError> {
+            let prefs = RelativeTimeFormatterPreferences::from(&locale.0);
+            Ok(Box::new(RelativeTimeFormatter(
+                icu_experimental::relativetime::RelativeTimeFormatter::try_new_{{ width }}_{{ unit.singular }}(
+                    prefs,
+                    options.into(),
+                )?,
+            )))
+        }
+
+        /// Construct a new [`RelativeTimeFormatter`] for {{ width }} {{ unit.plural }} using a particular data source.
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::RelativeTimeFormatter::try_new_{{ width }}_{{ unit.singular }},
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::RelativeTimeFormatter::try_new_{{ width }}_{{ unit.singular }}_with_buffer_provider,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::RelativeTimeFormatter::try_new_{{ width }}_{{ unit.singular }}_unstable,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ width }}_{{ unit.singular }}_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_{{ width }}_{{ unit.singular }}_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            options: RelativeTimeFormatterOptionsV1,
+        ) -> Result<Box<RelativeTimeFormatter>, DataError> {
+            let prefs = RelativeTimeFormatterPreferences::from(&locale.0);
+            Ok(Box::new(RelativeTimeFormatter(
+                icu_experimental::relativetime::RelativeTimeFormatter::try_new_{{ width }}_{{ unit.singular }}_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options.into(),
+                )?,
+            )))
+        }
+        {% endfor %}
+        {%- endfor %}
+        /// Formats a [`Decimal`] to a string.
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::RelativeTimeFormatter::format,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::FormattedRelativeTime,
+            Struct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::relativetime::FormattedRelativeTime::to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(icu::experimental::relativetime::parts, Mod, hidden)]
+        #[diplomat::rust_link(icu::experimental::relativetime::parts::LITERAL, Constant, hidden)]
+        #[diplomat::attr(demo_gen, disable)]
+        pub fn format(&self, value: &Decimal, write: &mut DiplomatWrite) {
+            let _infallible = self.0.format(value.0.clone()).write_to(write);
+        }
+    }
+}
+
+impl From<ffi::RelativeTimeFormatterOptionsV1>
+    for icu_experimental::relativetime::RelativeTimeFormatterOptions
+{
+    fn from(other: ffi::RelativeTimeFormatterOptionsV1) -> Self {
+        let mut options = Self::default();
+        options.numeric = other.numeric.into_converted_option();
+        options.grouping_strategy = other.grouping_strategy.into_converted_option();
+        options
+    }
+}

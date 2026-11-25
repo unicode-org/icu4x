@@ -36,6 +36,8 @@ export { BidiMirroringGlyph } from "./BidiMirroringGlyph.mjs"
 
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 
+export { RelativeTimeFormatterOptions } from "./RelativeTimeFormatterOptions.mjs"
+
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
 
 export { CollatorResolvedOptions } from "./CollatorResolvedOptions.mjs"
@@ -175,6 +177,8 @@ export { CodePointSetData } from "./CodePointSetData.mjs"
 export { EmojiSetData } from "./EmojiSetData.mjs"
 
 export { DataProvider } from "./DataProvider.mjs"
+
+export { RelativeTimeFormatter } from "./RelativeTimeFormatter.mjs"
 
 export { ScriptExtensionsSet } from "./ScriptExtensionsSet.mjs"
 
@@ -375,6 +379,8 @@ export { SentenceBreak } from "./SentenceBreak.mjs"
 export { VerticalOrientation } from "./VerticalOrientation.mjs"
 
 export { WordBreak } from "./WordBreak.mjs"
+
+export { RelativeTimeNumeric } from "./RelativeTimeNumeric.mjs"
 
 export { LineBreakStrictness } from "./LineBreakStrictness.mjs"
 
