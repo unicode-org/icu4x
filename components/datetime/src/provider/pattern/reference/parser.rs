@@ -47,7 +47,7 @@ impl<'p> Parser<'p> {
     ///
     /// [UTS #35 Date Format Pattern]: https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
     pub fn parse(self) -> Result<Vec<PatternItem>, PatternError> {
-        let mut tokenizer = Uts35DateTimePatternTokenizer::new(self.source.as_bytes());
+        let mut tokenizer = Uts35DateTimePatternTokenizer(self.source.as_bytes());
         let mut result = vec![];
 
         while let Some(token) = tokenizer.step() {
@@ -60,7 +60,7 @@ impl<'p> Parser<'p> {
                             tokenizer = lookahead;
                             fraction_digits
                         }
-                        Some(Token::Literal('.')) => match lookahead.step() {
+                        Some(Token::Literal(b".")) => match lookahead.step() {
                             Some(Token::Symbol('S', fraction_digits)) => {
                                 tokenizer = lookahead;
                                 fraction_digits
@@ -111,8 +111,13 @@ impl<'p> Parser<'p> {
                         result.extend(core::iter::repeat_n(PatternItem::Literal(ch), length));
                     }
                 }
-                Token::Literal(ch) => {
-                    result.push(PatternItem::Literal(ch));
+                Token::Literal(bytes) => {
+                    for chunk in bytes.utf8_chunks() {
+                        result.extend(chunk.valid().chars().map(PatternItem::Literal));
+                        if !chunk.invalid().is_empty() {
+                            result.push(PatternItem::Literal(char::REPLACEMENT_CHARACTER));
+                        }
+                    }
                 }
                 Token::UnclosedLiteral(_) => {
                     return Err(PatternError::UnclosedLiteral);
