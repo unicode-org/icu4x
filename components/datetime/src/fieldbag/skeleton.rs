@@ -5,8 +5,8 @@
 use core::fmt;
 
 use super::DateTimeFieldBag;
-use crate::provider::pattern::reference::tokenizer::BytesToken as Token;
-use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternBytesTokenizer;
+use crate::provider::pattern::reference::tokenizer::Token;
+use crate::provider::pattern::reference::tokenizer::Uts35DateTimePatternTokenizer;
 
 /// An error returned when parsing a UTS #35 skeleton string into a [`DateTimeFieldBag`].
 ///
@@ -50,7 +50,7 @@ pub enum DateTimeFieldBagParseError {
     /// assert_writeable_eq!(DateTimeFieldBag::from_skeleton("y-MM-dd"), "yMMdd");
     /// ```
     UnexpectedLiteral,
-    /// The skeleton contained a syntax error, such as an unclosed quoted literal or invalid UTF-8.
+    /// The skeleton contained a syntax error, such as an unclosed quoted literal.
     ///
     /// # Examples
     ///
@@ -134,7 +134,7 @@ pub(crate) fn uts35_to_fieldbag(
         }};
     }
 
-    let mut tokenizer = Uts35DateTimePatternBytesTokenizer(skeleton);
+    let mut tokenizer = Uts35DateTimePatternTokenizer::new(skeleton);
     let mut bag = DateTimeFieldBag::default();
     let mut error = None;
     while let Some(token) = tokenizer.step() {
@@ -419,12 +419,8 @@ pub(crate) fn uts35_to_fieldbag(
             Token::Symbol(_, _) => {
                 error.get_or_insert(UnknownField);
             }
-            Token::Literal(bytes) => {
-                if core::str::from_utf8(bytes).is_err() {
-                    error.get_or_insert(SyntaxError);
-                } else {
-                    error.get_or_insert(UnexpectedLiteral);
-                }
+            Token::Literal(_) => {
+                error.get_or_insert(UnexpectedLiteral);
             }
             Token::UnclosedLiteral(_) => {
                 error.get_or_insert(SyntaxError);
@@ -573,10 +569,19 @@ fn test_skeleton_parse_errors_and_lenient() {
     }
 
     let utf8_cases: &[(&[u8], DateTimeFieldBagParseError, &str)] = &[
-        (b"y\xffM", DateTimeFieldBagParseError::SyntaxError, "yM"),
+        (
+            b"y\xffM",
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
         (
             b"y'foo\xff'M",
-            DateTimeFieldBagParseError::SyntaxError,
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
+        (
+            b"y'a''\xff'M",
+            DateTimeFieldBagParseError::UnexpectedLiteral,
             "yM",
         ),
         (b"y'foo\xff", DateTimeFieldBagParseError::SyntaxError, "y"),

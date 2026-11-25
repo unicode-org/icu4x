@@ -145,14 +145,17 @@ impl DateTimeFieldBag {
     /// let err_bag = DateTimeFieldBag::try_from_skeleton("...GGGGy...");
     /// assert!(err_bag.is_err());
     /// ```
+    #[inline]
     pub fn try_from_skeleton(skeleton: &str) -> Result<Self, DateTimeFieldBagParseError> {
         Self::try_from_skeleton_utf8(skeleton.as_bytes())
     }
 
     /// Creates a [`DateTimeFieldBag`] from a potentially ill-formed UTF-8 skeleton byte slice.
     ///
-    /// See [`Self::try_from_skeleton`] for details. Invalid UTF-8 sequences return
-    /// [`DateTimeFieldBagParseError::SyntaxError`].
+    /// See [`Self::try_from_skeleton`] for details. Ill-formed UTF-8 byte sequences are treated
+    /// as non-field literal characters (returning
+    /// [`DateTimeFieldBagParseError::UnexpectedLiteral`], or
+    /// [`DateTimeFieldBagParseError::SyntaxError`] inside an unclosed quoted literal).
     ///
     /// # Examples
     ///
@@ -166,7 +169,7 @@ impl DateTimeFieldBag {
     ///
     /// assert_eq!(
     ///     DateTimeFieldBag::try_from_skeleton_utf8(b"y\xffM"),
-    ///     Err(DateTimeFieldBagParseError::SyntaxError)
+    ///     Err(DateTimeFieldBagParseError::UnexpectedLiteral)
     /// );
     /// ```
     pub fn try_from_skeleton_utf8(skeleton: &[u8]) -> Result<Self, DateTimeFieldBagParseError> {
@@ -202,6 +205,7 @@ impl DateTimeFieldBag {
     /// let lenient_bag = DateTimeFieldBag::from_skeleton("...GGGGy...");
     /// assert_eq!(lenient_bag, expected);
     /// ```
+    #[inline]
     pub fn from_skeleton(skeleton: &str) -> Self {
         Self::from_skeleton_utf8(skeleton.as_bytes())
     }

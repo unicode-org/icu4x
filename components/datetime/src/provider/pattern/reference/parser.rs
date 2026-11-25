@@ -47,7 +47,7 @@ impl<'p> Parser<'p> {
     ///
     /// [UTS #35 Date Format Pattern]: https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
     pub fn parse(self) -> Result<Vec<PatternItem>, PatternError> {
-        let mut tokenizer = Uts35DateTimePatternTokenizer(self.source);
+        let mut tokenizer = Uts35DateTimePatternTokenizer::new(self.source.as_bytes());
         let mut result = vec![];
 
         while let Some(token) = tokenizer.step() {
@@ -60,13 +60,17 @@ impl<'p> Parser<'p> {
                             tokenizer = lookahead;
                             fraction_digits
                         }
-                        Some(Token::Literal(".")) => match lookahead.step() {
-                            Some(Token::Symbol('S', fraction_digits)) => {
-                                tokenizer = lookahead;
-                                fraction_digits
+                        Some(Token::Literal(range))
+                            if self.source.get(range.clone()) == Some(".") =>
+                        {
+                            match lookahead.step() {
+                                Some(Token::Symbol('S', fraction_digits)) => {
+                                    tokenizer = lookahead;
+                                    fraction_digits
+                                }
+                                _ => 0,
                             }
-                            _ => 0,
-                        },
+                        }
                         _ => 0,
                     };
                     let second_symbol = FieldSymbol::Second(fields::Second::Second);
@@ -111,8 +115,16 @@ impl<'p> Parser<'p> {
                         result.extend(core::iter::repeat_n(PatternItem::Literal(ch), length));
                     }
                 }
-                Token::Literal(s) => {
-                    result.extend(s.chars().map(PatternItem::Literal));
+                Token::Literal(range) => {
+                    if let Some(s) = self.source.get(range) {
+                        result.extend(s.chars().map(PatternItem::Literal));
+                    } else {
+                        debug_assert!(
+                            false,
+                            "tokenizer returned non-UTF-8-boundary literal range for {:?}",
+                            self.source
+                        );
+                    }
                 }
                 Token::UnclosedLiteral(_) => {
                     return Err(PatternError::UnclosedLiteral);
