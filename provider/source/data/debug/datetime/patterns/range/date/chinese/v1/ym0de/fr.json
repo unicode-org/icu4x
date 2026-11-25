@@ -1,0 +1,24 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "elements": [
+    {
+      "header": 24,
+      "patterns": [
+        "U MMM d, E – MMM d, E",
+        "U MMM d, E"
+      ]
+    },
+    {
+      "header": 0,
+      "patterns": []
+    }
+  ]
+}

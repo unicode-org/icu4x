@@ -15,11 +15,8 @@
       ]
     },
     {
-      "header": 96,
-      "patterns": [
-        "G y–y",
-        "G y"
-      ]
+      "header": 0,
+      "patterns": []
     }
   ]
 }

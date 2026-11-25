@@ -1,25 +1,22 @@
 {
-  "has_explicit_medium": true,
   "variant_pattern_indices": [
     0,
     0,
     0,
-    0,
+    2,
     0,
     0
   ],
   "elements": [
     {
+      "header": 0,
+      "patterns": []
+    },
+    {
       "header": 24,
       "patterns": [
         "U MMMM–MMMM",
         "U MMMM"
-      ]
-    },
-    {
-      "header": 16,
-      "patterns": [
-        "y-MM"
       ]
     }
   ]
