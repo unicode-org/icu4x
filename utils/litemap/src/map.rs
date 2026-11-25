@@ -1371,7 +1371,7 @@ where
     {
         match self {
             Self::Occupied(entry) => entry.into_mut(),
-            Self::Vacant(entry) => entry.insert(V::default())
+            Self::Vacant(entry) => entry.insert(V::default()),
         }
     }
 
@@ -1739,6 +1739,34 @@ mod test {
         let mut map: LiteMap<i32, String> = LiteMap::new();
         map.entry(1).or_default();
         assert_eq!(map.get(&1), Some(&String::new()));
+    }
+
+    #[test]
+    fn entry_or_default_vacant() {
+        let mut map: LiteMap<i32, String> = LiteMap::new();
+        map.entry(1).or_default();
+        assert_eq!(map.get(&1), Some(&String::new()));
+    }
+
+    #[test]
+    fn entry_or_default_occupied() {
+        let mut map: LiteMap<i32, String> = LiteMap::new();
+        map.insert(1, "occupied".into());
+        map.entry(1).or_default();
+        assert_eq!(map.get(&1), Some(&String::from("occupied")));
+    }
+
+    #[test]
+    fn entry_or_default_dont_construct_default_when_occupied() {
+        struct Value;
+        impl Default for Value {
+            fn default() -> Self {
+                panic!("Entry::or_default eagerly constructed default value");
+            }
+        }
+        let mut map: LiteMap<i32, Value> = LiteMap::new();
+        map.insert(1, Value {});
+        map.entry(1).or_default();
     }
 
     #[test]
