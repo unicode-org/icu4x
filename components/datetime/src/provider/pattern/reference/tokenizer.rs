@@ -30,7 +30,7 @@ pub(crate) enum Token<'a> {
     /// slice of the input.
     ///
     /// # Examples
-    /// - `": "` in `b"HH: mm"` produces `Token::Literal(b": ")`.
+    /// - `b": "` in `b"HH: mm"` produces `Token::Literal(b": ")`.
     /// - `b"'at'"` produces `Token::Literal(b"at")`.
     /// - `b"''"` produces `Token::Literal(b"'")`.
     /// - `b"'o''clock'"` produces `Token::Literal(b"o'")` followed by `Token::Literal(b"clock")`.
