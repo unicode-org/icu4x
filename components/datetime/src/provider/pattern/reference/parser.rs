@@ -60,17 +60,13 @@ impl<'p> Parser<'p> {
                             tokenizer = lookahead;
                             fraction_digits
                         }
-                        Some(Token::Literal(range))
-                            if self.source.get(range.clone()) == Some(".") =>
-                        {
-                            match lookahead.step() {
-                                Some(Token::Symbol('S', fraction_digits)) => {
-                                    tokenizer = lookahead;
-                                    fraction_digits
-                                }
-                                _ => 0,
+                        Some(Token::Literal('.')) => match lookahead.step() {
+                            Some(Token::Symbol('S', fraction_digits)) => {
+                                tokenizer = lookahead;
+                                fraction_digits
                             }
-                        }
+                            _ => 0,
+                        },
                         _ => 0,
                     };
                     let second_symbol = FieldSymbol::Second(fields::Second::Second);
@@ -115,16 +111,8 @@ impl<'p> Parser<'p> {
                         result.extend(core::iter::repeat_n(PatternItem::Literal(ch), length));
                     }
                 }
-                Token::Literal(range) => {
-                    if let Some(s) = self.source.get(range) {
-                        result.extend(s.chars().map(PatternItem::Literal));
-                    } else {
-                        debug_assert!(
-                            false,
-                            "tokenizer returned non-UTF-8-boundary literal range for {:?}",
-                            self.source
-                        );
-                    }
+                Token::Literal(ch) => {
+                    result.push(PatternItem::Literal(ch));
                 }
                 Token::UnclosedLiteral(_) => {
                     return Err(PatternError::UnclosedLiteral);
