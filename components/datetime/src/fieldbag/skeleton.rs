@@ -119,7 +119,7 @@ pub enum DateTimeFieldBagParseError {
 impl core::error::Error for DateTimeFieldBagParseError {}
 
 pub(crate) fn uts35_to_fieldbag(
-    skeleton: &str,
+    skeleton: &[u8],
 ) -> (DateTimeFieldBag, Option<DateTimeFieldBagParseError>) {
     use super::field::*;
     use DateTimeFieldBagParseError::*;
@@ -563,6 +563,42 @@ fn test_skeleton_parse_errors_and_lenient() {
         );
         assert_writeable_eq!(
             DateTimeFieldBag::from_skeleton(input),
+            expected_canonical,
+            "{input:?}"
+        );
+    }
+
+    let utf8_cases: &[(&[u8], DateTimeFieldBagParseError, &str)] = &[
+        (
+            b"y\xffM",
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
+        (
+            b"y'foo\xff'M",
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
+        (
+            b"y'a''\xff'M",
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
+        (b"y'foo\xff", DateTimeFieldBagParseError::SyntaxError, "y"),
+        (
+            "y😀M".as_bytes(),
+            DateTimeFieldBagParseError::UnexpectedLiteral,
+            "yM",
+        ),
+    ];
+    for &(input, expected_err, expected_canonical) in utf8_cases {
+        assert_eq!(
+            DateTimeFieldBag::try_from_skeleton_utf8(input),
+            Err(expected_err),
+            "{input:?}"
+        );
+        assert_writeable_eq!(
+            DateTimeFieldBag::from_skeleton_utf8(input),
             expected_canonical,
             "{input:?}"
         );

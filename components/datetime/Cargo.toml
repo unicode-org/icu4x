@@ -32,6 +32,7 @@ icu_provider = { workspace = true }
 icu_time = { workspace = true, features = ["alloc"] }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
+utf8_iter = { workspace = true }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
