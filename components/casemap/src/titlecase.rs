@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Titlecasing-specific
+use crate::CaseMapWriteable;
 use crate::provider::CaseMapV1;
 use crate::{CaseMapper, CaseMapperBorrowed};
 use alloc::borrow::Cow;
@@ -11,7 +12,6 @@ use icu_properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_properties::provider::PropertyEnumGeneralCategoryV1;
 use icu_properties::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_provider::prelude::*;
-use writeable::Writeable;
 
 /// How to handle the rest of the string once the beginning of the
 /// string has been titlecased.
@@ -328,7 +328,7 @@ impl Default for TitlecaseMapperBorrowed<'static> {
 }
 
 impl<'a> TitlecaseMapperBorrowed<'a> {
-    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// Returns the full titlecase mapping of the given string as a [`CaseMapWriteable`], treating
     /// the string as a single segment (and thus only titlecasing the beginning of it).
     ///
     /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
@@ -346,7 +346,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-    ) -> impl Writeable + 'a + use<'a> {
+    ) -> impl CaseMapWriteable + 'a + use<'a> {
         if options.leading_adjustment.unwrap_or_default() == LeadingAdjustment::Auto {
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
@@ -376,7 +376,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`TitlecaseMapperBorrowed::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`TitlecaseMapperBorrowed::titlecase_segment()`] for the equivalent lower-level function that returns a [`CaseMapWriteable`]
     ///
     /// # Examples
     ///
