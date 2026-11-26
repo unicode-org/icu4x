@@ -1369,7 +1369,10 @@ where
     where
         V: Default,
     {
-        self.or_insert(V::default())
+        match self {
+            Self::Occupied(entry) => entry.into_mut(),
+            Self::Vacant(entry) => entry.insert(V::default()),
+        }
     }
 
     /// Ensures a value is in the entry by inserting the result of the default function if empty,
@@ -1732,10 +1735,31 @@ mod test {
     }
 
     #[test]
-    fn entry_or_default() {
+    fn entry_or_default_vacant() {
         let mut map: LiteMap<i32, String> = LiteMap::new();
         map.entry(1).or_default();
         assert_eq!(map.get(&1), Some(&String::new()));
+    }
+
+    #[test]
+    fn entry_or_default_occupied() {
+        let mut map: LiteMap<i32, String> = LiteMap::new();
+        map.insert(1, "occupied".into());
+        map.entry(1).or_default();
+        assert_eq!(map.get(&1), Some(&String::from("occupied")));
+    }
+
+    #[test]
+    fn entry_or_default_dont_construct_default_when_occupied() {
+        struct Value;
+        impl Default for Value {
+            fn default() -> Self {
+                panic!("Entry::or_default eagerly constructed default value");
+            }
+        }
+        let mut map: LiteMap<i32, Value> = LiteMap::new();
+        map.insert(1, Value {});
+        map.entry(1).or_default();
     }
 
     #[test]
