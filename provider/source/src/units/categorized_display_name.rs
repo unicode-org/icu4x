@@ -61,24 +61,15 @@ impl SourceDataProvider {
     }
 
     /// Returns whether the patterns of a unit for a length differ from its short patterns
-    /// in a locale or in one of its parents.
+    /// in a locale or in one of its parents. Only then does the data need them.
     ///
-    /// CLDR looks up the long and the narrow patterns in the locale and its parents. Only
-    /// when none of them has any does it take the short patterns: the alias in root starts
-    /// the lookup again from the locale, for the short length. The formatter looks them up
-    /// in the same order, so the data needs the long or the narrow patterns of a locale only
-    /// when this function returns true:
+    /// As in CLDR, the formatter looks for the long or the narrow patterns in the locale and
+    /// its parents, and takes the short patterns when it finds none. A parent counts,
+    /// because the formatter would find its patterns before the short ones of the locale:
+    /// the narrow `{0} noches` of `es-419` is also its short pattern, and its parent `es`
+    /// has the narrow `{0}noches`.
     ///
-    /// - If the patterns equal the short ones in the whole chain, the formatter finds none
-    ///   for the length and takes the short patterns.
-    /// - If they differ in a parent, the locale needs its own entry also when its patterns
-    ///   equal its short ones, because the formatter would find the parent's entry first.
-    ///   For example, the narrow `{0} noches` of `es-419` is also its short pattern, and
-    ///   the narrow pattern of its parent `es` is `{0}noches`.
-    ///
-    /// The CLDR JSON data is resolved: a locale has the patterns of every length, also where
-    /// CLDR takes them from a parent or from the short length. So this function compares
-    /// the patterns, because it can't tell which ones the locale has on its own.
+    /// The CLDR JSON data is resolved, so this function compares the patterns.
     fn differs_from_short(
         &self,
         mut locales: LocaleFallbackIterator,
