@@ -13,8 +13,6 @@ use crate::source::{AbstractFs, SerdeCache};
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu::locale::subtags::Language;
-#[cfg(feature = "unstable")]
-use icu::locale::subtags::Region;
 use icu_provider::DataError;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -197,29 +195,6 @@ impl CldrCache {
         // Restore the region
         langid.region = locale.region;
         Ok(Some(langid.into()))
-    }
-
-    /// Extracts the region from a [`DataLocale`].
-    ///
-    /// If the locale already has a region, it is returned.  
-    /// Otherwise, the likely region is inferred from the language.
-    ///
-    /// # Example
-    ///  - "en-US" -> "US"
-    ///  - "en" -> "US"
-    ///  - "ar" -> "EG"
-    ///  - "und" -> "001"
-    #[cfg(feature = "unstable")]
-    pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
-        if let Some(region) = locale.region {
-            return Ok(region);
-        }
-
-        let mut lang_id = LanguageIdentifier::from((locale.language, locale.script, locale.region));
-        let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
-        Ok(lang_id
-            .region
-            .unwrap_or(icu::locale::subtags::region!("001")))
     }
 
     /// Computes the script-based locale group for a given locale.

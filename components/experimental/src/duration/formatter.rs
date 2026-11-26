@@ -5,10 +5,12 @@
 use core::marker::PhantomData;
 
 use crate::dimension::provider::units::categorized_display_names::{
-    UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongTinyV1,
-    UnitsNamesDurationNarrowHeavyV1, UnitsNamesDurationNarrowLightV1,
-    UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationShortHeavyV1, UnitsNamesDurationShortLightV1,
-    UnitsNamesDurationShortTinyV1,
+    UnitsNamesDurationLongEssentialV1, UnitsNamesDurationLongImperialV1,
+    UnitsNamesDurationLongMetricV1, UnitsNamesDurationLongOutlierV1,
+    UnitsNamesDurationNarrowEssentialV1, UnitsNamesDurationNarrowImperialV1,
+    UnitsNamesDurationNarrowMetricV1, UnitsNamesDurationNarrowOutlierV1,
+    UnitsNamesDurationShortEssentialV1, UnitsNamesDurationShortImperialV1,
+    UnitsNamesDurationShortMetricV1, UnitsNamesDurationShortOutlierV1,
 };
 use crate::dimension::units::categorized_formatter::{
     CategorizedFormatter, CategorizedUnitsFormatterPreferences,
@@ -143,13 +145,13 @@ impl DurationUnitFormatter {
 
             match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
                 Width::Long => {
-                    CategorizedFormatter::try_new_long_heavy((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_long_outlier((&prefs).into(), categorized_unit)
                 }
                 Width::Short => {
-                    CategorizedFormatter::try_new_short_heavy((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_short_outlier((&prefs).into(), categorized_unit)
                 }
                 Width::Narrow => {
-                    CategorizedFormatter::try_new_narrow_heavy((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_narrow_outlier((&prefs).into(), categorized_unit)
                 }
             }
         };
@@ -170,15 +172,18 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsNamesDurationLongTinyV1>
-            + DataProvider<UnitsNamesDurationLongLightV1>
-            + DataProvider<UnitsNamesDurationLongHeavyV1>
-            + DataProvider<UnitsNamesDurationShortTinyV1>
-            + DataProvider<UnitsNamesDurationShortLightV1>
-            + DataProvider<UnitsNamesDurationShortHeavyV1>
-            + DataProvider<UnitsNamesDurationNarrowTinyV1>
-            + DataProvider<UnitsNamesDurationNarrowLightV1>
-            + DataProvider<UnitsNamesDurationNarrowHeavyV1>
+            + DataProvider<UnitsNamesDurationLongEssentialV1>
+            + DataProvider<UnitsNamesDurationLongImperialV1>
+            + DataProvider<UnitsNamesDurationLongMetricV1>
+            + DataProvider<UnitsNamesDurationLongOutlierV1>
+            + DataProvider<UnitsNamesDurationShortEssentialV1>
+            + DataProvider<UnitsNamesDurationShortImperialV1>
+            + DataProvider<UnitsNamesDurationShortMetricV1>
+            + DataProvider<UnitsNamesDurationShortOutlierV1>
+            + DataProvider<UnitsNamesDurationNarrowEssentialV1>
+            + DataProvider<UnitsNamesDurationNarrowImperialV1>
+            + DataProvider<UnitsNamesDurationNarrowMetricV1>
+            + DataProvider<UnitsNamesDurationNarrowOutlierV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -194,17 +199,17 @@ impl DurationUnitFormatter {
             };
 
             match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
-                Width::Long => CategorizedFormatter::try_new_long_heavy_unstable(
+                Width::Long => CategorizedFormatter::try_new_long_outlier_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
                 ),
-                Width::Short => CategorizedFormatter::try_new_short_heavy_unstable(
+                Width::Short => CategorizedFormatter::try_new_short_outlier_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
                 ),
-                Width::Narrow => CategorizedFormatter::try_new_narrow_heavy_unstable(
+                Width::Narrow => CategorizedFormatter::try_new_narrow_outlier_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
@@ -287,15 +292,18 @@ impl DurationFormatter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::UnitsDurationDigitalV1>
-            + DataProvider<UnitsNamesDurationLongTinyV1>
-            + DataProvider<UnitsNamesDurationLongLightV1>
-            + DataProvider<UnitsNamesDurationLongHeavyV1>
-            + DataProvider<UnitsNamesDurationShortTinyV1>
-            + DataProvider<UnitsNamesDurationShortLightV1>
-            + DataProvider<UnitsNamesDurationShortHeavyV1>
-            + DataProvider<UnitsNamesDurationNarrowTinyV1>
-            + DataProvider<UnitsNamesDurationNarrowLightV1>
-            + DataProvider<UnitsNamesDurationNarrowHeavyV1>
+            + DataProvider<UnitsNamesDurationLongEssentialV1>
+            + DataProvider<UnitsNamesDurationLongImperialV1>
+            + DataProvider<UnitsNamesDurationLongMetricV1>
+            + DataProvider<UnitsNamesDurationLongOutlierV1>
+            + DataProvider<UnitsNamesDurationShortEssentialV1>
+            + DataProvider<UnitsNamesDurationShortImperialV1>
+            + DataProvider<UnitsNamesDurationShortMetricV1>
+            + DataProvider<UnitsNamesDurationShortOutlierV1>
+            + DataProvider<UnitsNamesDurationNarrowEssentialV1>
+            + DataProvider<UnitsNamesDurationNarrowImperialV1>
+            + DataProvider<UnitsNamesDurationNarrowMetricV1>
+            + DataProvider<UnitsNamesDurationNarrowOutlierV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>

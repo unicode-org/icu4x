@@ -8,41 +8,46 @@ use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 macro_rules! define_units_data_markers {
     (
         $category:literal,
-        long: [$long_tiny:ident, $long_light:ident, $long_heavy:ident],
-        short: [$short_tiny:ident, $short_light:ident, $short_heavy:ident],
-        narrow: [$narrow_tiny:ident, $narrow_light:ident, $narrow_heavy:ident] $(,)?
+        long: [$long_essential:ident, $long_imperial:ident, $long_metric:ident, $long_outlier:ident $(,)?],
+        short: [$short_essential:ident, $short_imperial:ident, $short_metric:ident, $short_outlier:ident $(,)?],
+        narrow: [$narrow_essential:ident, $narrow_imperial:ident, $narrow_metric:ident, $narrow_outlier:ident $(,)?] $(,)?
     ) => {
         define_units_data_markers!(
-            @width $category, "Long", $long_tiny, $long_light, $long_heavy,
+            @width $category, "Long", $long_essential, $long_imperial, $long_metric, $long_outlier,
             "\n\nNOTE\nThe data has a long name only where it differs from the short name, in the locale or in one of its parents. Where it has none, the short name is also the long name."
         );
         define_units_data_markers!(
-            @width $category, "Short", $short_tiny, $short_light, $short_heavy,
+            @width $category, "Short", $short_essential, $short_imperial, $short_metric, $short_outlier,
             ""
         );
         define_units_data_markers!(
-            @width $category, "Narrow", $narrow_tiny, $narrow_light, $narrow_heavy,
+            @width $category, "Narrow", $narrow_essential, $narrow_imperial, $narrow_metric, $narrow_outlier,
             "\n\nNOTE\nThe data has a narrow name only where it differs from the short name, in the locale or in one of its parents. Where it has none, the short name is also the narrow name."
         );
     };
-    (@width $category:literal, $width:literal, $tiny:ident, $light:ident, $heavy:ident, $fallback:literal) => {
+    (@width $category:literal, $width:literal, $essential:ident, $imperial:ident, $metric:ident, $outlier:ident, $fallback:literal) => {
         define_units_data_markers!(
-            @marker $tiny, $category, $width, $fallback,
-            "that are essential or defined by locale-specific preferences"
+            @marker $essential, $category, $width, $fallback,
+            "that are essential"
         );
         define_units_data_markers!(
-            @marker $light, $category, $width, $fallback,
-            "covering units from other locales' preferences"
+            @marker $imperial, $category, $width, $fallback,
+            "of the US and the UK systems that the unit preferences of some region use"
         );
         define_units_data_markers!(
-            @marker $heavy, $category, $width, $fallback,
-            "not specified by any locale's preferences"
+            @marker $metric, $category, $width, $fallback,
+            "of the other systems that the unit preferences of some region use"
+        );
+        define_units_data_markers!(
+            @marker $outlier, $category, $width, $fallback,
+            "that the unit preferences of no region use"
         );
     };
     (@marker $marker:ident, $category:literal, $width:literal, $fallback:literal, $units:literal) => {
         icu_provider::data_marker!(
             #[doc = concat!(
                 $width, " display names for ", $category, " units ", $units, ". ",
+                "A unit is in the same marker in every locale. ",
                 "Access requires specifying the unit in DataMarkerAttributes (e.g., meter). ",
                 "The pluralized displayname of the unit.",
                 $fallback
@@ -57,35 +62,110 @@ macro_rules! define_units_data_markers {
 
 define_units_data_markers!(
     "area",
-    long: [UnitsNamesAreaLongTinyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongHeavyV1],
-    short: [UnitsNamesAreaShortTinyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortHeavyV1],
-    narrow: [UnitsNamesAreaNarrowTinyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowHeavyV1],
+    long: [
+        UnitsNamesAreaLongEssentialV1,
+        UnitsNamesAreaLongImperialV1,
+        UnitsNamesAreaLongMetricV1,
+        UnitsNamesAreaLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesAreaShortEssentialV1,
+        UnitsNamesAreaShortImperialV1,
+        UnitsNamesAreaShortMetricV1,
+        UnitsNamesAreaShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesAreaNarrowEssentialV1,
+        UnitsNamesAreaNarrowImperialV1,
+        UnitsNamesAreaNarrowMetricV1,
+        UnitsNamesAreaNarrowOutlierV1,
+    ],
 );
 
 define_units_data_markers!(
     "duration",
-    long: [UnitsNamesDurationLongTinyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongHeavyV1],
-    short: [UnitsNamesDurationShortTinyV1, UnitsNamesDurationShortLightV1, UnitsNamesDurationShortHeavyV1],
-    narrow: [UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationNarrowLightV1, UnitsNamesDurationNarrowHeavyV1],
+    long: [
+        UnitsNamesDurationLongEssentialV1,
+        UnitsNamesDurationLongImperialV1,
+        UnitsNamesDurationLongMetricV1,
+        UnitsNamesDurationLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesDurationShortEssentialV1,
+        UnitsNamesDurationShortImperialV1,
+        UnitsNamesDurationShortMetricV1,
+        UnitsNamesDurationShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesDurationNarrowEssentialV1,
+        UnitsNamesDurationNarrowImperialV1,
+        UnitsNamesDurationNarrowMetricV1,
+        UnitsNamesDurationNarrowOutlierV1,
+    ],
 );
 
 define_units_data_markers!(
     "length",
-    long: [UnitsNamesLengthLongTinyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongHeavyV1],
-    short: [UnitsNamesLengthShortTinyV1, UnitsNamesLengthShortLightV1, UnitsNamesLengthShortHeavyV1],
-    narrow: [UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthNarrowLightV1, UnitsNamesLengthNarrowHeavyV1],
+    long: [
+        UnitsNamesLengthLongEssentialV1,
+        UnitsNamesLengthLongImperialV1,
+        UnitsNamesLengthLongMetricV1,
+        UnitsNamesLengthLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesLengthShortEssentialV1,
+        UnitsNamesLengthShortImperialV1,
+        UnitsNamesLengthShortMetricV1,
+        UnitsNamesLengthShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesLengthNarrowEssentialV1,
+        UnitsNamesLengthNarrowImperialV1,
+        UnitsNamesLengthNarrowMetricV1,
+        UnitsNamesLengthNarrowOutlierV1,
+    ],
 );
 
 define_units_data_markers!(
     "mass",
-    long: [UnitsNamesMassLongTinyV1, UnitsNamesMassLongLightV1, UnitsNamesMassLongHeavyV1],
-    short: [UnitsNamesMassShortTinyV1, UnitsNamesMassShortLightV1, UnitsNamesMassShortHeavyV1],
-    narrow: [UnitsNamesMassNarrowTinyV1, UnitsNamesMassNarrowLightV1, UnitsNamesMassNarrowHeavyV1],
+    long: [
+        UnitsNamesMassLongEssentialV1,
+        UnitsNamesMassLongImperialV1,
+        UnitsNamesMassLongMetricV1,
+        UnitsNamesMassLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesMassShortEssentialV1,
+        UnitsNamesMassShortImperialV1,
+        UnitsNamesMassShortMetricV1,
+        UnitsNamesMassShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesMassNarrowEssentialV1,
+        UnitsNamesMassNarrowImperialV1,
+        UnitsNamesMassNarrowMetricV1,
+        UnitsNamesMassNarrowOutlierV1,
+    ],
 );
 
 define_units_data_markers!(
     "volume",
-    long: [UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeLongLightV1, UnitsNamesVolumeLongHeavyV1],
-    short: [UnitsNamesVolumeShortTinyV1, UnitsNamesVolumeShortLightV1, UnitsNamesVolumeShortHeavyV1],
-    narrow: [UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeNarrowLightV1, UnitsNamesVolumeNarrowHeavyV1],
+    long: [
+        UnitsNamesVolumeLongEssentialV1,
+        UnitsNamesVolumeLongImperialV1,
+        UnitsNamesVolumeLongMetricV1,
+        UnitsNamesVolumeLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesVolumeShortEssentialV1,
+        UnitsNamesVolumeShortImperialV1,
+        UnitsNamesVolumeShortMetricV1,
+        UnitsNamesVolumeShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesVolumeNarrowEssentialV1,
+        UnitsNamesVolumeNarrowImperialV1,
+        UnitsNamesVolumeNarrowMetricV1,
+        UnitsNamesVolumeNarrowOutlierV1,
+    ],
 );

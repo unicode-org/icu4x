@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::units::data::Patterns;
-use crate::cldr_serde::units::info::Constant;
+use crate::cldr_serde::units::info::{Constant, ConvertUnit};
 use crate::cldr_serde::units::preferences::{CategorizedUnitsList, Supplemental, UnitType};
 use core::str::FromStr;
 use icu::experimental::measure::measureunit::MeasureUnit;
@@ -508,11 +508,9 @@ impl Patterns {
     }
 }
 
-/// The units that are in the tiny tier for every locale.
+/// The units of the essential tier.
 ///
-/// The tiny tier also has the units that the unit preferences use in the locale's region.
-/// The essential units are there even when the preferences don't use them,
-/// so a formatter that needs only these units can load the tiny tier alone.
+/// A formatter that needs only these units can load the essential tier alone.
 const ESSENTIAL_UNITS: &[&str] = &[
     // The units of the duration formatter.
     "year",
@@ -574,46 +572,59 @@ impl Supplemental {
         result
     }
 
-    /// Determines the type of unit based on the region and category.
-    /// If the unit is one of the [`ESSENTIAL_UNITS`], it is a tiny unit in every region.
-    /// If the unit is present in the unit preferences and the region is present in the unit preferences, it is a tiny unit.
-    /// If the unit is present in the unit preferences but not in the region preferences, it is a light unit.
-    /// If the unit is not present in the unit preferences, it is a heavy unit.
+    /// Returns whether a unit is an imperial unit: one of its single units, such as the
+    /// `foot` of `square-foot`, is part of only the US or the UK system.
+    fn is_imperial(unit: &str, convert_units: &BTreeMap<String, ConvertUnit>) -> bool {
+        let Ok(unit) = MeasureUnit::try_from_str(unit) else {
+            return false;
+        };
+        convert_units.iter().any(|(name, convert_unit)| {
+            !convert_unit.systems.is_empty()
+                && convert_unit
+                    .systems
+                    .iter()
+                    .all(|system| matches!(system.as_str(), "ussystem" | "uksystem"))
+                && icu::experimental::measure::parser::ids::unit_id(name).is_some_and(|id| {
+                    unit.single_units()
+                        .iter()
+                        .any(|single_unit| single_unit.unit_id == id)
+                })
+        })
+    }
+
+    /// Determines the tier of a unit. The tier does not depend on the locale.
     ///
-    /// If the specific region is not found, falls back to region "001" (world/default region).
+    /// - The [`ESSENTIAL_UNITS`] are essential units.
+    /// - The units that the unit preferences of no region use are outlier units.
+    /// - Of the units that the unit preferences use, the ones of the US and the UK systems
+    ///   are imperial units, and the others are metric units.
     ///
     /// A unit matches a preference by its full name, or as one part of a mixed unit:
     /// "foot" matches "foot-and-inch", but "mile" does not match "mile-scandinavian".
     pub(crate) fn unit_type(
         category: &str,
         unit: &str,
-        region: &str,
         categorized_units_list: &CategorizedUnitsList,
+        convert_units: &BTreeMap<String, ConvertUnit>,
     ) -> UnitType {
         if ESSENTIAL_UNITS.contains(&unit) {
-            return UnitType::Tiny;
+            return UnitType::Essential;
         }
 
-        let region_units = match categorized_units_list.get(category) {
-            Some(units) => units,
-            None => return UnitType::Heavy,
-        };
+        let is_preferred = categorized_units_list
+            .get(category)
+            .is_some_and(|region_units| {
+                region_units
+                    .values()
+                    .any(|units| Self::unit_matches_any(unit, units))
+            });
 
-        let found_in_region = region_units
-            .get(region)
-            .or_else(|| region_units.get("001"))
-            .is_some_and(|units| Self::unit_matches_any(unit, units));
-
-        let found_anywhere = region_units
-            .values()
-            .any(|units| Self::unit_matches_any(unit, units));
-
-        if found_in_region {
-            UnitType::Tiny
-        } else if found_anywhere {
-            UnitType::Light
+        if !is_preferred {
+            UnitType::Outlier
+        } else if Self::is_imperial(unit, convert_units) {
+            UnitType::Imperial
         } else {
-            UnitType::Heavy
+            UnitType::Metric
         }
     }
 }
@@ -654,56 +665,26 @@ fn test_unit_matches_any() {
 }
 
 #[test]
-fn test_unit_type_matches_full_unit_names() {
+fn test_unit_type() {
     use crate::SourceDataProvider;
-    use crate::cldr_serde::units::preferences::Resource;
 
     let provider = SourceDataProvider::new_testing();
-    let preferences: &Resource = provider
+    let preferences: &crate::cldr_serde::units::preferences::Resource = provider
         .cldr()
         .unwrap()
         .core()
         .read_and_parse("supplemental/unitPreferenceData.json")
         .unwrap();
     let units_list = preferences.supplemental.categorized_units_list();
-    let unit_type =
-        |category, unit, region| Supplemental::unit_type(category, unit, region, &units_list);
-
-    // Canada lists "foot-and-inch", and not "foot".
-    assert_eq!(unit_type("length", "foot", "CA"), UnitType::Tiny);
-    assert_eq!(unit_type("length", "inch", "CA"), UnitType::Tiny);
-
-    // Sweden lists "mile-scandinavian", and only other regions list "mile".
-    assert_eq!(
-        unit_type("length", "mile-scandinavian", "SE"),
-        UnitType::Tiny
-    );
-    assert_eq!(unit_type("length", "mile", "SE"), UnitType::Light);
-
-    // France uses the units of "001", which lists "tonne". Only other regions list "ton".
-    assert_eq!(unit_type("mass", "tonne", "FR"), UnitType::Tiny);
-    assert_eq!(unit_type("mass", "ton", "FR"), UnitType::Light);
-
-    // Great Britain lists "gallon-imperial", and only other regions list "gallon".
-    assert_eq!(unit_type("volume", "gallon-imperial", "GB"), UnitType::Tiny);
-    assert_eq!(unit_type("volume", "gallon", "GB"), UnitType::Light);
-}
-
-#[test]
-fn test_unit_type_essential_units() {
-    use crate::SourceDataProvider;
-    use crate::cldr_serde::units::preferences::Resource;
-
-    let provider = SourceDataProvider::new_testing();
-    let preferences: &Resource = provider
+    let units_info: &crate::cldr_serde::units::info::Resource = provider
         .cldr()
         .unwrap()
         .core()
-        .read_and_parse("supplemental/unitPreferenceData.json")
+        .read_and_parse("supplemental/units.json")
         .unwrap();
-    let units_list = preferences.supplemental.categorized_units_list();
+    let convert_units = &units_info.supplemental.convert_units.convert_units;
     let unit_type =
-        |category, unit, region| Supplemental::unit_type(category, unit, region, &units_list);
+        |category, unit| Supplemental::unit_type(category, unit, &units_list, convert_units);
 
     // The units of the duration formatter. The preferences don't list "week",
     // and they list "year" and "month" in the "year-duration" category.
@@ -719,13 +700,55 @@ fn test_unit_type_essential_units() {
         "microsecond",
         "nanosecond",
     ] {
-        assert_eq!(unit_type("duration", unit, "US"), UnitType::Tiny, "{unit}");
+        assert_eq!(unit_type("duration", unit), UnitType::Essential, "{unit}");
+    }
+    assert_eq!(unit_type("length", "meter"), UnitType::Essential);
+
+    // Units of the US and the UK systems that the preferences of some region list.
+    for (category, unit) in [
+        // Canada lists "foot-and-inch", and not "foot".
+        ("length", "foot"),
+        ("length", "inch"),
+        ("length", "mile"),
+        ("area", "square-foot"),
+        ("area", "acre"),
+        ("mass", "pound"),
+        ("mass", "stone"),
+        ("mass", "ton"),
+        ("volume", "gallon"),
+        ("volume", "gallon-imperial"),
+        ("volume", "cubic-inch"),
+    ] {
+        assert_eq!(unit_type(category, unit), UnitType::Imperial, "{unit}");
     }
 
-    // The United States doesn't list "meter".
-    assert_eq!(unit_type("length", "meter", "US"), UnitType::Tiny);
+    // The other units that the preferences of some region list.
+    for (category, unit) in [
+        ("length", "kilometer"),
+        ("length", "centimeter"),
+        // Sweden lists it. The full name counts: "mile" is an imperial unit.
+        ("length", "mile-scandinavian"),
+        ("area", "square-meter"),
+        ("area", "hectare"),
+        ("mass", "kilogram"),
+        // The full name counts: "ton" is an imperial unit.
+        ("mass", "tonne"),
+        ("volume", "liter"),
+        ("volume", "cubic-meter"),
+    ] {
+        assert_eq!(unit_type(category, unit), UnitType::Metric, "{unit}");
+    }
 
-    // The other units keep the tier that the preferences give them.
-    assert_eq!(unit_type("length", "kilometer", "US"), UnitType::Light);
-    assert_eq!(unit_type("duration", "century", "US"), UnitType::Heavy);
+    // Units that the preferences of no region list, whatever their system.
+    for (category, unit) in [
+        ("duration", "century"),
+        ("length", "decimeter"),
+        ("length", "furlong"),
+        ("length", "nautical-mile"),
+        ("area", "square-yard"),
+        ("mass", "carat"),
+        ("volume", "cup-metric"),
+    ] {
+        assert_eq!(unit_type(category, unit), UnitType::Outlier, "{unit}");
+    }
 }

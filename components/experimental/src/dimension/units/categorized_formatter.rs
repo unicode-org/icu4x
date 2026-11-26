@@ -47,8 +47,20 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
 ///
-/// There is one constructor for each width (long, short, narrow) and each tier of units
-/// (tiny, light, heavy), such as [`Self::try_new_long_tiny`].
+/// The names of the units are in four tiers, and a unit is in the same tier in every locale:
+///
+/// - essential: the units of the duration formatter, and `meter`
+/// - imperial: the units of the US and the UK systems that the unit preferences of some
+///   region use, such as `foot`
+/// - metric: the other units that the unit preferences of some region use, such as
+///   `kilometer`
+/// - outlier: the units that the unit preferences of no region use, such as `furlong`
+///
+/// There is one constructor for each width (long, short, narrow) and each of these sets of
+/// tiers: the essential tier, the essential and the imperial tiers, the essential and the
+/// metric tiers, and all the tiers. For example, [`Self::try_new_long_imperial`] loads the
+/// long names of the essential and the imperial units. A constructor returns an error for
+/// a unit of a tier that it does not load.
 ///
 /// As in CLDR, a unit has a long or a narrow name only where it differs from the short
 /// name, in the locale or in one of its parents. So the constructors of the long and the
@@ -175,6 +187,8 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
 ///
 /// A name that a marker does not have is expected. Only that error leads to the next
 /// marker, and the requests are silent except for the last marker.
+///
+/// A unit is in the same tier in every locale, so only the markers of that tier have it.
 macro_rules! impl_constructors {
     (
         $width:literal,
@@ -203,6 +217,8 @@ macro_rules! impl_constructors {
                 " width from compiled locale data with the ", $tiers, " markers.",
             )]
             ///
+            /// It returns an error for a unit of another tier.
+            ///
             /// ✨ *Enabled with the `compiled_data` Cargo feature.*
             ///
             /// [📚 Help choosing a constructor](icu_provider::constructors)
@@ -217,7 +233,6 @@ macro_rules! impl_constructors {
             {
                 let provider = &crate::provider::Baked;
 
-                // TODO(#8125): a marker might return the display name of a parent locale, even if the locale has its own one in a marker of a later tier.
                 let display_name = Self::load_first_display_name(
                     &|silent| {
                         Self::load_display_name::<C::$first, _>(
@@ -254,7 +269,6 @@ macro_rules! impl_constructors {
                     + DataProvider<icu_decimal::provider::DecimalDigitsV1>
                     + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
             {
-                // TODO(#8125): a marker might return the display name of a parent locale, even if the locale has its own one in a marker of a later tier.
                 let display_name = Self::load_first_display_name(
                     &|silent| {
                         Self::load_display_name::<C::$first, _>(
@@ -282,122 +296,189 @@ macro_rules! impl_constructors {
 
 impl_constructors!(
     "long",
-    "tiny",
+    "essential",
     functions: [
-        try_new_long_tiny,
-        try_new_long_tiny_unstable,
-        try_new_long_tiny_with_buffer_provider
-    ],
-    markers: [DataMarkerLongTiny, DataMarkerShortTiny],
-);
-impl_constructors!(
-    "long",
-    "tiny and light",
-    functions: [
-        try_new_long_light,
-        try_new_long_light_unstable,
-        try_new_long_light_with_buffer_provider
+        try_new_long_essential,
+        try_new_long_essential_unstable,
+        try_new_long_essential_with_buffer_provider
     ],
     markers: [
-        DataMarkerLongTiny,
-        DataMarkerLongLight,
-        DataMarkerShortTiny,
-        DataMarkerShortLight,
+        DataMarkerLongEssential,
+        DataMarkerShortEssential,
     ],
 );
 impl_constructors!(
     "long",
-    "tiny, light and heavy",
-    functions: [try_new_long_heavy, try_new_long_heavy_unstable],
+    "essential and imperial",
+    functions: [
+        try_new_long_imperial,
+        try_new_long_imperial_unstable,
+        try_new_long_imperial_with_buffer_provider
+    ],
     markers: [
-        DataMarkerLongTiny,
-        DataMarkerLongLight,
-        DataMarkerLongHeavy,
-        DataMarkerShortTiny,
-        DataMarkerShortLight,
-        DataMarkerShortHeavy,
+        DataMarkerLongEssential,
+        DataMarkerLongImperial,
+        DataMarkerShortEssential,
+        DataMarkerShortImperial,
+    ],
+);
+impl_constructors!(
+    "long",
+    "essential and metric",
+    functions: [
+        try_new_long_metric,
+        try_new_long_metric_unstable,
+        try_new_long_metric_with_buffer_provider
+    ],
+    markers: [
+        DataMarkerLongEssential,
+        DataMarkerLongMetric,
+        DataMarkerShortEssential,
+        DataMarkerShortMetric,
+    ],
+);
+impl_constructors!(
+    "long",
+    "essential, imperial, metric and outlier",
+    functions: [try_new_long_outlier, try_new_long_outlier_unstable],
+    markers: [
+        DataMarkerLongEssential,
+        DataMarkerLongImperial,
+        DataMarkerLongMetric,
+        DataMarkerLongOutlier,
+        DataMarkerShortEssential,
+        DataMarkerShortImperial,
+        DataMarkerShortMetric,
+        DataMarkerShortOutlier,
     ],
 );
 
 impl_constructors!(
     "short",
-    "tiny",
+    "essential",
     functions: [
-        try_new_short_tiny,
-        try_new_short_tiny_unstable,
-        try_new_short_tiny_with_buffer_provider
+        try_new_short_essential,
+        try_new_short_essential_unstable,
+        try_new_short_essential_with_buffer_provider
     ],
-    markers: [DataMarkerShortTiny],
+    markers: [
+        DataMarkerShortEssential,
+    ],
 );
 impl_constructors!(
     "short",
-    "tiny and light",
+    "essential and imperial",
     functions: [
-        try_new_short_light,
-        try_new_short_light_unstable,
-        try_new_short_light_with_buffer_provider
+        try_new_short_imperial,
+        try_new_short_imperial_unstable,
+        try_new_short_imperial_with_buffer_provider
     ],
-    markers: [DataMarkerShortTiny, DataMarkerShortLight],
+    markers: [
+        DataMarkerShortEssential,
+        DataMarkerShortImperial,
+    ],
 );
 impl_constructors!(
     "short",
-    "tiny, light and heavy",
-    functions: [try_new_short_heavy, try_new_short_heavy_unstable],
-    markers: [DataMarkerShortTiny, DataMarkerShortLight, DataMarkerShortHeavy],
+    "essential and metric",
+    functions: [
+        try_new_short_metric,
+        try_new_short_metric_unstable,
+        try_new_short_metric_with_buffer_provider
+    ],
+    markers: [
+        DataMarkerShortEssential,
+        DataMarkerShortMetric,
+    ],
+);
+impl_constructors!(
+    "short",
+    "essential, imperial, metric and outlier",
+    functions: [try_new_short_outlier, try_new_short_outlier_unstable],
+    markers: [
+        DataMarkerShortEssential,
+        DataMarkerShortImperial,
+        DataMarkerShortMetric,
+        DataMarkerShortOutlier,
+    ],
 );
 
 impl_constructors!(
     "narrow",
-    "tiny",
+    "essential",
     functions: [
-        try_new_narrow_tiny,
-        try_new_narrow_tiny_unstable,
-        try_new_narrow_tiny_with_buffer_provider
-    ],
-    markers: [DataMarkerNarrowTiny, DataMarkerShortTiny],
-);
-impl_constructors!(
-    "narrow",
-    "tiny and light",
-    functions: [
-        try_new_narrow_light,
-        try_new_narrow_light_unstable,
-        try_new_narrow_light_with_buffer_provider
+        try_new_narrow_essential,
+        try_new_narrow_essential_unstable,
+        try_new_narrow_essential_with_buffer_provider
     ],
     markers: [
-        DataMarkerNarrowTiny,
-        DataMarkerNarrowLight,
-        DataMarkerShortTiny,
-        DataMarkerShortLight,
+        DataMarkerNarrowEssential,
+        DataMarkerShortEssential,
     ],
 );
 impl_constructors!(
     "narrow",
-    "tiny, light and heavy",
-    functions: [try_new_narrow_heavy, try_new_narrow_heavy_unstable],
+    "essential and imperial",
+    functions: [
+        try_new_narrow_imperial,
+        try_new_narrow_imperial_unstable,
+        try_new_narrow_imperial_with_buffer_provider
+    ],
     markers: [
-        DataMarkerNarrowTiny,
-        DataMarkerNarrowLight,
-        DataMarkerNarrowHeavy,
-        DataMarkerShortTiny,
-        DataMarkerShortLight,
-        DataMarkerShortHeavy,
+        DataMarkerNarrowEssential,
+        DataMarkerNarrowImperial,
+        DataMarkerShortEssential,
+        DataMarkerShortImperial,
+    ],
+);
+impl_constructors!(
+    "narrow",
+    "essential and metric",
+    functions: [
+        try_new_narrow_metric,
+        try_new_narrow_metric_unstable,
+        try_new_narrow_metric_with_buffer_provider
+    ],
+    markers: [
+        DataMarkerNarrowEssential,
+        DataMarkerNarrowMetric,
+        DataMarkerShortEssential,
+        DataMarkerShortMetric,
+    ],
+);
+impl_constructors!(
+    "narrow",
+    "essential, imperial, metric and outlier",
+    functions: [try_new_narrow_outlier, try_new_narrow_outlier_unstable],
+    markers: [
+        DataMarkerNarrowEssential,
+        DataMarkerNarrowImperial,
+        DataMarkerNarrowMetric,
+        DataMarkerNarrowOutlier,
+        DataMarkerShortEssential,
+        DataMarkerShortImperial,
+        DataMarkerShortMetric,
+        DataMarkerShortOutlier,
     ],
 );
 
 #[cfg(feature = "compiled_data")]
 #[cfg(test)]
 mod tests {
+    use core::marker::PhantomData;
     use core::str::FromStr;
     use fixed_decimal::Decimal;
     use icu_locale_core::locale;
-    use icu_provider::DataError;
+    use icu_provider::{DataError, DataErrorKind};
     use writeable::assert_writeable_eq;
 
     use crate::dimension::units::categorized_formatter::{
         CategorizedFormatter, CategorizedUnitsFormatterPreferences,
     };
-    use crate::measure::category::{Area, CategorizedMeasureUnit, Duration, Length};
+    use crate::measure::category::{
+        Area, CategorizedMeasureUnit, Duration, Length, MeasureUnitCategory, Volume,
+    };
+    use crate::measure::measureunit::MeasureUnit;
 
     /// A constructor of [`CategorizedFormatter`] with compiled data.
     type Constructor<C> = fn(
@@ -405,87 +486,51 @@ mod tests {
         CategorizedMeasureUnit<C>,
     ) -> Result<CategorizedFormatter<C>, DataError>;
 
-    const AREA_SHORT_TINY: Constructor<Area> = CategorizedFormatter::<Area>::try_new_short_tiny;
-    const AREA_LONG_TINY: Constructor<Area> = CategorizedFormatter::<Area>::try_new_long_tiny;
-    const AREA_SHORT_LIGHT: Constructor<Area> = CategorizedFormatter::<Area>::try_new_short_light;
-    const AREA_LONG_LIGHT: Constructor<Area> = CategorizedFormatter::<Area>::try_new_long_light;
-    const AREA_SHORT_HEAVY: Constructor<Area> = CategorizedFormatter::<Area>::try_new_short_heavy;
-    const AREA_LONG_HEAVY: Constructor<Area> = CategorizedFormatter::<Area>::try_new_long_heavy;
+    const AREA_SHORT_METRIC: Constructor<Area> = CategorizedFormatter::<Area>::try_new_short_metric;
+    const AREA_LONG_METRIC: Constructor<Area> = CategorizedFormatter::<Area>::try_new_long_metric;
+    const AREA_SHORT_OUTLIER: Constructor<Area> =
+        CategorizedFormatter::<Area>::try_new_short_outlier;
+    const AREA_LONG_OUTLIER: Constructor<Area> = CategorizedFormatter::<Area>::try_new_long_outlier;
 
-    #[test]
-    fn test_area_categorized_tiny_formatter() {
-        let test_cases = vec![
-            (
-                locale!("en-US"),
-                Area::square_meter(),
-                "1000",
-                AREA_SHORT_TINY,
-                "1,000 m²",
-            ),
-            // TODO(#8125): `square-meter` is not a tiny unit in `en`, so this is the short name of root.
-            (
-                locale!("en-US"),
-                Area::square_meter(),
-                "1000",
-                AREA_LONG_TINY,
-                "1,000 m²",
-            ),
-            (
-                locale!("fr-FR"),
-                Area::square_meter(),
-                "1000",
-                AREA_LONG_TINY,
-                "1\u{202f}000\u{a0}mètres carrés",
-            ),
-            (
-                locale!("ar-EG"),
-                Area::square_meter(),
-                "1000",
-                AREA_LONG_TINY,
-                "١٬٠٠٠ متر مربع",
-            ),
-        ];
-
-        for (locale, categorized_unit, value_str, constructor, expected) in test_cases {
-            let formatter = constructor(locale.clone().into(), categorized_unit);
-
-            let formatter = formatter.unwrap();
-            let signed_decimal = Decimal::from_str(value_str).unwrap();
-            let formatted = formatter.format_fixed_decimal(&signed_decimal);
-
-            assert_writeable_eq!(formatted, expected);
+    /// A unit by its CLDR ID, for the units that have no constructor yet.
+    fn unit<C: MeasureUnitCategory>(id: &'static str) -> CategorizedMeasureUnit<C> {
+        let mut unit = MeasureUnit::try_from_str(id).unwrap();
+        unit.id = Some(id);
+        CategorizedMeasureUnit {
+            _category: PhantomData,
+            unit,
         }
     }
 
     #[test]
-    fn test_area_categorized_light_formatter() {
+    fn test_area_categorized_metric_formatter() {
         let test_cases = vec![
             (
                 locale!("en-US"),
                 Area::square_meter(),
                 "1000",
-                AREA_SHORT_LIGHT,
+                AREA_SHORT_METRIC,
                 "1,000 m²",
             ),
             (
                 locale!("en-US"),
                 Area::square_meter(),
                 "1000",
-                AREA_LONG_LIGHT,
+                AREA_LONG_METRIC,
                 "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
                 Area::square_meter(),
                 "1000",
-                AREA_LONG_LIGHT,
+                AREA_LONG_METRIC,
                 "1\u{202f}000\u{a0}mètres carrés",
             ),
             (
                 locale!("ar-EG"),
                 Area::square_meter(),
                 "1000",
-                AREA_LONG_LIGHT,
+                AREA_LONG_METRIC,
                 "١٬٠٠٠ متر مربع",
             ),
         ];
@@ -501,42 +546,42 @@ mod tests {
     }
 
     #[test]
-    fn test_area_categorized_heavy_formatter() {
+    fn test_area_categorized_outlier_formatter() {
         let test_cases = vec![
             // TODO: Uncomment this test case once we have danum units in the Area category.
             //    (
             //     locale!("en-US"),
             //     Area::danum(),
             //     "1000",
-            //     AREA_SHORT_HEAVY,
+            //     AREA_SHORT_OUTLIER,
             //     "TBD",
             //    ),
             (
                 locale!("en-US"),
                 Area::square_meter(),
                 "1000",
-                AREA_SHORT_HEAVY,
+                AREA_SHORT_OUTLIER,
                 "1,000 m²",
             ),
             (
                 locale!("en-US"),
                 Area::square_meter(),
                 "1000",
-                AREA_LONG_HEAVY,
+                AREA_LONG_OUTLIER,
                 "1,000 square meters",
             ),
             (
                 locale!("fr-FR"),
                 Area::square_meter(),
                 "1000",
-                AREA_LONG_HEAVY,
+                AREA_LONG_OUTLIER,
                 "1\u{202f}000\u{a0}mètres carrés",
             ),
             (
                 locale!("ar-EG"),
                 Area::square_meter(),
                 "1000",
-                AREA_LONG_HEAVY,
+                AREA_LONG_OUTLIER,
                 "١٬٠٠٠ متر مربع",
             ),
         ];
@@ -551,10 +596,88 @@ mod tests {
         }
     }
 
+    /// A constructor returns an error for a unit of a tier that it does not load,
+    /// in every locale.
     #[test]
-    fn test_duration_categorized_tiny_formatter() {
-        let short: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_short_tiny;
-        let long: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_long_tiny;
+    fn test_unit_of_another_tier_is_an_error() {
+        // `square-meter` is a metric unit.
+        let constructors: [(Constructor<Area>, &str); 6] = [
+            (
+                CategorizedFormatter::<Area>::try_new_long_essential,
+                "long essential",
+            ),
+            (
+                CategorizedFormatter::<Area>::try_new_short_essential,
+                "short essential",
+            ),
+            (
+                CategorizedFormatter::<Area>::try_new_narrow_essential,
+                "narrow essential",
+            ),
+            (
+                CategorizedFormatter::<Area>::try_new_long_imperial,
+                "long imperial",
+            ),
+            (
+                CategorizedFormatter::<Area>::try_new_short_imperial,
+                "short imperial",
+            ),
+            (
+                CategorizedFormatter::<Area>::try_new_narrow_imperial,
+                "narrow imperial",
+            ),
+        ];
+
+        for locale in [locale!("en-US"), locale!("fr-FR"), locale!("und")] {
+            for (constructor, name) in constructors {
+                let error = constructor(locale.clone().into(), Area::square_meter()).unwrap_err();
+                assert_eq!(
+                    error.kind,
+                    DataErrorKind::IdentifierNotFound,
+                    "{locale} {name}"
+                );
+            }
+        }
+    }
+
+    /// A locale and its parents have the names of a unit in the same tier,
+    /// so the formatter takes the name of the nearest locale that has one.
+    #[test]
+    fn test_name_of_the_locale_comes_before_the_name_of_a_parent() {
+        let value = Decimal::from_str("1000").unwrap();
+
+        // The unit preferences of the United States list `cup`, an imperial unit.
+        // `en-001` has its own long name for it.
+        let test_cases = [
+            (locale!("en"), "1,000 cups"),
+            (locale!("en-001"), "1,000 US cups"),
+            (locale!("en-GB"), "1,000 US cups"),
+        ];
+        for (locale, expected) in test_cases {
+            let formatter =
+                CategorizedFormatter::<Volume>::try_new_long_imperial(locale.into(), unit("cup"))
+                    .unwrap();
+            assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
+        }
+
+        // Root has the short name "km" for `kilometer`, a metric unit,
+        // and Arabic has its own short name.
+        let test_cases = [(locale!("und"), "1,000 km"), (locale!("ar-EG"), "١٬٠٠٠ كم")];
+        for (locale, expected) in test_cases {
+            let formatter = CategorizedFormatter::<Length>::try_new_short_metric(
+                locale.into(),
+                unit("kilometer"),
+            )
+            .unwrap();
+            assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
+        }
+    }
+
+    #[test]
+    fn test_duration_categorized_essential_formatter() {
+        let short: Constructor<Duration> =
+            CategorizedFormatter::<Duration>::try_new_short_essential;
+        let long: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_long_essential;
 
         let test_cases = vec![
             (
@@ -598,16 +721,22 @@ mod tests {
     /// Each width has its own data: the same unit and locale format differently
     /// with the constructor of each width.
     #[test]
-    fn test_widths_tiny_formatter() {
+    fn test_widths_essential_formatter() {
         let value = Decimal::from_str("1").unwrap();
 
         let test_cases: [(Constructor<Duration>, &str); 3] = [
             (
-                CategorizedFormatter::<Duration>::try_new_long_tiny,
+                CategorizedFormatter::<Duration>::try_new_long_essential,
                 "1 hour",
             ),
-            (CategorizedFormatter::<Duration>::try_new_short_tiny, "1 hr"),
-            (CategorizedFormatter::<Duration>::try_new_narrow_tiny, "1h"),
+            (
+                CategorizedFormatter::<Duration>::try_new_short_essential,
+                "1 hr",
+            ),
+            (
+                CategorizedFormatter::<Duration>::try_new_narrow_essential,
+                "1h",
+            ),
         ];
 
         for (constructor, expected) in test_cases {
@@ -616,14 +745,13 @@ mod tests {
         }
     }
 
-    /// The essential units are in the tiny data of every locale,
-    /// also when the unit preferences of the locale's region don't use them.
+    /// The essential units are in the essential data of every locale,
+    /// also when the unit preferences don't use them.
     #[test]
-    fn test_essential_units_tiny_formatter() {
+    fn test_essential_units_formatter() {
         let value = Decimal::from_str("1000").unwrap();
 
-        // The unit preferences of the United States don't list `meter`.
-        let formatter = CategorizedFormatter::<Length>::try_new_long_tiny(
+        let formatter = CategorizedFormatter::<Length>::try_new_long_essential(
             locale!("en-US").into(),
             Length::meter(),
         )
@@ -638,13 +766,15 @@ mod tests {
             (Duration::year(), "1,000 years"),
         ];
         for (unit, expected) in test_cases {
-            let formatter =
-                CategorizedFormatter::<Duration>::try_new_long_tiny(locale!("en-US").into(), unit)
-                    .unwrap();
+            let formatter = CategorizedFormatter::<Duration>::try_new_long_essential(
+                locale!("en-US").into(),
+                unit,
+            )
+            .unwrap();
             assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
         }
 
-        // Every unit of the duration formatter loads from the tiny data alone.
+        // Every unit of the duration formatter loads from the essential data alone.
         let duration_units: [fn() -> CategorizedMeasureUnit<Duration>; 10] = [
             Duration::year,
             Duration::month,
@@ -658,13 +788,16 @@ mod tests {
             Duration::nanosecond,
         ];
         let constructors: [(Constructor<Duration>, &str); 3] = [
-            (CategorizedFormatter::<Duration>::try_new_long_tiny, "long"),
             (
-                CategorizedFormatter::<Duration>::try_new_short_tiny,
+                CategorizedFormatter::<Duration>::try_new_long_essential,
+                "long",
+            ),
+            (
+                CategorizedFormatter::<Duration>::try_new_short_essential,
                 "short",
             ),
             (
-                CategorizedFormatter::<Duration>::try_new_narrow_tiny,
+                CategorizedFormatter::<Duration>::try_new_narrow_essential,
                 "narrow",
             ),
         ];
@@ -690,9 +823,11 @@ mod tests {
     fn test_long_and_narrow_fall_back_to_short() {
         let value = Decimal::from_str("1000").unwrap();
 
-        let long: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_long_tiny;
-        let short: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_short_tiny;
-        let narrow: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_narrow_tiny;
+        let long: Constructor<Duration> = CategorizedFormatter::<Duration>::try_new_long_essential;
+        let short: Constructor<Duration> =
+            CategorizedFormatter::<Duration>::try_new_short_essential;
+        let narrow: Constructor<Duration> =
+            CategorizedFormatter::<Duration>::try_new_narrow_essential;
 
         let test_cases = [
             // In English, the long name of `day` is also its short name.
@@ -720,7 +855,6 @@ mod tests {
     #[test]
     fn test_only_a_missing_name_leads_to_the_next_marker() {
         use core::cell::RefCell;
-        use icu_provider::DataErrorKind;
 
         // No marker has the name.
         let requests = RefCell::new(Vec::new());

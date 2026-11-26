@@ -49,12 +49,17 @@ pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }
 
-/// Determines the type of unit
+/// The tier of the names of a unit. A unit is in the same tier in every locale.
 #[derive(Debug, PartialEq)]
 pub(crate) enum UnitType {
-    Tiny,
-    Light,
-    Heavy,
+    /// An essential unit, such as `second` or `meter`.
+    Essential,
+    /// A unit of the US or the UK system that the unit preferences use, such as `foot`.
+    Imperial,
+    /// Any other unit that the unit preferences use, such as `kilometer`.
+    Metric,
+    /// A unit that the unit preferences don't use, such as `furlong`.
+    Outlier,
 }
 
 /// Maps a category (e.g., "length", "mass", "duration") to a map from each region to a set of units.
