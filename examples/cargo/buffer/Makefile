@@ -31,7 +31,7 @@ bin/tutorial_buffer.wasm:
 	rustup target add wasm32-wasip1 --toolchain ${PINNED_CI_NIGHTLY}
 	cargo +${PINNED_CI_NIGHTLY} build --target wasm32-wasip1 --release
 	mkdir -p bin
-	cp -p "$(CARGO_TARGET_DIR)"/wasm32-wasip1/release/tutorial_buffer.wasm bin/
+	cp -p "$(CARGO_TARGET_DIR)/wasm32-wasip1/release/tutorial_buffer.wasm" bin/
 	ls -l bin/
 
 buffer_data.postcard: ../bin/icu4x-datagen$(BINARY_EXT) bin/tutorial_buffer$(BINARY_EXT)
