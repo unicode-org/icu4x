@@ -642,6 +642,10 @@ jobs:
   ffi-libs:
     if: (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch') && github.repository == 'unicode-org/icu4x'
     name: Build FFI binaries
+    permissions:
+      contents: read
+      id-token: write # To sign the provenance attestations of the binaries.
+      attestations: write # To store the attestations with the repository.
     strategy:
       fail-fast: false
       matrix:
@@ -768,7 +772,37 @@ jobs:
       with:
         name: ffi-${{matrix.os}}-${{ matrix.compiletype }}${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}-libs
         path: bin
-        
+
+    # Verify with `gh attestation verify <file> --repo unicode-org/icu4x`.
+    # ffi/dart/tool/regenerate_hashes.dart checks these before pinning the
+    # hashes of the binaries that package:icu4x downloads.
+    - name: Attest the provenance of the binaries
+      id: attest
+      uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+      with:
+        subject-path: bin/*
+
+    # The release job publishes the attestation bundles with the binaries, so
+    # that copies of them, such as on a mirror, can be verified offline with
+    # `gh attestation verify <file> --repo unicode-org/icu4x
+    # --bundle provenance.intoto.jsonl`. The job index keeps the names of the
+    # bundles of the matrix jobs apart.
+    - name: Name the provenance attestation bundle
+      shell: bash
+      env:
+        BUNDLE: ${{ steps.attest.outputs.bundle-path }}
+        INDEX: ${{ strategy.job-index }}
+      run: |
+        mkdir -p "$RUNNER_TEMP/provenance"
+        cp "$BUNDLE" "$RUNNER_TEMP/provenance/$INDEX.intoto.jsonl"
+
+    - name: Upload the provenance attestation bundle
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: provenance-ffi-${{ strategy.job-index }}
+        path: ${{ runner.temp }}/provenance/*
+        if-no-files-found: error
+
   release-ffi-libs:
     runs-on: ubuntu-latest
     if: (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch') && github.repository == 'unicode-org/icu4x'
@@ -788,6 +822,22 @@ jobs:
           pattern: ffi-*-libs
           path: bin
           merge-multiple: true
+
+      - name: Download provenance attestation bundles
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: provenance-ffi-*
+          path: provenance
+          merge-multiple: true
+
+      # provenance.intoto.jsonl has one attestation bundle per line, which
+      # `gh attestation verify --bundle` accepts as is.
+      - name: Combine the provenance attestation bundles
+        working-directory: bin
+        run: |
+          for bundle in ../provenance/*.intoto.jsonl; do
+            jq -c . "$bundle"
+          done > provenance.intoto.jsonl
 
       - name: Display structure of downloaded files
         run: ls -R
