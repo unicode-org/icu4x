@@ -1735,13 +1735,6 @@ mod test {
     }
 
     #[test]
-    fn entry_or_default() {
-        let mut map: LiteMap<i32, String> = LiteMap::new();
-        map.entry(1).or_default();
-        assert_eq!(map.get(&1), Some(&String::new()));
-    }
-
-    #[test]
     fn entry_or_default_vacant() {
         let mut map: LiteMap<i32, String> = LiteMap::new();
         map.entry(1).or_default();
