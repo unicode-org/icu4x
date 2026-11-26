@@ -12,6 +12,7 @@ use icu::experimental::dimension::provider::units::categorized_display_names::{
     UnitsNamesMassTinyV1, UnitsNamesVolumeHeavyV1, UnitsNamesVolumeLightV1, UnitsNamesVolumeTinyV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
+use icu::locale::fallback::{LocaleFallbackIterator, LocaleFallbacker};
 use icu_provider::DataMarkerAttributes;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -59,11 +60,58 @@ impl SourceDataProvider {
         })
     }
 
-    fn get_display_name_iter_ids_cached(
+    /// Returns whether the patterns of a unit for a length differ from its short patterns
+    /// in a locale or in one of its parents. Only then does the data need them.
+    ///
+    /// As in CLDR, the formatter looks for the long or the narrow patterns in the locale and
+    /// its parents, and takes the short patterns when it finds none. A parent counts,
+    /// because the formatter would find its patterns before the short ones of the locale:
+    /// the narrow `{0} noches` of `es-419` is also its short pattern, and its parent `es`
+    /// has the narrow `{0}noches`.
+    ///
+    /// The CLDR JSON data is resolved, so this function compares the patterns.
+    fn differs_from_short(
+        &self,
+        mut locales: LocaleFallbackIterator,
+        length: &str,
+        category: &str,
+        unit: &str,
+    ) -> Result<bool, DataError> {
+        let units = self.cldr()?.units();
+        loop {
+            let locale = locales.get();
+            if units.file_exists(locale, "units.json")? {
+                let data: &cldr_serde::units::data::Resource =
+                    units.read_and_parse(locale, "units.json")?;
+                let data = &data.main.value.units;
+                let patterns = |length| {
+                    data.length(length)?
+                        .categories
+                        .get(category)?
+                        .get(unit)?
+                        .try_into_plural_elements_packed_cow()
+                        .ok()
+                };
+                let length_patterns = patterns(length);
+                if length_patterns.is_some() && length_patterns != patterns("short") {
+                    return Ok(true);
+                }
+            }
+            if locale.is_unknown() {
+                return Ok(false);
+            }
+            locales.step();
+        }
+    }
+
+    fn get_display_name_iter_ids_cached<M: DataMarker>(
         &self,
         unit_type: UnitType,
         category: &str,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let fallbacker = LocaleFallbacker::try_new_unstable(self)?;
+        let fallbacker = fallbacker.for_config(M::INFO.fallback_config);
+
         let mut data_locales = HashSet::new();
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
@@ -112,6 +160,19 @@ impl SourceDataProvider {
                         continue;
                     }
 
+                    // The formatter takes the short patterns when the data has no patterns
+                    // for the length, as CLDR does.
+                    if *length != "short"
+                        && !self.differs_from_short(
+                            fallbacker.fallback_for(locale),
+                            length,
+                            category,
+                            unit,
+                        )?
+                    {
+                        continue;
+                    }
+
                     data_locales.insert(DataIdentifierCow::from_owned(
                         DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
                             |_| {
@@ -140,7 +201,7 @@ macro_rules! impl_units_display_names_provider {
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.get_display_name_iter_ids_cached($unit_type, $category)
+                self.get_display_name_iter_ids_cached::<$marker>($unit_type, $category)
             }
         }
     };
@@ -244,4 +305,65 @@ fn test_basic() {
     let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, locale!("fr").into()).unwrap();
     let short = fr_locale.get().get(5.into(), &fr_rules).interpolate([5]);
     assert_writeable_eq!(short, "5 m");
+}
+
+/// Loads the unit names of an attribute, such as `narrow-day`, for a locale from the
+/// marker `M`. Returns `None` if the data has no such names.
+#[cfg(test)]
+fn load_names<M>(
+    provider: &SourceDataProvider,
+    locale: &str,
+    attributes: &str,
+) -> Option<DataPayload<M>>
+where
+    M: DataMarker,
+    SourceDataProvider: DataProvider<M>,
+{
+    provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic(attributes),
+                &locale.parse().unwrap(),
+            ),
+            ..Default::default()
+        })
+        .allow_identifier_not_found()
+        .unwrap()
+        .map(|response| response.payload)
+}
+
+/// The data has the long and the narrow patterns of a unit only where the formatter
+/// can't take the short ones.
+#[test]
+fn test_long_and_narrow_differ_from_short() {
+    let provider = SourceDataProvider::new_testing();
+    let tiny =
+        |locale, attributes| load_names::<UnitsNamesDurationTinyV1>(&provider, locale, attributes);
+    let heavy =
+        |locale, attributes| load_names::<UnitsNamesDurationHeavyV1>(&provider, locale, attributes);
+
+    // In root, the long and the narrow patterns are aliases of the short ones.
+    assert!(tiny("und", "short-day").is_some());
+    assert!(tiny("und", "long-day").is_none());
+    assert!(tiny("und", "narrow-day").is_none());
+
+    // In English, the long patterns of `day` are the short ones (`{0} day`, `{0} days`),
+    // and the narrow pattern is `{0}d`.
+    assert!(tiny("en", "short-day").is_some());
+    assert!(tiny("en", "long-day").is_none());
+    assert!(tiny("en", "narrow-day").is_some());
+
+    // The narrow patterns of `night` in `es-AR` are its short ones (`{0} noches`).
+    // But `es`, a parent of `es-AR`, has the narrow `{0}noches`, and the formatter
+    // would find it for `es-AR`. So `es-AR` keeps its narrow patterns.
+    assert!(heavy("es-AR", "narrow-night").is_some());
+    assert_eq!(
+        heavy("es-AR", "narrow-night"),
+        heavy("es-AR", "short-night")
+    );
+    assert_ne!(heavy("es-AR", "narrow-night"), heavy("es", "narrow-night"));
+
+    // The long patterns of `night` are the short ones in `es-AR`, in `es`, and in root.
+    assert!(heavy("es-AR", "long-night").is_none());
+    assert!(heavy("es", "long-night").is_none());
 }

@@ -9,6 +9,12 @@ macro_rules! define_units_data_markers {
         $(
             icu_provider::data_marker!(
                 #[doc = $doc]
+                /// The pluralized displayname of the unit.
+                ///
+                /// NOTE
+                /// The data has a name for the long or the narrow width only where it differs
+                /// from the short name, in the locale or in one of its parents. Where it has
+                /// none, the short name is the name for that width.
                 $marker,
                 UnitsDisplayNames<'static>,
                 #[cfg(feature = "datagen")]
