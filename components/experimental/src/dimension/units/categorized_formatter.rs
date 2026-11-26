@@ -21,6 +21,7 @@ use icu_provider::marker::DataMarkerExt;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::{
     DataIdentifierBorrowed, DataMarkerAttributes, DataPayload, DataProvider, DataRequest,
+    DataRequestMetadata, ResultDataError,
 };
 use smallvec::SmallVec;
 
@@ -81,28 +82,34 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     /// As in CLDR, a unit has a long or a narrow name only where it differs from the short
     /// name, in the locale or in one of its parents. So if `load` finds no name for the
     /// width, the short name is the name for that width.
+    ///
+    /// A long or a narrow name that the data does not have is expected: the request for it
+    /// is silent, and only that error leads to the short name.
     fn load_display_name(
         locale: &DataLocale,
         categorized_unit: &CategorizedMeasureUnit<C>,
         width: Width,
         load: impl Fn(DataRequest) -> Result<DisplayName, DataError>,
     ) -> Result<DisplayName, DataError> {
-        let load_width = |width| {
+        let load_width = |width, silent| {
             // TODO: Remove this allocation once we have separate markers for different widths.
             let attribute = Self::attribute(width, categorized_unit.cldr_id());
             let attribute = DataMarkerAttributes::try_from_utf8(&attribute)
                 .map_err(|_| DataError::custom("Failed to create a data marker"))?;
+            let mut metadata = DataRequestMetadata::default();
+            metadata.silent = silent;
             load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attribute, locale),
-                ..Default::default()
+                metadata,
             })
         };
 
-        let display_name = load_width(width);
-        if display_name.is_ok() || width == Width::Short {
-            return display_name;
+        if width != Width::Short {
+            if let Some(display_name) = load_width(width, true).allow_identifier_not_found()? {
+                return Ok(display_name);
+            }
         }
-        load_width(Width::Short).or(display_name)
+        load_width(Width::Short, false)
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -755,5 +762,55 @@ mod tests {
             .unwrap();
             assert_writeable_eq!(formatter.format_fixed_decimal(&value), expected);
         }
+    }
+
+    /// Only a long or a narrow name that the data does not have leads to the short name.
+    /// The request for it is silent, so a name that is missing as expected is not logged.
+    #[test]
+    fn test_only_a_missing_name_falls_back_to_short() {
+        use crate::dimension::provider::units::categorized_display_names::UnitsNamesDurationTinyV1;
+        use core::cell::RefCell;
+        use icu_locale_core::DataLocale;
+        use icu_provider::{DataError, DataErrorKind, DataMarker};
+
+        let locale = DataLocale::from(locale!("en"));
+        let unit = Duration::day();
+
+        // The data has no name for any width.
+        let requests = RefCell::new(Vec::new());
+        let result = CategorizedFormatter::<Duration>::load_display_name(
+            &locale,
+            &unit,
+            Width::Long,
+            |req| {
+                requests.borrow_mut().push((
+                    req.id.marker_attributes.as_str().to_string(),
+                    req.metadata.silent,
+                ));
+                Err(DataErrorKind::IdentifierNotFound.with_req(UnitsNamesDurationTinyV1::INFO, req))
+            },
+        );
+        assert_eq!(result.unwrap_err().kind, DataErrorKind::IdentifierNotFound);
+        assert_eq!(
+            requests.into_inner(),
+            [
+                ("long-day".to_string(), true),
+                ("short-day".to_string(), false)
+            ]
+        );
+
+        // Another error is returned, and the short name is not loaded.
+        let requests = RefCell::new(0);
+        let result = CategorizedFormatter::<Duration>::load_display_name(
+            &locale,
+            &unit,
+            Width::Long,
+            |_| {
+                *requests.borrow_mut() += 1;
+                Err(DataError::custom("another error"))
+            },
+        );
+        assert_eq!(result.unwrap_err().kind, DataErrorKind::Custom);
+        assert_eq!(requests.into_inner(), 1);
     }
 }
