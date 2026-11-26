@@ -104,10 +104,10 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
             })
         };
 
-        if width != Width::Short {
-            if let Some(display_name) = load_width(width, true).allow_identifier_not_found()? {
-                return Ok(display_name);
-            }
+        if width != Width::Short
+            && let Some(display_name) = load_width(width, true).allow_identifier_not_found()?
+        {
+            return Ok(display_name);
         }
         load_width(Width::Short, false)
     }
