@@ -63,6 +63,8 @@ extern crate alloc;
 
 type Trie<'trie> = FastCodePointTrie<'trie, u32>;
 
+type CombiningBuffer = SmallVec<[CharacterAndClass; 2]>;
+
 type CompositionTrie<'trie> = FastCodePointTrie<'trie, u16>;
 
 #[cfg(feature = "harfbuzz_traits")]
@@ -117,18 +119,26 @@ use zerovec::{ZeroSlice, zeroslice};
 // See https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3#commitcomment-164768806
 // for permission to relicense under Unicode-3.0.
 
-#[cfg(feature = "utf16_iter")]
 #[inline(always)]
 #[cold]
 fn cold_path() {}
 
-#[cfg(feature = "utf16_iter")]
 #[inline(always)]
 pub(crate) fn likely(b: bool) -> bool {
     if b {
         true
     } else {
         cold_path();
+        false
+    }
+}
+
+#[inline(always)]
+pub(crate) fn unlikely(b: bool) -> bool {
+    if b {
+        cold_path();
+        true
+    } else {
         false
     }
 }
@@ -187,6 +197,13 @@ fn trie_value_has_ccc(trie_value: u32) -> bool {
 /// See trie-value-format.md
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
     (trie_value & 0x3FFFFF00) == DecompositionData::SPECIAL_NON_STARTER_MARKER
+}
+
+/// Checks if the trie signifies a non-decomposing non-starter.
+///
+/// See trie-value-format.md
+fn trie_value_indicates_non_decomposing_non_starter(trie_value: u32) -> bool {
+    (trie_value & 0x3FFFFF00) == DecompositionData::NON_STARTER_MARKER
 }
 
 /// Checks if a trie value signifies a character whose decomposition
@@ -694,6 +711,88 @@ fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
         == 0
 }
 
+#[cold]
+#[inline(never)]
+fn push_special_decomposition(buffer: &mut CombiningBuffer, c: char) {
+    // The Tibetan special cases are starters that decompose into non-starters.
+    let mapped = match c {
+        '\u{0340}' => {
+            // COMBINING GRAVE TONE MARK
+            CharacterAndClass::new('\u{0300}', CanonicalCombiningClass::Above)
+        }
+        '\u{0341}' => {
+            // COMBINING ACUTE TONE MARK
+            CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
+        }
+        '\u{0343}' => {
+            // COMBINING GREEK KORONIS
+            CharacterAndClass::new('\u{0313}', CanonicalCombiningClass::Above)
+        }
+        '\u{0344}' => {
+            // COMBINING GREEK DIALYTIKA TONOS
+            buffer.push(CharacterAndClass::new(
+                '\u{0308}',
+                CanonicalCombiningClass::Above,
+            ));
+            CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
+        }
+        '\u{0F73}' => {
+            // TIBETAN VOWEL SIGN II
+            buffer.push(CharacterAndClass::new(
+                '\u{0F71}',
+                CanonicalCombiningClass(129),
+            ));
+            CharacterAndClass::new('\u{0F72}', CanonicalCombiningClass(130))
+        }
+        '\u{0F75}' => {
+            // TIBETAN VOWEL SIGN UU
+            buffer.push(CharacterAndClass::new(
+                '\u{0F71}',
+                CanonicalCombiningClass(129),
+            ));
+            CharacterAndClass::new('\u{0F74}', CanonicalCombiningClass(132))
+        }
+        '\u{0F81}' => {
+            // TIBETAN VOWEL SIGN REVERSED II
+            buffer.push(CharacterAndClass::new(
+                '\u{0F71}',
+                CanonicalCombiningClass(129),
+            ));
+            CharacterAndClass::new('\u{0F80}', CanonicalCombiningClass(130))
+        }
+        DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK => {
+            // HALFWIDTH KATAKANA VOICED SOUND MARK
+            CharacterAndClass::new('\u{3099}', CanonicalCombiningClass::KanaVoicing)
+        }
+        DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK => {
+            // HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK
+            CharacterAndClass::new('\u{309A}', CanonicalCombiningClass::KanaVoicing)
+        }
+        _ => {
+            // GIGO case
+            debug_assert!(false);
+            CharacterAndClass::new_with_placeholder(char::REPLACEMENT_CHARACTER)
+        }
+    };
+    buffer.push(mapped);
+}
+
+/// See trie-value-format.md
+#[inline(always)]
+#[cfg(feature = "utf8_iter")]
+fn starter_and_decomposes_to_self_except_replacement(c: char, trie_val: u32) -> bool {
+    // This intentionally leaves `DecompositionData::NON_ROUND_TRIP_MARKER` in the value
+    // to be compared with zero. U+FFFD has that flag set despite really
+    // being round-tripping in order to make UTF-8 errors
+    // ineligible for passthrough.
+    //
+    // Lead jamo have `DecompositionData::NON_ROUND_TRIP_MARKER` set
+    // for the benefit of the composing normalizer, but they are
+    // starters that decompose to self.
+    ((trie_val & !DecompositionData::BACKWARD_COMBINING_MARKER) == 0)
+        || (u32::from(c).wrapping_sub(HANGUL_L_BASE) < HANGUL_L_COUNT)
+}
+
 /// See trie-value-format.md
 #[inline(always)]
 fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
@@ -725,22 +824,6 @@ impl CharacterAndTrieValue {
     #[inline(always)]
     pub fn starter_and_decomposes_to_self(&self) -> bool {
         starter_and_decomposes_to_self_impl(self.trie_val)
-    }
-
-    /// See trie-value-format.md
-    #[inline(always)]
-    #[cfg(feature = "utf8_iter")]
-    pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
-        // This intentionally leaves `DecompositionData::NON_ROUND_TRIP_MARKER` in the value
-        // to be compared with zero. U+FFFD has that flag set despite really
-        // being round-tripping in order to make UTF-8 errors
-        // ineligible for passthrough.
-        //
-        // Lead jamo have `DecompositionData::NON_ROUND_TRIP_MARKER` set
-        // for the benefit of the composing normalizer, but they are
-        // starters that decompose to self.
-        ((self.trie_val & !DecompositionData::BACKWARD_COMBINING_MARKER) == 0)
-            || (u32::from(self.character).wrapping_sub(HANGUL_L_BASE) < HANGUL_L_COUNT)
     }
 
     /// See trie-value-format.md
@@ -801,7 +884,7 @@ impl<'data> CharacterAndClass {
     /// This method must exist for Pernosco to apply its special rendering.
     /// Also, this must not be dead code!
     pub fn character(&self) -> char {
-        // Safe, because the low 24 bits came from a `char`
+        // SAFETY: Safe, because the low 24 bits came from a `char`
         // originally.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
@@ -865,7 +948,7 @@ where
         decompositions: &'data DecompositionData,
         tables: &'data DecompositionTables,
     ) -> Self {
-        Self {
+        let mut ret = Self {
             inner: DecompositionInner::new_with_supplements(
                 CharIterWithTrie::new(
                     delegate,
@@ -875,7 +958,9 @@ where
                 tables,
                 None,
             ),
-        }
+        };
+        ret.inner.init(); // Discard the U+0000.
+        ret
     }
 }
 
@@ -896,6 +981,9 @@ where
 ///
 /// The trie carried by `delegate` must be the NFD trie that goes
 /// with `tables`.
+///
+/// The iterator first yields an extra U+0000 and then
+/// the sequence actually corresponding to the input.
 #[doc(hidden)] // used in collator
 #[inline(always)]
 pub fn new_decomposition<'data, I, T>(
@@ -918,7 +1006,7 @@ where
 {
     // See trie-value-format.md for the trie wrapped in `delegate`
     delegate: I,
-    buffer: SmallVec<[CharacterAndClass; 17]>, // Enough to hold NFKD for U+FDFA
+    buffer: CombiningBuffer,
     /// The index of the next item to be read from `buffer`.
     /// The purpose if this index is to avoid having to move
     /// the rest upon every read.
@@ -945,18 +1033,25 @@ where
     /// Constructs a decomposing iterator adapter from a delegate
     /// iterator and references to the necessary data, including
     /// supplementary data.
+    ///
+    /// The iterator first yields a U+0000 and only then the sequence
+    /// corresponding to the input. Unfortunately, due to the way
+    /// stack placement of structs works in Rust, the caller is responsible
+    /// for dealing with the initial U+0000. Callers within this crate
+    /// can (and should) do so by calling `init()`.
+    #[inline(always)]
     fn new_with_supplements(
         delegate: I,
         tables: &'data DecompositionTables,
         supplementary_tables: Option<&'data DecompositionTables>,
     ) -> Self {
-        let mut ret = DecompositionInner::<I, T, P> {
+        DecompositionInner::<I, T, P> {
             delegate,
             buffer: SmallVec::new(), // Normalized
             buffer_pos: 0,
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
-            pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
+            pending: Some(CharacterAndTrieValue::new('\u{0}', 0)),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -971,9 +1066,13 @@ where
             },
             _phantom_p: PhantomData,
             _phantom_t: PhantomData,
-        };
-        let _ = ret.next(); // Remove the U+FFFF placeholder
-        ret
+        }
+    }
+
+    /// Simplified alternative to calling `next()` and discarding the value after constructing this struct.
+    fn init(&mut self) {
+        self.pending = None;
+        self.gather_and_sort_combining(0);
     }
 
     fn push_decomposition16(
@@ -1253,86 +1352,6 @@ where
         starter
     }
 
-    fn gather_and_sort_combining(&mut self, combining_start: usize) {
-        // Not a `for` loop to avoid holding a mutable reference to `self` across
-        // the loop body.
-        while let Some(ch_and_trie_val) = self.delegate_next() {
-            if !trie_value_has_ccc(ch_and_trie_val.trie_val) {
-                self.pending = Some(ch_and_trie_val);
-                break;
-            } else if !trie_value_indicates_special_non_starter_decomposition(
-                ch_and_trie_val.trie_val,
-            ) {
-                self.buffer
-                    .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
-            } else {
-                // The Tibetan special cases are starters that decompose into non-starters.
-                let mapped = match ch_and_trie_val.character {
-                    '\u{0340}' => {
-                        // COMBINING GRAVE TONE MARK
-                        CharacterAndClass::new('\u{0300}', CanonicalCombiningClass::Above)
-                    }
-                    '\u{0341}' => {
-                        // COMBINING ACUTE TONE MARK
-                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
-                    }
-                    '\u{0343}' => {
-                        // COMBINING GREEK KORONIS
-                        CharacterAndClass::new('\u{0313}', CanonicalCombiningClass::Above)
-                    }
-                    '\u{0344}' => {
-                        // COMBINING GREEK DIALYTIKA TONOS
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0308}',
-                            CanonicalCombiningClass::Above,
-                        ));
-                        CharacterAndClass::new('\u{0301}', CanonicalCombiningClass::Above)
-                    }
-                    '\u{0F73}' => {
-                        // TIBETAN VOWEL SIGN II
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass(129),
-                        ));
-                        CharacterAndClass::new('\u{0F72}', CanonicalCombiningClass(130))
-                    }
-                    '\u{0F75}' => {
-                        // TIBETAN VOWEL SIGN UU
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass(129),
-                        ));
-                        CharacterAndClass::new('\u{0F74}', CanonicalCombiningClass(132))
-                    }
-                    '\u{0F81}' => {
-                        // TIBETAN VOWEL SIGN REVERSED II
-                        self.buffer.push(CharacterAndClass::new(
-                            '\u{0F71}',
-                            CanonicalCombiningClass(129),
-                        ));
-                        CharacterAndClass::new('\u{0F80}', CanonicalCombiningClass(130))
-                    }
-                    DecompositionData::HALF_WIDTH_VOICED_SOUND_MARK => {
-                        CharacterAndClass::new('\u{3099}', CanonicalCombiningClass::KanaVoicing)
-                    }
-                    DecompositionData::HALF_WIDTH_SEMI_VOICED_SOUND_MARK => {
-                        CharacterAndClass::new('\u{309A}', CanonicalCombiningClass::KanaVoicing)
-                    }
-                    _ => {
-                        // GIGO case
-                        debug_assert!(false);
-                        CharacterAndClass::new_with_placeholder(char::REPLACEMENT_CHARACTER)
-                    }
-                };
-                self.buffer.push(mapped);
-            }
-        }
-        // Slicing succeeds by construction; we've always ensured that `combining_start`
-        // is in permissible range.
-        #[expect(clippy::indexing_slicing)]
-        Self::sort_slice_by_ccc(&mut self.buffer[combining_start..], self.delegate.trie());
-    }
-
     // This function exists as a borrow check helper.
     #[inline(always)]
     fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &'data T) {
@@ -1349,6 +1368,28 @@ where
             .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(trie));
         slice.sort_by_key(|cc| cc.ccc());
     }
+
+    fn gather_and_sort_combining(&mut self, combining_start: usize) {
+        // Not a `for` loop to avoid holding a mutable reference to `self` across
+        // the loop body.
+        while let Some(ch_and_trie_val) = self.delegate_next() {
+            if !trie_value_has_ccc(ch_and_trie_val.trie_val) {
+                self.pending = Some(ch_and_trie_val);
+                break;
+            } else if !trie_value_indicates_special_non_starter_decomposition(
+                ch_and_trie_val.trie_val,
+            ) {
+                self.buffer
+                    .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
+            } else {
+                push_special_decomposition(&mut self.buffer, ch_and_trie_val.character);
+            }
+        }
+        // Slicing succeeds by construction; we've always ensured that `combining_start`
+        // is in permissible range.
+        #[expect(clippy::indexing_slicing)]
+        Self::sort_slice_by_ccc(&mut self.buffer[combining_start..], self.delegate.trie());
+    }
 }
 
 impl<'data, I, T, P> Iterator for DecompositionInner<'data, I, T, P>
@@ -1359,6 +1400,7 @@ where
 {
     type Item = char;
 
+    #[inline]
     fn next(&mut self) -> Option<char> {
         if let Some(ret) = self.buffer.get(self.buffer_pos).map(|c| c.character()) {
             self.buffer_pos += 1;
@@ -1454,6 +1496,7 @@ where
     T: AbstractCodePointTrie<'data, u32>,
     P: IteratorPolicy,
 {
+    #[inline(always)]
     fn new(
         decomposition: DecompositionInner<'data, I, T, P>,
         canonical_compositions: CanonicalCompositionsRef<'data>,
@@ -1720,6 +1763,8 @@ macro_rules! composing_normalize_to {
         ) -> core::fmt::Result {
             $prolog
             let mut $composition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie(self.trie()));
+            $composition.decomposition.init(); // Discard the U+0000.
+
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
@@ -1889,24 +1934,23 @@ macro_rules! decomposing_normalize_to {
      $text:ident,
      $sink:ident,
      $decomposition:ident,
-     $decomposition_passthrough_bound:ident,
      $undecomposed_starter:ident,
      $pending_slice:ident,
      $outer:lifetime, // loop labels use lifetime tokens
+     $self:ident,
      $chars_with_trie:ident,
     ) => {
         $(#[$meta])*
         pub fn $normalize_to<W: $write + ?Sized>(
-            &self,
+            &$self,
             $text: $slice,
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
 
-            let mut $decomposition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie(self.trie()));
+            let mut $decomposition = $self.normalize_iter_private::<_, Trie, Uax15Policy>($text.$chars_with_trie($self.trie()));
+            let _ = $decomposition.init(); // Discard the U+0000.
 
-            // Try to get the compiler to hoist the bound to a register.
-            let $decomposition_passthrough_bound = u32::from(self.decomposition_passthrough_bound);
             $outer: loop {
                 for cc in $decomposition.buffer.drain(..) {
                     $sink.write_char(cc.character())?;
@@ -1917,13 +1961,175 @@ macro_rules! decomposing_normalize_to {
                 } else {
                     return Ok(());
                 };
-                if $undecomposed_starter.starter_and_decomposes_to_self() {
-                    // Don't bother including `undecomposed_starter` in a contiguous buffer
-                    // write: Just write it right away:
-                    $sink.write_char($undecomposed_starter.character)?;
+                loop {
+                    if $undecomposed_starter.starter_and_decomposes_to_self() {
+                        // Don't bother including `undecomposed_starter` in a contiguous buffer
+                        // write: Just write it right away:
+                        $sink.write_char($undecomposed_starter.character)?;
 
-                    let $pending_slice = $decomposition.delegate.$as_slice();
-                    $fast
+                        let $pending_slice = $decomposition.delegate.$as_slice();
+                        $fast
+                    }
+                    debug_assert!($decomposition.pending.is_none());
+                    let c_and_trie_val_unless_at_end = if let Some((upcoming, trie_val)) = $decomposition.delegate.next() {
+                        if likely(!decomposition_starts_with_non_starter(trie_val)) {
+                            Some(CharacterAndTrieValue::new(upcoming, trie_val))
+                        } else {
+                            $decomposition.pending = Some(CharacterAndTrieValue::new(upcoming, trie_val));
+                            break;
+                        }
+                    } else {
+                        None
+                    };
+                    // The upcoming character cannot sort into the tail of this decomposition,
+                    // so, for performance, let's write decomposition directly here without
+                    // going via `$decomposition.buffer`. This wall of (edited) copypaste is
+                    // crucial for performance competitiveness with ICU4C.
+
+                    // Start edited copypaste from `decomposing_next`
+
+                    let c = $undecomposed_starter.character;
+                    // See trie-value-format.md
+                    let decomposition = $undecomposed_starter.trie_val;
+                    // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+                    // and that flag needs to be ignored here.
+                    if unlikely((decomposition & !(DecompositionData::BACKWARD_COMBINING_MARKER | DecompositionData::NON_ROUND_TRIP_MARKER)) == 0) {
+                        // The character is its own decomposition
+                        $sink.write_char(c)?;
+                    } else {
+                        let high_zeros = (decomposition & DecompositionData::HIGH_ZEROS_MASK) == 0;
+                        let low_zeros = (decomposition & DecompositionData::LOW_ZEROS_MASK) == 0;
+                        if !high_zeros && !low_zeros {
+                            // Decomposition into two BMP characters: starter and non-starter
+                            let starter = char_from_u32(decomposition & DecompositionData::PAIR_CHAR_MASK);
+                            let combining = char_from_u32(
+                                (decomposition >> DecompositionData::PAIR_TRAIL_SHIFT)
+                                    & DecompositionData::PAIR_CHAR_MASK,
+                            );
+                            $sink.write_char(starter)?;
+                            $sink.write_char(combining)?;
+                        } else if high_zeros {
+                            // Do the check by looking at `c` instead of looking at a marker
+                            // in `singleton` below, because if we looked at the trie value,
+                            // we'd still have to check that `c` is in the Hangul syllable
+                            // range in order for the subsequent interpretations as `char`
+                            // to be safe.
+                            // Alternatively, `FDFA_MARKER` and the Hangul marker could
+                            // be unified. That would add a branch for Hangul and remove
+                            // a branch from singleton decompositions. It seems more
+                            // important to favor Hangul syllables than singleton
+                            // decompositions.
+                            // Note that it would be valid to hoist this Hangul check
+                            // one or even two steps earlier in this check hierarchy.
+                            // Right now, it's assumed the kind of decompositions into
+                            // BMP starter and non-starter, which occur in many languages,
+                            // should be checked before Hangul syllables, which are about
+                            // one language specifically. Hopefully, we get some
+                            // instruction-level parallelism out of the disjointness of
+                            // operations on `c` and `decomposition`.
+                            let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
+                            if hangul_offset < HANGUL_S_COUNT {
+                                debug_assert_eq!(decomposition, DecompositionData::HANGUL_SYLLABLE_MARKER);
+                                // Hangul syllable
+                                // The math here comes from page 144 of Unicode 14.0
+                                let l = hangul_offset / HANGUL_N_COUNT;
+                                let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                                let t = hangul_offset % HANGUL_T_COUNT;
+
+                                // The unsafe blocks here are OK, because the values stay
+                                // within the Hangul jamo block and, therefore, the scalar
+                                // value range by construction.
+                                $sink.write_char(unsafe { char::from_u32_unchecked(HANGUL_L_BASE + l) })?;
+                                $sink.write_char(unsafe {
+                                    char::from_u32_unchecked(HANGUL_V_BASE + v)
+                                })?;
+                                if t != 0 {
+                                    $sink.write_char(unsafe {
+                                        char::from_u32_unchecked(HANGUL_T_BASE + t)
+                                    })?;
+                                }
+                            } else {
+                                let singleton = decomposition as u16;
+                                if singleton != DecompositionData::FDFA_MARKER {
+                                    // Decomposition into one BMP character
+                                    let starter = char_from_u16(singleton);
+                                    $sink.write_char(starter)?;
+                                } else {
+                                    // Special case for the NFKD form of U+FDFA.
+                                    $sink.write_char('\u{0635}')?;
+                                    for u in DecompositionData::FDFA_NFKD {
+                                        // SAFETY: `FDFA_NFKD` is known not to contain
+                                        // surrogates.
+                                        $sink.write_char(unsafe { char::from_u32_unchecked(u32::from(u)) })?;
+                                    }
+                                }
+                            }
+                        } else {
+                            debug_assert!(low_zeros);
+                            // Only 12 of 14 bits used as of Unicode 16.
+                            let offset = (((decomposition
+                                & !(DecompositionData::NON_ROUND_TRIP_MARKER
+                                    | DecompositionData::BACKWARD_COMBINING_MARKER))
+                                >> DecompositionData::COMPLEX_OFFSET_SHIFT)
+                                as usize)
+                                - 1;
+                            // Only 3 of 4 bits used as of Unicode 16.
+                            let len_bits = (decomposition & DecompositionData::COMPLEX_LENGTH_MASK) as usize;
+                            // Choose the table by range comparisons like `decomposing_next` does
+                            // so that GIGO data cannot cause subtraction underflow.
+                            let scalars16_len = $decomposition.scalars16.len();
+                            let scalars24_end = scalars16_len + $decomposition.scalars24.len();
+                            let supplementary_scalars16_end = scalars24_end + $decomposition.supplementary_scalars16.len();
+                            if offset < scalars16_len {
+                                if let Some(subslice) = $decomposition.scalars16.get_subslice(offset..offset + len_bits + 2) {
+                                    for u in subslice.iter() {
+                                        $sink.write_char(char_from_u16(u))?;
+                                    }
+                                } else {
+                                    // GIGO case
+                                    debug_assert!(false);
+                                }
+                            } else if offset < scalars24_end {
+                                let offset = offset - scalars16_len;
+                                if let Some(subslice) = $decomposition.scalars24.get_subslice(offset..offset + len_bits + 1) {
+                                    for c in subslice.iter() {
+                                        $sink.write_char(c)?;
+                                    }
+                                } else {
+                                    // GIGO case
+                                    debug_assert!(false);
+                                }
+                            } else if offset < supplementary_scalars16_end {
+                                let offset = offset - scalars24_end;
+                                if let Some(subslice) = $decomposition.supplementary_scalars16.get_subslice(offset..offset + len_bits + 2) {
+                                    for u in subslice.iter() {
+                                        $sink.write_char(char_from_u16(u))?;
+                                    }
+                                } else {
+                                    // GIGO case
+                                    debug_assert!(false);
+                                }
+                            } else {
+                                let offset = offset - supplementary_scalars16_end;
+                                if let Some(subslice) = $decomposition.supplementary_scalars24.get_subslice(offset..offset + len_bits + 1) {
+                                    for c in subslice.iter() {
+                                        $sink.write_char(c)?;
+                                    }
+                                } else {
+                                    // GIGO case
+                                    debug_assert!(false);
+                                }
+                            }
+                        }
+                    }
+
+                    // End edited copypaste from `decomposing_next`
+
+                    if let Some(c_and_trie_val) = c_and_trie_val_unless_at_end {
+                        $undecomposed_starter = c_and_trie_val;
+                        continue;
+                    }
+                    return Ok(());
                 }
                 let starter = $decomposition.decomposing_next($undecomposed_starter);
                 $sink.write_char(starter)?;
@@ -2261,12 +2467,17 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
 
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
+    #[inline]
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<'data, I> {
-        Decomposition {
+        let mut ret = Decomposition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
-        }
+        };
+        ret.inner.init(); // Discard the U+0000.
+        ret
     }
 
+    /// There's an extra U+0000 at the start. The caller must deal with it.
+    #[inline(always)]
     fn normalize_iter_private<
         I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
         T: AbstractCodePointTrie<'data, u32> + 'data,
@@ -2298,66 +2509,91 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         },
         as_str,
         {
-            let decomposition_passthrough_byte_bound = if decomposition_passthrough_bound == 0xC0 {
-                0xC3u8
-            } else {
-                decomposition_passthrough_bound.min(0x80) as u8
-            };
-            // The attribute belongs on an inner statement, but Rust doesn't allow it there.
-            #[expect(clippy::unwrap_used)]
             'fast: loop {
-                let mut code_unit_iter = decomposition.delegate.as_str().as_bytes().iter();
-                'fastest: loop {
-                    if let Some(&upcoming_byte) = code_unit_iter.next() {
-                        if upcoming_byte < decomposition_passthrough_byte_bound {
-                            // Fast-track succeeded!
-                            continue 'fastest;
-                        }
-                        // This deliberately isn't panic-free, since the code pattern
-                        // that was OK for the composing counterpart regressed
-                        // English and French performance if done here, too.
-                        decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars_with_trie(decomposition.delegate.trie());
-                        break 'fastest;
+                if let Some((mut upcoming, mut trie_val)) = decomposition.delegate.next() {
+                    if starter_and_decomposes_to_self_impl(trie_val) {
+                        continue 'fast;
                     }
-                    // End of stream
-                    sink.write_str(pending_slice)?;
-                    return Ok(());
-                }
 
-                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
-                // is an upcoming byte.
-                let (upcoming, trie_val) = decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
-                if upcoming_with_trie_value.starter_and_decomposes_to_self() {
-                    continue 'fast;
-                }
-                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
-                    - decomposition.delegate.as_str().len()
-                    - upcoming.len_utf8()];
-                sink.write_str(consumed_so_far_slice)?;
+                    // Try to handle a single combining mark followed by a starter in a way
+                    // that avoids `decomposition.buffer`.
 
-                // Now let's figure out if we got a starter or a non-starter.
-                if decomposition_starts_with_non_starter(
-                    upcoming_with_trie_value.trie_val,
-                ) {
-                    // Let this trie value to be reprocessed in case it is
-                    // one of the rare decomposing ones.
-                    decomposition.pending = Some(upcoming_with_trie_value);
-                    decomposition.gather_and_sort_combining(0);
-                    continue 'outer;
+                    if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                        // This loop is only broken out of as goto forward.
+                        #[expect(clippy::never_loop)]
+                        loop {
+                            if let Some((after_mark, after_mark_trie_value)) = decomposition.delegate.next() {
+                                if likely(starter_and_decomposes_to_self_impl(after_mark_trie_value)) {
+                                    continue 'fast;
+                                }
+                                if likely(!decomposition_starts_with_non_starter(after_mark_trie_value)) {
+                                    // We have a decomposing starter.
+                                    upcoming = after_mark;
+                                    trie_val = after_mark_trie_value;
+                                    break;
+                                }
+                                // We have another combining mark.
+                                // We put the first combining mark, which we know doesn't decompose,
+                                // directly into the buffer. We put the second one, which might decompose,
+                                // into `decomposition.pending` for `gather_and_sort_combining` to deal
+                                // with.
+
+                                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                                    - decomposition.delegate.as_str().len()
+                                    - upcoming.len_utf8()
+                                    - after_mark.len_utf8()];
+                                sink.write_str(consumed_so_far_slice)?;
+
+                                debug_assert!(decomposition.buffer.is_empty());
+
+                                // Narrowing `trie_value` to `u8` is OK, because we already checked
+                                // `decomposition_starts_with_non_starter`.
+                                debug_assert!(trie_value_has_ccc(trie_val));
+                                decomposition.buffer.push(CharacterAndClass::new(upcoming, CanonicalCombiningClass(trie_val as u8)));
+
+                                decomposition.pending = Some(CharacterAndTrieValue::new(after_mark, after_mark_trie_value));
+                                decomposition.gather_and_sort_combining(0);
+                                continue 'outer;
+                            }
+                            // End of stream
+                            sink.write_str(pending_slice)?;
+                            return Ok(());
+                        }
+                    }
+                    // End skipping over single combining mark
+
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
+                    let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                        - decomposition.delegate.as_str().len()
+                        - upcoming.len_utf8()];
+                    sink.write_str(consumed_so_far_slice)?;
+
+                    // Now let's figure out if we got a starter or a non-starter.
+                    if decomposition_starts_with_non_starter(
+                        trie_val,
+                    ) {
+                        // Let this trie value to be reprocessed in case it is
+                        // one of the rare decomposing ones.
+                        decomposition.pending = Some(upcoming_with_trie_value);
+                        decomposition.gather_and_sort_combining(0);
+                        continue 'outer;
+                    }
+                    undecomposed_starter = upcoming_with_trie_value;
+                    debug_assert!(decomposition.pending.is_none());
+                    break 'fast;
                 }
-                undecomposed_starter = upcoming_with_trie_value;
-                debug_assert!(decomposition.pending.is_none());
-                break 'fast;
+                // End of stream
+                sink.write_str(pending_slice)?;
+                return Ok(());
             }
         },
         text,
         sink,
         decomposition,
-        decomposition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         'outer,
+        self,
         chars_with_trie,
     );
 
@@ -2377,88 +2613,123 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         },
         as_slice,
         {
-            let decomposition_passthrough_byte_bound = decomposition_passthrough_bound.min(0x80) as u8;
             'fast: loop {
-                let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-                'fastest: loop {
-                    if let Some(&upcoming_byte) = code_unit_iter.next() {
-                        if upcoming_byte < decomposition_passthrough_byte_bound {
-                            // Fast-track succeeded!
-                            continue 'fastest;
-                        }
-                        break 'fastest;
+                if let Some((mut upcoming, mut trie_val)) = decomposition.delegate.next() {
+                    if starter_and_decomposes_to_self_except_replacement(upcoming, trie_val) {
+                        // Note: The trie value of the REPLACEMENT CHARACTER is
+                        // intentionally formatted to fail the
+                        // `starter_and_decomposes_to_self` test even though it
+                        // really is a starter that decomposes to self. This
+                        // Allows moving the branch on REPLACEMENT CHARACTER
+                        // below this `continue`.
+                        continue 'fast;
                     }
-                    // End of stream
-                    sink.write_str(unsafe { str::from_utf8_unchecked(pending_slice) })?;
-                    return Ok(());
-                }
-                #[expect(clippy::indexing_slicing)]
-                {decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars_with_trie(decomposition.delegate.trie());}
 
-                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
-                // is an upcoming byte.
-                #[expect(clippy::unwrap_used)]
-                let (upcoming, trie_val) = decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
-                if upcoming_with_trie_value.starter_and_decomposes_to_self_except_replacement() {
-                    // Note: The trie value of the REPLACEMENT CHARACTER is
-                    // intentionally formatted to fail the
-                    // `starter_and_decomposes_to_self` test even though it
-                    // really is a starter that decomposes to self. This
-                    // Allows moving the branch on REPLACEMENT CHARACTER
-                    // below this `continue`.
-                    continue 'fast;
-                }
+                    // Try to handle a single combining mark followed by a starter in a way
+                    // that avoids `decomposition.buffer`.
 
-                // TODO: Annotate as unlikely.
-                if upcoming == char::REPLACEMENT_CHARACTER {
-                    // We might have an error, so fall out of the fast path.
+                    if likely(trie_value_indicates_non_decomposing_non_starter(trie_val)) {
+                        // This loop is only broken out of as goto forward.
+                        #[expect(clippy::never_loop)]
+                        loop {
+                            if let Some((after_mark, after_mark_trie_value)) = decomposition.delegate.next() {
+                                if likely(starter_and_decomposes_to_self_except_replacement(after_mark, after_mark_trie_value)) {
+                                    continue 'fast;
+                                }
+                                if likely(!decomposition_starts_with_non_starter(after_mark_trie_value)) {
+                                    // We have a decomposing starter.
+                                    upcoming = after_mark;
+                                    trie_val = after_mark_trie_value;
+                                    break;
+                                }
+                                // We have another combining mark.
+                                // We put the first combining mark, which we know doesn't decompose,
+                                // directly into the buffer. We put the second one, which might decompose,
+                                // into `decomposition.pending` for `gather_and_sort_combining` to deal
+                                // with.
 
-                    // Since the U+FFFD might signify an error, we can't
-                    // assume `upcoming.len_utf8()` for the backoff length.
+                                // `len_utf8` is OK, since knowing that we have two combining marks
+                                // means that neither is U+FFFD, so we didn't have a UTF-8 error.
+                                debug_assert_ne!(upcoming, '\u{FFFD}');
+                                debug_assert_ne!(after_mark, '\u{FFFD}');
+                                #[expect(clippy::indexing_slicing)]
+                                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                                    - decomposition.delegate.as_slice().len()
+                                    - upcoming.len_utf8()
+                                    - after_mark.len_utf8()];
+                                sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) } )?;
+
+                                debug_assert!(decomposition.buffer.is_empty());
+
+                                // Narrowing `trie_value` to `u8` is OK, because we already checked
+                                // `decomposition_starts_with_non_starter`.
+                                debug_assert!(trie_value_has_ccc(trie_val));
+                                decomposition.buffer.push(CharacterAndClass::new(upcoming, CanonicalCombiningClass(trie_val as u8)));
+
+                                decomposition.pending = Some(CharacterAndTrieValue::new(after_mark, after_mark_trie_value));
+                                decomposition.gather_and_sort_combining(0);
+                                continue 'outer;
+                            }
+                            // End of stream
+                            sink.write_str(unsafe { str::from_utf8_unchecked(pending_slice) } )?;
+                            return Ok(());
+                        }
+                    }
+                    // End skipping over single combining mark
+
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
+                    if unlikely(upcoming == char::REPLACEMENT_CHARACTER) {
+                        // We might have an error, so fall out of the fast path.
+
+                        // Since the U+FFFD might signify an error, we can't
+                        // assume `upcoming.len_utf8()` for the backoff length.
+                        #[expect(clippy::indexing_slicing)]
+                        let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
+                        let back = consumed_so_far.next_back();
+                        debug_assert_eq!(back, Some(char::REPLACEMENT_CHARACTER));
+                        let consumed_so_far_slice = consumed_so_far.as_slice();
+                        sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) } )?;
+
+                        // We could call `gather_and_sort_combining` here and
+                        // `continue 'outer`, but this should be better for code
+                        // size.
+                        undecomposed_starter = upcoming_with_trie_value;
+                        debug_assert!(decomposition.pending.is_none());
+                        break 'fast;
+                    }
+
                     #[expect(clippy::indexing_slicing)]
-                    let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
-                    let back = consumed_so_far.next_back();
-                    debug_assert_eq!(back, Some(char::REPLACEMENT_CHARACTER));
-                    let consumed_so_far_slice = consumed_so_far.as_slice();
+                    let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                        - decomposition.delegate.as_slice().len()
+                        - upcoming.len_utf8()];
                     sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
-                    // We could call `gather_and_sort_combining` here and
-                    // `continue 'outer`, but this should be better for code
-                    // size.
+                    // Now let's figure out if we got a starter or a non-starter.
+                    if decomposition_starts_with_non_starter(
+                        upcoming_with_trie_value.trie_val,
+                    ) {
+                        // Let this trie value to be reprocessed in case it is
+                        // one of the rare decomposing ones.
+                        decomposition.pending = Some(upcoming_with_trie_value);
+                        decomposition.gather_and_sort_combining(0);
+                        continue 'outer;
+                    }
                     undecomposed_starter = upcoming_with_trie_value;
                     debug_assert!(decomposition.pending.is_none());
                     break 'fast;
                 }
-
-                #[expect(clippy::indexing_slicing)]
-                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
-                    - decomposition.delegate.as_slice().len()
-                    - upcoming.len_utf8()];
-                sink.write_str(unsafe { str::from_utf8_unchecked(consumed_so_far_slice) } )?;
-
-                // Now let's figure out if we got a starter or a non-starter.
-                if decomposition_starts_with_non_starter(
-                    upcoming_with_trie_value.trie_val,
-                ) {
-                    // Let this trie value to be reprocessed in case it is
-                    // one of the rare decomposing ones.
-                    decomposition.pending = Some(upcoming_with_trie_value);
-                    decomposition.gather_and_sort_combining(0);
-                    continue 'outer;
-                }
-                undecomposed_starter = upcoming_with_trie_value;
-                debug_assert!(decomposition.pending.is_none());
-                break 'fast;
+                // End of stream
+                sink.write_str(unsafe { str::from_utf8_unchecked(pending_slice) } )?;
+                return Ok(());
             }
         },
         text,
         sink,
         decomposition,
-        decomposition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         'outer,
+        self,
         chars_with_trie,
     );
 
@@ -2492,9 +2763,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 // SAFETY: materializing a pointer immediately past the end of an
                 // allocation is OK.
                 let end: *const u16 = unsafe { ptr.add(delegate_as_slice.len()) };
+                let decomposition_passthrough_bound = u16::from(self.decomposition_passthrough_bound);
                 'fast: loop {
                     // if let Some(&upcoming_code_unit) = code_unit_iter.next() {
-                    if ptr != end {
+                    if likely(ptr != end) {
                         // SAFETY: We just checked that `ptr` has not reached `end`.
                         // `ptr` always advances by one, and we always have a check
                         // per advancement.
@@ -2504,7 +2776,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         // after, which is OK.
                         ptr = unsafe { ptr.add(1) };
 
-                        let mut upcoming32 = u32::from(upcoming_code_unit);
                         // The performance of what logically is supposed to be this
                         // branch is _incredibly_ brittle and what LLVM ends up doing
                         // that affects the performance of what's logically about this
@@ -2520,19 +2791,107 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         // this code is monomorphized over.
                         //
                         // What a terrible sink of developer time!
-                        if upcoming32 < decomposition_passthrough_bound {
+                        if upcoming_code_unit < decomposition_passthrough_bound {
                             continue 'fast;
                         }
                         // We might be doing a trie lookup by surrogate. Surrogates get
                         // a decomposition to U+FFFD.
                         let mut trie_value = decomposition.delegate.trie().bmp(upcoming_code_unit);
-                        if starter_and_decomposes_to_self_impl(trie_value) {
+                        if likely(starter_and_decomposes_to_self_impl(trie_value)) {
                             continue 'fast;
                         }
+
+                        let mut upcoming32 = u32::from(upcoming_code_unit);
+
                         // We might now be looking at a surrogate.
                         // The loop is only broken out of as goto forward
                         #[expect(clippy::never_loop)]
                         'surrogateloop: loop {
+
+                            // Try to handle a single BMP combining mark followed by a starter in a way
+                            // that avoids `decomposition.buffer`. Crucial for perf competitiveness with ICU4C.
+
+                            if likely(trie_value_indicates_non_decomposing_non_starter(trie_value)) {
+                                if likely(ptr != end) {
+                                    // SAFETY: We just checked that `ptr` has not reached `end`.
+                                    // `ptr` always advances by one, and we always have a check
+                                    // per advancement.
+                                    let after_mark_code_unit = unsafe { *ptr };
+                                    // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
+                                    // by one points to the same allocation or to immediately
+                                    // after, which is OK.
+                                    ptr = unsafe { ptr.add(1) };
+                                    let after_mark_trie_value = decomposition.delegate.trie().bmp(after_mark_code_unit);
+                                    if likely(starter_and_decomposes_to_self_impl(after_mark_trie_value)) {
+                                        continue 'fast;
+                                    }
+                                    if unlikely(in_inclusive_range16(after_mark_code_unit, 0xD800, 0xDFFF)) {
+                                        // We have a surrogate. Too complicated to deal with, because
+                                        // it might be the first half of a combining mark.
+                                        // Pretend we didn't see it.
+
+                                        // SAFETY: We just incremented `ptr`, so decrementing it
+                                        // has to stay within the allocation.
+                                        ptr = unsafe { ptr.sub(1) };
+                                        break 'surrogateloop;
+                                    }
+                                    if likely(!decomposition_starts_with_non_starter(after_mark_trie_value)) {
+                                        // We have a decomposing starter.
+
+                                        // No need to sync `upcoming_code_unit`, since nothing reads it below.
+                                        upcoming32 = u32::from(after_mark_code_unit);
+                                        trie_value = after_mark_trie_value;
+                                        break 'surrogateloop;
+                                    }
+                                    // We have another combining mark.
+                                    // We put the first combining mark, which we know doesn't decompose,
+                                    // directly into the buffer. We put the second one, which might decompose,
+                                    // into `decomposition.pending` for `gather_and_sort_combining` to deal
+                                    // with.
+
+                                    let Some(consumed_so_far_slice) = pending_slice.get(..pending_slice.len() -
+                                        // code_unit_iter.as_slice().len()
+                                        // SAFETY: `ptr` and `end` have been derived from the same allocation
+                                        // and `ptr` is never greater than `end`.
+                                        unsafe { end.offset_from(ptr) as usize }
+                                        - 2) else {
+                                        // If we ever come here, it's a bug, but let's avoid panic code paths in release builds.
+                                        debug_assert!(false);
+                                        // Throw away the results of the fast path.
+                                        break 'fastwrap;
+                                    };
+                                    sink.write_slice(consumed_so_far_slice)?;
+
+                                    // Our belief that `upcoming32` is not a surrogate is based on trie data,
+                                    // which might be GIGO.
+                                    let upcoming = char_from_u32(upcoming32);
+
+                                    debug_assert!(decomposition.buffer.is_empty());
+
+                                    // Narrowing `trie_value` to `u8` is OK, because we already checked
+                                    // `decomposition_starts_with_non_starter`.
+                                    debug_assert!(trie_value_has_ccc(trie_value));
+                                    decomposition.buffer.push(CharacterAndClass::new(upcoming, CanonicalCombiningClass(trie_value as u8)));
+
+                                    // Sync with main iterator
+                                    // SAFETY: `ptr` and `end` have been derived from the same allocation
+                                    // and `ptr` is never greater than `end`.
+                                    decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(decomposition.delegate.trie());
+                                    // Let this trie value to be reprocessed in case it is
+                                    // one of the rare decomposing ones.
+                                    // SAFETY: We checked above that we don't have surrogate.
+                                    let after_mark_char = unsafe { char::from_u32_unchecked(u32::from(after_mark_code_unit))};
+                                    decomposition.pending = Some(CharacterAndTrieValue::new(after_mark_char, after_mark_trie_value));
+                                    decomposition.gather_and_sort_combining(0);
+                                    continue 'outer;
+                                }
+                                // End of stream
+                                sink.write_slice(pending_slice)?;
+                                return Ok(());
+                            }
+
+                            // End skipping over single combining mark
+
                             // LLVM's optimizations are incredibly brittle for the code _above_,
                             // and using `likely` _below_ without using it _above_ helps!
                             // What a massive sink of developer time!
@@ -2548,7 +2907,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                             if likely(surrogate_base <= (0xDBFF - 0xD800)) {
                                 // let iter_backup = code_unit_iter.clone();
                                 // if let Some(&low) = code_unit_iter.next() {
-                                if ptr != end {
+                                if likely(ptr != end) {
                                     // SAFETY: We just checked that `ptr` has not reached `end`.
                                     // `ptr` always advances by one, and we always have a check
                                     // per advancement.
@@ -2599,7 +2958,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                             upcoming_with_trie_value.trie_val,
                         ) {
                             // Sync with main iterator
-                            // decomposition.delegate = code_unit_iter.as_slice().chars_with_trie(decomposition.delegate.trie());
+                            // decomposition.delegate = code_unit_iter.as_slice().chars();
                             // SAFETY: `ptr` and `end` have been derived from the same allocation
                             // and `ptr` is never greater than `end`.
                             decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(decomposition.delegate.trie());
@@ -2618,7 +2977,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     return Ok(());
                 }
                 // Sync the main iterator
-                // decomposition.delegate = code_unit_iter.as_slice().chars_with_trie(decomposition.delegate.trie());
+                // decomposition.delegate = code_unit_iter.as_slice().chars();
                 // SAFETY: `ptr` and `end` have been derived from the same allocation
                 // and `ptr` is never greater than `end`.
                 decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(decomposition.delegate.trie());
@@ -2628,10 +2987,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         text,
         sink,
         decomposition,
-        decomposition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
         'outer,
+        self,
         chars_with_trie,
     );
 }
@@ -2966,12 +3325,17 @@ impl ComposingNormalizerBorrowed<'static> {
 impl<'data> ComposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
+    #[inline]
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<'data, I> {
-        Composition {
+        let mut ret = Composition {
             inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
-        }
+        };
+        ret.inner.decomposition.init(); // Discard the U+0000.
+        ret
     }
 
+    /// There's an extra U+0000 at the start. The caller must deal with it.
+    #[inline(always)]
     fn normalize_iter_private<
         I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
         T: AbstractCodePointTrie<'data, u32> + 'data,

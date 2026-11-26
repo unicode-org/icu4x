@@ -657,6 +657,8 @@ macro_rules! compare {
             let norm_trie = self.norm_trie();
             let ret = self.compare_impl(left_tail.$left_to_iter(norm_trie), right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie));
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
+                // Both iterators start with an extra U+0000. Since it's the same
+                // on both sides, it cancels out and doesn't need to be discarded.
                 return icu_normalizer::new_decomposition(left_tail.$left_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
                     icu_normalizer::new_decomposition(right_tail.$right_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
@@ -1787,7 +1789,8 @@ impl<'data> CollatorBorrowed<'data> {
         if let Some(iter) = identical {
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
 
-            let iter = icu_normalizer::new_decomposition(iter, self.tables);
+            let mut iter = icu_normalizer::new_decomposition(iter, self.tables);
+            let _ = iter.next(); // Discard the U+0000.
             write_identical_level(iter, sink, &mut state)?;
         }
 
