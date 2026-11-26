@@ -8,6 +8,7 @@ use crate::provider::*;
 use alloc::string::ToString;
 #[cfg(feature = "datagen")]
 use icu_provider::DataError;
+use regex_automata::dfa::sparse::DFA;
 use writeable::{LengthHint, Writeable};
 #[cfg(feature = "datagen")]
 use zerovec::VarZeroCow;
@@ -57,13 +58,19 @@ impl ListFormatterPatterns<'_> {
 type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
+    /// `parsed_condition` is the parsed condition of this pattern's special case, if the
+    /// caller holds one. Without it the condition is parsed here.
     pub(crate) fn parts<'b, W: Writeable + ?Sized>(
         &'a self,
+        parsed_condition: Option<&DFA<&[u8]>>,
         following_value: &'b W,
     ) -> PatternParts<'a> {
         match &self.special_case {
             Some(SpecialCasePattern { condition, pattern })
-                if condition.deref().matches_earliest_fwd_lazy(following_value) =>
+                if match parsed_condition {
+                    Some(parsed) => parsed.matches_earliest_fwd_lazy(following_value),
+                    None => condition.deref().matches_earliest_fwd_lazy(following_value),
+                } =>
             {
                 pattern.parts()
             }
@@ -189,20 +196,29 @@ pub mod test {
     #[test]
     fn produces_correct_parts() {
         assert_eq!(
-            test_patterns_general().pair.unwrap().parts(""),
+            test_patterns_general().pair.unwrap().parts(None, ""),
             ("$", ";", "+")
         );
     }
 
     #[test]
     fn produces_correct_parts_conditionally() {
-        assert_eq!(test_patterns_conditional().end.parts("a"), ("", " :o ", ""));
         assert_eq!(
-            test_patterns_conditional().end.parts("ab"),
+            test_patterns_conditional().end.parts(None, "a"),
             ("", " :o ", "")
         );
-        assert_eq!(test_patterns_conditional().end.parts("b"), ("", ". ", ""));
-        assert_eq!(test_patterns_conditional().end.parts("ba"), ("", ". ", ""));
+        assert_eq!(
+            test_patterns_conditional().end.parts(None, "ab"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns_conditional().end.parts(None, "b"),
+            ("", ". ", "")
+        );
+        assert_eq!(
+            test_patterns_conditional().end.parts(None, "ba"),
+            ("", ". ", "")
+        );
     }
 
     #[test]
