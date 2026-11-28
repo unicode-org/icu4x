@@ -5,12 +5,8 @@
 use core::marker::PhantomData;
 
 use crate::dimension::provider::units::categorized_display_names::{
-    UnitsNamesDurationLongEssentialV1, UnitsNamesDurationLongImperialV1,
-    UnitsNamesDurationLongMetricV1, UnitsNamesDurationLongOutlierV1,
-    UnitsNamesDurationNarrowEssentialV1, UnitsNamesDurationNarrowImperialV1,
-    UnitsNamesDurationNarrowMetricV1, UnitsNamesDurationNarrowOutlierV1,
-    UnitsNamesDurationShortEssentialV1, UnitsNamesDurationShortImperialV1,
-    UnitsNamesDurationShortMetricV1, UnitsNamesDurationShortOutlierV1,
+    UnitsNamesDurationLongEssentialV1, UnitsNamesDurationNarrowEssentialV1,
+    UnitsNamesDurationShortEssentialV1,
 };
 use crate::dimension::units::categorized_formatter::{
     CategorizedFormatter, CategorizedUnitsFormatterPreferences,
@@ -143,16 +139,18 @@ impl DurationUnitFormatter {
                 Unit::Nanosecond => crate::measure::category::Duration::nanosecond(),
             };
 
+            // The essential tier has all the units of a duration.
             match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
                 Width::Long => {
-                    CategorizedFormatter::try_new_long_outlier((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_long_essential((&prefs).into(), categorized_unit)
                 }
                 Width::Short => {
-                    CategorizedFormatter::try_new_short_outlier((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_short_essential((&prefs).into(), categorized_unit)
                 }
-                Width::Narrow => {
-                    CategorizedFormatter::try_new_narrow_outlier((&prefs).into(), categorized_unit)
-                }
+                Width::Narrow => CategorizedFormatter::try_new_narrow_essential(
+                    (&prefs).into(),
+                    categorized_unit,
+                ),
             }
         };
 
@@ -173,17 +171,8 @@ impl DurationUnitFormatter {
     fn try_new_unstable<
         D: ?Sized
             + DataProvider<UnitsNamesDurationLongEssentialV1>
-            + DataProvider<UnitsNamesDurationLongImperialV1>
-            + DataProvider<UnitsNamesDurationLongMetricV1>
-            + DataProvider<UnitsNamesDurationLongOutlierV1>
             + DataProvider<UnitsNamesDurationShortEssentialV1>
-            + DataProvider<UnitsNamesDurationShortImperialV1>
-            + DataProvider<UnitsNamesDurationShortMetricV1>
-            + DataProvider<UnitsNamesDurationShortOutlierV1>
             + DataProvider<UnitsNamesDurationNarrowEssentialV1>
-            + DataProvider<UnitsNamesDurationNarrowImperialV1>
-            + DataProvider<UnitsNamesDurationNarrowMetricV1>
-            + DataProvider<UnitsNamesDurationNarrowOutlierV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -198,18 +187,19 @@ impl DurationUnitFormatter {
                 unit: MeasureUnit::try_from_str(unit.as_unit_formatter_name()).unwrap(),
             };
 
+            // The essential tier has all the units of a duration.
             match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
-                Width::Long => CategorizedFormatter::try_new_long_outlier_unstable(
+                Width::Long => CategorizedFormatter::try_new_long_essential_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
                 ),
-                Width::Short => CategorizedFormatter::try_new_short_outlier_unstable(
+                Width::Short => CategorizedFormatter::try_new_short_essential_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
                 ),
-                Width::Narrow => CategorizedFormatter::try_new_narrow_outlier_unstable(
+                Width::Narrow => CategorizedFormatter::try_new_narrow_essential_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
@@ -293,17 +283,8 @@ impl DurationFormatter {
     pub fn try_new_unstable<
         D: DataProvider<provider::UnitsDurationDigitalV1>
             + DataProvider<UnitsNamesDurationLongEssentialV1>
-            + DataProvider<UnitsNamesDurationLongImperialV1>
-            + DataProvider<UnitsNamesDurationLongMetricV1>
-            + DataProvider<UnitsNamesDurationLongOutlierV1>
             + DataProvider<UnitsNamesDurationShortEssentialV1>
-            + DataProvider<UnitsNamesDurationShortImperialV1>
-            + DataProvider<UnitsNamesDurationShortMetricV1>
-            + DataProvider<UnitsNamesDurationShortOutlierV1>
             + DataProvider<UnitsNamesDurationNarrowEssentialV1>
-            + DataProvider<UnitsNamesDurationNarrowImperialV1>
-            + DataProvider<UnitsNamesDurationNarrowMetricV1>
-            + DataProvider<UnitsNamesDurationNarrowOutlierV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>
