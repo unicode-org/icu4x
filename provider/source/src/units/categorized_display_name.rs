@@ -55,6 +55,7 @@ impl SourceDataProvider {
     fn get_display_name_payload<M>(
         &self,
         req: DataRequest,
+        category: &str,
         width: Width,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -70,8 +71,8 @@ impl SourceDataProvider {
         let unit_patterns = width
             .select(&units_format_data.main.value.units)
             .categories
-            .iter()
-            .find_map(|(_, units_map)| units_map.get(unit))
+            .get(category)
+            .and_then(|units_map| units_map.get(unit))
             .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(M::INFO, req))?;
 
         Ok(DataResponse {
@@ -134,20 +135,21 @@ impl SourceDataProvider {
         let fallbacker = LocaleFallbacker::try_new_unstable(self)?;
         let fallbacker = fallbacker.for_config(M::INFO.fallback_config);
 
+        // Load and parse the unit preferences from the supplemental data file.
+        let preferences: &cldr_serde::units::preferences::Resource = self
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/unitPreferenceData.json")?;
+        let categorized_units_list = preferences.supplemental.categorized_units_list();
+
         let mut data_locales = HashSet::new();
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
         for locale in locales {
-            // Load and parse the unit constants from the supplemental data file.
-            let preferences: &cldr_serde::units::preferences::Resource = self
-                .cldr()?
-                .core()
-                .read_and_parse("supplemental/unitPreferenceData.json")?;
-
-            let categorized_units_list = preferences.supplemental.categorized_units_list();
+            let region = self.cldr()?.extract_or_infer_region(&locale)?.to_string();
 
             let units_format_data: &cldr_serde::units::data::Resource =
-                self.cldr()?.units().read_and_parse(&locale, "units.json")?;
+                units.read_and_parse(&locale, "units.json")?;
             let units_map = width
                 .select(&units_format_data.main.value.units)
                 .categories
@@ -165,7 +167,7 @@ impl SourceDataProvider {
                 if cldr_serde::units::preferences::Supplemental::unit_type(
                     category,
                     unit,
-                    &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
+                    &region,
                     &categorized_units_list,
                 ) != unit_type
                 {
@@ -203,7 +205,7 @@ macro_rules! impl_units_display_names_provider {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
-                self.get_display_name_payload::<$marker>(req, $width)
+                self.get_display_name_payload::<$marker>(req, $category, $width)
             }
         }
 
