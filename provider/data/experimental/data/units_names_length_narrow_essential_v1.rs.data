@@ -1,0 +1,70 @@
+// @generated
+/// Implement `DataProvider<UnitsNamesLengthNarrowEssentialV1>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 557B for the lookup data structure (50 data identifiers)
+/// * 520B[^1] for the actual data (17 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `icu_provider/baked`
+/// * `zerovec`
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_units_names_length_narrow_essential_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.88"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.88"]
+        impl $provider {
+            const DATA_UNITS_NAMES_LENGTH_NARROW_ESSENTIAL_V1: icu_provider::baked::zerotrie::DataForVarULEs<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1> = {
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1sabcefghijkmnprstuvz\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x13&CU\x91\xA3\xAB\xC6\xCE\x06\x18 )1V\x8C\x9E\xB1\xC2rs\x07\x1Emeter\x80t\x1Emeter\x81\xC2lr\x08o\x1Emeter\x82\x1Emeter\x81\xC3ehy\x08\x10b\x1Emeter\x81r\x1Emeter\x83\x1Emeter\x81\xC2ns\x07\x1Emeter\x81\x1Emeter\x81\xC5afior\x07\x13$+\x1Emeter\x81-Adlm\x1Emeter\x84\xC2\x1El\x06meter\x81\x1Emeter\x81\x1Emeter\x81\x1Emeter\x81\xC2ad\x07\x1Emeter\x81\x1Emeter\x81a\x1Emeter\x82\xC3ast\x07\x0E\x1Emeter\x81\x1Emeter\x81\x1Emeter\x81a\x1Emeter\x81\xC6anosuy\x07\x0E\x16\x1E%\x1Emeter\x85\x1Emeter\x86k\x1Emeter\x87h\x1Emeter\x81\x1Emeter\x81\x1Emeter\x88\xC2lr\x07\x1Emeter\x81\x1Emeter\x89o\x1Emeter\x81cm\x1Emeter\x81m\x1Emeter\x81\xC4chov\x07\x0F\x16\x1Emeter\x81n\x1Emeter\x8A\x1Emeter\x81\x1Emeter\x81\xC6aehiko\x07\x0E\x15\x1C#\x1Emeter\x81\x1Emeter\x8B\x1Emeter\x8C\x1Emeter\x8D\x1Emeter\x81\x1Emeter\x8E\xC2gk\x07\x1Emeter\x81\x1Emeter\x88\xC2ei\x08c\x1Emeter\x81\x1Emeter\x81h-\xC2HM\x15\xC2Ka\x07\x1Emeter\x8Fnt\x1Emeter\x90\0O\x1Emeter\x8F" };
+                const VALUES: &'static zerovec::VarZeroSlice<<<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = unsafe { zerovec::vecs::VarZeroSlice32::from_bytes_unchecked(b"\x11\0\0\0\x05\0\0\0\x08\0\0\0\x0B\0\0\0\x13\0\0\0\x19\0\0\0\x1E\0\0\0&\0\0\0:\0\0\0>\0\0\0F\0\0\0L\0\0\0T\0\0\0Z\0\0\0_\0\0\0c\0\0\0h\0\0\0\0\x01 \xD9\x85\0\x01m\0\x02m\0\x01\xE1\x8E\xA0\xE1\x8F\x9F\0\x01\xF0\x9E\xA4\xA5\0\x01\xE1\x83\x9B\0\x01\xE0\xB2\xAE\xE0\xB3\x80\x80\x07\x01\xE0\xA4\xAE\xE0\xA5\x80\x01\0\x10\x01 \xE0\xA4\xAE\xE0\xA5\x80\0\x01\xD0\xBC\0\x01\xE0\xA4\xAE\xE0\xA5\x80\0\x01\xE1\x80\x99.\0\x01\xE0\xB0\xAE\xE0\xB1\x80\0\x01\xE0\xB8\xA1.\0\x01\xE1\x88\x9C\0\x01 m\0\x01\xE7\xB1\xB3\0\x01\xE5\x85\xAC\xE5\xB0\xBA") };
+                unsafe { icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES) }
+            };
+        }
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_UNITS_NAMES_LENGTH_NARROW_ESSENTIAL_V1, req.id, req.metadata.attributes_prefix_match) {
+                    payload
+                } else {
+                    const FALLBACKER: icu_locale_fallback::LocaleFallbackerWithConfig<'static> = icu_locale_fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1 as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_UNITS_NAMES_LENGTH_NARROW_ESSENTIAL_V1, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_unknown() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1 as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload, metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_units_names_length_narrow_essential_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowEssentialV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider::baked::DataStore::iter(&Self::DATA_UNITS_NAMES_LENGTH_NARROW_ESSENTIAL_V1).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {};
+    ($ provider : ty , DRY , ITER) => {
+        __impl_units_names_length_narrow_essential_v1!($provider, ITER);
+    };
+}
+#[doc(inline)]
+pub use __impl_units_names_length_narrow_essential_v1 as impl_units_names_length_narrow_essential_v1;

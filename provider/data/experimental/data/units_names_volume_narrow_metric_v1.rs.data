@@ -1,0 +1,70 @@
+// @generated
+/// Implement `DataProvider<UnitsNamesVolumeNarrowMetricV1>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 2308B for the lookup data structure (175 data identifiers)
+/// * 2172B[^1] for the actual data (65 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `icu_provider/baked`
+/// * `zerovec`
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_units_names_volume_narrow_metric_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.88"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.88"]
+        impl $provider {
+            const DATA_UNITS_NAMES_VOLUME_NARROW_METRIC_V1: icu_provider::baked::zerotrie::DataForVarULEs<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1> = {
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnopqrstuvyz\0\0\x01\x01\x01\x02\x03\x03\x03\x04\x04\x04\x04\x05\x05\x05\x05\x05\x06\x07\x07\x07\x08[\xCA2M\xF7\xDE5\x99\xF5&\x9D\xA6\xEC-_\x91\x9A\xCBxW\x9E\xDB\x10\xC4mrsz\r\x15F\x1Emilliliter\x90 \x1Eliter\x90\nt\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90!\x1Emilliliter\x90\"\xC3lrs1ao\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x81eter\x8Diter\x90\x0Cilliliter\x90#\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\x1Eliter\x90\x0B\xC3ehy\t:b\x1Eliter\x90\rr\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\rilliliter\x90!\x1E\xC2cm\x18ubic-\xC2cm\nentimeter\x80eter\x8Cilliliter\x90!a\x1Ecubic-\xC2cm\nentimeter\x80eter\x8C\xC3lns\x08n\x1Eliter\x90\x0E\xC2\x1E-/\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\rilliliter\x90!\xC20A\x1801\x1E\xC2lm\x06iter\x90\x0Billiliter\x90$U\x1E\xC2lm\x06iter\x90\rilliliter\x90!\xC2\x1E-\"\xC2cl\x18ubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0B419\x1Emilliliter\x90$\xC5afior\rB}\xAD\x1Emilliliter\x90!-Adlm\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x82eter\x8Eiter\x90\x0Filliliter\x90%\xC2\x1El/\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\x1Eliter\x90\r\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\xC2ad#\x1E\xC2cl\x18ubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0B\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\rilliliter\x90!\xC2ai0\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x81eter\x8Diter\x90\x10illiliter\x90#\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x83eter\x8Fiter\x90\x11illiliter\x90&\xC2at(\x1E\xC2cm\x18ubic-\xC2cm\nentimeter\x80eter\x8Cilliliter\x90$\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$a\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\rilliliter\x90$\xC6agmnos\x08\x11\x19=b\x1Eliter\x90\x12p\x1Eliter\x90\x13\x1Eliter\x90\r\x1E\xC3clm\x0C\x12ubic-meter\x90\0iter\x90\x14illiliter\x90'k\x1E\xC3clm\x0C\x12ubic-meter\x90\x01iter\x90\x15illiliter\x90(h\x1Eliter\x90\ro\x1Eliter\x90\r\xC3lry08\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\rilliliter\x90!\x1Eliter\x90\x16\x1Eliter\x90\r\xC2no\r\x1Emilliliter\x90)\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$r\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x84eter\x90\x02iter\x90\x17illiliter\x90*\xC3acs\x1B$\x1Ecubic-\xC2cm\nentimeter\x85eter\x90\x03m\x1Eliter\x90\r\x1Eliter\x90\ru\x1Eliter\x90\x18m\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\xC5achov\t9ksh\x1Eliter\x90\x19\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$n\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x86eter\x90\x04iter\x90\x1Ailliliter\x90+\x1Eliter\x90\r\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\xC6aehiko08i\x9A\xA2\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\rilliliter\x90!\x1Eliter\x90\x1B\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x87eter\x90\x05iter\x90\x1Cilliliter\x90,\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x88eter\x90\x06iter\x90\x1Dilliliter\x90-\x1Eliter\x90\x0B\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x89eter\x90\x07iter\x90\x1Eilliliter\x90\"\xC3gkz\x089\x1Eliter\x90\x0B\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x8Aeter\x90\x08iter\x90\x19illiliter\x90.\x1Eliter\x90\r\xC2ei1c\x1E\xC3clm\x18\x1Eubic-\xC2cm\nentimeter\x80eter\x8Citer\x90\x0Billiliter\x90$\x1Eliter\x90\r\xC2or(\x1E\xC2cm\x18ubic-\xC2cm\nentimeter\x80eter\x8Cilliliter\x90!l\x1Eliter\x90\x0B\xC2hu`\xC2\x1E-'\xC2cm\x18ubic-\xC2cm\nentimeter\x80eter\x8Cilliliter\x90!Hant\x1E\xC3clm\x19\x1Fubic-\xC2cm\nentimeter\x8Beter\x90\titer\x90\x1Filliliter\x90/\x1E\xC2cm\x18ubic-\xC2cm\nentimeter\x8Ceter\x8Cilliliter\x900" };
+                const VALUES: &'static zerovec::VarZeroSlice<<<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = unsafe { zerovec::vecs::VarZeroSlice32::from_bytes_unchecked(b"A\0\0\0\x06\0\0\0\x0C\0\0\0\x1A\0\0\x003\0\0\0H\0\0\0X\0\0\0c\0\0\0s\0\0\0}\0\0\0\x84\0\0\0\x8C\0\0\0\x9A\0\0\0\x9F\0\0\0\xA4\0\0\0\xAE\0\0\0\xBE\0\0\0\xC8\0\0\0\xE0\0\0\0\xF0\0\0\0\xFA\0\0\0\x02\x01\0\0\x0F\x01\0\0\x16\x01\0\0\x1C\x01\0\0\"\x01\0\x000\x01\0\x005\x01\0\08\x01\0\0;\x01\0\0>\x01\0\0D\x01\0\0J\x01\0\0M\x01\0\0V\x01\0\0[\x01\0\0^\x01\0\0f\x01\0\0z\x01\0\0\x82\x01\0\0\x8A\x01\0\0\x92\x01\0\0\x96\x01\0\0\x9C\x01\0\0\xA4\x01\0\0\xAA\x01\0\0\xAF\x01\0\0\xB3\x01\0\0\xB8\x01\0\0\xC1\x01\0\0\xC5\x01\0\0\xCA\x01\0\0\xCE\x01\0\0\xD2\x01\0\0\xDC\x01\0\0\xEB\x01\0\0\xFA\x01\0\0\x1A\x02\0\0&\x02\0\08\x02\0\0A\x02\0\0J\x02\0\0R\x02\0\0X\x02\0\0`\x02\0\0\0\x01cm\xC2\xB3\0\x05cm\xC2\xB3\0\x01\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA5\xF0\x9E\xA5\x93\0\x01 \xE0\xA4\x98\xE0\xA4\xA8 \xE0\xA4\xB8\xE0\xA5\x87\xE0\xA4\x82\xE0\xA4\xAE\xE0\xA5\x80\0\x01/\xE0\xAC\x98\xE0\xAC\xA8\xE0\xAC\xB8\xE0\xAD\x87\xE0\xAC\xAE\xE0\xAC\xBF\0\x01\xE0\xA8\xB8\xE0\xA9\x88\xE0\xA8\xAE\xE0\xA9\x80\xC2\xB3\0\x01\xE1\x80\x9E\xE1\x80\x99.\xC2\xB3\0\x01\xE0\xB8\xA5\xE0\xB8\x9A.\xE0\xB8\x8B\xE0\xB8\xA1.\0\x01\xE1\x88\xB4\xE1\x88\x9C\xC2\xB3\0\x01 sm\xC2\xB3\0\x01\xD1\x81\xD0\xBC\xC2\xB3\0\x01\xE7\xAB\x8B\xE6\x96\xB9\xE5\x85\xAC\xE5\x88\x86\0\x01m\xC2\xB3\0\x04m\xC2\xB3\0\x01\xF0\x9E\xA4\xA5\xF0\x9E\xA5\x93\0\x01 \xE0\xA4\x98\xE0\xA4\xA8 \xE0\xA4\xAE\xE0\xA5\x80\0\x01\xE0\xB2\xAE\xE0\xB3\x80\xC2\xB3\x80\t\x01\xE0\xA4\xAE\xE0\xA5\x80\xC2\xB3\x01\0\x10\x01 \xE0\xA4\xAE\xE0\xA5\x80\xC2\xB3\0\x01/ \xE0\xAC\x98\xE0\xAC\xA8\xE0\xAC\xAE\xE0\xAC\xBF\0\x01\xE0\xA8\xAE\xE0\xA9\x80\xC2\xB3\0\x01\xE1\x80\x99.\xC2\xB3\0\x01\xE0\xB8\xA5\xE0\xB8\x9A.\xE0\xB8\xA1.\0\x01\xE1\x88\x9C\xC2\xB3\0\x01 m\xC2\xB3\0\x01\xD0\xBC\xC2\xB3\0\x01\xE7\xAB\x8B\xE6\x96\xB9\xE5\x85\xAC\xE5\xB0\xBA\0\x01 \xD9\x84\0\x01l\0\x02l\0\x01L\0\x01 \xCE\xBB.\0\x01\xF0\x9E\xA4\xA4\0\x02L\0\x01 \xE0\xA4\xB2\xE0\xA5\x80\0\x01\xE1\x83\x9A\0\x01r\0\x01\xE0\xB2\xB2\xE0\xB3\x80\x80\x07\x01\xE0\xA4\xB2\xE0\xA4\xBF\x01\0\x10\x01 \xE0\xA4\xB2\xE0\xA4\xBF\0\x01\xE0\xA4\xB2\xE0\xA5\x80\0\x01\xE0\xAC\xB2\xE0\xAC\xBF\0\x01 litro\0\x01\xD0\xBB\0\x01\xE1\x80\x9C.\0\x01\xE0\xB0\xB2\xE0\xB1\x80\0\x01\xE0\xB8\xA5.\0\x01\xE1\x88\x8A\0\x01 l\0\x01\xE5\x8D\x87\0\x01 \xE1\x88\x9A\xE1\x88\x8A\0\x01mL\0\x01 ml\0\x03mL\0\x01ml\0\x01\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA4\0\x01 \xE0\xA4\xAE\xE0\xA4\xBF\xE0\xA4\xB2\xE0\xA5\x80\0\x01\xE0\xB2\xAE\xE0\xB2\xBF.\xE0\xB2\xB2\xE0\xB3\x80\x80\r\x01\xE0\xA4\xAE\xE0\xA4\xBF\xE0\xA4\xB2\xE0\xA4\xBF\x01\0\x10\x01 \xE0\xA4\xAE\xE0\xA4\xBF\xE0\xA4\xB2\xE0\xA4\xBF\x80\x03\x01ml\x01\0\x10\x01 ml\0\x01 \xE0\xAC\xAE\xE0\xAC\xBF. \xE0\xAC\xB2\xE0\xAC\xBF.\0\x01\xE1\x80\x99\xE1\x80\x9C.\0\x01\xE0\xB8\xA1\xE0\xB8\xA5.\0\x01\xE1\x88\x9A\xE1\x88\x8A\0\x01\xD0\xBC\xD0\xBB\0\x01\xE6\xAF\xAB\xE5\x8D\x87\0\x01cL") };
+                unsafe { icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES) }
+            };
+        }
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_UNITS_NAMES_VOLUME_NARROW_METRIC_V1, req.id, req.metadata.attributes_prefix_match) {
+                    payload
+                } else {
+                    const FALLBACKER: icu_locale_fallback::LocaleFallbackerWithConfig<'static> = icu_locale_fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1 as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_UNITS_NAMES_VOLUME_NARROW_METRIC_V1, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_unknown() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1 as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload, metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_units_names_volume_narrow_metric_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesVolumeNarrowMetricV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider::baked::DataStore::iter(&Self::DATA_UNITS_NAMES_VOLUME_NARROW_METRIC_V1).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {};
+    ($ provider : ty , DRY , ITER) => {
+        __impl_units_names_volume_narrow_metric_v1!($provider, ITER);
+    };
+}
+#[doc(inline)]
+pub use __impl_units_names_volume_narrow_metric_v1 as impl_units_names_volume_narrow_metric_v1;

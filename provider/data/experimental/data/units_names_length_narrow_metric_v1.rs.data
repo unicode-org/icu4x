@@ -1,0 +1,70 @@
+// @generated
+/// Implement `DataProvider<UnitsNamesLengthNarrowMetricV1>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 3097B for the lookup data structure (200 data identifiers)
+/// * 2646B[^1] for the actual data (74 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `icu_provider/baked`
+/// * `zerovec`
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_units_names_length_narrow_metric_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.88"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.88"]
+        impl $provider {
+            const DATA_UNITS_NAMES_LENGTH_NARROW_METRIC_V1: icu_provider::baked::zerotrie::DataForVarULEs<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1> = {
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1wabcdefghijklmnopqrstuvz\0\0\x01\x01\x02\x03\x04\x04\x05\x05\x06\x06\x06\x07\x07\x07\x07\x08\t\n\n\x0B:\xC3a\x8D\x8A\xE3m\xC3S\x8CTv\xFCLy\xCC\xD9\x12\x1C@\xBF\"st\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\xC3alr\x12Kl-Latn\x1Ecentimeter\x81o\x1E\xC3ckm\n\x14entimeter\x82ilometer\x90\x08il\xC2el\x0F-scandinavian\x90\x16imeter\x90(\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\xC3ehy'`b\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'r\x1E\xC3ckm\n\x14entimeter\x83ilometer\x90\til\xC2el\x0F-scandinavian\x90\x15imeter\x90)\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x17imeter\x90'\xC2ae\x14\x1Emile-scandinavian\x90\x18\x1Emile-scandinavian\x90\x15\xC3lns\x14L\x1Emile-scandinavian\x90\x15\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\xC2\x1E-7\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x19imeter\x90'\xC34MU\x16=19\x1Emile-scandinavian\x90\x1AX\x1E\xC3ckm\n\x14entimeter\x84ilometer\x90\nillimeter\x90*S\x1E\xC2km\nilometer\x90\nil\xC2el\x0F-scandinavian\x90\x1Bimeter\x90*\xE1fafiory\0\0\0\0\x01&c\xD6\xFC;\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'-Adlm\x1E\xC3ckm\n\x14entimeter\x85ilometer\x90\x0Bil\xC2el\x0F-scandinavian\x90\x1Cimeter\x90+\xC2\x1El7\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x1Dimeter\x90'\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'\xC2\x1E-%\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'CA\x1Emile-scandinavian\x90\x15\x1Ecentimeter\x86\xC3adu8p\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x1Eimeter\x90'\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\x1Emile-scandinavian\x90\x15\xC2ai8\x1E\xC3ckm\n\x14entimeter\x87ilometer\x90\x08il\xC2el\x0F-scandinavian\x90\x16imeter\x90(\x1E\xC2km\nilometer\x90\x0Cillimeter\x90,\xC3ast&R\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'\x1E\xC2cm\nentimeter\x80il\xC2el\x0F-scandinavian\x90\x1Fimeter\x90'\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'a\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\xC6kmnosu\x14!M{\xA2\x1Emile-scandinavian\x90 \x1Emillimeter\x90-\x1E\xC2km\nilometer\x90\ril\xC2el\x0F-scandinavian\x90\x15imeter\x90.k\x1E\xC3ckm\n\x14entimeter\x88ilometer\x90\x0Eile-scandinavian\x90!h\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'\x1E\xC2cm\nentimeter\x80illimeter\x90'v\x1E\xC2cm\nentimeter\x89ile-scandinavian\x90\"\xC4lnry8Lr\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\x1Emile-scandinavian\x90#\x1E\xC3ckm\n\x14entimeter\x8Ailometer\x90\x0Fillimeter\x90/\x1Ekilometer\x90\x07\xC2eo\x14\x1Emile-scandinavian\x90\x15\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x1Bimeter\x90'r\x1E\xC2cm\nentimeter\x8Bil\xC2el\x0F-scandinavian\x90\x15imeter\x900\xC3acs\x0C3\x1Ecentimeter\x8Cm\x1E\xC3ckm\n\x14entimeter\x8Dilometer\x90\x07illimeter\x90'\x1E\xC2cm\nentimeter\x80illimeter\x90'u\x1Ekilometer\x90\x07m\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\xC6cdhovw8Yt\x9A\xD2\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\x1E\xC2cm\nentimeter\x86ile-scandinavian\x90$n\x1E\xC2cm\nentimeter\x8Eillimeter\x901\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x1Bimeter\x90'\xC2\x1E-\x19\xC2cm\nentimeter\x8Fillimeter\x902KE\x1Emillimeter\x90(\xE1faehiko\0\0\0\0\08_\x98\xB3\xD9\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\nil\xC2el\x0F-scandinavian\x90\x15imeter\x90'\x1E\xC3ckm\x0B\x15entimeter\x90\0ilometer\x90\x10illimeter\x903\x1E\xC3ckm\x0B\x15entimeter\x90\x01ilometer\x90\x11il\xC2el\x0F-scandinavian\x90\x15imeter\x904\x1E\xC2cm\x0Bentimeter\x90\x02illimeter\x905\x1E\xC3ckm\n\x14entimeter\x8Dilometer\x90\x07illimeter\x90'\x1E\xC3ckm\x0B\x15entimeter\x90\x03ilometer\x90\x12il\xC2el\x0F-scandinavian\x90%imeter\x906\xC3gkr&_\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'\x1E\xC3ckm\x0B\x15entimeter\x90\x04ilometer\x90\x13il\xC2el\x0F-scandinavian\x90&imeter\x907\x1E\xC2cm\nentimeter\x80illimeter\x906\xC2ei9c\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07il\xC2el\x0F-scandinavian\x90\x15imeter\x90'\x1E\xC3ckm\n\x14entimeter\x80ilometer\x90\x07illimeter\x90'h\xC2\x1E-\x13mile-scandinavian\x90\x15\xC2HMZ\xC2Ka\x1B\x1E\xC2cm\x0Bentimeter\x90\x05illimeter\x908nt\x1E\xC3ckm\x0B\x15entimeter\x90\x06ilometer\x90\x14il\xC2el\x0F-scandinavian\x90\x15imeter\x909O\x1E\xC2cm\x0Bentimeter\x90\x05illimeter\x908" };
+                const VALUES: &'static zerovec::VarZeroSlice<<<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = unsafe { zerovec::vecs::VarZeroSlice32::from_bytes_unchecked(b"J\0\0\0\x04\0\0\0\x11\0\0\0\x15\0\0\0\x1D\0\0\0)\0\0\x003\0\0\08\0\0\0<\0\0\0\\\0\0\0h\0\0\0y\0\0\0\x99\0\0\0\xAC\0\0\0\xB0\0\0\0\xB9\0\0\0\xBE\0\0\0\xD0\0\0\0\xD9\0\0\0\xE1\0\0\0\xE6\0\0\0\xEC\0\0\0\xF4\0\0\0\xFC\0\0\0\0\x01\0\0\x04\x01\0\0\x0C\x01\0\0\x18\x01\0\0\"\x01\0\x001\x01\0\0?\x01\0\0_\x01\0\0m\x01\0\0|\x01\0\0\x85\x01\0\0\x8A\x01\0\0\x90\x01\0\0\x98\x01\0\0\x9D\x01\0\0\xA2\x01\0\0\xC8\x01\0\0\xD1\x01\0\0\xD9\x01\0\0\xE2\x01\0\0\xE7\x01\0\0\xF5\x01\0\0\xFA\x01\0\0<\x02\0\0H\x02\0\0Y\x02\0\0g\x02\0\0{\x02\0\0\x8B\x02\0\0\xA1\x02\0\0\xA7\x02\0\0\xB2\x02\0\0\xB6\x02\0\0\xBA\x02\0\0\xC5\x02\0\0\xD1\x02\0\0\xDB\x02\0\0\xEA\x02\0\0\xF3\x02\0\0\x01\x03\0\0\x0F\x03\0\0\x1D\x03\0\0&\x03\0\0+\x03\0\0:\x03\0\0C\x03\0\0K\x03\0\0P\x03\0\0V\x03\0\0^\x03\0\0\0\x01cm\0\x01 santimitar\0\x03cm\0\x01\xE1\x8E\xA2\xE1\x8F\xB3\x80\x03\x01cm\x01\0\x10\x01 cm\0\x01\xF0\x9E\xA4\xA7\xF0\x9E\xA4\xA5\0\x01 cm\0\x03sm\x80\r\x01\xE0\xA4\xB8\xE0\xA5\x87\xE0\xA4\xAE\xE0\xA5\x80\x01\0\x10\x01 \xE0\xA4\xB8\xE0\xA5\x87\xE0\xA4\xAE\xE0\xA5\x80\x80\x04\x01 cm\x01\0\x10\x01cm\0\x01\xE0\xA4\xB8\xE0\xA5\x87\xE0\xA4\x82\xE0\xA4\xAE\xE0\xA5\x80\x80\r\x01\xE0\xAC\xB8\xE0\xAD\x87\xE0\xAC\xAE\xE0\xAC\xBF\x01\0\x10\x01 \xE0\xAC\xB8\xE0\xAD\x87\xE0\xAC\xAE\xE0\xAC\xBF\0\x01\xE0\xA8\xB8\xE0\xA9\x88\xE0\xA8\x82.\xE0\xA8\xAE\xE0\xA9\x80.\0\x01sm\0\x01\xE1\x80\x9E\xE1\x80\x99.\0\x04cm \0\x01\xE0\xB0\xB8\xE0\xB1\x86\xE0\xB0\x82.\xE0\xB0\xAE\xE0\xB1\x80\0\x01\xE0\xB8\x8B\xE0\xB8\xA1.\0\x01\xE1\x88\xB4\xE1\x88\x9C\0\x01 sm\0\x01\xD1\x81\xD0\xBC\0\x01\xE5\x8E\x98\xE7\xB1\xB3\0\x01\xE5\x85\xAC\xE5\x88\x86\0\x01km\0\x03km\0\x01\xE1\x8E\xA0\xE1\x8F\x97\x80\x03\x01km\x01\0\x10\x01 km\0\x01\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA5\0\x01 \xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xAE\xE0\xA5\x80\0\x01\xE0\xB2\x95\xE0\xB2\xBF\xE0\xB2\xAE\xE0\xB3\x80\x80\r\x01\xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xAE\xE0\xA5\x80\x01\0\x10\x01 \xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xAE\xE0\xA5\x80\0\x01\xE0\xA4\x95\xE0\xA4\xBF\xE0\xA4\xAE\xE0\xA5\x80\0\x01\xE0\xB0\x95\xE0\xB0\xBF.\xE0\xB0\xAE\xE0\xB1\x80\0\x01\xE0\xB8\x81\xE0\xB8\xA1.\0\x01 km\0\x01\xD0\xBA\xD0\xBC\0\x01\xE5\x85\xAC\xE9\x87\x8C\0\x01smi\0\x04smi\x80\x04\x01smi\x04\0\x06\0\x0C\0\x12\0\0\x01 smi \x01 smi0\x01 smi@\x01 smi\0\x01sv. mil\0\x01mi esc\0\x01mi esc.\0\x01mil\0\x01\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xA7\0\x01pnk\x80\r\x01m\xC3\xADle Lochl.\x03\0\x0F\0\x1E\0\x10\x01mh\xC3\xADle Lochl. \x01mh\xC3\xADle Lochl.0\x01mh\xC3\xADle Lochl.\0\x01 s\xC3\xA6. m\xC3\xADl\0\x01 \xD1\x81\xD0\xBA. \xD0\xBC\xD0\xB8\xD0\xBB\xD1\x8C\x80\x04\x01smi\x01\0\x10\x01 smi\x80\x07\x01 sk.j.\x01\0\0\x01\xC2\xA0sk.j.\0\x01 \xD1\x81\xD0\xBA.\xD0\xBC\xD0\xB8\xD0\xBB\xD1\x8C\0\x01\xD8\xA7\xD9\x8A\xD8\xB3 \xD8\xA7\xD9\x8A\xD9\x85 \xD8\xA2\xD8\xA6\xD9\x8A\0\x01 msi\0\x01\xD1\x81\xD0\xBA.\xD0\xBC\xD0\xBB\0\x01mm\0\x03mm\0\x01\xE1\x8F\x8C\xE1\x8E\xA2\xE1\x8E\xA0\x80\x03\x01mm\x01\0\x10\x01 mm\0\x01\xF0\x9E\xA4\xA5\xF0\x9E\xA4\xA5\0\x01 \xE0\xA4\xAE\xE0\xA4\xBF\xE0\xA4\xAE\xE0\xA5\x80\0\x01 \xE1\x9E\x98\xE1\x9E\x98\0\x01\xE0\xB2\xAE\xE0\xB2\xBF\xE0\xB2\xAE\xE0\xB3\x80\0\x01\xE0\xA4\xAE\xE0\xA4\xBF\xE0\xA4\xAE\xE0\xA5\x80\0\x01\xE0\xAC\xAE\xE0\xAC\xBF\xE0\xAC\xAE\xE0\xAC\xBF\0\x01\xE1\x80\x99\xE1\x80\x99.\0\x04mm \0\x01\xE0\xB0\xAE\xE0\xB0\xBF.\xE0\xB0\xAE\xE0\xB1\x80\0\x01\xE0\xB8\xA1\xE0\xB8\xA1.\0\x01\xE1\x88\x9A\xE1\x88\x9C\0\x01 mm\0\x01\xD0\xBC\xD0\xBC\0\x01\xE6\xAF\xAB\xE7\xB1\xB3\0\x01\xE5\x85\xAC\xE9\x87\x90") };
+                unsafe { icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES) }
+            };
+        }
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_UNITS_NAMES_LENGTH_NARROW_METRIC_V1, req.id, req.metadata.attributes_prefix_match) {
+                    payload
+                } else {
+                    const FALLBACKER: icu_locale_fallback::LocaleFallbackerWithConfig<'static> = icu_locale_fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1 as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_UNITS_NAMES_LENGTH_NARROW_METRIC_V1, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_unknown() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1 as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload, metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_units_names_length_narrow_metric_v1!($provider);
+        #[clippy::msrv = "1.88"]
+        impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::units::categorized_display_names::UnitsNamesLengthNarrowMetricV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider::baked::DataStore::iter(&Self::DATA_UNITS_NAMES_LENGTH_NARROW_METRIC_V1).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {};
+    ($ provider : ty , DRY , ITER) => {
+        __impl_units_names_length_narrow_metric_v1!($provider, ITER);
+    };
+}
+#[doc(inline)]
+pub use __impl_units_names_length_narrow_metric_v1 as impl_units_names_length_narrow_metric_v1;

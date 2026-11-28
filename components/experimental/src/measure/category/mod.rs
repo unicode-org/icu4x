@@ -9,25 +9,36 @@ use icu_provider::{DataMarker, DynamicDataMarker};
 use crate::{
     dimension::provider::units::{
         categorized_display_names::{
-            UnitsNamesAreaLongHeavyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongTinyV1,
-            UnitsNamesAreaNarrowHeavyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowTinyV1,
-            UnitsNamesAreaShortHeavyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortTinyV1,
-            UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1,
-            UnitsNamesDurationLongTinyV1, UnitsNamesDurationNarrowHeavyV1,
-            UnitsNamesDurationNarrowLightV1, UnitsNamesDurationNarrowTinyV1,
-            UnitsNamesDurationShortHeavyV1, UnitsNamesDurationShortLightV1,
-            UnitsNamesDurationShortTinyV1, UnitsNamesLengthLongHeavyV1,
-            UnitsNamesLengthLongLightV1, UnitsNamesLengthLongTinyV1, UnitsNamesLengthNarrowHeavyV1,
-            UnitsNamesLengthNarrowLightV1, UnitsNamesLengthNarrowTinyV1,
-            UnitsNamesLengthShortHeavyV1, UnitsNamesLengthShortLightV1,
-            UnitsNamesLengthShortTinyV1, UnitsNamesMassLongHeavyV1, UnitsNamesMassLongLightV1,
-            UnitsNamesMassLongTinyV1, UnitsNamesMassNarrowHeavyV1, UnitsNamesMassNarrowLightV1,
-            UnitsNamesMassNarrowTinyV1, UnitsNamesMassShortHeavyV1, UnitsNamesMassShortLightV1,
-            UnitsNamesMassShortTinyV1, UnitsNamesVolumeLongHeavyV1, UnitsNamesVolumeLongLightV1,
-            UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeNarrowHeavyV1,
-            UnitsNamesVolumeNarrowLightV1, UnitsNamesVolumeNarrowTinyV1,
-            UnitsNamesVolumeShortHeavyV1, UnitsNamesVolumeShortLightV1,
-            UnitsNamesVolumeShortTinyV1,
+            UnitsNamesAreaLongEssentialV1, UnitsNamesAreaLongImperialV1,
+            UnitsNamesAreaLongMetricV1, UnitsNamesAreaLongOutlierV1,
+            UnitsNamesAreaNarrowEssentialV1, UnitsNamesAreaNarrowImperialV1,
+            UnitsNamesAreaNarrowMetricV1, UnitsNamesAreaNarrowOutlierV1,
+            UnitsNamesAreaShortEssentialV1, UnitsNamesAreaShortImperialV1,
+            UnitsNamesAreaShortMetricV1, UnitsNamesAreaShortOutlierV1,
+            UnitsNamesDurationLongEssentialV1, UnitsNamesDurationLongImperialV1,
+            UnitsNamesDurationLongMetricV1, UnitsNamesDurationLongOutlierV1,
+            UnitsNamesDurationNarrowEssentialV1, UnitsNamesDurationNarrowImperialV1,
+            UnitsNamesDurationNarrowMetricV1, UnitsNamesDurationNarrowOutlierV1,
+            UnitsNamesDurationShortEssentialV1, UnitsNamesDurationShortImperialV1,
+            UnitsNamesDurationShortMetricV1, UnitsNamesDurationShortOutlierV1,
+            UnitsNamesLengthLongEssentialV1, UnitsNamesLengthLongImperialV1,
+            UnitsNamesLengthLongMetricV1, UnitsNamesLengthLongOutlierV1,
+            UnitsNamesLengthNarrowEssentialV1, UnitsNamesLengthNarrowImperialV1,
+            UnitsNamesLengthNarrowMetricV1, UnitsNamesLengthNarrowOutlierV1,
+            UnitsNamesLengthShortEssentialV1, UnitsNamesLengthShortImperialV1,
+            UnitsNamesLengthShortMetricV1, UnitsNamesLengthShortOutlierV1,
+            UnitsNamesMassLongEssentialV1, UnitsNamesMassLongImperialV1,
+            UnitsNamesMassLongMetricV1, UnitsNamesMassLongOutlierV1,
+            UnitsNamesMassNarrowEssentialV1, UnitsNamesMassNarrowImperialV1,
+            UnitsNamesMassNarrowMetricV1, UnitsNamesMassNarrowOutlierV1,
+            UnitsNamesMassShortEssentialV1, UnitsNamesMassShortImperialV1,
+            UnitsNamesMassShortMetricV1, UnitsNamesMassShortOutlierV1,
+            UnitsNamesVolumeLongEssentialV1, UnitsNamesVolumeLongImperialV1,
+            UnitsNamesVolumeLongMetricV1, UnitsNamesVolumeLongOutlierV1,
+            UnitsNamesVolumeNarrowEssentialV1, UnitsNamesVolumeNarrowImperialV1,
+            UnitsNamesVolumeNarrowMetricV1, UnitsNamesVolumeNarrowOutlierV1,
+            UnitsNamesVolumeShortEssentialV1, UnitsNamesVolumeShortImperialV1,
+            UnitsNamesVolumeShortMetricV1, UnitsNamesVolumeShortOutlierV1,
         },
         display_names::UnitsDisplayNames,
     },
@@ -43,24 +54,32 @@ pub mod volume;
 /// A category of measure units, such as length or mass.
 ///
 /// It has one data marker for each width (long, short, narrow)
-/// and each tier (tiny, light, heavy) of the unit names.
+/// and each tier (essential, imperial, metric, outlier) of the unit names.
+/// A unit is in the same tier in every locale.
 pub trait MeasureUnitCategory {
-    type DataMarkerLongTiny: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
-    type DataMarkerLongLight: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerLongEssential: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerLongHeavy: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerLongImperial: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerShortTiny: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerLongMetric: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerShortLight: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerLongOutlier: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerShortHeavy: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerShortEssential: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerNarrowTiny: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerShortImperial: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerNarrowLight: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerShortMetric: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
-    type DataMarkerNarrowHeavy: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+    type DataMarkerShortOutlier: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+        + DataMarker;
+    type DataMarkerNarrowEssential: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+        + DataMarker;
+    type DataMarkerNarrowImperial: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+        + DataMarker;
+    type DataMarkerNarrowMetric: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
+        + DataMarker;
+    type DataMarkerNarrowOutlier: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>>
         + DataMarker;
 }
 
@@ -110,57 +129,72 @@ pub struct Mass;
 pub struct Volume;
 
 impl MeasureUnitCategory for Area {
-    type DataMarkerLongTiny = UnitsNamesAreaLongTinyV1;
-    type DataMarkerLongLight = UnitsNamesAreaLongLightV1;
-    type DataMarkerLongHeavy = UnitsNamesAreaLongHeavyV1;
-    type DataMarkerShortTiny = UnitsNamesAreaShortTinyV1;
-    type DataMarkerShortLight = UnitsNamesAreaShortLightV1;
-    type DataMarkerShortHeavy = UnitsNamesAreaShortHeavyV1;
-    type DataMarkerNarrowTiny = UnitsNamesAreaNarrowTinyV1;
-    type DataMarkerNarrowLight = UnitsNamesAreaNarrowLightV1;
-    type DataMarkerNarrowHeavy = UnitsNamesAreaNarrowHeavyV1;
+    type DataMarkerLongEssential = UnitsNamesAreaLongEssentialV1;
+    type DataMarkerLongImperial = UnitsNamesAreaLongImperialV1;
+    type DataMarkerLongMetric = UnitsNamesAreaLongMetricV1;
+    type DataMarkerLongOutlier = UnitsNamesAreaLongOutlierV1;
+    type DataMarkerShortEssential = UnitsNamesAreaShortEssentialV1;
+    type DataMarkerShortImperial = UnitsNamesAreaShortImperialV1;
+    type DataMarkerShortMetric = UnitsNamesAreaShortMetricV1;
+    type DataMarkerShortOutlier = UnitsNamesAreaShortOutlierV1;
+    type DataMarkerNarrowEssential = UnitsNamesAreaNarrowEssentialV1;
+    type DataMarkerNarrowImperial = UnitsNamesAreaNarrowImperialV1;
+    type DataMarkerNarrowMetric = UnitsNamesAreaNarrowMetricV1;
+    type DataMarkerNarrowOutlier = UnitsNamesAreaNarrowOutlierV1;
 }
 impl MeasureUnitCategory for Duration {
-    type DataMarkerLongTiny = UnitsNamesDurationLongTinyV1;
-    type DataMarkerLongLight = UnitsNamesDurationLongLightV1;
-    type DataMarkerLongHeavy = UnitsNamesDurationLongHeavyV1;
-    type DataMarkerShortTiny = UnitsNamesDurationShortTinyV1;
-    type DataMarkerShortLight = UnitsNamesDurationShortLightV1;
-    type DataMarkerShortHeavy = UnitsNamesDurationShortHeavyV1;
-    type DataMarkerNarrowTiny = UnitsNamesDurationNarrowTinyV1;
-    type DataMarkerNarrowLight = UnitsNamesDurationNarrowLightV1;
-    type DataMarkerNarrowHeavy = UnitsNamesDurationNarrowHeavyV1;
+    type DataMarkerLongEssential = UnitsNamesDurationLongEssentialV1;
+    type DataMarkerLongImperial = UnitsNamesDurationLongImperialV1;
+    type DataMarkerLongMetric = UnitsNamesDurationLongMetricV1;
+    type DataMarkerLongOutlier = UnitsNamesDurationLongOutlierV1;
+    type DataMarkerShortEssential = UnitsNamesDurationShortEssentialV1;
+    type DataMarkerShortImperial = UnitsNamesDurationShortImperialV1;
+    type DataMarkerShortMetric = UnitsNamesDurationShortMetricV1;
+    type DataMarkerShortOutlier = UnitsNamesDurationShortOutlierV1;
+    type DataMarkerNarrowEssential = UnitsNamesDurationNarrowEssentialV1;
+    type DataMarkerNarrowImperial = UnitsNamesDurationNarrowImperialV1;
+    type DataMarkerNarrowMetric = UnitsNamesDurationNarrowMetricV1;
+    type DataMarkerNarrowOutlier = UnitsNamesDurationNarrowOutlierV1;
 }
 impl MeasureUnitCategory for Length {
-    type DataMarkerLongTiny = UnitsNamesLengthLongTinyV1;
-    type DataMarkerLongLight = UnitsNamesLengthLongLightV1;
-    type DataMarkerLongHeavy = UnitsNamesLengthLongHeavyV1;
-    type DataMarkerShortTiny = UnitsNamesLengthShortTinyV1;
-    type DataMarkerShortLight = UnitsNamesLengthShortLightV1;
-    type DataMarkerShortHeavy = UnitsNamesLengthShortHeavyV1;
-    type DataMarkerNarrowTiny = UnitsNamesLengthNarrowTinyV1;
-    type DataMarkerNarrowLight = UnitsNamesLengthNarrowLightV1;
-    type DataMarkerNarrowHeavy = UnitsNamesLengthNarrowHeavyV1;
+    type DataMarkerLongEssential = UnitsNamesLengthLongEssentialV1;
+    type DataMarkerLongImperial = UnitsNamesLengthLongImperialV1;
+    type DataMarkerLongMetric = UnitsNamesLengthLongMetricV1;
+    type DataMarkerLongOutlier = UnitsNamesLengthLongOutlierV1;
+    type DataMarkerShortEssential = UnitsNamesLengthShortEssentialV1;
+    type DataMarkerShortImperial = UnitsNamesLengthShortImperialV1;
+    type DataMarkerShortMetric = UnitsNamesLengthShortMetricV1;
+    type DataMarkerShortOutlier = UnitsNamesLengthShortOutlierV1;
+    type DataMarkerNarrowEssential = UnitsNamesLengthNarrowEssentialV1;
+    type DataMarkerNarrowImperial = UnitsNamesLengthNarrowImperialV1;
+    type DataMarkerNarrowMetric = UnitsNamesLengthNarrowMetricV1;
+    type DataMarkerNarrowOutlier = UnitsNamesLengthNarrowOutlierV1;
 }
 impl MeasureUnitCategory for Mass {
-    type DataMarkerLongTiny = UnitsNamesMassLongTinyV1;
-    type DataMarkerLongLight = UnitsNamesMassLongLightV1;
-    type DataMarkerLongHeavy = UnitsNamesMassLongHeavyV1;
-    type DataMarkerShortTiny = UnitsNamesMassShortTinyV1;
-    type DataMarkerShortLight = UnitsNamesMassShortLightV1;
-    type DataMarkerShortHeavy = UnitsNamesMassShortHeavyV1;
-    type DataMarkerNarrowTiny = UnitsNamesMassNarrowTinyV1;
-    type DataMarkerNarrowLight = UnitsNamesMassNarrowLightV1;
-    type DataMarkerNarrowHeavy = UnitsNamesMassNarrowHeavyV1;
+    type DataMarkerLongEssential = UnitsNamesMassLongEssentialV1;
+    type DataMarkerLongImperial = UnitsNamesMassLongImperialV1;
+    type DataMarkerLongMetric = UnitsNamesMassLongMetricV1;
+    type DataMarkerLongOutlier = UnitsNamesMassLongOutlierV1;
+    type DataMarkerShortEssential = UnitsNamesMassShortEssentialV1;
+    type DataMarkerShortImperial = UnitsNamesMassShortImperialV1;
+    type DataMarkerShortMetric = UnitsNamesMassShortMetricV1;
+    type DataMarkerShortOutlier = UnitsNamesMassShortOutlierV1;
+    type DataMarkerNarrowEssential = UnitsNamesMassNarrowEssentialV1;
+    type DataMarkerNarrowImperial = UnitsNamesMassNarrowImperialV1;
+    type DataMarkerNarrowMetric = UnitsNamesMassNarrowMetricV1;
+    type DataMarkerNarrowOutlier = UnitsNamesMassNarrowOutlierV1;
 }
 impl MeasureUnitCategory for Volume {
-    type DataMarkerLongTiny = UnitsNamesVolumeLongTinyV1;
-    type DataMarkerLongLight = UnitsNamesVolumeLongLightV1;
-    type DataMarkerLongHeavy = UnitsNamesVolumeLongHeavyV1;
-    type DataMarkerShortTiny = UnitsNamesVolumeShortTinyV1;
-    type DataMarkerShortLight = UnitsNamesVolumeShortLightV1;
-    type DataMarkerShortHeavy = UnitsNamesVolumeShortHeavyV1;
-    type DataMarkerNarrowTiny = UnitsNamesVolumeNarrowTinyV1;
-    type DataMarkerNarrowLight = UnitsNamesVolumeNarrowLightV1;
-    type DataMarkerNarrowHeavy = UnitsNamesVolumeNarrowHeavyV1;
+    type DataMarkerLongEssential = UnitsNamesVolumeLongEssentialV1;
+    type DataMarkerLongImperial = UnitsNamesVolumeLongImperialV1;
+    type DataMarkerLongMetric = UnitsNamesVolumeLongMetricV1;
+    type DataMarkerLongOutlier = UnitsNamesVolumeLongOutlierV1;
+    type DataMarkerShortEssential = UnitsNamesVolumeShortEssentialV1;
+    type DataMarkerShortImperial = UnitsNamesVolumeShortImperialV1;
+    type DataMarkerShortMetric = UnitsNamesVolumeShortMetricV1;
+    type DataMarkerShortOutlier = UnitsNamesVolumeShortOutlierV1;
+    type DataMarkerNarrowEssential = UnitsNamesVolumeNarrowEssentialV1;
+    type DataMarkerNarrowImperial = UnitsNamesVolumeNarrowImperialV1;
+    type DataMarkerNarrowMetric = UnitsNamesVolumeNarrowMetricV1;
+    type DataMarkerNarrowOutlier = UnitsNamesVolumeNarrowOutlierV1;
 }

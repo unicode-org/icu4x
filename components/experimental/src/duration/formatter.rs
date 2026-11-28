@@ -5,7 +5,8 @@
 use core::marker::PhantomData;
 
 use crate::dimension::provider::units::categorized_display_names::{
-    UnitsNamesDurationLongTinyV1, UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationShortTinyV1,
+    UnitsNamesDurationLongEssentialV1, UnitsNamesDurationNarrowEssentialV1,
+    UnitsNamesDurationShortEssentialV1,
 };
 use crate::dimension::units::categorized_formatter::{
     CategorizedFormatter, CategorizedUnitsFormatterPreferences,
@@ -138,17 +139,18 @@ impl DurationUnitFormatter {
                 Unit::Nanosecond => crate::measure::category::Duration::nanosecond(),
             };
 
-            // The tiny tier has all the units of a duration, in every locale.
+            // The essential tier has all the units of a duration.
             match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
                 Width::Long => {
-                    CategorizedFormatter::try_new_long_tiny((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_long_essential((&prefs).into(), categorized_unit)
                 }
                 Width::Short => {
-                    CategorizedFormatter::try_new_short_tiny((&prefs).into(), categorized_unit)
+                    CategorizedFormatter::try_new_short_essential((&prefs).into(), categorized_unit)
                 }
-                Width::Narrow => {
-                    CategorizedFormatter::try_new_narrow_tiny((&prefs).into(), categorized_unit)
-                }
+                Width::Narrow => CategorizedFormatter::try_new_narrow_essential(
+                    (&prefs).into(),
+                    categorized_unit,
+                ),
             }
         };
 
@@ -168,9 +170,9 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsNamesDurationLongTinyV1>
-            + DataProvider<UnitsNamesDurationShortTinyV1>
-            + DataProvider<UnitsNamesDurationNarrowTinyV1>
+            + DataProvider<UnitsNamesDurationLongEssentialV1>
+            + DataProvider<UnitsNamesDurationShortEssentialV1>
+            + DataProvider<UnitsNamesDurationNarrowEssentialV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
@@ -185,19 +187,19 @@ impl DurationUnitFormatter {
                 unit: MeasureUnit::try_from_str(unit.as_unit_formatter_name()).unwrap(),
             };
 
-            // The tiny tier has all the units of a duration, in every locale.
+            // The essential tier has all the units of a duration.
             match DurationUnitFormatter::field_style_to_unit_width(style, options.base) {
-                Width::Long => CategorizedFormatter::try_new_long_tiny_unstable(
+                Width::Long => CategorizedFormatter::try_new_long_essential_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
                 ),
-                Width::Short => CategorizedFormatter::try_new_short_tiny_unstable(
+                Width::Short => CategorizedFormatter::try_new_short_essential_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
                 ),
-                Width::Narrow => CategorizedFormatter::try_new_narrow_tiny_unstable(
+                Width::Narrow => CategorizedFormatter::try_new_narrow_essential_unstable(
                     provider,
                     (&prefs).into(),
                     categorized_unit,
@@ -280,9 +282,9 @@ impl DurationFormatter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::UnitsDurationDigitalV1>
-            + DataProvider<UnitsNamesDurationLongTinyV1>
-            + DataProvider<UnitsNamesDurationShortTinyV1>
-            + DataProvider<UnitsNamesDurationNarrowTinyV1>
+            + DataProvider<UnitsNamesDurationLongEssentialV1>
+            + DataProvider<UnitsNamesDurationShortEssentialV1>
+            + DataProvider<UnitsNamesDurationNarrowEssentialV1>
             + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>

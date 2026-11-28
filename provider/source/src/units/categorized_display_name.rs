@@ -6,22 +6,30 @@ use crate::SourceDataProvider;
 use crate::cldr_serde;
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_names::{
-    UnitsNamesAreaLongHeavyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongTinyV1,
-    UnitsNamesAreaNarrowHeavyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowTinyV1,
-    UnitsNamesAreaShortHeavyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortTinyV1,
-    UnitsNamesDurationLongHeavyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongTinyV1,
-    UnitsNamesDurationNarrowHeavyV1, UnitsNamesDurationNarrowLightV1,
-    UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationShortHeavyV1, UnitsNamesDurationShortLightV1,
-    UnitsNamesDurationShortTinyV1, UnitsNamesLengthLongHeavyV1, UnitsNamesLengthLongLightV1,
-    UnitsNamesLengthLongTinyV1, UnitsNamesLengthNarrowHeavyV1, UnitsNamesLengthNarrowLightV1,
-    UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthShortHeavyV1, UnitsNamesLengthShortLightV1,
-    UnitsNamesLengthShortTinyV1, UnitsNamesMassLongHeavyV1, UnitsNamesMassLongLightV1,
-    UnitsNamesMassLongTinyV1, UnitsNamesMassNarrowHeavyV1, UnitsNamesMassNarrowLightV1,
-    UnitsNamesMassNarrowTinyV1, UnitsNamesMassShortHeavyV1, UnitsNamesMassShortLightV1,
-    UnitsNamesMassShortTinyV1, UnitsNamesVolumeLongHeavyV1, UnitsNamesVolumeLongLightV1,
-    UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeNarrowHeavyV1, UnitsNamesVolumeNarrowLightV1,
-    UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeShortHeavyV1, UnitsNamesVolumeShortLightV1,
-    UnitsNamesVolumeShortTinyV1,
+    UnitsNamesAreaLongEssentialV1, UnitsNamesAreaLongImperialV1, UnitsNamesAreaLongMetricV1,
+    UnitsNamesAreaLongOutlierV1, UnitsNamesAreaNarrowEssentialV1, UnitsNamesAreaNarrowImperialV1,
+    UnitsNamesAreaNarrowMetricV1, UnitsNamesAreaNarrowOutlierV1, UnitsNamesAreaShortEssentialV1,
+    UnitsNamesAreaShortImperialV1, UnitsNamesAreaShortMetricV1, UnitsNamesAreaShortOutlierV1,
+    UnitsNamesDurationLongEssentialV1, UnitsNamesDurationLongImperialV1,
+    UnitsNamesDurationLongMetricV1, UnitsNamesDurationLongOutlierV1,
+    UnitsNamesDurationNarrowEssentialV1, UnitsNamesDurationNarrowImperialV1,
+    UnitsNamesDurationNarrowMetricV1, UnitsNamesDurationNarrowOutlierV1,
+    UnitsNamesDurationShortEssentialV1, UnitsNamesDurationShortImperialV1,
+    UnitsNamesDurationShortMetricV1, UnitsNamesDurationShortOutlierV1,
+    UnitsNamesLengthLongEssentialV1, UnitsNamesLengthLongImperialV1, UnitsNamesLengthLongMetricV1,
+    UnitsNamesLengthLongOutlierV1, UnitsNamesLengthNarrowEssentialV1,
+    UnitsNamesLengthNarrowImperialV1, UnitsNamesLengthNarrowMetricV1,
+    UnitsNamesLengthNarrowOutlierV1, UnitsNamesLengthShortEssentialV1,
+    UnitsNamesLengthShortImperialV1, UnitsNamesLengthShortMetricV1, UnitsNamesLengthShortOutlierV1,
+    UnitsNamesMassLongEssentialV1, UnitsNamesMassLongImperialV1, UnitsNamesMassLongMetricV1,
+    UnitsNamesMassLongOutlierV1, UnitsNamesMassNarrowEssentialV1, UnitsNamesMassNarrowImperialV1,
+    UnitsNamesMassNarrowMetricV1, UnitsNamesMassNarrowOutlierV1, UnitsNamesMassShortEssentialV1,
+    UnitsNamesMassShortImperialV1, UnitsNamesMassShortMetricV1, UnitsNamesMassShortOutlierV1,
+    UnitsNamesVolumeLongEssentialV1, UnitsNamesVolumeLongImperialV1, UnitsNamesVolumeLongMetricV1,
+    UnitsNamesVolumeLongOutlierV1, UnitsNamesVolumeNarrowEssentialV1,
+    UnitsNamesVolumeNarrowImperialV1, UnitsNamesVolumeNarrowMetricV1,
+    UnitsNamesVolumeNarrowOutlierV1, UnitsNamesVolumeShortEssentialV1,
+    UnitsNamesVolumeShortImperialV1, UnitsNamesVolumeShortMetricV1, UnitsNamesVolumeShortOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
 use icu::locale::fallback::{LocaleFallbackIterator, LocaleFallbacker};
@@ -142,12 +150,16 @@ impl SourceDataProvider {
             .read_and_parse("supplemental/unitPreferenceData.json")?;
         let categorized_units_list = preferences.supplemental.categorized_units_list();
 
+        // The tier of a unit depends on its unit systems.
+        let units_info: &cldr_serde::units::info::Resource = self
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/units.json")?;
+
         let mut data_locales = HashSet::new();
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
         for locale in locales {
-            let region = self.cldr()?.extract_or_infer_region(&locale)?.to_string();
-
             let units_format_data: &cldr_serde::units::data::Resource =
                 units.read_and_parse(&locale, "units.json")?;
             let units_map = width
@@ -167,8 +179,8 @@ impl SourceDataProvider {
                 if cldr_serde::units::preferences::Supplemental::unit_type(
                     category,
                     unit,
-                    &region,
                     &categorized_units_list,
+                    &units_info.supplemental.convert_units.convert_units,
                 ) != unit_type
                 {
                     continue;
@@ -221,65 +233,139 @@ macro_rules! impl_units_display_names_provider {
 macro_rules! impl_units_display_names_providers {
     (
         $category:expr,
-        long: [$long_tiny:ty, $long_light:ty, $long_heavy:ty],
-        short: [$short_tiny:ty, $short_light:ty, $short_heavy:ty],
-        narrow: [$narrow_tiny:ty, $narrow_light:ty, $narrow_heavy:ty] $(,)?
+        long: [$long_essential:ty, $long_imperial:ty, $long_metric:ty, $long_outlier:ty $(,)?],
+        short: [$short_essential:ty, $short_imperial:ty, $short_metric:ty, $short_outlier:ty $(,)?],
+        narrow: [$narrow_essential:ty, $narrow_imperial:ty, $narrow_metric:ty, $narrow_outlier:ty $(,)?] $(,)?
     ) => {
-        impl_units_display_names_provider!($long_tiny, UnitType::Tiny, $category, Width::Long);
-        impl_units_display_names_provider!($long_light, UnitType::Light, $category, Width::Long);
-        impl_units_display_names_provider!($long_heavy, UnitType::Heavy, $category, Width::Long);
-        impl_units_display_names_provider!($short_tiny, UnitType::Tiny, $category, Width::Short);
-        impl_units_display_names_provider!($short_light, UnitType::Light, $category, Width::Short);
-        impl_units_display_names_provider!($short_heavy, UnitType::Heavy, $category, Width::Short);
-        impl_units_display_names_provider!($narrow_tiny, UnitType::Tiny, $category, Width::Narrow);
-        impl_units_display_names_provider!(
-            $narrow_light,
-            UnitType::Light,
-            $category,
-            Width::Narrow
+        impl_units_display_names_providers!(
+            @width $category, Width::Long,
+            $long_essential, $long_imperial, $long_metric, $long_outlier
         );
-        impl_units_display_names_provider!(
-            $narrow_heavy,
-            UnitType::Heavy,
-            $category,
-            Width::Narrow
+        impl_units_display_names_providers!(
+            @width $category, Width::Short,
+            $short_essential, $short_imperial, $short_metric, $short_outlier
         );
+        impl_units_display_names_providers!(
+            @width $category, Width::Narrow,
+            $narrow_essential, $narrow_imperial, $narrow_metric, $narrow_outlier
+        );
+    };
+    (@width $category:expr, $width:expr, $essential:ty, $imperial:ty, $metric:ty, $outlier:ty) => {
+        impl_units_display_names_provider!($essential, UnitType::Essential, $category, $width);
+        impl_units_display_names_provider!($imperial, UnitType::Imperial, $category, $width);
+        impl_units_display_names_provider!($metric, UnitType::Metric, $category, $width);
+        impl_units_display_names_provider!($outlier, UnitType::Outlier, $category, $width);
     };
 }
 
 impl_units_display_names_providers!(
     "area",
-    long: [UnitsNamesAreaLongTinyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongHeavyV1],
-    short: [UnitsNamesAreaShortTinyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortHeavyV1],
-    narrow: [UnitsNamesAreaNarrowTinyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowHeavyV1],
+    long: [
+        UnitsNamesAreaLongEssentialV1,
+        UnitsNamesAreaLongImperialV1,
+        UnitsNamesAreaLongMetricV1,
+        UnitsNamesAreaLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesAreaShortEssentialV1,
+        UnitsNamesAreaShortImperialV1,
+        UnitsNamesAreaShortMetricV1,
+        UnitsNamesAreaShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesAreaNarrowEssentialV1,
+        UnitsNamesAreaNarrowImperialV1,
+        UnitsNamesAreaNarrowMetricV1,
+        UnitsNamesAreaNarrowOutlierV1,
+    ],
 );
 
 impl_units_display_names_providers!(
     "duration",
-    long: [UnitsNamesDurationLongTinyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongHeavyV1],
-    short: [UnitsNamesDurationShortTinyV1, UnitsNamesDurationShortLightV1, UnitsNamesDurationShortHeavyV1],
-    narrow: [UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationNarrowLightV1, UnitsNamesDurationNarrowHeavyV1],
+    long: [
+        UnitsNamesDurationLongEssentialV1,
+        UnitsNamesDurationLongImperialV1,
+        UnitsNamesDurationLongMetricV1,
+        UnitsNamesDurationLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesDurationShortEssentialV1,
+        UnitsNamesDurationShortImperialV1,
+        UnitsNamesDurationShortMetricV1,
+        UnitsNamesDurationShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesDurationNarrowEssentialV1,
+        UnitsNamesDurationNarrowImperialV1,
+        UnitsNamesDurationNarrowMetricV1,
+        UnitsNamesDurationNarrowOutlierV1,
+    ],
 );
 
 impl_units_display_names_providers!(
     "length",
-    long: [UnitsNamesLengthLongTinyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongHeavyV1],
-    short: [UnitsNamesLengthShortTinyV1, UnitsNamesLengthShortLightV1, UnitsNamesLengthShortHeavyV1],
-    narrow: [UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthNarrowLightV1, UnitsNamesLengthNarrowHeavyV1],
+    long: [
+        UnitsNamesLengthLongEssentialV1,
+        UnitsNamesLengthLongImperialV1,
+        UnitsNamesLengthLongMetricV1,
+        UnitsNamesLengthLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesLengthShortEssentialV1,
+        UnitsNamesLengthShortImperialV1,
+        UnitsNamesLengthShortMetricV1,
+        UnitsNamesLengthShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesLengthNarrowEssentialV1,
+        UnitsNamesLengthNarrowImperialV1,
+        UnitsNamesLengthNarrowMetricV1,
+        UnitsNamesLengthNarrowOutlierV1,
+    ],
 );
 
 impl_units_display_names_providers!(
     "mass",
-    long: [UnitsNamesMassLongTinyV1, UnitsNamesMassLongLightV1, UnitsNamesMassLongHeavyV1],
-    short: [UnitsNamesMassShortTinyV1, UnitsNamesMassShortLightV1, UnitsNamesMassShortHeavyV1],
-    narrow: [UnitsNamesMassNarrowTinyV1, UnitsNamesMassNarrowLightV1, UnitsNamesMassNarrowHeavyV1],
+    long: [
+        UnitsNamesMassLongEssentialV1,
+        UnitsNamesMassLongImperialV1,
+        UnitsNamesMassLongMetricV1,
+        UnitsNamesMassLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesMassShortEssentialV1,
+        UnitsNamesMassShortImperialV1,
+        UnitsNamesMassShortMetricV1,
+        UnitsNamesMassShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesMassNarrowEssentialV1,
+        UnitsNamesMassNarrowImperialV1,
+        UnitsNamesMassNarrowMetricV1,
+        UnitsNamesMassNarrowOutlierV1,
+    ],
 );
 
 impl_units_display_names_providers!(
     "volume",
-    long: [UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeLongLightV1, UnitsNamesVolumeLongHeavyV1],
-    short: [UnitsNamesVolumeShortTinyV1, UnitsNamesVolumeShortLightV1, UnitsNamesVolumeShortHeavyV1],
-    narrow: [UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeNarrowLightV1, UnitsNamesVolumeNarrowHeavyV1],
+    long: [
+        UnitsNamesVolumeLongEssentialV1,
+        UnitsNamesVolumeLongImperialV1,
+        UnitsNamesVolumeLongMetricV1,
+        UnitsNamesVolumeLongOutlierV1,
+    ],
+    short: [
+        UnitsNamesVolumeShortEssentialV1,
+        UnitsNamesVolumeShortImperialV1,
+        UnitsNamesVolumeShortMetricV1,
+        UnitsNamesVolumeShortOutlierV1,
+    ],
+    narrow: [
+        UnitsNamesVolumeNarrowEssentialV1,
+        UnitsNamesVolumeNarrowImperialV1,
+        UnitsNamesVolumeNarrowMetricV1,
+        UnitsNamesVolumeNarrowOutlierV1,
+    ],
 );
 
 #[test]
@@ -291,7 +377,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<UnitsNamesLengthLongTinyV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsNamesLengthLongEssentialV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("meter"),
@@ -309,7 +395,7 @@ fn test_basic() {
         .interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<UnitsNamesLengthShortTinyV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsNamesLengthShortEssentialV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("meter"),
@@ -326,7 +412,7 @@ fn test_basic() {
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
-    let ar_eg_locale: DataPayload<UnitsNamesLengthLongTinyV1> = provider
+    let ar_eg_locale: DataPayload<UnitsNamesLengthLongEssentialV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("meter"),
@@ -341,7 +427,7 @@ fn test_basic() {
     let long = ar_eg_locale.get().get(1.into(), &ar_rules).interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
-    let fr_locale: DataPayload<UnitsNamesLengthShortTinyV1> = provider
+    let fr_locale: DataPayload<UnitsNamesLengthShortEssentialV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("meter"),
@@ -383,40 +469,70 @@ where
 #[test]
 fn test_long_and_narrow_differ_from_short() {
     let provider = &SourceDataProvider::new_testing();
-    let long_tiny =
-        |locale, unit| load_names::<UnitsNamesDurationLongTinyV1>(provider, locale, unit);
-    let short_tiny =
-        |locale, unit| load_names::<UnitsNamesDurationShortTinyV1>(provider, locale, unit);
-    let narrow_tiny =
-        |locale, unit| load_names::<UnitsNamesDurationNarrowTinyV1>(provider, locale, unit);
-    let long_heavy =
-        |locale, unit| load_names::<UnitsNamesDurationLongHeavyV1>(provider, locale, unit);
-    let short_heavy =
-        |locale, unit| load_names::<UnitsNamesDurationShortHeavyV1>(provider, locale, unit);
-    let narrow_heavy =
-        |locale, unit| load_names::<UnitsNamesDurationNarrowHeavyV1>(provider, locale, unit);
+    let long_essential =
+        |locale, unit| load_names::<UnitsNamesDurationLongEssentialV1>(provider, locale, unit);
+    let short_essential =
+        |locale, unit| load_names::<UnitsNamesDurationShortEssentialV1>(provider, locale, unit);
+    let narrow_essential =
+        |locale, unit| load_names::<UnitsNamesDurationNarrowEssentialV1>(provider, locale, unit);
+    let long_outlier =
+        |locale, unit| load_names::<UnitsNamesDurationLongOutlierV1>(provider, locale, unit);
+    let short_outlier =
+        |locale, unit| load_names::<UnitsNamesDurationShortOutlierV1>(provider, locale, unit);
+    let narrow_outlier =
+        |locale, unit| load_names::<UnitsNamesDurationNarrowOutlierV1>(provider, locale, unit);
 
     // In root, the long and the narrow patterns are aliases of the short ones.
-    assert!(short_tiny("und", "day").is_some());
-    assert!(long_tiny("und", "day").is_none());
-    assert!(narrow_tiny("und", "day").is_none());
+    assert!(short_essential("und", "day").is_some());
+    assert!(long_essential("und", "day").is_none());
+    assert!(narrow_essential("und", "day").is_none());
 
     // In English, the long patterns of `day` are the short ones (`{0} day`, `{0} days`),
     // and the narrow pattern is `{0}d`.
-    assert!(short_tiny("en", "day").is_some());
-    assert!(long_tiny("en", "day").is_none());
-    assert!(narrow_tiny("en", "day").is_some());
+    assert!(short_essential("en", "day").is_some());
+    assert!(long_essential("en", "day").is_none());
+    assert!(narrow_essential("en", "day").is_some());
 
     // The narrow patterns of `night` in `es-AR` are its short ones (`{0} noches`).
     // But `es`, a parent of `es-AR`, has the narrow `{0}noches`, and the formatter
     // would find it for `es-AR`. So `es-AR` keeps its narrow patterns.
-    let es_ar_narrow = narrow_heavy("es-AR", "night").unwrap();
-    let es_ar_short = short_heavy("es-AR", "night").unwrap();
-    let es_narrow = narrow_heavy("es", "night").unwrap();
+    let es_ar_narrow = narrow_outlier("es-AR", "night").unwrap();
+    let es_ar_short = short_outlier("es-AR", "night").unwrap();
+    let es_narrow = narrow_outlier("es", "night").unwrap();
     assert_eq!(es_ar_narrow.get(), es_ar_short.get());
     assert_ne!(es_ar_narrow.get(), es_narrow.get());
 
     // The long patterns of `night` are the short ones in `es-AR`, in `es`, and in root.
-    assert!(long_heavy("es-AR", "night").is_none());
-    assert!(long_heavy("es", "night").is_none());
+    assert!(long_outlier("es-AR", "night").is_none());
+    assert!(long_outlier("es", "night").is_none());
+}
+
+/// A unit is in the same tier in every locale, so a locale and its parents have the
+/// names of the unit in the same marker.
+#[test]
+fn test_unit_tier_does_not_depend_on_locale() {
+    let provider = &SourceDataProvider::new_testing();
+    let essential =
+        |locale, unit| load_names::<UnitsNamesLengthShortEssentialV1>(provider, locale, unit);
+    let imperial =
+        |locale, unit| load_names::<UnitsNamesLengthShortImperialV1>(provider, locale, unit);
+    let metric = |locale, unit| load_names::<UnitsNamesLengthShortMetricV1>(provider, locale, unit);
+    let outlier =
+        |locale, unit| load_names::<UnitsNamesLengthShortOutlierV1>(provider, locale, unit);
+
+    // The unit preferences of the United States list `foot`, and not `kilometer`.
+    for locale in ["und", "en", "en-001", "fr", "ja"] {
+        assert!(imperial(locale, "foot").is_some());
+        assert!(essential(locale, "foot").is_none());
+        assert!(metric(locale, "foot").is_none());
+        assert!(outlier(locale, "foot").is_none());
+
+        assert!(metric(locale, "kilometer").is_some());
+        assert!(essential(locale, "kilometer").is_none());
+        assert!(imperial(locale, "kilometer").is_none());
+        assert!(outlier(locale, "kilometer").is_none());
+
+        assert!(essential(locale, "meter").is_some());
+        assert!(outlier(locale, "furlong").is_some());
+    }
 }

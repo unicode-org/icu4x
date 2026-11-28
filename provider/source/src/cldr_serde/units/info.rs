@@ -44,6 +44,10 @@ pub(crate) struct ConvertUnit {
 
     #[serde(rename = "_offset")]
     pub(crate) offset: Option<String>,
+
+    /// The unit systems that the unit is part of, such as `metric` or `ussystem`.
+    #[serde(rename = "_systems", default)]
+    pub(crate) systems: Vec<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

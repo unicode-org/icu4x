@@ -6,7 +6,7 @@
 //! [`CategorizedFormatter`](crate::dimension::units::categorized_formatter::CategorizedFormatter).
 //!
 //! The formatter has one constructor for each width, such as
-//! [`try_new_long_tiny`](crate::dimension::units::categorized_formatter::CategorizedFormatter::try_new_long_tiny).
+//! [`try_new_long_essential`](crate::dimension::units::categorized_formatter::CategorizedFormatter::try_new_long_essential).
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[non_exhaustive]
