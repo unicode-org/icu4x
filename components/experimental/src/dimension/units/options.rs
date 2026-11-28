@@ -2,22 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Options for [`CategorizedFormatter`](crate::dimension::units::categorized_formatter::CategorizedFormatter).
-
-/// A collection of configuration options that determine the formatting behavior of
-/// [`CategorizedFormatter`](crate::dimension::units::categorized_formatter::CategorizedFormatter).
-#[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
-#[non_exhaustive]
-pub struct UnitsFormatterOptions {
-    /// The width of the units format.
-    pub width: Width,
-}
-
-impl From<Width> for UnitsFormatterOptions {
-    fn from(width: Width) -> Self {
-        Self { width }
-    }
-}
+//! The widths of the units format of
+//! [`CategorizedFormatter`](crate::dimension::units::categorized_formatter::CategorizedFormatter).
+//!
+//! The formatter has one constructor for each width, such as
+//! [`try_new_long_tiny`](crate::dimension::units::categorized_formatter::CategorizedFormatter::try_new_long_tiny).
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[non_exhaustive]

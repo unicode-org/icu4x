@@ -4,64 +4,88 @@
 
 use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 
+/// Defines the data markers of one category: one marker for each width and each tier.
 macro_rules! define_units_data_markers {
-    ($($marker:ident, $doc:literal);* $(;)?) => {
-        $(
-            icu_provider::data_marker!(
-                #[doc = $doc]
-                /// The pluralized displayname of the unit.
-                ///
-                /// NOTE
-                /// The data has a name for the long or the narrow width only where it differs
-                /// from the short name, in the locale or in one of its parents. Where it has
-                /// none, the short name is the name for that width.
-                $marker,
-                UnitsDisplayNames<'static>,
-                #[cfg(feature = "datagen")]
-                attributes_domain = "units"
-            );
-        )*
+    (
+        $category:literal,
+        long: [$long_tiny:ident, $long_light:ident, $long_heavy:ident],
+        short: [$short_tiny:ident, $short_light:ident, $short_heavy:ident],
+        narrow: [$narrow_tiny:ident, $narrow_light:ident, $narrow_heavy:ident] $(,)?
+    ) => {
+        define_units_data_markers!(
+            @width $category, "Long", $long_tiny, $long_light, $long_heavy,
+            "\n\nNOTE\nThe data has a long name only where it differs from the short name, in the locale or in one of its parents. Where it has none, the short name is also the long name."
+        );
+        define_units_data_markers!(
+            @width $category, "Short", $short_tiny, $short_light, $short_heavy,
+            ""
+        );
+        define_units_data_markers!(
+            @width $category, "Narrow", $narrow_tiny, $narrow_light, $narrow_heavy,
+            "\n\nNOTE\nThe data has a narrow name only where it differs from the short name, in the locale or in one of its parents. Where it has none, the short name is also the narrow name."
+        );
+    };
+    (@width $category:literal, $width:literal, $tiny:ident, $light:ident, $heavy:ident, $fallback:literal) => {
+        define_units_data_markers!(
+            @marker $tiny, $category, $width, $fallback,
+            "that are essential or defined by locale-specific preferences"
+        );
+        define_units_data_markers!(
+            @marker $light, $category, $width, $fallback,
+            "covering units from other locales' preferences"
+        );
+        define_units_data_markers!(
+            @marker $heavy, $category, $width, $fallback,
+            "not specified by any locale's preferences"
+        );
+    };
+    (@marker $marker:ident, $category:literal, $width:literal, $fallback:literal, $units:literal) => {
+        icu_provider::data_marker!(
+            #[doc = concat!(
+                $width, " display names for ", $category, " units ", $units, ". ",
+                "Access requires specifying the unit in DataMarkerAttributes (e.g., meter). ",
+                "The pluralized displayname of the unit.",
+                $fallback
+            )]
+            $marker,
+            UnitsDisplayNames<'static>,
+            #[cfg(feature = "datagen")]
+            attributes_domain = "units"
+        );
     };
 }
 
 define_units_data_markers!(
-    // Area
-    UnitsNamesAreaTinyV1,
-    "Display names for area units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesAreaLightV1,
-    "Display names for area units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesAreaHeavyV1,
-    "Display names for area units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    "area",
+    long: [UnitsNamesAreaLongTinyV1, UnitsNamesAreaLongLightV1, UnitsNamesAreaLongHeavyV1],
+    short: [UnitsNamesAreaShortTinyV1, UnitsNamesAreaShortLightV1, UnitsNamesAreaShortHeavyV1],
+    narrow: [UnitsNamesAreaNarrowTinyV1, UnitsNamesAreaNarrowLightV1, UnitsNamesAreaNarrowHeavyV1],
+);
 
-    // Duration
-    UnitsNamesDurationTinyV1,
-    "Display names for duration units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesDurationLightV1,
-    "Display names for duration units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesDurationHeavyV1,
-    "Display names for duration units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+define_units_data_markers!(
+    "duration",
+    long: [UnitsNamesDurationLongTinyV1, UnitsNamesDurationLongLightV1, UnitsNamesDurationLongHeavyV1],
+    short: [UnitsNamesDurationShortTinyV1, UnitsNamesDurationShortLightV1, UnitsNamesDurationShortHeavyV1],
+    narrow: [UnitsNamesDurationNarrowTinyV1, UnitsNamesDurationNarrowLightV1, UnitsNamesDurationNarrowHeavyV1],
+);
 
-    // Length
-    UnitsNamesLengthTinyV1,
-    "Display names for length units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesLengthLightV1,
-    "Display names for length units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesLengthHeavyV1,
-    "Display names for length units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+define_units_data_markers!(
+    "length",
+    long: [UnitsNamesLengthLongTinyV1, UnitsNamesLengthLongLightV1, UnitsNamesLengthLongHeavyV1],
+    short: [UnitsNamesLengthShortTinyV1, UnitsNamesLengthShortLightV1, UnitsNamesLengthShortHeavyV1],
+    narrow: [UnitsNamesLengthNarrowTinyV1, UnitsNamesLengthNarrowLightV1, UnitsNamesLengthNarrowHeavyV1],
+);
 
-    // Mass
-    UnitsNamesMassTinyV1,
-    "Display names for mass units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesMassLightV1,
-    "Display names for mass units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesMassHeavyV1,
-    "Display names for mass units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+define_units_data_markers!(
+    "mass",
+    long: [UnitsNamesMassLongTinyV1, UnitsNamesMassLongLightV1, UnitsNamesMassLongHeavyV1],
+    short: [UnitsNamesMassShortTinyV1, UnitsNamesMassShortLightV1, UnitsNamesMassShortHeavyV1],
+    narrow: [UnitsNamesMassNarrowTinyV1, UnitsNamesMassNarrowLightV1, UnitsNamesMassNarrowHeavyV1],
+);
 
-    // Volume
-    UnitsNamesVolumeTinyV1,
-    "Display names for volume units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesVolumeLightV1,
-    "Display names for volume units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
-    UnitsNamesVolumeHeavyV1,
-    "Display names for volume units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+define_units_data_markers!(
+    "volume",
+    long: [UnitsNamesVolumeLongTinyV1, UnitsNamesVolumeLongLightV1, UnitsNamesVolumeLongHeavyV1],
+    short: [UnitsNamesVolumeShortTinyV1, UnitsNamesVolumeShortLightV1, UnitsNamesVolumeShortHeavyV1],
+    narrow: [UnitsNamesVolumeNarrowTinyV1, UnitsNamesVolumeNarrowLightV1, UnitsNamesVolumeNarrowHeavyV1],
 );
